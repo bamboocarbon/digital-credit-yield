@@ -17,6 +17,9 @@ export const metadata = {
     title: 'Digital Credit Yield — Track STRC & SATA Income Assets',
     description: 'Track, analyse and project the growth of next-generation income assets. Live prices, yields, and growth projections for STRC and SATA.',
   },
+  other: {
+    'google-adsense-account': 'ca-pub-2860789238138317',
+  },
 };
 
 export default function RootLayout({ children }) {
