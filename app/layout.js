@@ -19,6 +19,7 @@ export const metadata = {
   },
   other: {
     'google-adsense-account': 'ca-pub-2860789238138317',
+    'msvalidate.01': 'D3F294A0F265C1CC2A354FAB6748707D',
   },
 };
 
