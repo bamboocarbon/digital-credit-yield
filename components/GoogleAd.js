@@ -1,6 +1,14 @@
 'use client';
 
+import { useEffect } from 'react';
+
 export default function GoogleAd({ slot, format = 'auto' }) {
+  useEffect(() => {
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {}
+  }, []);
+
   if (process.env.NODE_ENV === 'development') {
     return (
       <div style={{
@@ -17,5 +25,17 @@ export default function GoogleAd({ slot, format = 'auto' }) {
       </div>
     );
   }
-  return null;
+
+  if (!process.env.NEXT_PUBLIC_ADSENSE_ID) return null;
+
+  return (
+    <ins
+      className="adsbygoogle"
+      style={{ display: 'block' }}
+      data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_ID}
+      data-ad-slot={slot}
+      data-ad-format={format}
+      data-full-width-responsive="true"
+    />
+  );
 }
