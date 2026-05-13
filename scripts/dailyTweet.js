@@ -2,7 +2,7 @@
 // Run via: node scripts/dailyTweet.js
 // Cron (Hostinger, 17:00 UTC daily): 0 17 * * * /usr/bin/node /path/to/scripts/dailyTweet.js
 
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { TwitterApi } from 'twitter-api-v2';
@@ -197,16 +197,12 @@ async function run() {
     ? priority[dayOfYear % priority.length]
     : normal[dayOfYear % normal.length];
 
-  const siteBase = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');
-  const pageUrl  = `${siteBase}${insight.path}`;
-
-  // Note: Twitter counts all URLs as 23 chars regardless of actual length.
   const tweet = [
     buildHeader(quotes),
     '',
     insight.text,
     '',
-    `${pageUrl}  #STRC #SATA #PassiveIncome #Dividends`,
+    '#STRC #SATA #PassiveIncome #Dividends',
   ].join('\n');
 
   console.log('\n--- Tweet preview ---');
@@ -220,7 +216,15 @@ async function run() {
     accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
   });
 
-  const { data } = await client.v2.tweet(tweet);
+  const logoPath = join(__dir, '..', 'public', 'logo-tweet.png');
+  let mediaId;
+  if (existsSync(logoPath)) {
+    mediaId = await client.v1.uploadMedia(logoPath, { mimeType: 'image/png' });
+    console.log(`\nUploaded logo, media ID: ${mediaId}`);
+  }
+
+  const tweetParams = mediaId ? { media: { media_ids: [mediaId] } } : {};
+  const { data } = await client.v2.tweet(tweet, tweetParams);
   console.log(`\nPosted! Tweet ID: ${data.id}`);
 }
 
