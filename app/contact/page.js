@@ -4,12 +4,28 @@ import { useState } from 'react';
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
   const [form, setForm] = useState({ name: '', email: '', message: '' });
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    window.location.href = `mailto:contact@digitalcredityield.com?subject=Enquiry from ${encodeURIComponent(form.name)}&body=${encodeURIComponent(form.message)}%0A%0AFrom: ${encodeURIComponent(form.email)}`;
-    setTimeout(() => setSubmitted(true), 500);
+    setSending(true);
+    setError('');
+
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    });
+
+    setSending(false);
+
+    if (res.ok) {
+      setSubmitted(true);
+    } else {
+      setError('Sorry, something went wrong. Please email us directly.');
+    }
   }
 
   return (
@@ -24,12 +40,9 @@ export default function ContactPage() {
 
       {submitted ? (
         <div className="p-6 rounded-xl text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-          <p className="text-lg font-semibold mb-2">Your email client should have opened</p>
+          <p className="text-lg font-semibold mb-2">Message sent!</p>
           <p className="text-sm mb-4" style={{ color: 'var(--text-muted)' }}>
-            Please complete and send the email from your mail app. If it didn't open, you can email us directly at{' '}
-            <a href="mailto:contact@digitalcredityield.com" className="underline" style={{ color: 'var(--accent-gold)' }}>
-              contact@digitalcredityield.com
-            </a>
+            Thanks for getting in touch. We'll get back to you at {form.email}.
           </p>
           <button
             onClick={() => { setSubmitted(false); setForm({ name: '', email: '', message: '' }); }}
@@ -62,10 +75,13 @@ export default function ContactPage() {
               style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
               placeholder="Your message..." />
           </div>
-          <button type="submit"
-            className="w-full py-3 rounded-lg font-medium text-sm min-h-[44px] transition-opacity hover:opacity-80"
+          {error && (
+            <p className="text-sm text-red-400">{error}</p>
+          )}
+          <button type="submit" disabled={sending}
+            className="w-full py-3 rounded-lg font-medium text-sm min-h-[44px] transition-opacity hover:opacity-80 disabled:opacity-50"
             style={{ background: 'var(--accent-gold)', color: '#000' }}>
-            Send Message
+            {sending ? 'Sending...' : 'Send Message'}
           </button>
         </form>
       )}
