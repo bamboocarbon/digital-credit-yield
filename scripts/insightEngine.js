@@ -65,7 +65,7 @@ function buildInsightPool(quotes, nextDates) {
     const nd = nextDates[t];
     if (nd) {
       const daysUntil = Math.round((new Date(nd) - new Date(today)) / 86400000);
-      if (daysUntil >= 0 && daysUntil <= 7) {
+      if (daysUntil >= 0 && daysUntil <= 2) {
         const perShare = (price * (ey / 100)) / 12;
         const dayStr   = daysUntil === 0 ? 'today' : `${daysUntil} day${daysUntil === 1 ? '' : 's'}`;
         priority.push({
@@ -207,9 +207,8 @@ export async function generateDailyInsight() {
 
   const { priority, normal } = buildInsightPool(quotes, nextDates);
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-  const insight   = priority.length > 0
-    ? priority[dayOfYear % priority.length]
-    : normal[dayOfYear % normal.length];
+  const pool      = [...priority, ...normal];
+  const insight   = pool[dayOfYear % pool.length];
 
   const header   = buildHeader(quotes);
   const siteBase = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');
