@@ -2,9 +2,21 @@
 // Sends a daily tweet preview email with a contextual chart
 // Run via: node scripts/dailyEmail.js
 
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import sharp from 'sharp';
 import { Resend } from 'resend';
 import { generateDailyInsight } from './insightEngine.js';
+
+const __dir = dirname(fileURLToPath(import.meta.url));
+const fontDir = join(__dir, '..', 'node_modules', '@fontsource', 'noto-sans', 'files');
+const font400 = readFileSync(join(fontDir, 'noto-sans-latin-400-normal.woff2')).toString('base64');
+const font700 = readFileSync(join(fontDir, 'noto-sans-latin-700-normal.woff2')).toString('base64');
+const FONT_DEFS = `<defs><style>
+  @font-face{font-family:'Noto Sans';font-weight:400;src:url('data:font/woff2;base64,${font400}') format('woff2')}
+  @font-face{font-family:'Noto Sans';font-weight:700;src:url('data:font/woff2;base64,${font700}') format('woff2')}
+</style></defs>`;
 
 const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 const SITE_URL  = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');
@@ -27,7 +39,7 @@ function svgToPng(svg) {
 }
 
 function chartFooter(y) {
-  return `<text x="${W / 2}" y="${y}" text-anchor="middle" fill="#555" font-size="12" font-family="Arial">digitalcredityield.com</text>`;
+  return `<text x="${W / 2}" y="${y}" text-anchor="middle" fill="#555" font-size="12" font-family="Noto Sans">digitalcredityield.com</text>`;
 }
 
 // Price chart — fetches 6-month OHLC from the live API
@@ -53,16 +65,17 @@ async function buildPriceChart(ticker) {
       const p = minP + ((maxP - minP) * i / 4);
       const y = yS(p).toFixed(1);
       return `<line x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}" stroke="#1f2937" stroke-width="1"/>
-              <text x="${pad.left - 8}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#6b7280" font-size="11" font-family="Arial">$${p.toFixed(2)}</text>`;
+              <text x="${pad.left - 8}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#6b7280" font-size="11" font-family="Noto Sans">$${p.toFixed(2)}</text>`;
     }).join('');
 
     const xLabels = Array.from({ length: 6 }, (_, i) => {
       const idx  = Math.round(i * (candles.length - 1) / 5);
       const date = new Date(times[idx]).toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
-      return `<text x="${xS(idx).toFixed(1)}" y="${H - 10}" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Arial">${date}</text>`;
+      return `<text x="${xS(idx).toFixed(1)}" y="${H - 10}" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Noto Sans">${date}</text>`;
     }).join('');
 
     const svg = `<svg width="${W}" height="${H + 28}" xmlns="http://www.w3.org/2000/svg">
+  ${FONT_DEFS}
   <rect width="${W}" height="${H + 28}" fill="#111827" rx="8"/>
   <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#f5a623" stop-opacity="0.25"/>
@@ -72,8 +85,8 @@ async function buildPriceChart(ticker) {
   <path d="${area}" fill="url(#g)"/>
   <path d="${line}" fill="none" stroke="#f5a623" stroke-width="2.5"/>
   ${xLabels}
-  <text x="${pad.left}" y="24" fill="#9ca3af" font-size="12" font-family="Arial" font-weight="600">${ticker} — 6 Month Price</text>
-  <text x="${W - pad.right}" y="24" text-anchor="end" fill="#f5a623" font-size="14" font-family="Arial" font-weight="700">$${closes.at(-1).toFixed(2)}</text>
+  <text x="${pad.left}" y="24" fill="#9ca3af" font-size="12" font-family="Noto Sans" font-weight="600">${ticker} — 6 Month Price</text>
+  <text x="${W - pad.right}" y="24" text-anchor="end" fill="#f5a623" font-size="14" font-family="Noto Sans" font-weight="700">$${closes.at(-1).toFixed(2)}</text>
   ${chartFooter(H + 20)}
 </svg>`;
 
@@ -99,17 +112,17 @@ function buildSeriesChart({ title, series, months }) {
       const v = minV + ((maxV - minV) * i / 4);
       const y = yS(v).toFixed(1);
       return `<line x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}" stroke="#1f2937" stroke-width="1"/>
-              <text x="${pad.left - 8}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#6b7280" font-size="11" font-family="Arial">${fmtMoney(v)}</text>`;
+              <text x="${pad.left - 8}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#6b7280" font-size="11" font-family="Noto Sans">${fmtMoney(v)}</text>`;
     }).join('');
 
-    // X axis labels — show year markers
-    const yearStep = months <= 12 ? 1 : months <= 60 ? 12 : 24;
+    // X axis labels
+    const step = months <= 12 ? 3 : months <= 60 ? 12 : 24;
     const xLabels = [];
-    for (let m = 0; m <= months; m += yearStep) {
+    for (let m = 0; m <= months; m += step) {
       const idx = Math.min(m, len - 1);
       const x   = xS(idx).toFixed(1);
-      const lbl = m === 0 ? 'Now' : `${m / 12}yr`;
-      xLabels.push(`<text x="${x}" y="${H - 10}" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Arial">${lbl}</text>`);
+      const lbl = m === 0 ? 'Now' : months <= 12 ? `${m}m` : `${m / 12}yr`;
+      xLabels.push(`<text x="${x}" y="${H - 10}" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Noto Sans">${lbl}</text>`);
     }
 
     // Draw each series line
@@ -123,16 +136,17 @@ function buildSeriesChart({ title, series, months }) {
       const x = W - pad.right + 8;
       const y = pad.top + 16 + i * 22;
       return `<rect x="${x}" y="${y - 8}" width="12" height="12" rx="2" fill="${s.color}"/>
-              <text x="${x + 16}" y="${y + 2}" fill="#9ca3af" font-size="11" font-family="Arial">${s.label}</text>`;
+              <text x="${x + 16}" y="${y + 2}" fill="#9ca3af" font-size="11" font-family="Noto Sans">${s.label}</text>`;
     }).join('');
 
     const svg = `<svg width="${W}" height="${H + 28}" xmlns="http://www.w3.org/2000/svg">
+  ${FONT_DEFS}
   <rect width="${W}" height="${H + 28}" fill="#111827" rx="8"/>
   ${yLines}
   ${lines}
   ${xLabels.join('')}
   ${legend}
-  <text x="${pad.left}" y="24" fill="#9ca3af" font-size="12" font-family="Arial" font-weight="600">${title}</text>
+  <text x="${pad.left}" y="24" fill="#9ca3af" font-size="12" font-family="Noto Sans" font-weight="600">${title}</text>
   ${chartFooter(H + 20)}
 </svg>`;
 
@@ -178,7 +192,7 @@ async function run() {
   const html = `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#0a0f1e;font-family:Arial,sans-serif;color:#fff;">
+<body style="margin:0;padding:0;background:#0a0f1e;font-family:Arial,Helvetica,sans-serif;color:#fff;">
   <div style="max-width:640px;margin:0 auto;padding:24px 16px 16px;">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;">
       <div style="width:10px;height:10px;background:#f5a623;border-radius:2px;flex-shrink:0;"></div>
