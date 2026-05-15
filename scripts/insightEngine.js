@@ -210,10 +210,29 @@ export async function generateDailyInsight() {
   const pool      = [...priority, ...normal];
   const insight   = pool[dayOfYear % pool.length];
 
+  const MOTIVATIONAL = [
+    'Stay invested. Compound income builds real wealth.',
+    'Monthly income. Reinvest. Repeat. It works.',
+    'Time in the market beats timing the market.',
+    'Every dividend reinvested is future income.',
+    'Patience and income — a powerful combination.',
+    'Your money is working for you right now.',
+    'Consistent income compounds into lasting wealth.',
+    'Another month, another dividend. Keep going.',
+    'Income today becomes wealth tomorrow.',
+    'The strategy is simple. Stick to it.',
+    'High yield, monthly income, long-term growth.',
+    'Stay the course. The income keeps arriving.',
+    'Small steps and steady income win the race.',
+    'The market moves. Your income strategy doesn\'t.',
+    'Reinvest every dividend. Watch it compound.',
+  ];
+
   const header   = buildHeader(quotes);
   const siteBase = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');
   const pageUrl  = `${siteBase}${insight.path}`;
-  const tweetText = [header, insight.text, pageUrl, '#STRC #SATA #PassiveIncome #Dividends'].join('\n');
+  const motivation = MOTIVATIONAL[dayOfYear % MOTIVATIONAL.length];
+  const tweetText = [header, insight.text, pageUrl, '#STRC #SATA #PassiveIncome #Dividends', motivation].join('\n');
 
-  return { quotes, nextDates, insight, header, tweetText };
+  return { quotes, nextDates, insight, header, tweetText, motivation };
 }

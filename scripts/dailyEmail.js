@@ -175,7 +175,7 @@ async function run() {
   if (!process.env.RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
 
   console.log('Fetching market data...');
-  const { insight, tweetText } = await generateDailyInsight();
+  const { insight, tweetText, motivation } = await generateDailyInsight();
 
   const ticker   = insight.path.startsWith('/sata') ? 'SATA' : 'STRC';
   const chartUrl = `${SITE_URL}/${ticker.toLowerCase()}/chart`;
@@ -196,11 +196,11 @@ async function run() {
   <div style="max-width:640px;margin:0 auto;padding:24px 16px 16px;">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;">
       <div style="width:10px;height:10px;background:#f5a623;border-radius:2px;flex-shrink:0;"></div>
-      <span style="font-size:18px;font-weight:700;letter-spacing:-0.5px;">Digital Credit Yield</span>
-      <span style="font-size:13px;color:#888;margin-left:auto;">${today}</span>
+      <span style="font-size:13px;color:#888;">${today}</span>
     </div>
     <div style="background:#111827;border:1px solid #1e2a3a;border-radius:12px;padding:20px;margin-bottom:16px;">
-      <div style="font-size:15px;line-height:1.6;">${tweetToHtml(tweetText)}</div>
+      <div style="font-size:15px;line-height:1.6;">${tweetToHtml(tweetText.split('\n').slice(0, -1).join('\n'))}</div>
+      <div style="font-size:14px;margin-top:12px;">${tweetToHtml(motivation)}</div>
     </div>
     <div style="border-radius:12px;overflow:hidden;">${chartSection}</div>
   </div>
