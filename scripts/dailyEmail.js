@@ -210,7 +210,12 @@ async function run() {
   console.log(`Email sent to ${RECIPIENT}`);
 }
 
-run().catch(err => {
-  console.error('Failed:', err.message || err);
-  process.exit(1);
-});
+export { run };
+
+// Only auto-run when invoked directly (not when imported as a module)
+if (import.meta.url === `file://${process.argv[1]}`) {
+  run().catch(err => {
+    console.error('Failed:', err.message || err);
+    process.exit(1);
+  });
+}
