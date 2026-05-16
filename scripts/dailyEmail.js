@@ -10,13 +10,16 @@ import { Resend } from 'resend';
 import { generateDailyInsight } from './insightEngine.js';
 
 const __dir = dirname(fileURLToPath(import.meta.url));
-const fontDir = join(__dir, '..', 'node_modules', '@fontsource', 'noto-sans', 'files');
-const font400 = readFileSync(join(fontDir, 'noto-sans-latin-400-normal.woff2')).toString('base64');
-const font700 = readFileSync(join(fontDir, 'noto-sans-latin-700-normal.woff2')).toString('base64');
-const FONT_DEFS = `<defs><style>
+
+function getFontDefs() {
+  const fontDir = join(__dir, '..', 'node_modules', '@fontsource', 'noto-sans', 'files');
+  const font400 = readFileSync(join(fontDir, 'noto-sans-latin-400-normal.woff2')).toString('base64');
+  const font700 = readFileSync(join(fontDir, 'noto-sans-latin-700-normal.woff2')).toString('base64');
+  return `<defs><style>
   @font-face{font-family:'Noto Sans';font-weight:400;src:url('data:font/woff2;base64,${font400}') format('woff2')}
   @font-face{font-family:'Noto Sans';font-weight:700;src:url('data:font/woff2;base64,${font700}') format('woff2')}
 </style></defs>`;
+}
 
 const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 const SITE_URL  = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');
@@ -44,6 +47,7 @@ function chartFooter(y) {
 
 // Price chart — fetches 6-month OHLC from the live API
 async function buildPriceChart(ticker) {
+  const FONT_DEFS = getFontDefs();
   try {
     const res  = await fetch(`${SITE_URL}/api/chart/${ticker}?period=6mo`);
     const data = await res.json();
@@ -99,6 +103,7 @@ async function buildPriceChart(ticker) {
 
 // Series chart — comparison, projection, or income-growth
 function buildSeriesChart({ title, series, months }) {
+  const FONT_DEFS = getFontDefs();
   try {
     const allValues = series.flatMap(s => s.values);
     const minV = Math.min(...allValues) * 0.98;

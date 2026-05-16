@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { saveProjectorState, loadProjectorState, defaultProjectorState } from '@/lib/projectorState';
 import { runProjection, HORIZON_MONTHS as horizonMonths, HORIZON_LABELS as horizonLabels, fmt, fmtNum, stripNum } from '@/lib/projectorEngine';
 import NumericInput from '@/components/NumericInput';
@@ -44,13 +44,28 @@ export default function Differentiator({ ticker, liveYield }) {
   const priceForYield = form.inputMode === 'shares' ? Number(form.pricePerShare || 100) : 100;
   const effectiveYield = priceForYield > 0 ? Number(form.annualYield) * (100 / priceForYield) : Number(form.annualYield);
 
-  const assetData = runProjection(startValue, effectiveYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months);
-  const treasuryData = runProjection(startValue, benchmarks.treasury, Number(form.monthlyContribution), Number(form.reinvestmentPct), months);
-  const highYieldData = runProjection(startValue, benchmarks.highYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months);
-  const bankData = runProjection(startValue, benchmarks.bank, Number(form.monthlyContribution), Number(form.reinvestmentPct), months);
-
   const step = months <= 24 ? 1 : 12;
-  const indices = Array.from({ length: Math.floor(months / step) + 1 }, (_, i) => i * step);
+
+  const assetData = useMemo(
+    () => runProjection(startValue, effectiveYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months),
+    [startValue, effectiveYield, form.monthlyContribution, form.reinvestmentPct, months]
+  );
+  const treasuryData = useMemo(
+    () => runProjection(startValue, benchmarks.treasury, Number(form.monthlyContribution), Number(form.reinvestmentPct), months),
+    [startValue, benchmarks.treasury, form.monthlyContribution, form.reinvestmentPct, months]
+  );
+  const highYieldData = useMemo(
+    () => runProjection(startValue, benchmarks.highYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months),
+    [startValue, benchmarks.highYield, form.monthlyContribution, form.reinvestmentPct, months]
+  );
+  const bankData = useMemo(
+    () => runProjection(startValue, benchmarks.bank, Number(form.monthlyContribution), Number(form.reinvestmentPct), months),
+    [startValue, benchmarks.bank, form.monthlyContribution, form.reinvestmentPct, months]
+  );
+  const indices = useMemo(
+    () => Array.from({ length: Math.floor(months / step) + 1 }, (_, i) => i * step),
+    [months, step]
+  );
 
   const assetFinal = assetData[months].portfolio + assetData[months].cashDistributions;
   const treasuryFinal = treasuryData[months].portfolio + treasuryData[months].cashDistributions;
@@ -74,9 +89,11 @@ export default function Differentiator({ ticker, liveYield }) {
 
   // Main chart
   useEffect(() => {
+    let destroyed = false;
     async function drawMain() {
       const { Chart, registerables } = await import('chart.js');
       Chart.register(...registerables);
+      if (destroyed) return;
       const ctx = mainChartRef.current?.getContext('2d');
       if (!ctx) return;
       if (mainChartInstance.current) mainChartInstance.current.destroy();
@@ -110,13 +127,16 @@ export default function Differentiator({ ticker, liveYield }) {
       });
     }
     drawMain();
+    return () => { destroyed = true; };
   }, [assetData, treasuryData, highYieldData, bankData, indices, step, ticker, benchmarks]);
 
   // Difference chart
   useEffect(() => {
+    let destroyed = false;
     async function drawDiff() {
       const { Chart, registerables } = await import('chart.js');
       Chart.register(...registerables);
+      if (destroyed) return;
       const ctx = diffChartRef.current?.getContext('2d');
       if (!ctx) return;
       if (diffChartInstance.current) diffChartInstance.current.destroy();
@@ -160,6 +180,7 @@ export default function Differentiator({ ticker, liveYield }) {
       });
     }
     drawDiff();
+    return () => { destroyed = true; };
   }, [assetData, treasuryData, indices, step]);
 
   const rows = [

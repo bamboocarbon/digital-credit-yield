@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { saveProjectorState, loadProjectorState, defaultProjectorState } from '@/lib/projectorState';
 import { runProjection, HORIZON_MONTHS as horizonMonths, HORIZON_LABELS as horizonLabels, fmt, fmtNum, stripNum } from '@/lib/projectorEngine';
 import NumericInput from '@/components/NumericInput';
@@ -41,7 +41,10 @@ export default function GrowthProjector({ ticker, liveYield }) {
   const priceForYield = form.inputMode === 'shares' ? Number(form.pricePerShare || 100) : 100;
   const effectiveYield = priceForYield > 0 ? Number(form.annualYield) * (100 / priceForYield) : Number(form.annualYield);
 
-  const history = runProjection(startValue, effectiveYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months);
+  const history = useMemo(
+    () => runProjection(startValue, effectiveYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months),
+    [startValue, effectiveYield, form.monthlyContribution, form.reinvestmentPct, months]
+  );
 
   const final = history[history.length - 1];
   const totalInvested = startValue + Number(form.monthlyContribution) * months;
@@ -59,10 +62,12 @@ export default function GrowthProjector({ ticker, liveYield }) {
   }
 
   useEffect(() => {
+    let destroyed = false;
     async function drawChart() {
       const { Chart, registerables } = await import('chart.js');
       Chart.register(...registerables);
 
+      if (destroyed) return;
       const ctx = chartRef.current?.getContext('2d');
       if (!ctx) return;
 
@@ -117,6 +122,7 @@ export default function GrowthProjector({ ticker, liveYield }) {
       });
     }
     drawChart();
+    return () => { destroyed = true; };
   }, [history, step]);
 
   return (

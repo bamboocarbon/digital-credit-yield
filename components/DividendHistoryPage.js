@@ -102,10 +102,12 @@ export default function DividendHistoryPage({ ticker }) {
 
     // Compute prediction locally so the dep array stays a fixed size
     const pred = dividends.length >= 2 ? predictNextDividend(dividends) : null;
+    let destroyed = false;
 
     async function draw() {
       const { Chart, registerables } = await import('chart.js');
       Chart.register(...registerables);
+      if (destroyed) return;
       const ctx = chartRef.current?.getContext('2d');
       if (!ctx) return;
       if (chartInstance.current) chartInstance.current.destroy();
@@ -161,6 +163,7 @@ export default function DividendHistoryPage({ ticker }) {
       });
     }
     draw();
+    return () => { destroyed = true; };
   }, [dividends]);
 
   return (
