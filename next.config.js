@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ['yahoo-finance2'],
+  serverExternalPackages: ['yahoo-finance2', 'sharp'],
   allowedDevOrigins: ['192.168.1.70'],
 };
 
