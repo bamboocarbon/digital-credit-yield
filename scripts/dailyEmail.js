@@ -2,24 +2,15 @@
 // Sends a daily tweet preview email with a contextual chart
 // Run via: node scripts/dailyEmail.js
 
-import { readFileSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
 import sharp from 'sharp';
 import { Resend } from 'resend';
 import { generateDailyInsight } from './insightEngine.js';
+import { NOTO_400, NOTO_700 } from './fontData.js';
 
-const __dir = dirname(fileURLToPath(import.meta.url));
-
-function getFontDefs() {
-  const fontDir = join(__dir, '..', 'node_modules', '@fontsource', 'noto-sans', 'files');
-  const font400 = readFileSync(join(fontDir, 'noto-sans-latin-400-normal.woff2')).toString('base64');
-  const font700 = readFileSync(join(fontDir, 'noto-sans-latin-700-normal.woff2')).toString('base64');
-  return `<defs><style>
-  @font-face{font-family:'Noto Sans';font-weight:400;src:url('data:font/woff2;base64,${font400}') format('woff2')}
-  @font-face{font-family:'Noto Sans';font-weight:700;src:url('data:font/woff2;base64,${font700}') format('woff2')}
+const FONT_DEFS = `<defs><style>
+  @font-face{font-family:'Noto Sans';font-weight:400;src:url('data:font/woff2;base64,${NOTO_400}') format('woff2')}
+  @font-face{font-family:'Noto Sans';font-weight:700;src:url('data:font/woff2;base64,${NOTO_700}') format('woff2')}
 </style></defs>`;
-}
 
 const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 const SITE_URL  = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');
@@ -47,8 +38,7 @@ function chartFooter(y) {
 
 // Price chart — fetches 6-month OHLC from the live API
 async function buildPriceChart(ticker) {
-  const FONT_DEFS = getFontDefs();
-  try {
+    try {
     const res  = await fetch(`${SITE_URL}/api/chart/${ticker}?period=6mo`);
     const data = await res.json();
     if (!data || data.error || !Array.isArray(data) || data.length < 2) return null;
@@ -103,8 +93,7 @@ async function buildPriceChart(ticker) {
 
 // Series chart — comparison, projection, or income-growth
 function buildSeriesChart({ title, series, months }) {
-  const FONT_DEFS = getFontDefs();
-  try {
+    try {
     const allValues = series.flatMap(s => s.values);
     const minV = Math.min(...allValues) * 0.98;
     const maxV = Math.max(...allValues) * 1.02;
