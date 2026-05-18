@@ -3,7 +3,7 @@ import { run } from '../../../../scripts/dailyEmail.js';
 
 export const maxDuration = 60;
 
-export async function POST(request) {
+async function handler(request) {
   const authHeader = request.headers.get('authorization');
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -17,3 +17,6 @@ export async function POST(request) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+
+export const GET = handler;
+export const POST = handler;
