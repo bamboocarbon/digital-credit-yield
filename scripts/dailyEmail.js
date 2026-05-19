@@ -5,12 +5,6 @@
 import sharp from 'sharp';
 import { Resend } from 'resend';
 import { generateDailyInsight } from './insightEngine.js';
-import { NOTO_400, NOTO_700 } from './fontData.js';
-
-const FONT_DEFS = `<defs><style>
-  @font-face{font-family:'Noto Sans';font-weight:400;src:url('data:font/woff2;base64,${NOTO_400}') format('woff2')}
-  @font-face{font-family:'Noto Sans';font-weight:700;src:url('data:font/woff2;base64,${NOTO_700}') format('woff2')}
-</style></defs>`;
 
 const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 const SITE_URL  = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');
@@ -33,7 +27,7 @@ function svgToPng(svg) {
 }
 
 function chartFooter(y) {
-  return `<text x="${W / 2}" y="${y}" text-anchor="middle" fill="#555" font-size="12" font-family="Noto Sans">digitalcredityield.com</text>`;
+  return `<text x="${W / 2}" y="${y}" text-anchor="middle" fill="#555" font-size="12" font-family="Liberation Sans, Arial, sans-serif">digitalcredityield.com</text>`;
 }
 
 // Price chart — fetches 6-month OHLC from the live API
@@ -59,18 +53,17 @@ async function buildPriceChart(ticker) {
       const p = minP + ((maxP - minP) * i / 4);
       const y = yS(p).toFixed(1);
       return `<line x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}" stroke="#1f2937" stroke-width="1"/>
-              <text x="${pad.left - 8}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#6b7280" font-size="11" font-family="Noto Sans">$${p.toFixed(2)}</text>`;
+              <text x="${pad.left - 8}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#6b7280" font-size="11" font-family="Liberation Sans, Arial, sans-serif">$${p.toFixed(2)}</text>`;
     }).join('');
 
     const xLabels = Array.from({ length: 6 }, (_, i) => {
       const idx  = Math.round(i * (candles.length - 1) / 5);
       const date = new Date(times[idx]).toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
-      return `<text x="${xS(idx).toFixed(1)}" y="${H - 10}" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Noto Sans">${date}</text>`;
+      return `<text x="${xS(idx).toFixed(1)}" y="${H - 10}" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Liberation Sans, Arial, sans-serif">${date}</text>`;
     }).join('');
 
     const svg = `<svg width="${W}" height="${H + 28}" xmlns="http://www.w3.org/2000/svg">
-  ${FONT_DEFS}
-  <rect width="${W}" height="${H + 28}" fill="#111827" rx="8"/>
+<rect width="${W}" height="${H + 28}" fill="#111827" rx="8"/>
   <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#f5a623" stop-opacity="0.25"/>
     <stop offset="100%" stop-color="#f5a623" stop-opacity="0.02"/>
@@ -79,8 +72,8 @@ async function buildPriceChart(ticker) {
   <path d="${area}" fill="url(#g)"/>
   <path d="${line}" fill="none" stroke="#f5a623" stroke-width="2.5"/>
   ${xLabels}
-  <text x="${pad.left}" y="24" fill="#9ca3af" font-size="12" font-family="Noto Sans" font-weight="600">${ticker} — 6 Month Price</text>
-  <text x="${W - pad.right}" y="24" text-anchor="end" fill="#f5a623" font-size="14" font-family="Noto Sans" font-weight="700">$${closes.at(-1).toFixed(2)}</text>
+  <text x="${pad.left}" y="24" fill="#9ca3af" font-size="12" font-family="Liberation Sans, Arial, sans-serif" font-weight="600">${ticker} — 6 Month Price</text>
+  <text x="${W - pad.right}" y="24" text-anchor="end" fill="#f5a623" font-size="14" font-family="Liberation Sans, Arial, sans-serif" font-weight="700">$${closes.at(-1).toFixed(2)}</text>
   ${chartFooter(H + 20)}
 </svg>`;
 
@@ -106,7 +99,7 @@ function buildSeriesChart({ title, series, months }) {
       const v = minV + ((maxV - minV) * i / 4);
       const y = yS(v).toFixed(1);
       return `<line x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}" stroke="#1f2937" stroke-width="1"/>
-              <text x="${pad.left - 8}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#6b7280" font-size="11" font-family="Noto Sans">${fmtMoney(v)}</text>`;
+              <text x="${pad.left - 8}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#6b7280" font-size="11" font-family="Liberation Sans, Arial, sans-serif">${fmtMoney(v)}</text>`;
     }).join('');
 
     // X axis labels
@@ -116,7 +109,7 @@ function buildSeriesChart({ title, series, months }) {
       const idx = Math.min(m, len - 1);
       const x   = xS(idx).toFixed(1);
       const lbl = m === 0 ? 'Now' : months <= 12 ? `${m}m` : `${m / 12}yr`;
-      xLabels.push(`<text x="${x}" y="${H - 10}" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Noto Sans">${lbl}</text>`);
+      xLabels.push(`<text x="${x}" y="${H - 10}" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Liberation Sans, Arial, sans-serif">${lbl}</text>`);
     }
 
     // Draw each series line
@@ -130,17 +123,16 @@ function buildSeriesChart({ title, series, months }) {
       const x = W - pad.right + 8;
       const y = pad.top + 16 + i * 22;
       return `<rect x="${x}" y="${y - 8}" width="12" height="12" rx="2" fill="${s.color}"/>
-              <text x="${x + 16}" y="${y + 2}" fill="#9ca3af" font-size="11" font-family="Noto Sans">${s.label}</text>`;
+              <text x="${x + 16}" y="${y + 2}" fill="#9ca3af" font-size="11" font-family="Liberation Sans, Arial, sans-serif">${s.label}</text>`;
     }).join('');
 
     const svg = `<svg width="${W}" height="${H + 28}" xmlns="http://www.w3.org/2000/svg">
-  ${FONT_DEFS}
-  <rect width="${W}" height="${H + 28}" fill="#111827" rx="8"/>
+<rect width="${W}" height="${H + 28}" fill="#111827" rx="8"/>
   ${yLines}
   ${lines}
   ${xLabels.join('')}
   ${legend}
-  <text x="${pad.left}" y="24" fill="#9ca3af" font-size="12" font-family="Noto Sans" font-weight="600">${title}</text>
+  <text x="${pad.left}" y="24" fill="#9ca3af" font-size="12" font-family="Liberation Sans, Arial, sans-serif" font-weight="600">${title}</text>
   ${chartFooter(H + 20)}
 </svg>`;
 
