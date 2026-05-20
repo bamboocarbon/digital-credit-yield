@@ -23,8 +23,15 @@ export const TICKERS = ['STRC', 'SATA'];
 const BENCHMARKS = {
   TREASURY_1Y: 4.2,
   TREASURY_5Y: 4.5,
-  HIGH_YIELD:  4.5,
   BANK:        0.5,
+};
+
+// Colors — consistent across all charts
+const COLOR = {
+  STRC:       '#f5a623',
+  SATA:       '#10b981',
+  TREASURIES: '#60a5fa',
+  BANK:       '#9ca3af',
 };
 
 const HORIZONS = [
@@ -42,6 +49,26 @@ export function effYield(ticker, price) {
 
 function dirArrow(pct) { return pct >= 0 ? '▲' : '▼'; }
 function amtStr(amount) { return `$${amount.toLocaleString('en-US')}`; }
+function tsyRate(months) { return months <= 12 ? BENCHMARKS.TREASURY_1Y : BENCHMARKS.TREASURY_5Y; }
+
+// 3-line comparison series: asset vs Treasuries vs Bank
+function compSeries(ticker, assetData, tsyData, bankData) {
+  return [
+    { label: ticker,       color: COLOR[ticker],      values: assetData.map(d => d.portfolio) },
+    { label: 'Treasuries', color: COLOR.TREASURIES,   values: tsyData.map(d => d.portfolio)  },
+    { label: 'Bank',       color: COLOR.BANK,         values: bankData.map(d => d.portfolio)  },
+  ];
+}
+
+// 4-line comparison series: STRC vs SATA vs Treasuries vs Bank
+function comp4Series(strcData, sataData, tsyData, bankData) {
+  return [
+    { label: 'STRC',       color: COLOR.STRC,        values: strcData.map(d => d.portfolio) },
+    { label: 'SATA',       color: COLOR.SATA,        values: sataData.map(d => d.portfolio) },
+    { label: 'Treasuries', color: COLOR.TREASURIES,  values: tsyData.map(d => d.portfolio)  },
+    { label: 'Bank',       color: COLOR.BANK,        values: bankData.map(d => d.portfolio)  },
+  ];
+}
 
 export function buildHeader(quotes) {
   return '📊 ' + TICKERS.map(t => {
@@ -56,12 +83,16 @@ function buildInsightPool(quotes, nextDates) {
   const normal   = [];
   const add = (text, path, chartData) => normal.push({ text, path, chartData });
 
+  const eYields = {};
+  for (const t of TICKERS) eYields[t] = effYield(t, quotes[t].price);
+
+  // ── Per-ticker insights ──────────────────────────────────────────────────
   for (const t of TICKERS) {
     const price = quotes[t].price;
-    const ey    = effYield(t, price);
+    const ey    = eYields[t];
     const slug  = t.toLowerCase();
 
-    // Dividend upcoming → price chart
+    // Dividend upcoming → price chart (no comparison needed; it's a date event)
     const nd = nextDates[t];
     if (nd) {
       const daysUntil = Math.round((new Date(nd) - new Date(today)) / 86400000);
@@ -76,106 +107,85 @@ function buildInsightPool(quotes, nextDates) {
       }
     }
 
-    // Monthly income at various sizes → price chart
+    // Monthly income at various sizes — chart shows 1yr reinvested vs alternatives
     for (const amount of AMOUNTS) {
-      const monthly = (amount * (ey / 100)) / 12;
+      const monthly    = (amount * (ey / 100)) / 12;
+      const bankMonthly = (amount * (BENCHMARKS.BANK / 100)) / 12;
+      const tsyMonthly  = (amount * (BENCHMARKS.TREASURY_1Y / 100)) / 12;
+      const assetData  = runProjection(amount, ey, 0, 100, 12);
+      const tsyData    = runProjection(amount, BENCHMARKS.TREASURY_1Y, 0, 100, 12);
+      const bankData   = runProjection(amount, BENCHMARKS.BANK, 0, 100, 12);
       add(
-        `💵 ${amtStr(amount)} in ${t} at today's price earns ~$${monthly.toFixed(2)}/mo in dividends — $${(monthly * 12).toFixed(0)}/yr.`,
+        `💵 ${amtStr(amount)} in ${t} earns ~$${monthly.toFixed(2)}/mo — vs ~$${tsyMonthly.toFixed(2)}/mo in Treasuries and ~$${bankMonthly.toFixed(2)}/mo in a bank account.`,
         `/${slug}/projector`,
-        { type: 'price', ticker: t },
-      );
-    }
-
-    // Beats US Treasuries 1Y (income) → 1-year comparison chart
-    const income1y    = 10000 * (ey / 100);
-    const treasury1y  = 10000 * (BENCHMARKS.TREASURY_1Y / 100);
-    const asset1yData = runProjection(10000, ey, 0, 100, 12);
-    const tsy1yData   = runProjection(10000, BENCHMARKS.TREASURY_1Y, 0, 100, 12);
-    if (income1y > treasury1y) {
-      add(
-        `📈 $10k in ${t} earns ~$${income1y.toFixed(0)}/yr in dividends vs ~$${treasury1y.toFixed(0)} from US Treasuries — $${(income1y - treasury1y).toFixed(0)} more per year.`,
-        `/${slug}/differentiator`,
-        { type: 'comparison', title: `$10k: ${t} vs US Treasuries (1yr)`, months: 12,
-          series: [
-            { label: t,              color: '#f5a623', values: asset1yData.map(d => d.portfolio) },
-            { label: 'US Treasuries', color: '#6b7280', values: tsy1yData.map(d => d.portfolio) },
-          ],
+        { type: 'comparison',
+          title: `${amtStr(amount)} in ${t} vs alternatives (1yr, reinvested)`, months: 12,
+          series: compSeries(t, assetData, tsyData, bankData),
         },
       );
     }
 
-    // Reuse 5Y projection data for all three 5Y comparisons
-    const asset5yData = runProjection(10000, ey, 0, 100, 60);
-    const asset5yFinal = asset5yData.at(-1).portfolio;
+    // 5Y comparisons — 3 lines
+    const asset5y = runProjection(10000, ey, 0, 100, 60);
+    const tsy5y   = runProjection(10000, BENCHMARKS.TREASURY_5Y, 0, 100, 60);
+    const bank5y  = runProjection(10000, BENCHMARKS.BANK, 0, 100, 60);
+    const a5f = asset5y.at(-1).portfolio;
+    const t5f = tsy5y.at(-1).portfolio;
+    const b5f = bank5y.at(-1).portfolio;
 
-    const tsy5yData   = runProjection(10000, BENCHMARKS.TREASURY_5Y, 0, 100, 60);
-    const tsy5yFinal  = tsy5yData.at(-1).portfolio;
-    if (asset5yFinal > tsy5yFinal) {
+    if (a5f > t5f) {
       add(
-        `📈 $10k in ${t} reinvested over 5 years: ~$${(asset5yFinal / 1000).toFixed(1)}k vs ~$${(tsy5yFinal / 1000).toFixed(1)}k in US Treasuries — $${((asset5yFinal - tsy5yFinal) / 1000).toFixed(1)}k more.`,
+        `📈 $10k in ${t} reinvested over 5 years: ~$${(a5f / 1000).toFixed(1)}k vs ~$${(t5f / 1000).toFixed(1)}k in Treasuries and ~$${(b5f / 1000).toFixed(1)}k in a bank — $${((a5f - t5f) / 1000).toFixed(1)}k ahead of Treasuries.`,
         `/${slug}/differentiator`,
-        { type: 'comparison', title: `$10k: ${t} vs US Treasuries (5yr)`, months: 60,
-          series: [
-            { label: t,              color: '#f5a623', values: asset5yData.map(d => d.portfolio) },
-            { label: 'US Treasuries', color: '#6b7280', values: tsy5yData.map(d => d.portfolio) },
-          ],
+        { type: 'comparison', title: `$10k: ${t} vs Treasuries vs Bank (5yr)`, months: 60,
+          series: compSeries(t, asset5y, tsy5y, bank5y),
         },
       );
     }
 
-    const hys5yData   = runProjection(10000, BENCHMARKS.HIGH_YIELD, 0, 100, 60);
-    const hys5yFinal  = hys5yData.at(-1).portfolio;
-    if (asset5yFinal > hys5yFinal) {
-      add(
-        `💰 $10k in ${t} reinvested over 5 years: ~$${(asset5yFinal / 1000).toFixed(1)}k vs ~$${(hys5yFinal / 1000).toFixed(1)}k in a high-yield savings account. $${((asset5yFinal - hys5yFinal) / 1000).toFixed(1)}k more.`,
-        `/${slug}/differentiator`,
-        { type: 'comparison', title: `$10k: ${t} vs High-Yield Savings (5yr)`, months: 60,
-          series: [
-            { label: t,                  color: '#f5a623', values: asset5yData.map(d => d.portfolio) },
-            { label: 'High-Yield Savings', color: '#6b7280', values: hys5yData.map(d => d.portfolio) },
-          ],
-        },
-      );
-    }
-
-    const bank5yData  = runProjection(10000, BENCHMARKS.BANK, 0, 100, 60);
-    const bank5yFinal = bank5yData.at(-1).portfolio;
     add(
-      `🏦 $10k in ${t} vs a typical bank savings account over 5 years: ~$${(asset5yFinal / 1000).toFixed(1)}k vs ~$${(bank5yFinal / 1000).toFixed(1)}k. The difference: $${((asset5yFinal - bank5yFinal) / 1000).toFixed(1)}k.`,
+      `🏦 $10k in ${t} vs a bank account over 5 years: ~$${(a5f / 1000).toFixed(1)}k vs ~$${(b5f / 1000).toFixed(1)}k. That's $${((a5f - b5f) / 1000).toFixed(1)}k more — a difference that compounds every month.`,
       `/${slug}/differentiator`,
-      { type: 'comparison', title: `$10k: ${t} vs Bank Savings (5yr)`, months: 60,
-        series: [
-          { label: t,             color: '#f5a623', values: asset5yData.map(d => d.portfolio) },
-          { label: 'Bank Savings', color: '#6b7280', values: bank5yData.map(d => d.portfolio) },
-        ],
+      { type: 'comparison', title: `$10k: ${t} vs Treasuries vs Bank (5yr)`, months: 60,
+        series: compSeries(t, asset5y, tsy5y, bank5y),
       },
     );
 
-    // Portfolio growth + income growth — share one runProjection call per combination
+    // Portfolio growth for various horizons — 3 lines each
     for (const { label, months } of HORIZONS) {
+      const rate = tsyRate(months);
       for (const amount of AMOUNTS) {
-        const projData     = runProjection(amount, ey, 0, 100, months);
-        const finalValue   = projData.at(-1).portfolio;
-        const returnPct    = ((finalValue - amount) / amount) * 100;
-        const finalStr     = `$${(finalValue / 1000).toFixed(1)}k`;
-        const portfolioVals = projData.map(d => d.portfolio);
+        const assetData  = runProjection(amount, ey, 0, 100, months);
+        const tsyData    = runProjection(amount, rate, 0, 100, months);
+        const bankData   = runProjection(amount, BENCHMARKS.BANK, 0, 100, months);
+        const finalValue = assetData.at(-1).portfolio;
+        const tsyFinal   = tsyData.at(-1).portfolio;
+        const bankFinal  = bankData.at(-1).portfolio;
+        const returnPct  = ((finalValue - amount) / amount) * 100;
 
         add(
-          `📊 ${amtStr(amount)} in ${t} with dividends reinvested over ${label} grows to ~${finalStr} — a ${returnPct.toFixed(0)}% total return.`,
+          `📊 ${amtStr(amount)} in ${t} reinvested over ${label}: ~$${(finalValue / 1000).toFixed(1)}k vs ~$${(tsyFinal / 1000).toFixed(1)}k in Treasuries and ~$${(bankFinal / 1000).toFixed(1)}k in a bank — ${returnPct.toFixed(0)}% total return.`,
           `/${slug}/projector`,
-          { type: 'projection', title: `${amtStr(amount)} in ${t} reinvested (${label})`, months,
-            series: [{ label: t, color: '#f5a623', values: portfolioVals }],
+          { type: 'comparison',
+            title: `${amtStr(amount)} in ${t}: reinvested vs alternatives (${label})`, months,
+            series: compSeries(t, assetData, tsyData, bankData),
           },
         );
 
-        const incomeVals    = projData.map(d => (d.portfolio * (ey / 100)) / 12);
-        const initialMonthly = incomeVals[0];
-        const finalMonthly   = incomeVals.at(-1);
+        // Monthly income growth — compare income streams, not portfolio totals
+        const incomeVals = assetData.map(d => (d.portfolio * (ey / 100)) / 12);
+        const tsyIncome  = tsyData.map(d => (d.portfolio * (rate / 100)) / 12);
+        const bankIncome = bankData.map(d => (d.portfolio * (BENCHMARKS.BANK / 100)) / 12);
         add(
-          `💸 ${amtStr(amount)} in ${t} pays ~$${initialMonthly.toFixed(0)}/mo today. Reinvest for ${label} and that grows to ~$${finalMonthly.toFixed(0)}/mo.`,
+          `💸 ${amtStr(amount)} in ${t} pays ~$${incomeVals[0].toFixed(0)}/mo today — reinvest for ${label} and that grows to ~$${incomeVals.at(-1).toFixed(0)}/mo vs ~$${tsyIncome.at(-1).toFixed(0)}/mo from Treasuries.`,
           `/${slug}/projector`,
-          { type: 'income-growth', title: `Monthly income: ${amtStr(amount)} in ${t} (${label})`, months,
-            series: [{ label: 'Monthly Income', color: '#f5a623', values: incomeVals }],
+          { type: 'comparison',
+            title: `Monthly income: ${amtStr(amount)} in ${t} vs alternatives (${label})`, months,
+            series: [
+              { label: `${t} Income`,   color: COLOR[t],          values: incomeVals },
+              { label: 'Tsy Income',    color: COLOR.TREASURIES,  values: tsyIncome  },
+              { label: 'Bank Income',   color: COLOR.BANK,        values: bankIncome },
+            ],
           },
         );
       }
@@ -187,6 +197,32 @@ function buildInsightPool(quotes, nextDates) {
         `🔍 ${t} is trading at $${price.toFixed(2)} — below its $100 par value. Today's effective yield: ${ey.toFixed(2)}%, above the stated ${ASSET_RATES[t]}%.`,
         `/${slug}/chart`,
         { type: 'price', ticker: t },
+      );
+    }
+  }
+
+  // ── Cross-asset 4-line comparisons: STRC vs SATA vs Treasuries vs Bank ──
+  const strc_ey = eYields['STRC'];
+  const sata_ey = eYields['SATA'];
+
+  for (const { label, months } of HORIZONS) {
+    const rate = tsyRate(months);
+    for (const amount of [5_000, 10_000, 25_000, 50_000]) {
+      const strcData  = runProjection(amount, strc_ey, 0, 100, months);
+      const sataData  = runProjection(amount, sata_ey, 0, 100, months);
+      const tsyData   = runProjection(amount, rate, 0, 100, months);
+      const bankData  = runProjection(amount, BENCHMARKS.BANK, 0, 100, months);
+      const strcFinal = strcData.at(-1).portfolio;
+      const sataFinal = sataData.at(-1).portfolio;
+      const tsyFinal  = tsyData.at(-1).portfolio;
+      const bankFinal = bankData.at(-1).portfolio;
+      add(
+        `📊 ${amtStr(amount)} reinvested over ${label}: STRC ~$${(strcFinal / 1000).toFixed(1)}k, SATA ~$${(sataFinal / 1000).toFixed(1)}k vs ~$${(tsyFinal / 1000).toFixed(1)}k in Treasuries and ~$${(bankFinal / 1000).toFixed(1)}k in a bank account.`,
+        `/strc/differentiator`,
+        { type: 'comparison',
+          title: `${amtStr(amount)}: STRC vs SATA vs Treasuries vs Bank (${label})`, months,
+          series: comp4Series(strcData, sataData, tsyData, bankData),
+        },
       );
     }
   }
@@ -228,11 +264,11 @@ export async function generateDailyInsight() {
     'Reinvest every dividend. Watch it compound.',
   ];
 
-  const header   = buildHeader(quotes);
-  const siteBase = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');
-  const pageUrl  = `${siteBase}${insight.path}`;
+  const header    = buildHeader(quotes);
+  const siteBase  = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');
+  const pageUrl   = `${siteBase}${insight.path}`;
   const motivation = MOTIVATIONAL[dayOfYear % MOTIVATIONAL.length];
-  const tweetText = [header, insight.text, pageUrl, '#STRC #SATA #PassiveIncome #Dividends', motivation].join('\n');
+  const tweetText  = [header, insight.text, pageUrl, '#STRC #SATA #PassiveIncome #Dividends', motivation].join('\n');
 
   return { quotes, nextDates, insight, header, tweetText, motivation };
 }

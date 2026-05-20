@@ -28,8 +28,8 @@ function setupFonts() {
 const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 const SITE_URL  = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');
 
-const W = 1160, H = 360;
-const pad = { top: 40, right: 100, bottom: 44, left: 80 };
+const W = 1200, H = 360;
+const pad = { top: 40, right: 130, bottom: 44, left: 80 };
 const cW  = W - pad.left - pad.right;
 const cH  = H - pad.top  - pad.bottom;
 
