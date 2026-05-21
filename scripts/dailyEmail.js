@@ -28,8 +28,8 @@ function setupFonts() {
 const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 const SITE_URL  = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');
 
-const W = 1200, H = 360;
-const pad = { top: 40, right: 130, bottom: 44, left: 80 };
+const W = 900, H = 800;
+const pad = { top: 165, right: 30, bottom: 100, left: 120 };
 const cW  = W - pad.left - pad.right;
 const cH  = H - pad.top  - pad.bottom;
 
@@ -45,8 +45,31 @@ function svgToPng(svg) {
   return sharp(Buffer.from(svg)).png().toBuffer();
 }
 
+function wrapTitle(text, fontSize) {
+  const maxChars = Math.floor((W - 60) / (fontSize * 0.6));
+  if (text.length <= maxChars) return [text];
+  const words = text.split(' ');
+  const lines = [];
+  let current = '';
+  for (const word of words) {
+    const next = current ? `${current} ${word}` : word;
+    if (next.length <= maxChars) { current = next; }
+    else { if (current) lines.push(current); current = word; }
+  }
+  if (current) lines.push(current);
+  return lines.slice(0, 2);
+}
+
+function renderTitle(text, fontSize) {
+  const lines = wrapTitle(text, fontSize);
+  const lineH = Math.round(fontSize * 1.28);
+  return lines.map((line, i) =>
+    `<text x="${W / 2}" y="${48 + i * lineH}" text-anchor="middle" fill="#e5e7eb" font-size="${fontSize}" font-family="Geist" font-weight="600">${line}</text>`
+  ).join('\n  ');
+}
+
 function chartFooter(y) {
-  return `<text x="${W / 2}" y="${y}" text-anchor="middle" fill="#555" font-size="12" font-family="Geist">digitalcredityield.com</text>`;
+  return `<text x="${W / 2}" y="${y}" text-anchor="middle" fill="#ffffff" font-size="36" font-family="Geist">digitalcredityield.com</text>`;
 }
 
 // Price chart — fetches 6-month OHLC from the live API
@@ -71,29 +94,29 @@ async function buildPriceChart(ticker) {
     const yLines = Array.from({ length: 5 }, (_, i) => {
       const p = minP + ((maxP - minP) * i / 4);
       const y = yS(p).toFixed(1);
-      return `<line x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}" stroke="#1f2937" stroke-width="1"/>
-              <text x="${pad.left - 8}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#6b7280" font-size="11" font-family="Geist">$${p.toFixed(2)}</text>`;
+      return `<line x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}" stroke="#4b5563" stroke-width="2"/>
+              <text x="${pad.left - 8}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#d1d5db" font-size="26" font-family="Geist">$${p.toFixed(2)}</text>`;
     }).join('');
 
     const xLabels = Array.from({ length: 6 }, (_, i) => {
       const idx  = Math.round(i * (candles.length - 1) / 5);
       const date = new Date(times[idx]).toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
-      return `<text x="${xS(idx).toFixed(1)}" y="${H - 10}" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Geist">${date}</text>`;
+      return `<text x="${xS(idx).toFixed(1)}" y="${H - 10}" text-anchor="middle" fill="#d1d5db" font-size="26" font-family="Geist">${date}</text>`;
     }).join('');
 
-    const svg = `<svg width="${W}" height="${H + 28}" xmlns="http://www.w3.org/2000/svg">
-<rect width="${W}" height="${H + 28}" fill="#111827" rx="8"/>
+    const svg = `<svg width="${W}" height="${H + 100}" xmlns="http://www.w3.org/2000/svg">
+<rect width="${W}" height="${H + 100}" fill="#111827" rx="8"/>
   <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#f5a623" stop-opacity="0.25"/>
     <stop offset="100%" stop-color="#f5a623" stop-opacity="0.02"/>
   </linearGradient></defs>
   ${yLines}
   <path d="${area}" fill="url(#g)"/>
-  <path d="${line}" fill="none" stroke="#f5a623" stroke-width="2.5"/>
+  <path d="${line}" fill="none" stroke="#f5a623" stroke-width="7"/>
   ${xLabels}
-  <text x="${pad.left}" y="24" fill="#9ca3af" font-size="12" font-family="Geist" font-weight="600">${ticker} — 6 Month Price</text>
-  <text x="${W - pad.right}" y="24" text-anchor="end" fill="#f5a623" font-size="14" font-family="Geist" font-weight="700">$${closes.at(-1).toFixed(2)}</text>
-  ${chartFooter(H + 20)}
+  ${renderTitle(`${ticker} — 6 Month Price`, 36)}
+  <text x="${W - pad.right}" y="48" text-anchor="end" fill="#f5a623" font-size="32" font-family="Geist" font-weight="700">$${closes.at(-1).toFixed(2)}</text>
+  ${chartFooter(H + 65)}
 </svg>`;
 
     return svgToPng(svg);
@@ -117,8 +140,8 @@ function buildSeriesChart({ title, series, months }) {
     const yLines = Array.from({ length: 5 }, (_, i) => {
       const v = minV + ((maxV - minV) * i / 4);
       const y = yS(v).toFixed(1);
-      return `<line x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}" stroke="#1f2937" stroke-width="1"/>
-              <text x="${pad.left - 8}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#6b7280" font-size="11" font-family="Geist">${fmtMoney(v)}</text>`;
+      return `<line x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}" stroke="#4b5563" stroke-width="2"/>
+              <text x="${pad.left - 8}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#d1d5db" font-size="26" font-family="Geist">${fmtMoney(v)}</text>`;
     }).join('');
 
     // X axis labels
@@ -128,31 +151,31 @@ function buildSeriesChart({ title, series, months }) {
       const idx = Math.min(m, len - 1);
       const x   = xS(idx).toFixed(1);
       const lbl = m === 0 ? 'Now' : months <= 12 ? `${m}m` : `${m / 12}yr`;
-      xLabels.push(`<text x="${x}" y="${H - 10}" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Geist">${lbl}</text>`);
+      xLabels.push(`<text x="${x}" y="${H - 10}" text-anchor="middle" fill="#d1d5db" font-size="26" font-family="Geist">${lbl}</text>`);
     }
 
     // Draw each series line
     const lines = series.map(s => {
       const d = s.values.map((v, i) => `${i === 0 ? 'M' : 'L'}${xS(i).toFixed(1)},${yS(v).toFixed(1)}`).join(' ');
-      return `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2.5"/>`;
+      return `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="7"/>`;
     }).join('');
 
-    // Legend (top right)
-    const legend = series.map((s, i) => {
-      const x = W - pad.right + 8;
-      const y = pad.top + 16 + i * 22;
-      return `<rect x="${x}" y="${y - 8}" width="12" height="12" rx="2" fill="${s.color}"/>
-              <text x="${x + 16}" y="${y + 2}" fill="#9ca3af" font-size="11" font-family="Geist">${s.label}</text>`;
+    // Inline labels — sit above each line's right endpoint
+    const legend = series.map((s) => {
+      const lastVal = s.values[s.values.length - 1];
+      const x = xS(len - 1) - 8;
+      const y = yS(lastVal) - 14;
+      return `<text x="${x}" y="${y}" text-anchor="end" fill="${s.color}" font-size="26" font-family="Geist" font-weight="600">${s.label}</text>`;
     }).join('');
 
-    const svg = `<svg width="${W}" height="${H + 28}" xmlns="http://www.w3.org/2000/svg">
-<rect width="${W}" height="${H + 28}" fill="#111827" rx="8"/>
+    const svg = `<svg width="${W}" height="${H + 100}" xmlns="http://www.w3.org/2000/svg">
+<rect width="${W}" height="${H + 100}" fill="#111827" rx="8"/>
   ${yLines}
   ${lines}
   ${xLabels.join('')}
   ${legend}
-  <text x="${pad.left}" y="24" fill="#9ca3af" font-size="12" font-family="Geist" font-weight="600">${title}</text>
-  ${chartFooter(H + 20)}
+  ${renderTitle(title, 36)}
+  ${chartFooter(H + 65)}
 </svg>`;
 
     return svgToPng(svg);
