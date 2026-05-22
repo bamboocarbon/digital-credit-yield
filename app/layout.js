@@ -33,6 +33,27 @@ export default function RootLayout({ children }) {
         </main>
         <Footer />
         <CookieBanner />
+        <Script id="consent-init" strategy="beforeInteractive">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('consent', 'default', {
+            ad_storage: 'denied',
+            analytics_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied',
+            wait_for_update: 500
+          });
+          try {
+            if (localStorage.getItem('cookieConsent') === 'accepted') {
+              gtag('consent', 'update', {
+                ad_storage: 'granted',
+                analytics_storage: 'granted',
+                ad_user_data: 'granted',
+                ad_personalization: 'granted'
+              });
+            }
+          } catch(e) {}
+        `}</Script>
         {process.env.NEXT_PUBLIC_GA_ID && (
           <>
             <Script
