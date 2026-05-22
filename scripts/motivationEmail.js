@@ -33,8 +33,8 @@ export async function run() {
       <h1 style="font-size:24px;line-height:1.5;font-weight:700;margin:0;color:#fff;">${motivation}</h1>
     </div>
 
-    <p style="text-align:center;font-size:12px;color:#374151;margin-top:24px;">
-      <a href="${SITE_URL}" style="color:#555;text-decoration:none;">digitalcredityield.com</a>
+    <p style="text-align:center;font-size:16px;color:#ffffff;margin-top:24px;">
+      <a href="${SITE_URL}" style="color:#ffffff;text-decoration:none;">digitalcredityield.com</a>
     </p>
 
   </div>
