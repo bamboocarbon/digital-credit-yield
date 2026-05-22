@@ -10,37 +10,37 @@ const SITE_URL  = (process.env.SITE_URL || 'https://www.digitalcredityield.com')
 const QUESTIONS = [
   // STRC — Projector
   {
-    question: "How can I earn £500 interest in a year on a £10,000 investment?",
-    teaser: "With STRC currently yielding over 11%, the maths could work in your favour. See your exact 12-month income projection.",
+    question: "How can I earn $500 interest in a year on a $10,000 investment?",
+    teaser: "With STRC currently yielding over 11%, the math could work in your favor. See your exact 12-month income projection.",
     cta: "Run the numbers",
     path: "/strc/projector",
   },
   {
-    question: "What monthly income would £50,000 invested in STRC generate?",
-    teaser: "At today's rate, that's potentially over £450 every single month. See a full income breakdown.",
+    question: "What monthly income would $50,000 invested in STRC generate?",
+    teaser: "At today's rate, that's potentially over $450 every single month. See a full income breakdown.",
     cta: "See my projection",
     path: "/strc/projector",
   },
   {
-    question: "How much do you need to invest to earn £1,000 a month in passive income?",
+    question: "How much do you need to invest to earn $1,000 a month in passive income?",
     teaser: "It's less than you might think. Use the STRC projector to find your magic number.",
     cta: "Find my number",
     path: "/strc/projector",
   },
   {
-    question: "Could a £20,000 investment in STRC cover your monthly bills?",
-    teaser: "See exactly how much monthly income £20,000 would generate — and whether reinvesting dividends grows it faster.",
+    question: "Could a $20,000 investment in STRC cover your monthly bills?",
+    teaser: "See exactly how much monthly income $20,000 would generate — and whether reinvesting dividends grows it faster.",
     cta: "Calculate it",
     path: "/strc/projector",
   },
   {
-    question: "What would £100,000 in STRC earn you each month?",
+    question: "What would $100,000 in STRC earn you each month?",
     teaser: "At an 11.5% annual rate paid monthly, the income adds up quickly. Model your own scenario.",
     cta: "See the projection",
     path: "/strc/projector",
   },
   {
-    question: "How much would you need to invest to cover a £500 monthly shortfall in retirement?",
+    question: "How much would you need to invest to cover a $500 monthly shortfall in retirement?",
     teaser: "Use the STRC income projector to model exactly how much capital generates the income you need.",
     cta: "Model my retirement income",
     path: "/strc/projector",
@@ -52,20 +52,20 @@ const QUESTIONS = [
     path: "/strc/projector",
   },
   {
-    question: "What would £75,000 invested in STRC pay out over 3 years?",
+    question: "What would $75,000 invested in STRC pay out over 3 years?",
     teaser: "See a full 3-year income projection, with and without dividend reinvestment.",
     cta: "See the 3-year view",
     path: "/strc/projector",
   },
   // STRC — Differentiator
   {
-    question: "How does STRC compare to a UK high-street savings account?",
-    teaser: "Most savings accounts offer under 5%. See side-by-side how STRC stacks up over 1, 3, and 5 years.",
+    question: "How does STRC compare to a high-yield savings account?",
+    teaser: "Most high-yield savings accounts offer under 5% APY. See side-by-side how STRC stacks up over 1, 3, and 5 years.",
     cta: "Compare now",
     path: "/strc/differentiator",
   },
   {
-    question: "Is STRC a better income option than UK government bonds?",
+    question: "Is STRC a better income option than US Treasuries?",
     teaser: "Treasury yields sit around 4–5%. STRC targets 11.5%. See the real income difference over time.",
     cta: "See the comparison",
     path: "/strc/differentiator",
@@ -90,7 +90,7 @@ const QUESTIONS = [
     path: "/sata/projector",
   },
   {
-    question: "How much passive income could £30,000 in SATA generate each month?",
+    question: "How much passive income could $30,000 in SATA generate each month?",
     teaser: "At 13% annual yield paid every business day, SATA compounds faster than monthly payers. See how it adds up.",
     cta: "Run the projection",
     path: "/sata/projector",
@@ -102,15 +102,15 @@ const QUESTIONS = [
     path: "/sata/projector",
   },
   {
-    question: "How much would £75,000 in SATA earn you over the next 12 months?",
+    question: "How much would $75,000 in SATA earn you over the next 12 months?",
     teaser: "At 13% annual yield paid daily, the income adds up every NYSE business day. See the full projection.",
     cta: "Calculate my income",
     path: "/sata/projector",
   },
   // SATA — Differentiator
   {
-    question: "How does SATA's 13% daily dividend compare to a Cash ISA?",
-    teaser: "Most Cash ISAs offer 4–5% AER. See how SATA's daily income stacks up side by side.",
+    question: "How does SATA's 13% daily dividend compare to a high-yield savings account?",
+    teaser: "Most high-yield savings accounts offer 4–5% APY. See how SATA's daily income stacks up side by side.",
     cta: "Compare now",
     path: "/sata/differentiator",
   },
@@ -145,14 +145,13 @@ export async function run() {
 
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:32px;">
       <div style="width:10px;height:10px;background:#f5a623;border-radius:2px;flex-shrink:0;"></div>
-      <span style="font-size:13px;color:#888;">Digital Credit Yield &middot; ${today}</span>
+      <span style="font-size:16px;color:#888;">Digital Credit Yield &middot; ${today}</span>
     </div>
 
     <div style="background:#111827;border:1px solid #1e2a3a;border-radius:16px;padding:36px 28px;text-align:center;">
-      <div style="font-size:12px;color:#f5a623;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:24px;">Evening Question</div>
+      <div style="font-size:18px;color:#f5a623;font-weight:700;margin-bottom:24px;">Question</div>
       <h1 style="font-size:24px;line-height:1.45;font-weight:700;margin:0 0 20px;color:#fff;">${q.question}</h1>
-      <p style="font-size:15px;line-height:1.75;color:#9ca3af;margin:0 0 24px;">${q.teaser}</p>
-      <p style="font-size:14px;color:#f5a623;word-break:break-all;margin:0;">${url}</p>
+      <p style="font-size:15px;line-height:1.75;color:#9ca3af;margin:0;">${q.teaser}</p>
     </div>
 
     <p style="text-align:center;font-size:12px;color:#374151;margin-top:24px;">
