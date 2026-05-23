@@ -154,8 +154,8 @@ export async function run() {
       <p style="font-size:15px;line-height:1.75;color:#9ca3af;margin:0;">${q.teaser}</p>
     </div>
 
-    <p style="text-align:center;font-size:12px;color:#374151;margin-top:24px;">
-      <a href="${SITE_URL}" style="color:#555;text-decoration:none;">digitalcredityield.com</a>
+    <p style="text-align:center;font-size:16px;color:#ffffff;margin-top:24px;">
+      <a href="${SITE_URL}" style="color:#ffffff;text-decoration:none;">digitalcredityield.com</a>
     </p>
 
   </div>
