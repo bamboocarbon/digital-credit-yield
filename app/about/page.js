@@ -1,13 +1,13 @@
 export const metadata = {
   alternates: { canonical: '/about' },
-  title: 'About Us — Digital Credit Yield',
+  title: 'About — Digital Credit Yield',
   description: 'About Digital Credit Yield — independent tracking and research for STRC and SATA preferred equity instruments.',
 };
 
 export default function AboutPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-      <h1 className="text-3xl font-bold mb-6">About Digital Credit Yield</h1>
+      <h1 className="text-xl font-semibold mb-6">About Digital Credit Yield</h1>
 
       <p className="text-base leading-7 mb-6" style={{ color: 'var(--text-muted)' }}>
         Digital Credit Yield is an independent financial research and tracking tool built for
