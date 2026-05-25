@@ -3,6 +3,7 @@ import { join } from 'path';
 import DividendHistoryPage from '@/components/DividendHistoryPage';
 
 export const metadata = {
+  alternates: { canonical: '/sata/dividends' },
   title: 'SATA Dividend History — Digital Credit Yield',
   description: 'Full dividend payment history for SATA. Track every monthly distribution, per-share amounts, and calculate your income based on the shares you hold.',
 };

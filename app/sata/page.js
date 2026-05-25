@@ -1,6 +1,7 @@
 import AssetHub from '@/components/AssetHub';
 
 export const metadata = {
+  alternates: { canonical: '/sata' },
   title: 'SATA Hub — Digital Credit Yield',
   description: "Live price, yield, and data for Strive's SATA preferred equity instrument.",
 };

@@ -1,4 +1,5 @@
 export const metadata = {
+  alternates: { canonical: '/terms' },
   title: 'Terms & Conditions — Digital Credit Yield',
 };
 

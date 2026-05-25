@@ -5,6 +5,8 @@ import Footer from '@/components/Footer';
 import CookieBanner from '@/components/CookieBanner';
 
 export const metadata = {
+  metadataBase: new URL('https://www.digitalcredityield.com'),
+  alternates: { canonical: '/' },
   title: 'Digital Credit Yield — Track STRC & SATA Income Assets',
   description: 'Track, analyse and project the growth of next-generation income assets. Live prices, yields, and growth projections for STRC and SATA.',
   openGraph: {

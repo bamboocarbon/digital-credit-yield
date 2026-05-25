@@ -3,6 +3,7 @@ import { getStockQuote } from '@/lib/fetchStockData';
 import { ASSET_RATES } from '@/lib/constants';
 
 export const metadata = {
+  alternates: { canonical: '/sata/projector' },
   title: 'SATA Growth Projector — Digital Credit Yield',
   description: 'Model your future income and portfolio growth from holding SATA. Adjust yield, investment amount, and time horizon to project returns over 1–10 years.',
 };

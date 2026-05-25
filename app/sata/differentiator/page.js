@@ -3,6 +3,7 @@ import { getStockQuote } from '@/lib/fetchStockData';
 import { ASSET_RATES } from '@/lib/constants';
 
 export const metadata = {
+  alternates: { canonical: '/sata/differentiator' },
   title: 'SATA Differentiator — Digital Credit Yield',
   description: 'See how SATA\'s 13.00% annual dividend compares against US Treasuries, high-yield savings, and bank accounts over your chosen time horizon.',
 };

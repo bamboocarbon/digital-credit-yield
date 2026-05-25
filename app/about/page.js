@@ -1,4 +1,5 @@
 export const metadata = {
+  alternates: { canonical: '/about' },
   title: 'About Us — Digital Credit Yield',
   description: 'About Digital Credit Yield — independent tracking and research for STRC and SATA preferred equity instruments.',
 };
