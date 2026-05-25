@@ -225,7 +225,7 @@ async function run() {
   <div style="max-width:640px;margin:0 auto;padding:24px 16px 16px;">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;">
       <div style="width:10px;height:10px;background:#f5a623;border-radius:2px;flex-shrink:0;"></div>
-      <span style="font-size:13px;color:#888;">${today}</span>
+      <span style="font-size:16px;color:#888;">Digital Credit Yield &middot; ${today}</span>
     </div>
     <div style="background:#111827;border:1px solid #1e2a3a;border-radius:12px;padding:20px;margin-bottom:16px;">
       <div style="font-size:15px;line-height:1.6;">${tweetToHtml(tweetText.split('\n').slice(0, -1).join('\n'))}</div>
