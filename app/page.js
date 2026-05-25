@@ -23,17 +23,39 @@ export default function HomePage() {
       <GoogleAd slot="home-banner" />
 
       {/* About section */}
-      <div className="mt-12 max-w-3xl mx-auto text-center">
-        <h2 className="text-2xl font-bold mb-4">What is Digital Credit Yield?</h2>
-        <p className="text-base leading-7" style={{ color: 'var(--text-muted)' }}>
-          Digital Credit Yield is an independent research and tracking tool built for investors
-          high-yield digital credit instruments. We focus on STRC and SATA — two preferred equity
-          instruments that pay monthly cash dividends at rates far above traditional savings. Use our tools
-          to track live pricing, understand yields, and model long-term portfolio growth.
+      <div className="mt-12 max-w-3xl mx-auto">
+        <h2 className="text-2xl font-bold mb-4">About Digital Credit Yield</h2>
+        <p className="text-base leading-7 mb-6" style={{ color: 'var(--text-muted)' }}>
+          Digital Credit Yield is an independent financial research and tracking tool built for
+          investors in high-yield digital credit instruments. The focus is specifically on STRC and
+          SATA — two preferred equity instruments that pay high-yield cash dividends far above
+          traditional savings — STRC monthly, SATA daily on every NYSE business day.
+          The tools help you track live pricing, understand current and effective yields, and model
+          long-term portfolio growth.
         </p>
-        <p className="text-sm mt-4" style={{ color: 'var(--text-muted)' }}>
-          For information purposes only. Not financial advice.
+        <p className="text-base leading-7 mb-6" style={{ color: 'var(--text-muted)' }}>
+          These are relatively new products, with STRC launching in July 2025 and SATA in November
+          2025. As the market digests these innovative products and sees the demand that exists, I am
+          sure more companies will decide to enter this space. Through Digital Credit Yield I will monitor
+          and update the website as the landscape evolves.
         </p>
+        <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
+          I built this site because I believe retail investors need clear, accessible data on
+          emerging income assets — without the noise, paywalls, or complexity of institutional
+          platforms. Whether you're evaluating STRC or SATA for the first time or actively tracking
+          your existing position, my Growth Projector and Differentiator tools give you the clarity
+          to make informed decisions.
+        </p>
+
+        <div className="p-5 rounded-xl" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
+          <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>Important Disclaimer</p>
+          <p className="text-sm mt-2 leading-6" style={{ color: 'var(--text-muted)' }}>
+            Digital Credit Yield is not a financial advisor. All content is provided for educational
+            and research purposes only. Nothing on this site constitutes financial advice, investment
+            advice, or a solicitation to buy or sell any financial instrument. Always consult a qualified
+            financial adviser before making investment decisions.
+          </p>
+        </div>
       </div>
     </div>
   );

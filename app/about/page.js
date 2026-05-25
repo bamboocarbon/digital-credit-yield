@@ -59,32 +59,6 @@ export default function AboutPage() {
         whilst cycling hard through the country roads. Always great to travel too.
       </p>
 
-      <h2 className="text-xl font-semibold mb-6">About Digital Credit Yield</h2>
-
-      <p className="text-base leading-7 mb-6" style={{ color: 'var(--text-muted)' }}>
-        Digital Credit Yield is an independent financial research and tracking tool built for
-        investors in high-yield digital credit instruments. The focus is specifically on STRC and
-        SATA — two preferred equity instruments that pay high-yield cash dividends far above
-        traditional savings — STRC monthly, SATA daily on every NYSE business day.
-        The tools help you track live pricing, understand current and effective yields, and model
-        long-term portfolio growth.
-      </p>
-
-      <p className="text-base leading-7 mb-6" style={{ color: 'var(--text-muted)' }}>
-        These are relatively new products, with STRC launching in July 2025 and SATA in November
-        2025. As the market digests these innovative products and sees the demand that exists, I am
-        sure more companies will decide to enter this space. Through Digital Credit Yield I will monitor
-        and update the website as the landscape evolves.
-      </p>
-
-      <p className="text-base leading-7 mb-10" style={{ color: 'var(--text-muted)' }}>
-        I built this site because I believe retail investors need clear, accessible data on
-        emerging income assets — without the noise, paywalls, or complexity of institutional
-        platforms. Whether you're evaluating STRC or SATA for the first time or actively tracking
-        your existing position, my Growth Projector and Differentiator tools give you the clarity
-        to make informed decisions.
-      </p>
-
       <div className="p-5 rounded-xl mb-8" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
         <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>Important Disclaimer</p>
         <p className="text-sm mt-2 leading-6" style={{ color: 'var(--text-muted)' }}>
