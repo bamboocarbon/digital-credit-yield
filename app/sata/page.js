@@ -21,7 +21,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'FinancialProduct',
   name: 'SATA — Strive Perpetual Preferred Equity',
-  description: "Strive's perpetual preferred equity listed on Nasdaq, paying a 13.00% annual dividend distributed as a daily cash payment on every NYSE business day — approximately 21 payments per month.",
+  description: "Strive's perpetual preferred equity listed on Nasdaq, paying a 13.00% annual dividend distributed as monthly cash dividends.",
   url: 'https://digitalcredityield.com/sata',
   category: 'Preferred Stock',
   provider: {
