@@ -2,18 +2,18 @@ import AssetHub from '@/components/AssetHub';
 
 export const metadata = {
   alternates: { canonical: '/sata' },
-  title: "SATA Stock — Strive Preferred Stock | 13% Daily Dividend",
-  description: "Track SATA live price, dividend yield, and history. Strive's preferred equity pays 13.00% annually as a daily cash payment on every NYSE business day — the first listed security to pay daily dividends. Listed on Nasdaq.",
+  title: "SATA Stock — Strive Preferred Stock | 13% Monthly Dividend",
+  description: "Track SATA live price and yield. Strive's preferred stock pays 13.00% annually in monthly cash. Listed on Nasdaq, backed by 18+ months cash reserves.",
   openGraph: {
-    title: "SATA Stock — Strive Preferred Stock | 13% Daily Dividend",
-    description: "Strive's preferred equity paying 13.00% annually as a daily cash payment on every NYSE business day. Track live price, yield, and dividend history.",
+    title: "SATA Stock — Strive Preferred Stock | 13% Monthly Dividend",
+    description: "Strive's preferred stock paying 13.00% annually in monthly cash dividends. Track live price, yield, and dividend history.",
     type: 'website',
     url: 'https://digitalcredityield.com/sata',
   },
   twitter: {
     card: 'summary',
-    title: "SATA Stock — Strive Preferred Stock | 13% Daily Dividend",
-    description: "Strive's preferred equity paying 13.00% annually as a daily cash payment every NYSE business day.",
+    title: "SATA Stock — Strive Preferred Stock | 13% Monthly Dividend",
+    description: "Strive's preferred stock paying 13.00% annually in monthly cash dividends.",
   },
 };
 

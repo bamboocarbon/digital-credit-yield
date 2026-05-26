@@ -4,10 +4,10 @@ import { ASSET_RATES } from '@/lib/constants';
 
 export const metadata = {
   alternates: { canonical: '/strc/projector' },
-  title: 'STRC Income Calculator — Strategy Preferred Stock Returns Projector',
-  description: "Calculate your STRC income and model long-term portfolio growth. Compare Strategy's 11.50% preferred stock against US Treasuries and bank savings over 1–10 years. Adjust investment size, reinvestment rate, and time horizon.",
+  title: 'STRC Income Calculator — Strategy Preferred Stock Projector',
+  description: "Model STRC income and portfolio growth. Compare Strategy's 11.50% preferred stock against US Treasuries and bank savings over 1–20 years.",
   openGraph: {
-    title: 'STRC Income Calculator — Strategy Preferred Stock Returns Projector',
+    title: 'STRC Income Calculator — Strategy Preferred Stock Projector',
     description: "Model your STRC income and compare Strategy's 11.50% preferred stock against US Treasuries and bank savings.",
     type: 'website',
     url: 'https://digitalcredityield.com/strc/projector',

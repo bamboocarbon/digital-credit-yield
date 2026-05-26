@@ -7,7 +7,7 @@ import CookieBanner from '@/components/CookieBanner';
 export const metadata = {
   metadataBase: new URL('https://www.digitalcredityield.com'),
   title: 'Digital Credit Yield — STRC & SATA Preferred Stock Tracker',
-  description: 'Independent tracker for STRC (Strategy, 11.50% monthly dividend) and SATA (Strive, 13.00% daily dividend) — high-yield preferred stocks on Nasdaq. Live prices, yields, and income projectors.',
+  description: 'Independent tracker for STRC (11.50%) and SATA (13.00%) — high-yield preferred stocks on Nasdaq. Live prices, yields, and income projectors.',
   openGraph: {
     title: 'Digital Credit Yield — STRC & SATA Preferred Stock Tracker',
     description: 'Track STRC and SATA high-yield preferred stocks. Live prices, dividend history, and income projectors.',

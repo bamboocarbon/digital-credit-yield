@@ -3,7 +3,7 @@ import AssetHub from '@/components/AssetHub';
 export const metadata = {
   alternates: { canonical: '/strc' },
   title: "STRC Stock — Strategy Preferred Stock | 11.50% Annual Dividend",
-  description: "Track STRC live price, dividend yield, and history. Strategy's perpetual preferred stock pays 11.50% annually in monthly cash dividends, listed on Nasdaq. Backed by 800,000+ Bitcoin. Available on all major brokerages.",
+  description: "Track STRC live price and yield. Strategy's preferred stock pays 11.50% annually in monthly cash. Listed on Nasdaq, backed by 800,000+ Bitcoin.",
   openGraph: {
     title: "STRC Stock — Strategy Preferred Stock | 11.50% Annual Dividend",
     description: "Strategy's preferred stock paying 11.50% annually in monthly cash dividends. Track live price, yield, and dividend history.",

@@ -4,7 +4,7 @@ import GoogleAd from '@/components/GoogleAd';
 export const metadata = {
   alternates: { canonical: '/' },
   title: 'STRC & SATA Preferred Stock Tracker — Up to 13% Annual Dividend',
-  description: 'Track STRC (Strategy, 11.50%/yr) and SATA (Strive, 13.00%/yr) — two high-yield preferred stocks on Nasdaq paying monthly cash dividends. Live prices, dividend history, income calculators, and growth projectors.',
+  description: 'Track STRC (11.50%) and SATA (13.00%) — preferred stocks on Nasdaq paying monthly dividends. Live prices, dividend history, and income projectors.',
   openGraph: {
     title: 'STRC & SATA Preferred Stock Tracker — Up to 13% Annual Dividend',
     description: 'Track STRC and SATA — two high-yield preferred stocks paying 11.50%–13.00% annually. Live prices, dividend history, and income projectors.',
