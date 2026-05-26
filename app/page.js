@@ -4,7 +4,7 @@ import GoogleAd from '@/components/GoogleAd';
 export const metadata = {
   alternates: { canonical: '/' },
   title: 'STRC & SATA Preferred Stock Tracker — Up to 13% Annual Dividend',
-  description: 'Track STRC (Strategy, 11.50%/yr monthly dividend) and SATA (Strive, 13.00%/yr daily dividend) — two high-yield preferred stocks on Nasdaq. Live prices, dividend history, income calculators, and growth projectors.',
+  description: 'Track STRC (Strategy, 11.50%/yr) and SATA (Strive, 13.00%/yr) — two high-yield preferred stocks on Nasdaq paying monthly cash dividends. Live prices, dividend history, income calculators, and growth projectors.',
   openGraph: {
     title: 'STRC & SATA Preferred Stock Tracker — Up to 13% Annual Dividend',
     description: 'Track STRC and SATA — two high-yield preferred stocks paying 11.50%–13.00% annually. Live prices, dividend history, and income projectors.',
@@ -61,7 +61,7 @@ export default function HomePage() {
           Digital Credit Yield is an independent financial research and tracking tool built for
           investors in high-yield digital credit instruments. The focus is specifically on STRC and
           SATA — two preferred equity instruments that pay high-yield cash dividends far above
-          traditional savings — STRC monthly, SATA daily on every NYSE business day.
+          traditional savings — both paying monthly cash dividends.
           The tools help you track live pricing, understand current and effective yields, and model
           long-term portfolio growth.
         </p>

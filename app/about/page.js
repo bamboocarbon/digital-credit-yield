@@ -63,7 +63,7 @@ export default function AboutPage() {
       <div className="space-y-4 mb-8">
         {[
           { ticker: 'STRC', name: "Strategy's Perpetual Preferred Stock", desc: "Pays 11.50% annual dividends monthly in cash. Dividend rate adjusts monthly to maintain trading near its $100 par value." },
-          { ticker: 'SATA', name: "Strive's Preferred Equity Instrument", desc: "Pays 13.00% annualised in daily dividends — one payment every NYSE business day from June 2026. Strive believes SATA is the first listed security in history to pay daily dividends. Targets a $99–$101 trading range, backed by 18+ months of cash reserves and over 13,000 Bitcoin." },
+          { ticker: 'SATA', name: "Strive's Preferred Equity Instrument", desc: "Pays 13.00% annualised in monthly cash dividends. Targets a $99–$101 trading range, backed by 18+ months of cash reserves and over 13,000 Bitcoin." },
         ].map(asset => (
           <div key={asset.ticker} className="p-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
             <p className="font-semibold mb-1">{asset.ticker} — {asset.name}</p>

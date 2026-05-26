@@ -5,12 +5,12 @@ import Link from 'next/link';
 
 const DESCRIPTIONS = {
   STRC: "Strategy's perpetual preferred stock paying 11.50% annual dividends in monthly cash. Dividend rate adjusts monthly to maintain trading near its $100 par value.",
-  SATA: "Strive's publicly traded preferred equity paying 13.00% annualised in daily dividends — one payment every NYSE business day. Targets a $99–$101 trading range, backed by 18+ months of cash reserves and over 13,000 Bitcoin.",
+  SATA: "Strive's publicly traded preferred equity paying 13.00% annualised in monthly cash dividends. Targets a $99–$101 trading range, backed by 18+ months of cash reserves and over 13,000 Bitcoin.",
 };
 
 const INCOME_BADGE = {
   STRC: 'Monthly Income',
-  SATA: 'Daily Income',
+  SATA: 'Monthly Income',
 };
 
 
