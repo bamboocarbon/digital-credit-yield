@@ -14,7 +14,7 @@ export default function AboutPage() {
         <div className="rounded-2xl overflow-hidden mb-2 mr-6" style={{ border: '1px solid var(--border)', maxWidth: '160px', float: 'left' }}>
           <img
             src="/about-photo.jpg?v=2"
-            alt=""
+            alt="Robin Gillingham, creator of Digital Credit Yield"
             className="w-full object-cover"
           />
         </div>
