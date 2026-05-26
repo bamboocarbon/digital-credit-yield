@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { saveProjectorState, loadProjectorState, defaultProjectorState } from '@/lib/projectorState';
-import { runProjection, HORIZON_MONTHS as horizonMonths, HORIZON_LABELS as horizonLabels, fmt, fmtNum, stripNum } from '@/lib/projectorEngine';
+import { runProjection, computeAPY, HORIZON_MONTHS as horizonMonths, HORIZON_LABELS as horizonLabels, fmt, fmtNum, stripNum } from '@/lib/projectorEngine';
 import NumericInput from '@/components/NumericInput';
 
 const pct = (a, b) => (((a - b) / b) * 100).toFixed(1);
@@ -46,9 +46,12 @@ export default function Differentiator({ ticker, liveYield }) {
 
   const step = months <= 24 ? 1 : 12;
 
+  // SATA uses 250 business-day compounding; benchmarks are monthly instruments so stay at 12
+  const paymentsPerYear = ticker === 'SATA' ? 250 : 12;
+
   const assetData = useMemo(
-    () => runProjection(startValue, effectiveYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months),
-    [startValue, effectiveYield, form.monthlyContribution, form.reinvestmentPct, months]
+    () => runProjection(startValue, effectiveYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months, paymentsPerYear),
+    [startValue, effectiveYield, form.monthlyContribution, form.reinvestmentPct, months, paymentsPerYear]
   );
   const treasuryData = useMemo(
     () => runProjection(startValue, benchmarks.treasury, Number(form.monthlyContribution), Number(form.reinvestmentPct), months),
@@ -292,6 +295,14 @@ export default function Differentiator({ ticker, liveYield }) {
                 onChange={e => update('reinvestmentPct', e.target.value)}
                 aria-label={`Reinvestment percentage: ${form.reinvestmentPct}%`}
                 className="w-full" style={{ accentColor: 'var(--accent-gold)' }} />
+              {ticker === 'SATA' && Number(form.reinvestmentPct) > 0 && (
+                <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
+                  Daily compounding: {computeAPY(effectiveYield, 250).toFixed(4)}% APY
+                  <span style={{ color: 'var(--text-muted)' }}>
+                    {' '}(+{((computeAPY(effectiveYield, 250) - computeAPY(effectiveYield, 12)) * 100).toFixed(1)} bps vs monthly)
+                  </span>
+                </p>
+              )}
             </div>
 
           </div>
@@ -303,7 +314,7 @@ export default function Differentiator({ ticker, liveYield }) {
               </p>
               {Number(form.pricePerShare || 100) !== 100 && (
                 <p className="text-xs" style={{ color: 'var(--accent-gold)' }}>
-                  Effective yield on cost: {effectiveYield.toFixed(2)}%
+                  Effective yield on cost: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>
                   {Number(form.pricePerShare) < 100 ? ' ↑' : ' ↓'}
                 </p>
               )}
@@ -438,7 +449,7 @@ export default function Differentiator({ ticker, liveYield }) {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {/* ETF — highlighted */}
             <div className="p-4 rounded-xl flex flex-col gap-1" style={{ background: 'rgba(200,137,58,0.12)', border: '2px solid var(--accent-gold)' }}>
-              <p className="text-xs font-semibold" style={{ color: 'var(--accent-gold)' }}>{ticker} — {annualYield.toFixed(1)}%</p>
+              <p className="text-xs font-semibold" style={{ color: 'var(--accent-gold)' }}>{ticker} — {annualYield.toFixed(1)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span></p>
               <div>
                 <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Start</p>
                 <p className="font-mono-data text-lg font-bold" style={{ fontFamily: "'PercentFix','Roboto Mono','Courier New',monospace", color: 'var(--accent-gold)' }}>
@@ -462,7 +473,7 @@ export default function Differentiator({ ticker, liveYield }) {
               { label: 'Bank Savings', start: bankMonthlyStart, end: bankMonthlyEnd, rate: benchmarks.bank },
             ].map(({ label, start, end, rate }) => (
               <div key={label} className="p-4 rounded-xl flex flex-col gap-1" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
-                <p className="text-xs font-semibold" style={{ color: 'var(--text-muted)' }}>{label} — {rate.toFixed(1)}%</p>
+                <p className="text-xs font-semibold" style={{ color: 'var(--text-muted)' }}>{label} — {rate.toFixed(1)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span></p>
                 <div>
                   <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Start</p>
                   <p className="font-mono-data text-lg font-medium" style={{ fontFamily: "'PercentFix','Roboto Mono','Courier New',monospace", color: 'var(--text-primary)' }}>

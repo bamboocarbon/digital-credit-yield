@@ -1,8 +1,40 @@
 import AssetCard from '@/components/AssetCard';
 import GoogleAd from '@/components/GoogleAd';
 
+export const metadata = {
+  alternates: { canonical: '/' },
+  title: 'STRC & SATA Preferred Stock Tracker — Up to 13% Annual Dividend',
+  description: 'Track STRC (11.50%) and SATA (13.00%) — preferred stocks on Nasdaq paying monthly dividends. Live prices, dividend history, and income projectors.',
+  openGraph: {
+    title: 'STRC & SATA Preferred Stock Tracker — Up to 13% Annual Dividend',
+    description: 'Track STRC and SATA — two high-yield preferred stocks paying 11.50%–13.00% annually. Live prices, dividend history, and income projectors.',
+    type: 'website',
+    url: 'https://digitalcredityield.com',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'STRC & SATA Preferred Stock Tracker — Up to 13% Annual Dividend',
+    description: 'Track STRC and SATA — two high-yield preferred stocks paying 11.50%–13.00% annually.',
+  },
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Digital Credit Yield',
+  url: 'https://digitalcredityield.com',
+  description: 'Independent tracker for STRC and SATA high-yield preferred stocks. Live prices, dividend history, and income projectors.',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: 'https://digitalcredityield.com/{search_term_string}',
+    'query-input': 'required name=search_term_string',
+  },
+};
+
 export default function HomePage() {
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Hero */}
       <div className="text-center mb-12">
@@ -29,7 +61,7 @@ export default function HomePage() {
           Digital Credit Yield is an independent financial research and tracking tool built for
           investors in high-yield digital credit instruments. The focus is specifically on STRC and
           SATA — two preferred equity instruments that pay high-yield cash dividends far above
-          traditional savings — STRC monthly, SATA daily on every NYSE business day.
+          traditional savings — both paying monthly cash dividends.
           The tools help you track live pricing, understand current and effective yields, and model
           long-term portfolio growth.
         </p>
@@ -58,5 +90,6 @@ export default function HomePage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

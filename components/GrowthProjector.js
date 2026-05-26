@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { saveProjectorState, loadProjectorState, defaultProjectorState } from '@/lib/projectorState';
-import { runProjection, HORIZON_MONTHS as horizonMonths, HORIZON_LABELS as horizonLabels, fmt, fmtNum, stripNum } from '@/lib/projectorEngine';
+import { runProjection, computeAPY, HORIZON_MONTHS as horizonMonths, HORIZON_LABELS as horizonLabels, fmt, fmtNum, stripNum } from '@/lib/projectorEngine';
 import NumericInput from '@/components/NumericInput';
 
 const MONO = { fontFamily: "'Roboto Mono', 'Courier New', monospace" };
@@ -41,9 +41,11 @@ export default function GrowthProjector({ ticker, liveYield }) {
   const priceForYield = form.inputMode === 'shares' ? Number(form.pricePerShare || 100) : 100;
   const effectiveYield = priceForYield > 0 ? Number(form.annualYield) * (100 / priceForYield) : Number(form.annualYield);
 
+  const paymentsPerYear = ticker === 'SATA' ? 250 : 12;
+
   const history = useMemo(
-    () => runProjection(startValue, effectiveYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months),
-    [startValue, effectiveYield, form.monthlyContribution, form.reinvestmentPct, months]
+    () => runProjection(startValue, effectiveYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months, paymentsPerYear),
+    [startValue, effectiveYield, form.monthlyContribution, form.reinvestmentPct, months, paymentsPerYear]
   );
 
   const final = history[history.length - 1];
@@ -222,6 +224,14 @@ export default function GrowthProjector({ ticker, liveYield }) {
                 onChange={e => update('reinvestmentPct', e.target.value)}
                 aria-label={`Reinvestment percentage: ${form.reinvestmentPct}%`}
                 className="w-full" style={{ accentColor: 'var(--accent-gold)' }} />
+              {ticker === 'SATA' && Number(form.reinvestmentPct) > 0 && (
+                <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
+                  Daily compounding: {computeAPY(effectiveYield, 250).toFixed(4)}% APY
+                  <span style={{ color: 'var(--text-muted)' }}>
+                    {' '}(+{((computeAPY(effectiveYield, 250) - computeAPY(effectiveYield, 12)) * 100).toFixed(1)} bps vs monthly)
+                  </span>
+                </p>
+              )}
             </div>
 
           </div>
@@ -233,7 +243,7 @@ export default function GrowthProjector({ ticker, liveYield }) {
               </p>
               {Number(form.pricePerShare || 100) !== 100 && (
                 <p className="text-xs" style={{ color: 'var(--accent-gold)' }}>
-                  Effective yield on cost: {effectiveYield.toFixed(2)}%
+                  Effective yield on cost: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>
                   {Number(form.pricePerShare) < 100 ? ' ↑' : ' ↓'}
                 </p>
               )}
@@ -254,7 +264,9 @@ export default function GrowthProjector({ ticker, liveYield }) {
               <div key={stat.label} className="p-4 rounded-xl" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
                 <p className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>{stat.label}</p>
                 <p className="font-mono-data text-xl font-medium" style={{ ...MONO, color: stat.gold ? 'var(--accent-gold)' : 'var(--text-primary)' }}>
-                  {stat.value}
+                  {typeof stat.value === 'string' && stat.value.endsWith('%')
+                    ? <>{stat.value.slice(0, -1)}<span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8em' }}>%</span></>
+                    : stat.value}
                 </p>
               </div>
             ))}

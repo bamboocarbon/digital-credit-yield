@@ -6,18 +6,17 @@ import CookieBanner from '@/components/CookieBanner';
 
 export const metadata = {
   metadataBase: new URL('https://www.digitalcredityield.com'),
-  alternates: { canonical: '/' },
-  title: 'Digital Credit Yield — Track STRC & SATA Income Assets',
-  description: 'Track, analyse and project the growth of next-generation income assets. Live prices, yields, and growth projections for STRC and SATA.',
+  title: 'Digital Credit Yield — STRC & SATA Preferred Stock Tracker',
+  description: 'Independent tracker for STRC (11.50%) and SATA (13.00%) — high-yield preferred stocks on Nasdaq. Live prices, yields, and income projectors.',
   openGraph: {
-    title: 'Digital Credit Yield — Track STRC & SATA Income Assets',
-    description: 'Track, analyse and project the growth of next-generation income assets. Live prices, yields, and growth projections for STRC and SATA.',
+    title: 'Digital Credit Yield — STRC & SATA Preferred Stock Tracker',
+    description: 'Track STRC and SATA high-yield preferred stocks. Live prices, dividend history, and income projectors.',
     type: 'website',
   },
   twitter: {
     card: 'summary',
-    title: 'Digital Credit Yield — Track STRC & SATA Income Assets',
-    description: 'Track, analyse and project the growth of next-generation income assets. Live prices, yields, and growth projections for STRC and SATA.',
+    title: 'Digital Credit Yield — STRC & SATA Preferred Stock Tracker',
+    description: 'Track STRC and SATA high-yield preferred stocks. Live prices, dividend history, and income projectors.',
   },
   other: {
     'google-adsense-account': 'ca-pub-2860789238138317',

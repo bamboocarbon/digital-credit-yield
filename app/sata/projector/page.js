@@ -4,8 +4,14 @@ import { ASSET_RATES } from '@/lib/constants';
 
 export const metadata = {
   alternates: { canonical: '/sata/projector' },
-  title: 'SATA Growth Projector — Digital Credit Yield',
-  description: 'Model your future income and portfolio growth from holding SATA. Adjust yield, investment amount, and time horizon to project returns over 1–10 years.',
+  title: 'SATA Income Calculator — Strive Preferred Stock Returns Projector',
+  description: "Model SATA income and portfolio growth. Compare Strive's 13.00% preferred stock against US Treasuries and bank savings over 1–20 years.",
+  openGraph: {
+    title: 'SATA Income Calculator — Strive Preferred Stock Returns Projector',
+    description: "Model your SATA income and compare Strive's 13.00% preferred stock against US Treasuries and bank savings.",
+    type: 'website',
+    url: 'https://digitalcredityield.com/sata/projector',
+  },
 };
 
 export default async function SATAProjector() {

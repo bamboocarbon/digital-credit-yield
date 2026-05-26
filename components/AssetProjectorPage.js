@@ -7,9 +7,14 @@ export default function AssetProjectorPage({ ticker, liveYield }) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <SubNav ticker={ticker} />
       <h1 className="text-2xl sm:text-3xl font-bold mb-2">{ticker} Growth Projector</h1>
-      <p className="mb-8 text-sm" style={{ color: 'var(--text-muted)' }}>
+      <p className="mb-2 text-sm" style={{ color: 'var(--text-muted)' }}>
         Model your future income and portfolio growth from holding {ticker}.
         Yield is pre-filled from live data — adjust any input to recalculate instantly.
+      </p>
+      <p className="mb-8 text-sm" style={{ color: 'var(--text-muted)' }}>
+        All projections are hypothetical illustrations only. They assume a constant dividend yield
+        and do not account for price fluctuation, reinvestment risk, tax, or changes in the dividend
+        rate. Past performance is not indicative of future results.
       </p>
       <GrowthProjector ticker={ticker} liveYield={liveYield} />
       <GoogleAd slot={`${ticker.toLowerCase()}-projector`} />
