@@ -55,12 +55,12 @@ export default function AssetCard({ ticker }) {
             {data.price?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
           </div>
           <div className="text-sm font-mono-data" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: data.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
-            <span style={{marginRight:'2px'}}>{data.change >= 0 ? '+' : '-'}</span>{Math.abs(data.change)?.toFixed(2)} (<span style={{marginRight:'2px'}}>{data.changePercent >= 0 ? '+' : '-'}</span>{Math.abs(data.changePercent)?.toFixed(2)}%)
+            <span style={{marginRight:'2px'}}>{data.change >= 0 ? '+' : '-'}</span>{Math.abs(data.change)?.toFixed(2)} (<span style={{marginRight:'2px'}}>{data.changePercent >= 0 ? '+' : '-'}</span>{Math.abs(data.changePercent)?.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>)
           </div>
           {data.dividendYield != null && (
             <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
               Yield: <span className="font-bold" style={{ color: 'var(--accent-gold)' }}>
-                {data.dividendYield.toFixed(2)}%
+                {data.dividendYield.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8em' }}>%</span>
               </span>
             </div>
           )}

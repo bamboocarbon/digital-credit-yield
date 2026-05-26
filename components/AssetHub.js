@@ -1,6 +1,54 @@
+import Link from 'next/link';
 import SubNav from '@/components/SubNav';
 import GoogleAd from '@/components/GoogleAd';
 import AssetHubLive from '@/components/AssetHubLive';
+
+const TOOLS = {
+  STRC: [
+    {
+      href: '/strc/chart',
+      label: 'Live Price Chart',
+      description: 'Track the STRC market price in real time against its $100 par value. As the price moves, the effective yield changes — use the chart to spot when STRC is trading at a premium or discount and understand what that means for your entry yield.',
+    },
+    {
+      href: '/strc/projector',
+      label: 'Growth Projector',
+      description: 'Enter an investment amount and time horizon to model your projected income and portfolio growth from holding STRC. Adjust the reinvestment rate to see the compounding effect, and compare returns against US Treasuries and bank savings side by side.',
+    },
+    {
+      href: '/strc/differentiator',
+      label: 'Differentiator',
+      description: "See exactly how much more income STRC's 11.50% annual dividend generates compared to US Treasuries and bank savings over any time period. Enter your investment amount and let the tool show you the income gap in dollar terms.",
+    },
+    {
+      href: '/strc/dividends',
+      label: 'Dividend History',
+      description: 'A complete record of every STRC dividend payment — per-share amount, payment date, and record date. Enter your holding size to calculate exactly how much you received or will receive from each distribution.',
+    },
+  ],
+  SATA: [
+    {
+      href: '/sata/chart',
+      label: 'Live Price Chart',
+      description: 'Track the SATA market price in real time against its $100 par value. As the price moves, the effective yield changes — use the chart to spot when SATA is trading at a premium or discount and understand what that means for your entry yield.',
+    },
+    {
+      href: '/sata/projector',
+      label: 'Growth Projector',
+      description: 'Enter an investment amount and time horizon to model your projected income and portfolio growth from holding SATA. Adjust the reinvestment rate to see the compounding effect, and compare returns against US Treasuries and bank savings side by side.',
+    },
+    {
+      href: '/sata/differentiator',
+      label: 'Differentiator',
+      description: "See exactly how much more income SATA's 13.00% annual dividend generates compared to US Treasuries and bank savings over any time period. Enter your investment amount and let the tool show you the income gap in dollar terms.",
+    },
+    {
+      href: '/sata/dividends',
+      label: 'Dividend History',
+      description: 'A complete record of every SATA dividend payment — per-share amount, payment date, and record date. Enter your holding size to calculate exactly how much you received or will receive from each distribution.',
+    },
+  ],
+};
 
 const DESCRIPTIONS = {
   STRC: (
@@ -43,6 +91,24 @@ export default function AssetHub({ ticker, name }) {
       <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <h2 className="text-lg font-semibold mb-3">About {ticker}</h2>
         <div className="text-sm leading-6" style={{ color: 'var(--text-muted)' }}>{DESCRIPTIONS[ticker]}</div>
+      </div>
+
+      {/* Tools section */}
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold mb-3">Tools</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {TOOLS[ticker].map(tool => (
+            <Link
+              key={tool.href}
+              href={tool.href}
+              className="block p-5 rounded-xl transition-opacity hover:opacity-80"
+              style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
+            >
+              <p className="font-semibold text-sm mb-2" style={{ color: 'var(--accent-gold)' }}>{tool.label}</p>
+              <p className="text-sm leading-6" style={{ color: 'var(--text-muted)' }}>{tool.description}</p>
+            </Link>
+          ))}
+        </div>
       </div>
 
       <GoogleAd slot={`${ticker.toLowerCase()}-hub`} />

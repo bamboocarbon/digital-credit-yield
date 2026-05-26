@@ -314,7 +314,7 @@ export default function Differentiator({ ticker, liveYield }) {
               </p>
               {Number(form.pricePerShare || 100) !== 100 && (
                 <p className="text-xs" style={{ color: 'var(--accent-gold)' }}>
-                  Effective yield on cost: {effectiveYield.toFixed(2)}%
+                  Effective yield on cost: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>
                   {Number(form.pricePerShare) < 100 ? ' ↑' : ' ↓'}
                 </p>
               )}
@@ -449,7 +449,7 @@ export default function Differentiator({ ticker, liveYield }) {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {/* ETF — highlighted */}
             <div className="p-4 rounded-xl flex flex-col gap-1" style={{ background: 'rgba(200,137,58,0.12)', border: '2px solid var(--accent-gold)' }}>
-              <p className="text-xs font-semibold" style={{ color: 'var(--accent-gold)' }}>{ticker} — {annualYield.toFixed(1)}%</p>
+              <p className="text-xs font-semibold" style={{ color: 'var(--accent-gold)' }}>{ticker} — {annualYield.toFixed(1)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span></p>
               <div>
                 <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Start</p>
                 <p className="font-mono-data text-lg font-bold" style={{ fontFamily: "'PercentFix','Roboto Mono','Courier New',monospace", color: 'var(--accent-gold)' }}>
@@ -473,7 +473,7 @@ export default function Differentiator({ ticker, liveYield }) {
               { label: 'Bank Savings', start: bankMonthlyStart, end: bankMonthlyEnd, rate: benchmarks.bank },
             ].map(({ label, start, end, rate }) => (
               <div key={label} className="p-4 rounded-xl flex flex-col gap-1" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
-                <p className="text-xs font-semibold" style={{ color: 'var(--text-muted)' }}>{label} — {rate.toFixed(1)}%</p>
+                <p className="text-xs font-semibold" style={{ color: 'var(--text-muted)' }}>{label} — {rate.toFixed(1)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span></p>
                 <div>
                   <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Start</p>
                   <p className="font-mono-data text-lg font-medium" style={{ fontFamily: "'PercentFix','Roboto Mono','Courier New',monospace", color: 'var(--text-primary)' }}>

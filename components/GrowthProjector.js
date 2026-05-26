@@ -243,7 +243,7 @@ export default function GrowthProjector({ ticker, liveYield }) {
               </p>
               {Number(form.pricePerShare || 100) !== 100 && (
                 <p className="text-xs" style={{ color: 'var(--accent-gold)' }}>
-                  Effective yield on cost: {effectiveYield.toFixed(2)}%
+                  Effective yield on cost: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>
                   {Number(form.pricePerShare) < 100 ? ' ↑' : ' ↓'}
                 </p>
               )}
@@ -264,7 +264,9 @@ export default function GrowthProjector({ ticker, liveYield }) {
               <div key={stat.label} className="p-4 rounded-xl" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
                 <p className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>{stat.label}</p>
                 <p className="font-mono-data text-xl font-medium" style={{ ...MONO, color: stat.gold ? 'var(--accent-gold)' : 'var(--text-primary)' }}>
-                  {stat.value}
+                  {typeof stat.value === 'string' && stat.value.endsWith('%')
+                    ? <>{stat.value.slice(0, -1)}<span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8em' }}>%</span></>
+                    : stat.value}
                 </p>
               </div>
             ))}
