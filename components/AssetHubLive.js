@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { ASSET_RATES } from '@/lib/constants';
-import { getSataMonthlyTotal } from '@/lib/sataBusinessDays';
 
 export default function AssetHubLive({ ticker }) {
   const [data, setData]   = useState(null);
@@ -78,11 +77,9 @@ export default function AssetHubLive({ ticker }) {
 
         <div className="card p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>Distribution Frequency</p>
-          <p className="text-2xl font-bold">{ticker === 'SATA' ? 'Daily' : 'Monthly'}</p>
+          <p className="text-2xl font-bold">Monthly</p>
           <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
-            {ticker === 'SATA'
-              ? `Every NYSE business day · ~${getSataMonthlyTotal(annualDividendDollars).toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 4, maximumFractionDigits: 4 })}/share/month`
-              : `~${(annualDividendDollars / 12).toLocaleString('en-US', { style: 'currency', currency: 'USD' })} per share/month`}
+            ~{(annualDividendDollars / 12).toLocaleString('en-US', { style: 'currency', currency: 'USD' })} per share/month
           </p>
         </div>
       </div>
