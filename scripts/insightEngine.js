@@ -218,7 +218,7 @@ export async function generateDailyInsight() {
     'Patience and income — a powerful combination.',
     'Your money is working for you right now.',
     'Consistent income compounds into lasting wealth.',
-    'Another month, another dividend. Keep going.',
+    'Another month, another dividend. Repeat.',
     'Income today becomes wealth tomorrow.',
     'The strategy is simple. Stick to it.',
     'High yield, monthly income, long-term growth.',

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { saveProjectorState, loadProjectorState, defaultProjectorState } from '@/lib/projectorState';
-import { runProjection, HORIZON_MONTHS as horizonMonths, HORIZON_LABELS as horizonLabels, fmt, fmtNum, stripNum } from '@/lib/projectorEngine';
+import { runProjection, computeAPY, HORIZON_MONTHS as horizonMonths, HORIZON_LABELS as horizonLabels, fmt, fmtNum, stripNum } from '@/lib/projectorEngine';
 import NumericInput from '@/components/NumericInput';
 
 const MONO = { fontFamily: "'Roboto Mono', 'Courier New', monospace" };
@@ -41,7 +41,12 @@ export default function GrowthProjector({ ticker, liveYield }) {
   const priceForYield = form.inputMode === 'shares' ? Number(form.pricePerShare || 100) : 100;
   const effectiveYield = priceForYield > 0 ? Number(form.annualYield) * (100 / priceForYield) : Number(form.annualYield);
 
-  const history = runProjection(startValue, effectiveYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months);
+  const paymentsPerYear = ticker === 'SATA' ? 250 : 12;
+
+  const history = useMemo(
+    () => runProjection(startValue, effectiveYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months, paymentsPerYear),
+    [startValue, effectiveYield, form.monthlyContribution, form.reinvestmentPct, months, paymentsPerYear]
+  );
 
   const final = history[history.length - 1];
   const totalInvested = startValue + Number(form.monthlyContribution) * months;
@@ -59,10 +64,12 @@ export default function GrowthProjector({ ticker, liveYield }) {
   }
 
   useEffect(() => {
+    let destroyed = false;
     async function drawChart() {
       const { Chart, registerables } = await import('chart.js');
       Chart.register(...registerables);
 
+      if (destroyed) return;
       const ctx = chartRef.current?.getContext('2d');
       if (!ctx) return;
 
@@ -117,6 +124,7 @@ export default function GrowthProjector({ ticker, liveYield }) {
       });
     }
     drawChart();
+    return () => { destroyed = true; };
   }, [history, step]);
 
   return (
@@ -216,6 +224,14 @@ export default function GrowthProjector({ ticker, liveYield }) {
                 onChange={e => update('reinvestmentPct', e.target.value)}
                 aria-label={`Reinvestment percentage: ${form.reinvestmentPct}%`}
                 className="w-full" style={{ accentColor: 'var(--accent-gold)' }} />
+              {ticker === 'SATA' && Number(form.reinvestmentPct) > 0 && (
+                <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
+                  Daily compounding: {computeAPY(effectiveYield, 250).toFixed(4)}% APY
+                  <span style={{ color: 'var(--text-muted)' }}>
+                    {' '}(+{((computeAPY(effectiveYield, 250) - computeAPY(effectiveYield, 12)) * 100).toFixed(1)} bps vs monthly)
+                  </span>
+                </p>
+              )}
             </div>
 
           </div>

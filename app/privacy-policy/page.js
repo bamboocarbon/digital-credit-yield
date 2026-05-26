@@ -1,4 +1,5 @@
 export const metadata = {
+  alternates: { canonical: '/privacy-policy' },
   title: 'Privacy Policy — Digital Credit Yield',
 };
 

@@ -1,8 +1,15 @@
 import AssetChartPage from '@/components/AssetChartPage';
 
 export const metadata = {
-  title: 'SATA Chart — Digital Credit Yield',
-  description: 'Live SATA candlestick price chart and effective yield history. Select a timeframe to explore how SATA has traded relative to its $100 par value.',
+  alternates: { canonical: '/sata/chart' },
+  title: 'SATA Live Price Chart — Strive Preferred Stock Price & Yield',
+  description: "Live SATA candlestick chart for Strive's preferred stock. Track the price relative to $100 par value and see how the effective 13.00% daily dividend yield changes with the market price.",
+  openGraph: {
+    title: 'SATA Live Price Chart — Strive Preferred Stock Price & Yield',
+    description: "Live SATA price chart. Track Strive's preferred stock relative to $100 par and see the effective yield.",
+    type: 'website',
+    url: 'https://digitalcredityield.com/sata/chart',
+  },
 };
 
 export default function SATAChart() {

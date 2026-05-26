@@ -1,21 +1,8 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import SubNav from '@/components/SubNav';
 import Differentiator from '@/components/Differentiator';
 import GoogleAd from '@/components/GoogleAd';
-import { ASSET_RATES } from '@/lib/constants';
 
-export default function AssetDifferentiatorPage({ ticker }) {
-  const [liveYield, setLiveYield] = useState(ASSET_RATES[ticker]);
-
-  useEffect(() => {
-    fetch(`/api/quote/${ticker}`)
-      .then(r => r.json())
-      .then(d => { if (d.dividendYield != null) setLiveYield(d.dividendYield); })
-      .catch(() => {});
-  }, [ticker]);
-
+export default function AssetDifferentiatorPage({ ticker, liveYield }) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <SubNav ticker={ticker} />
@@ -28,6 +15,16 @@ export default function AssetDifferentiatorPage({ ticker }) {
       </p>
       <Differentiator ticker={ticker} liveYield={liveYield} />
       <GoogleAd slot={`${ticker.toLowerCase()}-differentiator`} />
+
+      <div className="mt-8 p-5 rounded-xl" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
+        <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>Important Disclaimer</p>
+        <p className="text-sm mt-2 leading-6" style={{ color: 'var(--text-muted)' }}>
+          Digital Credit Yield is not a financial advisor. All content is provided for educational
+          and research purposes only. Nothing on this site constitutes financial advice, investment
+          advice, or a solicitation to buy or sell any financial instrument. Always consult a qualified
+          financial adviser before making investment decisions.
+        </p>
+      </div>
     </div>
   );
 }

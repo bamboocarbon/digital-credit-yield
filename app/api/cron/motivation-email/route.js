@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { run } from '../../../../scripts/dailyEmail.js';
+import { run } from '../../../../scripts/motivationEmail.js';
 
 export const maxDuration = 60;
 
@@ -13,7 +13,7 @@ async function handler(request) {
     await run();
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error('Daily email cron failed:', err);
+    console.error('Motivation email cron failed:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

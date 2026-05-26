@@ -1,10 +1,21 @@
 import AssetProjectorPage from '@/components/AssetProjectorPage';
+import { getStockQuote } from '@/lib/fetchStockData';
+import { ASSET_RATES } from '@/lib/constants';
 
 export const metadata = {
-  title: 'SATA Growth Projector — Digital Credit Yield',
-  description: 'Model your future income and portfolio growth from holding SATA. Adjust yield, investment amount, and time horizon to project returns over 1–10 years.',
+  alternates: { canonical: '/sata/projector' },
+  title: 'SATA Income Calculator — Strive Daily Dividend Returns Projector',
+  description: "Calculate your SATA income and model long-term portfolio growth. Compare Strive's 13.00% daily-dividend preferred stock against US Treasuries and bank savings over 1–10 years.",
+  openGraph: {
+    title: 'SATA Income Calculator — Strive Daily Dividend Returns Projector',
+    description: "Model your SATA income and compare Strive's 13.00% daily-dividend preferred stock against US Treasuries and bank savings.",
+    type: 'website',
+    url: 'https://digitalcredityield.com/sata/projector',
+  },
 };
 
-export default function SATAProjector() {
-  return <AssetProjectorPage ticker="SATA" />;
+export default async function SATAProjector() {
+  const q = await getStockQuote('SATA').catch(() => null);
+  const liveYield = q?.dividendYield ?? ASSET_RATES['SATA'];
+  return <AssetProjectorPage ticker="SATA" liveYield={liveYield} />;
 }
