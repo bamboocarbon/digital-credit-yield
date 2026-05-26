@@ -10,15 +10,18 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const article = getArticle(slug);
   if (!article) return {};
+  const desc = article.excerpt.length > 155
+    ? article.excerpt.slice(0, 152).replace(/\s\S*$/, '') + '...'
+    : article.excerpt;
   return {
-    title: `${article.title} — Digital Credit Yield`,
-    description: article.excerpt,
+    title: article.title,
+    description: desc,
     alternates: { canonical: `/blog/${slug}` },
   };
 }
 
 function formatDate(dateStr) {
-  return new Date(dateStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  return new Date(dateStr).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 const categoryColour = {
