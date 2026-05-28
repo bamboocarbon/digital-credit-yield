@@ -25,7 +25,7 @@ function formatDate(dateStr) {
 }
 
 const categoryColour = {
-  Education: '#e11d48',
+  Education: '#f87171',
   STRC: '#15803d',
   SATA: '#2563eb',
   Comparison: '#0891b2',
