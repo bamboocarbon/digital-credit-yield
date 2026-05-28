@@ -28,7 +28,7 @@ export default function MoneyFlowPage() {
             <div className="flex items-center gap-2">
               <span className="font-bold text-lg">STRC</span>
               <span className="text-xs px-2 py-0.5 rounded-full font-medium"
-                style={{ background: 'rgba(34,197,94,0.15)', color: '#22c55e' }}>Strategy Preferred</span>
+                style={{ background: 'rgba(22,163,74,0.15)', color: '#16a34a' }}>Strategy Preferred</span>
             </div>
           </div>
           <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Jul 2025 · 11.50% · $4.2B ATM programme</p>
@@ -40,7 +40,7 @@ export default function MoneyFlowPage() {
             <div className="flex items-center gap-2">
               <span className="font-bold text-lg">SATA</span>
               <span className="text-xs px-2 py-0.5 rounded-full font-medium"
-                style={{ background: 'rgba(96,165,250,0.15)', color: '#60a5fa' }}>Strive Preferred</span>
+                style={{ background: 'rgba(59,130,246,0.15)', color: '#3b82f6' }}>Strive Preferred</span>
             </div>
           </div>
           <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Nov 2025 · 13.00% · $500M ATM programme</p>
@@ -64,7 +64,7 @@ export default function MoneyFlowPage() {
         <div className="space-y-5">
 
           <div className="flex gap-4">
-            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: '#22c55e' }} />
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: '#16a34a' }} />
             <div>
               <p className="font-semibold text-sm mb-1">Zone 1 — STRC Launch <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Jul 2025</span></p>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
@@ -74,7 +74,7 @@ export default function MoneyFlowPage() {
           </div>
 
           <div className="flex gap-4">
-            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: 'linear-gradient(#22c55e 47%, var(--bg-card) 47%, var(--bg-card) 53%, #60a5fa 53%)' }} />
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: 'linear-gradient(#16a34a 47%, var(--bg-card) 47%, var(--bg-card) 53%, #3b82f6 53%)' }} />
             <div>
               <p className="font-semibold text-sm mb-1">Zone 2 — Quiet ATM <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Aug – Dec 2025</span></p>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
@@ -84,7 +84,7 @@ export default function MoneyFlowPage() {
           </div>
 
           <div className="flex gap-4">
-            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: 'linear-gradient(#22c55e 47%, var(--bg-card) 47%, var(--bg-card) 53%, #60a5fa 53%)' }} />
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: 'linear-gradient(#16a34a 47%, var(--bg-card) 47%, var(--bg-card) 53%, #3b82f6 53%)' }} />
             <div>
               <p className="font-semibold text-sm mb-1">Zone 3 — Acceleration <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Jan – Feb 2026</span></p>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
@@ -94,7 +94,7 @@ export default function MoneyFlowPage() {
           </div>
 
           <div className="flex gap-4">
-            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: '#22c55e' }} />
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: '#16a34a' }} />
             <div>
               <p className="font-semibold text-sm mb-1">Zone 4 — Breakout <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Mar – Apr 2026</span></p>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
@@ -104,7 +104,7 @@ export default function MoneyFlowPage() {
           </div>
 
           <div className="flex gap-4">
-            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: 'linear-gradient(#22c55e 47%, var(--bg-card) 47%, var(--bg-card) 53%, #60a5fa 53%)' }} />
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: 'linear-gradient(#16a34a 47%, var(--bg-card) 47%, var(--bg-card) 53%, #3b82f6 53%)' }} />
             <div>
               <p className="font-semibold text-sm mb-1">Zone 5 — Record Run <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>May 2026</span></p>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>

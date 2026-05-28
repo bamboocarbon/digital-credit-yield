@@ -89,10 +89,10 @@ const SATA_WEEKS = [
   { week: 'May 25',  date: '2026-05-25', value: 79 },
 ];
 
-const STRC_GOLD = '#22c55e';
-const STRC_GOLD_DIM = 'rgba(34,197,94,0.35)';
-const SATA_BLUE = '#60a5fa';
-const SATA_BLUE_DIM = 'rgba(96,165,250,0.35)';
+const STRC_GOLD = '#16a34a';
+const STRC_GOLD_DIM = 'rgba(22,163,74,0.35)';
+const SATA_BLUE = '#3b82f6';
+const SATA_BLUE_DIM = 'rgba(59,130,246,0.35)';
 
 function fmt(v) {
   if (v >= 1000) return `$${(v / 1000).toFixed(2)}B`;
