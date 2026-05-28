@@ -15,8 +15,8 @@ const categoryColour = {
   Education: '#f87171',
   STRC: '#15803d',
   SATA: '#2563eb',
-  Comparison: '#0891b2',
-  Guide: '#8b5cf6',
+  Comparison: '#67e8f9',
+  Guide: '#c4b5fd',
 };
 
 export default function BlogPage() {
