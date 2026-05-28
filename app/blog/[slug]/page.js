@@ -25,10 +25,10 @@ function formatDate(dateStr) {
 }
 
 const categoryColour = {
-  Education: '#6366f1',
-  STRC: '#f5a623',
-  SATA: '#22c55e',
-  Comparison: '#3b82f6',
+  Education: '#9333ea',
+  STRC: '#15803d',
+  SATA: '#2563eb',
+  Comparison: '#0891b2',
   Guide: '#8b5cf6',
 };
 
