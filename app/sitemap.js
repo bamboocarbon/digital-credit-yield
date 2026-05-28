@@ -14,6 +14,7 @@ export default function sitemap() {
     { url: `${base}/sata/dividends`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/sata/projector`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/sata/differentiator`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${base}/money-flow`, lastModified: '2026-05-28', changeFrequency: 'weekly', priority: 0.7 },
     { url: `${base}/about`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${base}/contact`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${base}/privacy-policy`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
