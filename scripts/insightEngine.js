@@ -268,7 +268,8 @@ export async function generateDailyInsight() {
   const siteBase  = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');
   const pageUrl   = `${siteBase}${insight.path}`;
   const motivation = MOTIVATIONAL[dayOfYear % MOTIVATIONAL.length];
+  const motivationB = MOTIVATIONAL[(dayOfYear + Math.ceil(MOTIVATIONAL.length / 2)) % MOTIVATIONAL.length];
   const tweetText  = [header, insight.text, pageUrl, '#STRC #SATA #PassiveIncome #Dividends', motivation].join('\n');
 
-  return { quotes, nextDates, insight, header, tweetText, motivation };
+  return { quotes, nextDates, insight, header, tweetText, motivation, motivationB };
 }
