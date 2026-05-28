@@ -14,7 +14,7 @@ try {
     if (!t || t.startsWith('#')) continue;
     const i = t.indexOf('=');
     if (i === -1) continue;
-    process.env[t.slice(0, i).trim()] ??= t.slice(i + 1).trim();
+    process.env[t.slice(0, i).trim()] ??= t.slice(i + 1).trim().replace(/^["']|["']$/g, '');
   }
 } catch { /* .env.local is optional on the server */ }
 
