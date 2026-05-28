@@ -216,7 +216,7 @@ async function run() {
   if (!process.env.RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
 
   console.log('Fetching market data...');
-  const { insight, tweetText, header } = await generateDailyInsight();
+  const { insight, tweetText, header, quotes } = await generateDailyInsight();
 
   const ticker   = insight.path.startsWith('/sata') ? 'SATA' : 'STRC';
   const chartUrl = `${SITE_URL}/${ticker.toLowerCase()}/chart`;
@@ -226,8 +226,14 @@ async function run() {
 
   const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-  const cleanPrices     = cleanForApp(header);
-  const cleanInsight    = cleanForApp(insight.text);
+  const cleanInsight = cleanForApp(insight.text);
+  const pricesHtml   = ['STRC', 'SATA'].map(ticker => {
+    const { price, changePercent } = quotes[ticker];
+    const up    = changePercent >= 0;
+    const color = up ? '#22c55e' : '#ef4444';
+    const arrow = up ? '▲' : '▼';
+    return `<div>${ticker} $${price.toFixed(2)} <span style="color:${color}">${arrow} ${Math.abs(changePercent).toFixed(2)}%</span></div>`;
+  }).join('');
 
   const html = `<!DOCTYPE html>
 <html>
@@ -246,7 +252,7 @@ async function run() {
 
     <div style="background:#111827;border:1px solid #1e2a3a;border-radius:12px;padding:28px 24px;margin-bottom:16px;text-align:center;">
       <div style="font-size:16px;font-weight:700;color:#9ca3af;margin-bottom:18px;">Snapshot</div>
-      <div style="font-size:20px;font-weight:700;line-height:1.5;color:#ffffff;margin-bottom:18px;">${cleanPrices}</div>
+      <div style="font-size:20px;font-weight:700;line-height:1.8;color:#ffffff;margin-bottom:18px;">${pricesHtml}</div>
       <div style="font-size:15px;line-height:1.7;color:#9ca3af;text-align:left;">${cleanInsight}</div>
     </div>
 
