@@ -57,14 +57,6 @@ export default function MoneyFlowPage() {
         <CumulativeFlowChart />
       </div>
 
-      {/* Disclaimer */}
-      <div className="rounded-xl p-5 mb-6" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
-        <p className="text-sm font-medium mb-1" style={{ color: 'var(--accent-gold)' }}>Data Disclaimer</p>
-        <p className="text-sm leading-6" style={{ color: 'var(--text-muted)' }}>
-          Capital flow data is compiled from publicly available SEC 8-K filings and is provided for informational purposes only. Figures represent gross proceeds reported at time of filing and may not reflect subsequent adjustments. This data does not constitute financial advice, investment advice, or a solicitation to buy or sell any financial instrument. Always consult a qualified financial adviser before making investment decisions.
-        </p>
-      </div>
-
       {/* Story zones */}
       <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <h2 className="text-lg font-bold mb-5">The Story Behind the Charts</h2>
@@ -122,6 +114,14 @@ export default function MoneyFlowPage() {
           </div>
 
         </div>
+      </div>
+
+      {/* Disclaimer */}
+      <div className="rounded-xl p-5 mt-6" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
+        <p className="text-sm font-medium mb-1" style={{ color: 'var(--accent-gold)' }}>Data Disclaimer</p>
+        <p className="text-sm leading-6" style={{ color: 'var(--text-muted)' }}>
+          Capital flow data is compiled from publicly available SEC 8-K filings and is provided for informational purposes only. Figures represent gross proceeds reported at time of filing and may not reflect subsequent adjustments. This data does not constitute financial advice, investment advice, or a solicitation to buy or sell any financial instrument. Always consult a qualified financial adviser before making investment decisions.
+        </p>
       </div>
 
     </div>
