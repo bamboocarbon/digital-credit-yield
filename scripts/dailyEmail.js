@@ -232,7 +232,7 @@ async function run() {
     const up    = changePercent >= 0;
     const color = up ? '#22c55e' : '#ef4444';
     const arrow = up ? '▲' : '▼';
-    return `<div>${ticker} $${price.toFixed(2)} <span style="color:${color}">${arrow} ${Math.abs(changePercent).toFixed(2)}%</span></div>`;
+    return `<div>${ticker} $${price.toFixed(2)} <span style="color:${color}">${arrow}</span> ${Math.abs(changePercent).toFixed(2)}%</div>`;
   }).join('');
 
   const html = `<!DOCTYPE html>
