@@ -89,10 +89,10 @@ const SATA_WEEKS = [
   { week: 'May 25',  date: '2026-05-25', value: 79 },
 ];
 
-const STRC_GOLD = '#16a34a';
-const STRC_GOLD_DIM = 'rgba(22,163,74,0.35)';
-const SATA_BLUE = '#3b82f6';
-const SATA_BLUE_DIM = 'rgba(59,130,246,0.35)';
+const STRC_GOLD = '#15803d';
+const STRC_GOLD_DIM = 'rgba(21,128,61,0.35)';
+const SATA_BLUE = '#2563eb';
+const SATA_BLUE_DIM = 'rgba(37,99,235,0.35)';
 
 function fmt(v) {
   if (v >= 1000) return `$${(v / 1000).toFixed(2)}B`;
@@ -225,6 +225,7 @@ export function STRCMoneyFlowChart() {
     <div>
       <RangeButtons range={range} setRange={setRange} activeColor={STRC_GOLD} />
       <div style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
+      <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering</p>
     </div>
   );
 }
@@ -250,6 +251,7 @@ export function SATAMoneyFlowChart() {
     <div>
       <RangeButtons range={range} setRange={setRange} activeColor={SATA_BLUE} />
       <div style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
+      <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering</p>
     </div>
   );
 }

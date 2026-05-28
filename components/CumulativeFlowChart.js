@@ -112,8 +112,8 @@ export default function CumulativeFlowChart() {
       <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
         <div className="flex gap-5 text-xs" style={{ color: 'var(--text-muted)' }}>
           {[
-            { color: '#16a34a', label: 'STRC', sub: 'Strategy · IPO Jul 2025' },
-            { color: '#3b82f6', label: 'SATA', sub: 'Strive · IPO Nov 2025' },
+            { color: '#15803d', label: 'STRC', sub: 'Strategy · IPO Jul 2025' },
+            { color: '#2563eb', label: 'SATA', sub: 'Strive · IPO Nov 2025' },
           ].map(i => (
             <div key={i.label} className="flex items-center gap-2">
               <div style={{ width: 24, height: 2, background: i.color, borderRadius: 2 }} />
@@ -165,8 +165,8 @@ export default function CumulativeFlowChart() {
               <XAxis dataKey="period" tick={tick} angle={-45} textAnchor="end" interval={0} height={65} />
               <YAxis tickFormatter={fmtLinear} tick={tick} width={54} />
               <Tooltip content={<TooltipLinear />} />
-              <Line type="monotone" dataKey="strc" name="STRC" stroke="#16a34a" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
-              <Line type="monotone" dataKey="sata" name="SATA" stroke="#3b82f6" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
+              <Line type="monotone" dataKey="strc" name="STRC" stroke="#15803d" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
+              <Line type="monotone" dataKey="sata" name="SATA" stroke="#2563eb" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -187,8 +187,8 @@ export default function CumulativeFlowChart() {
               <XAxis dataKey="period" tick={tick} angle={-45} textAnchor="end" interval={0} height={65} />
               <YAxis tickFormatter={fmtLog} tick={tick} width={54} domain={[2, 4.2]} ticks={[2, 2.5, 3, 3.5, 4]} />
               <Tooltip content={<TooltipLog />} />
-              <Line type="monotone" dataKey="strc" name="STRC" stroke="#16a34a" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
-              <Line type="monotone" dataKey="sata" name="SATA" stroke="#3b82f6" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
+              <Line type="monotone" dataKey="strc" name="STRC" stroke="#15803d" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
+              <Line type="monotone" dataKey="sata" name="SATA" stroke="#2563eb" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
