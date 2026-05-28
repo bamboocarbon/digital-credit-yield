@@ -1,0 +1,121 @@
+import { STRCMoneyFlowChart, SATAMoneyFlowChart } from '@/components/MoneyFlowChart';
+import CumulativeFlowChart from '@/components/CumulativeFlowChart';
+import MoneyFlowStats from '@/components/MoneyFlowStats';
+
+export const metadata = {
+  title: 'Money Flow — Digital Credit Yield',
+  description: 'Weekly capital raised by STRC and SATA from SEC 8-K filings since IPO — linear and log scale comparison.',
+};
+
+export default function MoneyFlowPage() {
+  return (
+    <div className="max-w-6xl mx-auto px-4 py-10">
+
+      <div className="text-center mb-10">
+        <h1 className="text-4xl sm:text-5xl font-bold mb-3 tracking-tight">Money Flow</h1>
+        <p className="text-lg max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
+          Weekly capital raised by STRC and SATA, compiled from SEC 8-K filings since each IPO.
+        </p>
+      </div>
+
+      {/* Totals */}
+      <MoneyFlowStats />
+
+      {/* Side-by-side weekly bars */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-lg">STRC</span>
+              <span className="text-xs px-2 py-0.5 rounded-full font-medium"
+                style={{ background: 'rgba(34,197,94,0.15)', color: '#22c55e' }}>Strategy Preferred</span>
+            </div>
+          </div>
+          <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Jul 2025 · 11.50% · $4.2B ATM programme</p>
+          <STRCMoneyFlowChart />
+        </div>
+
+        <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-lg">SATA</span>
+              <span className="text-xs px-2 py-0.5 rounded-full font-medium"
+                style={{ background: 'rgba(96,165,250,0.15)', color: '#60a5fa' }}>Strive Preferred</span>
+            </div>
+          </div>
+          <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Nov 2025 · 13.00% · $500M ATM programme</p>
+          <SATAMoneyFlowChart />
+        </div>
+      </div>
+
+      {/* Cumulative line chart */}
+      <div className="rounded-2xl p-6 mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+        <h2 className="text-lg font-bold mb-1">Cumulative Capital Raised</h2>
+        <p className="text-xs mb-5" style={{ color: 'var(--text-muted)' }}>
+          Linear shows STRC&apos;s dominance. Switch to Log to compare growth trajectories side by side.
+        </p>
+        <CumulativeFlowChart />
+      </div>
+
+      {/* Story zones */}
+      <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+        <h2 className="text-lg font-bold mb-5">The Story Behind the Charts</h2>
+
+        <div className="space-y-5">
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: '#22c55e' }} />
+            <div>
+              <p className="font-semibold text-sm mb-1">Zone 1 — STRC Launch <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Jul 2025</span></p>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                Strategy priced its STRC IPO at $90 per share on July 24, 2025, closing with gross proceeds of $2.52B — the largest US preferred stock IPO since 2009. Proceeds were immediately deployed into 21,021 BTC at an average of ~$117,256, bringing Strategy&apos;s total holdings to 628,791 BTC. A $4.2B at-the-market programme was announced days later on July 31, setting the stage for a sustained weekly capital machine.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: 'linear-gradient(#22c55e 50%, #60a5fa 50%)' }} />
+            <div>
+              <p className="font-semibold text-sm mb-1">Zone 2 — Quiet ATM <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Aug – Dec 2025</span></p>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                The ATM programme ran at a measured pace through the second half of 2025 — typically $5–27M per week. Weekly raises were small relative to the IPO but consistent, totalling ~$235M over five months. This period established the mechanics of the programme and allowed the market to absorb the new instrument. SATA entered the picture in November with its own $160M IPO, immediately acquiring 1,567 BTC.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: 'linear-gradient(#22c55e 50%, #60a5fa 50%)' }} />
+            <div>
+              <p className="font-semibold text-sm mb-1">Zone 3 — Acceleration <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Jan – Feb 2026</span></p>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                January 2026 marked a clear step-change. STRC weekly ATM raises jumped from ~$10M to $100–250M as institutional appetite grew and the programme gained credibility. Strategy acquired 41,002 BTC in January alone. SATA simultaneously closed a $225M follow-on on January 28 — oversubscribed with $600M+ in demand — signalling that the preferred equity Bitcoin playbook was being validated by the market. Both instruments were now in full capital-raising mode.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: '#22c55e' }} />
+            <div>
+              <p className="font-semibold text-sm mb-1">Zone 4 — Breakout <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Mar – Apr 2026</span></p>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                March 9 was the inflection point. STRC raised $1.18B in a single week — funding the purchase of 22,337 BTC at an average of $70,194. A month later, April 6 delivered another $1B week. These weren&apos;t anomalies; they reflected a structural shift in how institutional capital was being channelled into Bitcoin exposure via preferred equity. The cumulative line chart bends sharply upward from this point — the machine had found its stride.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: 'linear-gradient(#22c55e 50%, #60a5fa 50%)' }} />
+            <div>
+              <p className="font-semibold text-sm mb-1">Zone 5 — Record Run <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>May 2026</span></p>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                May 25 saw STRC raise $2B in a single week — its largest weekly total. By this point STRC had raised $10.9B cumulatively, with 2026 year-to-date proceeds exceeding $5.58B through May 3 alone. SATA mirrored the momentum on a smaller scale: the week of May 25 produced a record 790 BTC purchase, more than doubling its previous weekly record of 371 BTC set earlier in the month. Both programmes are accelerating simultaneously, compressing the gap visible on the log scale.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  );
+}

@@ -41,6 +41,21 @@ export default function HomePage() {
         <h1 className="text-4xl sm:text-5xl font-bold mb-4 tracking-tight">
           Digital Credit Yield
         </h1>
+        <div style={{
+          display: 'inline-block',
+          background: '#f5a623',
+          color: '#060809',
+          fontSize: '14px',
+          fontWeight: '700',
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
+          borderRadius: '8px',
+          padding: '8px 16px',
+          marginBottom: '20px',
+          fontFamily: 'Arial, Helvetica, sans-serif',
+        }}>
+          Tracking STRC and SATA for growth
+        </div>
         <p className="text-lg sm:text-xl max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
           Track, analyse and project the growth of next-generation income assets
         </p>
