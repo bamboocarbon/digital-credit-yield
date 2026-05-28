@@ -5,8 +5,20 @@
 import fs from 'fs';
 import sharp from 'sharp';
 import { Resend } from 'resend';
+import { put, list } from '@vercel/blob';
 import { generateDailyInsight } from './insightEngine.js';
 import { NOTO_400 } from './fontData.js';
+
+function cleanForApp(text) {
+  return text
+    .replace(/[\u{1F300}-\u{1FBFF}]/gu, '')
+    .replace(/[\u{2600}-\u{26FF}]/gu, '')
+    .replace(/[\u{2700}-\u{27BF}]/gu, '')
+    .replace(/#\w+/g, '')
+    .replace(/https?:\/\/\S+/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
 const FONTS_DIR = '/tmp/dcy-fonts';
 
@@ -204,7 +216,7 @@ async function run() {
   if (!process.env.RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
 
   console.log('Fetching market data...');
-  const { insight, tweetText } = await generateDailyInsight();
+  const { insight, tweetText, header } = await generateDailyInsight();
 
   const ticker   = insight.path.startsWith('/sata') ? 'SATA' : 'STRC';
   const chartUrl = `${SITE_URL}/${ticker.toLowerCase()}/chart`;
@@ -250,6 +262,25 @@ async function run() {
 
   if (error) throw new Error(`Resend error: ${JSON.stringify(error)}`);
   console.log(`Email sent to ${RECIPIENT}`);
+
+  // Save daily card to Blob for DCY app
+  const updatedAt = new Date().toISOString();
+  const cardPayload = JSON.stringify({
+    box1: 'Snapshot',
+    box2: cleanForApp(header),
+    box3: cleanForApp(insight.text),
+    hasChart: !!chartImg,
+    updatedAt,
+  });
+  await put('dcy-daily-card.json', cardPayload, {
+    access: 'private', contentType: 'application/json', allowOverwrite: true,
+  });
+  if (chartImg) {
+    await put('dcy-daily-chart.png', chartImg, {
+      access: 'private', contentType: 'image/png', allowOverwrite: true,
+    });
+  }
+  console.log('DCY card saved to Blob');
 }
 
 export { run };
