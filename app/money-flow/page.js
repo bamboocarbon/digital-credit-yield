@@ -74,7 +74,7 @@ export default function MoneyFlowPage() {
           </div>
 
           <div className="flex gap-4">
-            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: 'linear-gradient(#22c55e 50%, #60a5fa 50%)' }} />
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: 'linear-gradient(#22c55e 44%, var(--bg-card) 44%, var(--bg-card) 56%, #60a5fa 56%)' }} />
             <div>
               <p className="font-semibold text-sm mb-1">Zone 2 — Quiet ATM <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Aug – Dec 2025</span></p>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
@@ -84,7 +84,7 @@ export default function MoneyFlowPage() {
           </div>
 
           <div className="flex gap-4">
-            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: 'linear-gradient(#22c55e 50%, #60a5fa 50%)' }} />
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: 'linear-gradient(#22c55e 44%, var(--bg-card) 44%, var(--bg-card) 56%, #60a5fa 56%)' }} />
             <div>
               <p className="font-semibold text-sm mb-1">Zone 3 — Acceleration <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Jan – Feb 2026</span></p>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
@@ -104,7 +104,7 @@ export default function MoneyFlowPage() {
           </div>
 
           <div className="flex gap-4">
-            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: 'linear-gradient(#22c55e 50%, #60a5fa 50%)' }} />
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: 'linear-gradient(#22c55e 44%, var(--bg-card) 44%, var(--bg-card) 56%, #60a5fa 56%)' }} />
             <div>
               <p className="font-semibold text-sm mb-1">Zone 5 — Record Run <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>May 2026</span></p>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
