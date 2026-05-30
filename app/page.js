@@ -13,7 +13,7 @@ export const metadata = {
     images: [{ url: '/api/og?title=STRC+%26+SATA+Tracker&sub=Up+to+13%25+Annual+Dividend' }],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'STRC & SATA Preferred Stock Tracker — Up to 13% Annual Dividend',
     description: 'Track STRC and SATA — two high-yield preferred stocks paying 11.50%–13.00% annually.',
   },

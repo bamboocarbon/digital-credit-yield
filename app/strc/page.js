@@ -12,7 +12,7 @@ export const metadata = {
     images: [{ url: '/api/og?title=STRC+Stock&sub=Strategy+Preferred+Stock&rate=11.50%25' }],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: "STRC Stock — Strategy Preferred Stock | 11.50% Annual Dividend",
     description: "Strategy's preferred stock paying 11.50% annually in monthly cash dividends.",
   },

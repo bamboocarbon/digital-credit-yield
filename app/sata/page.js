@@ -12,7 +12,7 @@ export const metadata = {
     images: [{ url: '/api/og?title=SATA+Stock&sub=Strive+Preferred+Stock&rate=13.00%25' }],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: "SATA Stock — Strive Preferred Stock | 13% Monthly Dividend",
     description: "Strive's preferred stock paying 13.00% annually in monthly cash dividends.",
   },

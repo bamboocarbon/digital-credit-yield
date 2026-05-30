@@ -14,7 +14,7 @@ export const metadata = {
     type: 'website',
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Digital Credit Yield — STRC & SATA Preferred Stock Tracker',
     description: 'Track STRC and SATA high-yield preferred stocks. Live prices, dividend history, and income projectors.',
   },
