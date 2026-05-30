@@ -246,29 +246,31 @@ export async function generateDailyInsight() {
   const pool      = [...priority, ...normal];
   const insight   = pool[dayOfYear % pool.length];
 
-  const MOTIVATIONAL = [
-    'Stay invested. Compound income builds real wealth.',
-    'Monthly income. Reinvest. Repeat. It works.',
-    'Time in the market beats timing the market.',
-    'Every dividend reinvested is future income.',
-    'Patience and income — a powerful combination.',
-    'Your money is working for you right now.',
-    'Consistent income compounds into lasting wealth.',
-    'Another month, another dividend. Repeat.',
-    'Income today becomes wealth tomorrow.',
-    'The strategy is simple. Stick to it.',
-    'High yield, monthly income, long-term growth.',
-    'Stay the course. The income keeps arriving.',
-    'Small steps and steady income win the race.',
-    'The market moves. Your income strategy doesn\'t.',
-    'Reinvest every dividend. Watch it compound.',
-  ];
-
   const header    = buildHeader(quotes);
   const siteBase  = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');
   const pageUrl   = `${siteBase}${insight.path}`;
-  const motivation = MOTIVATIONAL[dayOfYear % MOTIVATIONAL.length];
-  const motivationB = MOTIVATIONAL[(dayOfYear + Math.ceil(MOTIVATIONAL.length / 2)) % MOTIVATIONAL.length];
+
+  let motivation = 'Stay invested. Compound income builds real wealth.';
+  let motivationB = 'Your money is working for you right now.';
+
+  if (process.env.ANTHROPIC_API_KEY) {
+    try {
+      const { default: Anthropic } = await import('@anthropic-ai/sdk');
+      const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+      const msg = await client.messages.create({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 120,
+        messages: [{
+          role: 'user',
+          content: 'Give me exactly 2 short motivational thoughts for a dividend income investor. Each should be one or two sentences, fresh and specific — avoid clichés like "stay the course" or "time in the market". Focus on the psychology, mindset, or quiet satisfaction of building passive income. Return only the two thoughts, separated by a pipe character |, with no labels or extra text.',
+        }],
+      });
+      const parts = msg.content[0].text.split('|').map(s => s.trim()).filter(Boolean);
+      if (parts[0]) motivation = parts[0];
+      if (parts[1]) motivationB = parts[1];
+    } catch { /* fall back to defaults */ }
+  }
+
   const tweetText  = [header, insight.text, pageUrl, '#STRC #SATA #PassiveIncome #Dividends', motivation].join('\n');
 
   return { quotes, nextDates, insight, header, tweetText, motivation, motivationB };
