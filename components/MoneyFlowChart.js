@@ -224,7 +224,7 @@ export function STRCMoneyFlowChart() {
   return (
     <div>
       <RangeButtons range={range} setRange={setRange} activeColor={STRC_GOLD} />
-      <div style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
+      <div role="img" aria-label="STRC weekly capital raised bar chart" style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
       <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering</p>
     </div>
   );
@@ -250,7 +250,7 @@ export function SATAMoneyFlowChart() {
   return (
     <div>
       <RangeButtons range={range} setRange={setRange} activeColor={SATA_BLUE} />
-      <div style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
+      <div role="img" aria-label="SATA weekly capital raised bar chart" style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
       <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering</p>
     </div>
   );
@@ -345,7 +345,7 @@ export function CombinedMoneyFlowChart() {
           ))}
         </div>
       </div>
-      <div style={{ height: 140, position: 'relative' }}><canvas ref={canvasRef} /></div>
+      <div role="img" aria-label="STRC and SATA combined weekly capital raised bar chart" style={{ height: 140, position: 'relative' }}><canvas ref={canvasRef} /></div>
     </div>
   );
 }

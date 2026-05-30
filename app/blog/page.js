@@ -5,6 +5,12 @@ export const metadata = {
   alternates: { canonical: '/blog' },
   title: 'Blog & Insights — Digital Credit Yield',
   description: 'Educational articles on preferred equity, high-yield income assets, STRC, SATA, dividend investing, and the Bitcoin treasury model.',
+  openGraph: {
+    title: 'Blog & Insights — Digital Credit Yield',
+    description: 'Educational articles on STRC, SATA, preferred equity, dividend investing strategies, and the Bitcoin treasury model.',
+    type: 'website',
+    url: 'https://digitalcredityield.com/blog',
+  },
 };
 
 function formatDate(dateStr) {

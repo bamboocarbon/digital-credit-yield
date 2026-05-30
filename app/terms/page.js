@@ -1,6 +1,7 @@
 export const metadata = {
   alternates: { canonical: '/terms' },
   title: 'Terms & Conditions — Digital Credit Yield',
+  description: 'Terms and conditions for using Digital Credit Yield — an independent tracker for STRC and SATA preferred stocks. Not financial advice.',
 };
 
 function Section({ id, title, children }) {

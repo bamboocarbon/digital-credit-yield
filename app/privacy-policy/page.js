@@ -1,6 +1,7 @@
 export const metadata = {
   alternates: { canonical: '/privacy-policy' },
   title: 'Privacy Policy — Digital Credit Yield',
+  description: 'Digital Credit Yield privacy policy — how we collect, use, and protect your data when you use our STRC and SATA dividend tracking tools.',
 };
 
 function Section({ title, children }) {

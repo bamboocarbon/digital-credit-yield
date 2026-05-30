@@ -17,6 +17,18 @@ export async function generateMetadata({ params }) {
     title: article.title,
     description: desc,
     alternates: { canonical: `/blog/${slug}` },
+    openGraph: {
+      title: article.title,
+      description: desc,
+      type: 'article',
+      url: `https://digitalcredityield.com/blog/${slug}`,
+      publishedTime: article.date,
+    },
+    twitter: {
+      card: 'summary',
+      title: article.title,
+      description: desc,
+    },
   };
 }
 

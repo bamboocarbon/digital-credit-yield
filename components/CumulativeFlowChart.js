@@ -159,6 +159,7 @@ export default function CumulativeFlowChart() {
           <p style={{ margin: '0 0 16px 44px', fontSize: 11, color: '#4b5563', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
             Linear Scale · Absolute Size
           </p>
+          <div role="img" aria-label="STRC and SATA cumulative capital raised — linear scale line chart">
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={displayData} margin={{ top: 4, right: 20, left: 8, bottom: 55 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
@@ -169,6 +170,7 @@ export default function CumulativeFlowChart() {
               <Line type="monotone" dataKey="sata" name="SATA" stroke="#2563eb" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
             </LineChart>
           </ResponsiveContainer>
+          </div>
         </div>
       )}
 
@@ -178,6 +180,7 @@ export default function CumulativeFlowChart() {
           <p style={{ margin: '0 0 16px 44px', fontSize: 11, color: '#4b5563', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
             Log Scale · Growth Trajectory
           </p>
+          <div role="img" aria-label="STRC and SATA cumulative capital raised — log scale line chart">
           <ResponsiveContainer width="100%" height={260}>
             <LineChart
               data={displayData.map(d => ({ ...d, strc: d.strc ? Math.log10(d.strc) : null, sata: d.sata ? Math.log10(d.sata) : null }))}
@@ -191,6 +194,7 @@ export default function CumulativeFlowChart() {
               <Line type="monotone" dataKey="sata" name="SATA" stroke="#2563eb" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
             </LineChart>
           </ResponsiveContainer>
+          </div>
         </div>
       )}
 

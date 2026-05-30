@@ -3,8 +3,15 @@ import CumulativeFlowChart from '@/components/CumulativeFlowChart';
 import MoneyFlowStats from '@/components/MoneyFlowStats';
 
 export const metadata = {
-  title: 'Money Flow — Digital Credit Yield',
-  description: 'Weekly capital raised by STRC and SATA from SEC 8-K filings since IPO — linear and log scale comparison.',
+  alternates: { canonical: '/money-flow' },
+  title: 'Money Flow — STRC & SATA Capital Raised Since IPO',
+  description: 'Weekly capital raised by STRC and SATA tracked from SEC 8-K filings since each IPO. Bar charts and cumulative totals showing investor demand over time.',
+  openGraph: {
+    title: 'Money Flow — STRC & SATA Capital Raised Since IPO',
+    description: 'Weekly capital raised by STRC and SATA from SEC 8-K filings since IPO. See cumulative totals and weekly bar charts.',
+    type: 'website',
+    url: 'https://digitalcredityield.com/money-flow',
+  },
 };
 
 export default function MoneyFlowPage() {
