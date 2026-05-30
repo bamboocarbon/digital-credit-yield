@@ -11,20 +11,11 @@ const BORDER = '#1e2a3a';
 let fontRegular = null;
 let fontBold    = null;
 
-async function loadTTF(family, weight) {
-  // No modern UA → Google Fonts returns TTF (truetype), which satori supports
-  const css = await fetch(`https://fonts.googleapis.com/css2?family=${family}:wght@${weight}`)
-    .then(r => r.text());
-  const url = css.match(/src: url\(([^)]+)\)/)?.[1];
-  if (!url) throw new Error('Font URL not found');
-  return fetch(url).then(r => r.arrayBuffer());
-}
-
-async function getFonts() {
+async function getFonts(origin) {
   if (fontRegular && fontBold) return [fontRegular, fontBold];
   const [r, b] = await Promise.all([
-    loadTTF('Inter', 400),
-    loadTTF('Inter', 700),
+    fetch(`${origin}/fonts/inter-400.ttf`).then(res => res.arrayBuffer()),
+    fetch(`${origin}/fonts/inter-700.ttf`).then(res => res.arrayBuffer()),
   ]);
   fontRegular = r;
   fontBold    = b;
@@ -38,9 +29,10 @@ export async function GET(request) {
   const rate  = searchParams.get('rate')  || '';
   const tag   = searchParams.get('tag')   || '';
 
+  const origin = new URL(request.url).origin;
   let fonts = [];
   try {
-    const [regular, bold] = await getFonts();
+    const [regular, bold] = await getFonts(origin);
     fonts = [
       { name: 'Inter', data: regular, weight: 400 },
       { name: 'Inter', data: bold,    weight: 700 },
