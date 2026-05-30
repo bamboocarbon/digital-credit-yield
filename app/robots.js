@@ -2,7 +2,7 @@ export default function robots() {
   return {
     rules: {
       userAgent: '*',
-      allow: '/',
+      allow: ['/api/og'],
       disallow: '/api/',
     },
     sitemap: 'https://www.digitalcredityield.com/sitemap.xml',
