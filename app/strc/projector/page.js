@@ -11,6 +11,7 @@ export const metadata = {
     description: "Model your STRC income and compare Strategy's 11.50% preferred stock against US Treasuries and bank savings.",
     type: 'website',
     url: 'https://digitalcredityield.com/strc/projector',
+    images: [{ url: '/api/og?title=STRC+Income+Calculator&sub=Model+your+dividend+income&tag=Income+Tool' }],
   },
 };
 

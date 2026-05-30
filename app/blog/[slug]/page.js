@@ -23,6 +23,7 @@ export async function generateMetadata({ params }) {
       type: 'article',
       url: `https://digitalcredityield.com/blog/${slug}`,
       publishedTime: article.date,
+      images: [{ url: `/api/og?title=${encodeURIComponent(article.title)}&sub=${encodeURIComponent(article.category)}&tag=Blog` }],
     },
     twitter: {
       card: 'summary',

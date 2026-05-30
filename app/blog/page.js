@@ -10,6 +10,7 @@ export const metadata = {
     description: 'Educational articles on STRC, SATA, preferred equity, dividend investing strategies, and the Bitcoin treasury model.',
     type: 'website',
     url: 'https://digitalcredityield.com/blog',
+    images: [{ url: '/api/og?title=Blog+%26+Insights&sub=Preferred+equity+education&tag=Blog' }],
   },
 };
 

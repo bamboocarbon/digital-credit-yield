@@ -9,6 +9,7 @@ export const metadata = {
     description: "Strategy's preferred stock paying 11.50% annually in monthly cash dividends. Track live price, yield, and dividend history.",
     type: 'website',
     url: 'https://digitalcredityield.com/strc',
+    images: [{ url: '/api/og?title=STRC+Stock&sub=Strategy+Preferred+Stock&rate=11.50%25' }],
   },
   twitter: {
     card: 'summary',

@@ -11,6 +11,7 @@ export const metadata = {
     description: "Compare STRC's 11.50% annual dividend against US Treasuries and bank savings.",
     type: 'website',
     url: 'https://digitalcredityield.com/strc/differentiator',
+    images: [{ url: '/api/og?title=STRC+vs+Treasuries&sub=Compare+income+vs+Treasuries&tag=Comparison' }],
   },
 };
 

@@ -9,6 +9,7 @@ export const metadata = {
     description: "Live SATA price chart. Track Strive's preferred stock relative to $100 par and see the effective yield.",
     type: 'website',
     url: 'https://digitalcredityield.com/sata/chart',
+    images: [{ url: '/api/og?title=SATA+Price+Chart&sub=Strive+Preferred+Stock&tag=Live+Chart' }],
   },
 };
 

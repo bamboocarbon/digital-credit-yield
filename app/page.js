@@ -10,6 +10,7 @@ export const metadata = {
     description: 'Track STRC and SATA — two high-yield preferred stocks paying 11.50%–13.00% annually. Live prices, dividend history, and income projectors.',
     type: 'website',
     url: 'https://digitalcredityield.com',
+    images: [{ url: '/api/og?title=STRC+%26+SATA+Tracker&sub=Up+to+13%25+Annual+Dividend' }],
   },
   twitter: {
     card: 'summary',
