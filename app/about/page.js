@@ -2,6 +2,12 @@ export const metadata = {
   alternates: { canonical: '/about' },
   title: 'About — Digital Credit Yield',
   description: 'The story behind Digital Credit Yield — from aircraft engineering to full-time trading and building tools for retail investors in STRC and SATA.',
+  openGraph: {
+    title: 'About — Digital Credit Yield',
+    description: 'From aircraft engineering to full-time trading — the story behind Digital Credit Yield and its STRC and SATA tracking tools.',
+    type: 'website',
+    url: 'https://digitalcredityield.com/about',
+  },
 };
 
 export default function AboutPage() {
