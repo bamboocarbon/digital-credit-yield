@@ -23,8 +23,8 @@ async function loadTTF(family, weight) {
 async function getFonts() {
   if (fontRegular && fontBold) return [fontRegular, fontBold];
   const [r, b] = await Promise.all([
-    loadTTF('DM+Sans', 400),
-    loadTTF('DM+Sans', 700),
+    loadTTF('Inter', 400),
+    loadTTF('Inter', 700),
   ]);
   fontRegular = r;
   fontBold    = b;
@@ -42,8 +42,8 @@ export async function GET(request) {
   try {
     const [regular, bold] = await getFonts();
     fonts = [
-      { name: 'DM Sans', data: regular, weight: 400 },
-      { name: 'DM Sans', data: bold,    weight: 700 },
+      { name: 'Inter', data: regular, weight: 400 },
+      { name: 'Inter', data: bold,    weight: 700 },
     ];
   } catch { /* render with fallback font */ }
 
@@ -53,7 +53,7 @@ export async function GET(request) {
         width: '100%', height: '100%',
         display: 'flex', flexDirection: 'column',
         background: NAVY, padding: '56px 64px',
-        fontFamily: fonts.length ? 'DM Sans' : 'sans-serif',
+        fontFamily: fonts.length ? 'Inter' : 'sans-serif',
       }}>
 
         {/* Top bar — branding */}
