@@ -52,8 +52,33 @@ export default async function ArticlePage({ params }) {
 
   const { Content } = article;
 
+  const desc = article.excerpt.length > 155
+    ? article.excerpt.slice(0, 152).replace(/\s\S*$/, '') + '...'
+    : article.excerpt;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    description: desc,
+    datePublished: article.date,
+    url: `https://www.digitalcredityield.com/blog/${slug}`,
+    author: {
+      '@type': 'Person',
+      name: 'Robin Gillingham',
+      url: 'https://www.digitalcredityield.com/about',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Digital Credit Yield',
+      url: 'https://www.digitalcredityield.com',
+    },
+  };
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
       <Link
         href="/blog"
         className="inline-flex items-center gap-1 text-sm mb-8 transition-opacity hover:opacity-75"
@@ -78,6 +103,8 @@ export default async function ArticlePage({ params }) {
         <span>{formatDate(article.date)}</span>
         <span style={{ color: 'var(--border)' }}>·</span>
         <span>{article.readTime}</span>
+        <span style={{ color: 'var(--border)' }}>·</span>
+        <span>By <Link href="/about" className="transition-opacity hover:opacity-75" style={{ color: 'var(--accent-gold)' }}>Robin Gillingham</Link></span>
       </div>
 
       <div className="article-prose">
