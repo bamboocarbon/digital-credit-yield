@@ -25,11 +25,11 @@ function formatDate(dateStr) {
 }
 
 const categoryColour = {
-  Education: '#6366f1',
-  STRC: '#f5a623',
-  SATA: '#22c55e',
-  Comparison: '#3b82f6',
-  Guide: '#8b5cf6',
+  Education: '#f87171',
+  STRC: '#15803d',
+  SATA: '#2563eb',
+  Comparison: '#67e8f9',
+  Guide: '#c4b5fd',
 };
 
 export default async function ArticlePage({ params }) {

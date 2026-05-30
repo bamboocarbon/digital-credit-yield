@@ -37,6 +37,7 @@ export default function PrivacyPolicyPage() {
           <li>Serve relevant advertisements via Google AdSense (only with your consent)</li>
           <li>Preserve your calculator settings (Growth Projector, Differentiator, and Dividend History income calculator inputs) between visits for your convenience</li>
           <li>Build and maintain a long-term dividend payment history for STRC and SATA — when you visit a Dividend History page, our server may fetch the latest public dividend data from Yahoo Finance and store it on our server to grow this record over time. This process involves no personal data whatsoever; only publicly available market information is stored.</li>
+          <li>Display weekly capital flow data for STRC and SATA on the Money Flow page — this data is compiled from publicly available SEC 8-K filings and stored on our server. No personal data is involved; only publicly available regulatory filings are used.</li>
         </ul>
         <p>We do not sell, rent, or share your personal data with third parties for marketing purposes.</p>
       </Section>
@@ -49,6 +50,7 @@ export default function PrivacyPolicyPage() {
           <li><strong>Google Fonts</strong> — web fonts (DM Sans and Space Mono) loaded from Google's CDN. Google may log your IP address as part of the font request. <a href="https://policies.google.com/privacy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Google Privacy Policy</a></li>
           <li><strong>TradingView (lightweight-charts)</strong> — open-source charting library used to render price and yield charts. Runs entirely client-side with no external requests to TradingView servers and no user data is collected or transmitted.</li>
           <li><strong>Yahoo Finance</strong> — live price and dividend data, fetched server-side (no user data shared).</li>
+          <li><strong>Vercel</strong> — hosting platform and Blob storage. Our server stores non-personal market data (capital flow records, daily card data) in Vercel's Blob storage service. No personal data is stored in Blob. <a href="https://vercel.com/legal/privacy-policy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Vercel Privacy Policy</a></li>
         </ul>
       </Section>
 

@@ -8,6 +8,7 @@ const links = [
   { label: 'Home', href: '/' },
   { label: 'STRC', href: '/strc' },
   { label: 'SATA', href: '/sata' },
+  { label: 'Money Flow', href: '/money-flow' },
   { label: 'Blog', href: '/blog' },
   { label: 'About Me', href: '/about' },
   { label: 'Contact', href: '/contact' },

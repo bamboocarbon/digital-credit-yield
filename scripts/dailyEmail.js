@@ -5,8 +5,20 @@
 import fs from 'fs';
 import sharp from 'sharp';
 import { Resend } from 'resend';
+import { put, list } from '@vercel/blob';
 import { generateDailyInsight } from './insightEngine.js';
 import { NOTO_400 } from './fontData.js';
+
+function cleanForApp(text) {
+  return text
+    .replace(/[\u{1F300}-\u{1FBFF}]/gu, '')
+    .replace(/[\u{2600}-\u{26FF}]/gu, '')
+    .replace(/[\u{2700}-\u{27BF}]/gu, '')
+    .replace(/#\w+/g, '')
+    .replace(/https?:\/\/\S+/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
 const FONTS_DIR = '/tmp/dcy-fonts';
 
@@ -204,7 +216,7 @@ async function run() {
   if (!process.env.RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
 
   console.log('Fetching market data...');
-  const { insight, tweetText } = await generateDailyInsight();
+  const { insight, tweetText, header, quotes } = await generateDailyInsight();
 
   const ticker   = insight.path.startsWith('/sata') ? 'SATA' : 'STRC';
   const chartUrl = `${SITE_URL}/${ticker.toLowerCase()}/chart`;
@@ -214,42 +226,103 @@ async function run() {
 
   const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-  const chartSection = chartImg
-    ? `<img src="data:image/png;base64,${chartImg.toString('base64')}" alt="chart" style="width:100%;border-radius:8px;display:block;">`
-    : `<div style="font-size:13px;color:#888;">Chart unavailable — <a href="${chartUrl}" style="color:#f5a623;">view on site</a></div>`;
+  const cleanInsight = cleanForApp(insight.text);
+  const pricesHtml   = ['STRC', 'SATA'].map(ticker => {
+    const { price, changePercent } = quotes[ticker];
+    const up    = changePercent >= 0;
+    const color = up ? '#22c55e' : '#ef4444';
+    const arrow = up ? '▲' : '▼';
+    return `<div>${ticker} $${price.toFixed(2)} <span style="color:${color}">${arrow}</span> ${Math.abs(changePercent).toFixed(2)}%</div>`;
+  }).join('');
 
   const html = `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#0a0f1e;font-family:Arial,Helvetica,sans-serif;color:#fff;">
-  <div style="max-width:640px;margin:0 auto;padding:24px 16px 16px;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;">
+  <div style="max-width:600px;margin:0 auto;padding:28px 20px;">
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
       <div style="width:10px;height:10px;background:#f5a623;border-radius:2px;flex-shrink:0;"></div>
-      <span style="font-size:16px;color:#888;">Digital Credit Yield &middot; ${today}</span>
+      <span style="font-size:15px;color:#6b7280;">Digital Credit Yield &middot; ${today}</span>
     </div>
-    <div style="background:#111827;border:1px solid #1e2a3a;border-radius:12px;padding:20px;margin-bottom:16px;">
-      <div style="font-size:15px;line-height:1.6;">${tweetToHtml(tweetText.split('\n').slice(0, -1).join('\n'))}</div>
+
+    <div style="text-align:center;margin-bottom:20px;">
+      <span style="display:inline-block;color:#f5a623;border:1px solid #f5a623;border-radius:12px;padding:10px 24px;font-size:18px;font-weight:700;">Tracking STRC and SATA for growth</span>
     </div>
-    <div style="border-radius:12px;overflow:hidden;">${chartSection}</div>
+
+    <div style="background:#111827;border:1px solid #1e2a3a;border-radius:12px;padding:28px 24px;margin-bottom:16px;text-align:center;">
+      <div style="font-size:16px;font-weight:700;color:#9ca3af;margin-bottom:18px;">Snapshot</div>
+      <div style="font-size:20px;font-weight:700;line-height:1.8;color:#ffffff;margin-bottom:18px;">${pricesHtml}</div>
+      <div style="font-size:15px;line-height:1.7;color:#9ca3af;text-align:left;">${cleanInsight}</div>
+    </div>
+
+    <div style="text-align:center;margin-top:20px;">
+      <a href="https://digitalcredityield.com" style="font-size:13px;color:#ffffff;text-decoration:none;">digitalcredityield.com</a>
+    </div>
+
   </div>
 </body>
 </html>`;
 
-  const attachments = chartImg
-    ? [{ filename: `${ticker}-chart.png`, content: chartImg.toString('base64') }]
-    : [];
-
   const resend = new Resend(process.env.RESEND_API_KEY);
+
+  // Email 1 — text only
   const { error } = await resend.emails.send({
     from: 'Digital Credit Yield <contact@digitalcredityield.com>',
     to: RECIPIENT,
-    subject: `📊 Daily Tweet Preview — ${today}`,
+    subject: `Snapshot — ${today}`,
     html,
-    attachments,
   });
+  if (error) throw new Error(`Resend error (text): ${JSON.stringify(error)}`);
+  console.log(`Text email sent to ${RECIPIENT}`);
 
-  if (error) throw new Error(`Resend error: ${JSON.stringify(error)}`);
-  console.log(`Email sent to ${RECIPIENT}`);
+  // Email 2 — chart only
+  if (chartImg) {
+    const chartHtml = `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#0a0f1e;font-family:Arial,Helvetica,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;padding:28px 20px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+      <div style="width:10px;height:10px;background:#f5a623;border-radius:2px;flex-shrink:0;"></div>
+      <span style="font-size:15px;color:#6b7280;">Digital Credit Yield &middot; ${today}</span>
+    </div>
+    <div style="text-align:center;margin-bottom:20px;">
+      <span style="display:inline-block;color:#f5a623;border:1px solid #f5a623;border-radius:12px;padding:10px 24px;font-size:18px;font-weight:700;">Tracking STRC and SATA for growth</span>
+    </div>
+    <img src="data:image/png;base64,${chartImg.toString('base64')}" alt="chart" style="width:100%;border-radius:10px;display:block;">
+  </div>
+</body>
+</html>`;
+
+    const { error: chartError } = await resend.emails.send({
+      from: 'Digital Credit Yield <contact@digitalcredityield.com>',
+      to: RECIPIENT,
+      subject: `Chart — ${today}`,
+      html: chartHtml,
+    });
+    if (chartError) console.warn(`Chart email failed: ${JSON.stringify(chartError)}`);
+    else console.log(`Chart email sent to ${RECIPIENT}`);
+  }
+
+  // Save daily card to Blob for DCY app
+  const updatedAt = new Date().toISOString();
+  const cardPayload = JSON.stringify({
+    box1: 'Snapshot',
+    box2: cleanForApp(header),
+    box3: cleanForApp(insight.text),
+    hasChart: !!chartImg,
+    updatedAt,
+  });
+  await put('dcy-daily-card.json', cardPayload, {
+    access: 'private', contentType: 'application/json', allowOverwrite: true,
+  });
+  if (chartImg) {
+    await put('dcy-daily-chart.png', chartImg, {
+      access: 'private', contentType: 'image/png', allowOverwrite: true,
+    });
+  }
+  console.log('DCY card saved to Blob');
 }
 
 export { run };
