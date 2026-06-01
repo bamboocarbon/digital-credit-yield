@@ -1,0 +1,41 @@
+# Digital Credit Yield
+
+> Independent tracker for STRC and SATA — high-yield preferred stocks listed on Nasdaq. Live prices, dividend history, income projectors, and capital flow data. For information purposes only. Not financial advice.
+
+## Main Pages
+
+- [Home](https://www.digitalcredityield.com/): Overview of STRC and SATA with live prices and current yields.
+- [STRC Hub](https://www.digitalcredityield.com/strc): Full hub for STRC (Stripe Capital Preferred Stock, 11.50% annualised yield).
+- [SATA Hub](https://www.digitalcredityield.com/sata): Full hub for SATA (SoundHound AI Preferred Stock, 13.00% annualised yield).
+- [Money Flow](https://www.digitalcredityield.com/money-flow): Weekly capital raised by STRC and SATA from SEC 8-K filings since each IPO.
+- [Blog](https://www.digitalcredityield.com/blog): Articles on STRC, SATA, preferred stock investing, and dividend strategies.
+
+## STRC Tools
+
+- [STRC Live Chart](https://www.digitalcredityield.com/strc/chart): Live price chart for STRC.
+- [STRC Dividend History](https://www.digitalcredityield.com/strc/dividends): Historical dividend payments for STRC.
+- [STRC Growth Projector](https://www.digitalcredityield.com/strc/projector): Project income and portfolio growth from STRC dividends.
+- [STRC Differentiator](https://www.digitalcredityield.com/strc/differentiator): Compare STRC against other income assets.
+
+## SATA Tools
+
+- [SATA Live Chart](https://www.digitalcredityield.com/sata/chart): Live price chart for SATA.
+- [SATA Dividend History](https://www.digitalcredityield.com/sata/dividends): Historical dividend payments for SATA.
+- [SATA Growth Projector](https://www.digitalcredityield.com/sata/projector): Project income and portfolio growth from SATA dividends.
+- [SATA Differentiator](https://www.digitalcredityield.com/sata/differentiator): Compare SATA against other income assets.
+
+## Blog Articles
+
+- [What Is Preferred Stock?](https://www.digitalcredityield.com/blog/what-is-preferred-stock)
+- [How STRC Works](https://www.digitalcredityield.com/blog/how-strc-works)
+- [Bitcoin Treasury Companies](https://www.digitalcredityield.com/blog/bitcoin-treasury-companies)
+- [What Is Effective Yield?](https://www.digitalcredityield.com/blog/what-is-effective-yield)
+- [How SATA Works](https://www.digitalcredityield.com/blog/how-sata-works)
+- [Monthly vs Daily Dividends](https://www.digitalcredityield.com/blog/monthly-vs-daily-dividends)
+- [STRC vs SATA](https://www.digitalcredityield.com/blog/strc-vs-sata)
+- [How to Use the Growth Projector](https://www.digitalcredityield.com/blog/how-to-use-the-growth-projector)
+
+## About
+
+- [About](https://www.digitalcredityield.com/about): About Digital Credit Yield and its author, Robin Gillingham.
+- [Contact](https://www.digitalcredityield.com/contact): Get in touch with questions about STRC, SATA, or dividend investing.

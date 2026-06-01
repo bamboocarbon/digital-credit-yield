@@ -10,7 +10,7 @@ export const metadata = {
     title: 'Money Flow — STRC & SATA Capital Raised Since IPO',
     description: 'Weekly capital raised by STRC and SATA from SEC 8-K filings since IPO. See cumulative totals and weekly bar charts.',
     type: 'website',
-    url: 'https://digitalcredityield.com/money-flow',
+    url: 'https://www.digitalcredityield.com/money-flow',
     images: [{ url: '/api/og?title=Money+Flow&sub=Capital+raised+since+IPO&tag=Data' }],
   },
 };
