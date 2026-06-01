@@ -2,6 +2,18 @@ export const metadata = {
   alternates: { canonical: '/terms' },
   title: 'Terms & Conditions — Digital Credit Yield',
   description: 'Terms and conditions for using Digital Credit Yield — an independent tracker for STRC and SATA preferred stocks. Not financial advice.',
+  openGraph: {
+    title: 'Terms & Conditions — Digital Credit Yield',
+    description: 'Terms for using Digital Credit Yield. Independent tracker, not financial advice.',
+    type: 'website',
+    url: 'https://www.digitalcredityield.com/terms',
+    images: [{ url: '/api/og?title=Terms+%26+Conditions&sub=Digital+Credit+Yield' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Terms & Conditions — Digital Credit Yield',
+    description: 'Terms for using Digital Credit Yield. Independent tracker, not financial advice.',
+  },
 };
 
 function Section({ id, title, children }) {

@@ -8,8 +8,13 @@ export const metadata = {
     title: 'Contact — Digital Credit Yield',
     description: 'Get in touch with questions about STRC, SATA, or dividend investing.',
     type: 'website',
-    url: 'https://digitalcredityield.com/contact',
+    url: 'https://www.digitalcredityield.com/contact',
     images: [{ url: '/api/og?title=Contact+Us&sub=Digital+Credit+Yield' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Contact — Digital Credit Yield',
+    description: 'Get in touch with questions about STRC, SATA, or dividend investing.',
   },
 };
 

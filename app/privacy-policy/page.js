@@ -2,6 +2,18 @@ export const metadata = {
   alternates: { canonical: '/privacy-policy' },
   title: 'Privacy Policy — Digital Credit Yield',
   description: 'Digital Credit Yield privacy policy — how we collect, use, and protect your data when you use our STRC and SATA dividend tracking tools.',
+  openGraph: {
+    title: 'Privacy Policy — Digital Credit Yield',
+    description: 'How we collect, use, and protect your data on Digital Credit Yield.',
+    type: 'website',
+    url: 'https://www.digitalcredityield.com/privacy-policy',
+    images: [{ url: '/api/og?title=Privacy+Policy&sub=Digital+Credit+Yield' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Privacy Policy — Digital Credit Yield',
+    description: 'How we collect, use, and protect your data on Digital Credit Yield.',
+  },
 };
 
 function Section({ title, children }) {
