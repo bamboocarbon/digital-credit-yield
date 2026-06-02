@@ -297,7 +297,7 @@ export async function generateDailyInsight() {
           max_tokens: 150,
           messages: [{
             role: 'user',
-            content: `Give me exactly 2 short motivational thoughts for a dividend income investor. Each should be one or two sentences, fresh and specific — avoid clichés like "stay the course" or "time in the market". Focus on the psychology, mindset, or quiet satisfaction of building passive income. Return only the two thoughts, separated by a pipe character |, with no labels or extra text.${recentBlock}`,
+            content: `Give me exactly 2 motivational thoughts for a dividend income investor. Each should be a single short sentence — punchy and specific, no more than 15 words. Avoid clichés like "stay the course" or "time in the market". Focus on the psychology, mindset, or quiet satisfaction of building passive income. Return only the two thoughts, separated by a pipe character |, with no labels or extra text.${recentBlock}`,
           }],
         }),
       });
