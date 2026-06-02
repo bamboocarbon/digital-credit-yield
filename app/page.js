@@ -1,5 +1,6 @@
 import AssetCard from '@/components/AssetCard';
 import GoogleAd from '@/components/GoogleAd';
+import AadsAd from '@/components/AadsAd';
 
 export const metadata = {
   alternates: { canonical: '/' },
@@ -67,6 +68,7 @@ export default function HomePage() {
       </div>
 
       <GoogleAd slot="home-banner" />
+      <AadsAd />
 
       {/* About section */}
       <div className="mt-12 max-w-3xl mx-auto">
