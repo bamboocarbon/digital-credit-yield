@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { put, list } from '@vercel/blob';
 import { getStockQuote, fetchNextPaymentDate } from '../lib/fetchStockData.js';
 import { runProjection } from '../lib/projectorEngine.js';
 import { ASSET_RATES } from '../lib/constants.js';
@@ -230,6 +231,29 @@ function buildInsightPool(quotes, nextDates) {
   return { priority, normal };
 }
 
+async function loadThoughtHistory() {
+  try {
+    const { blobs } = await list({ prefix: 'dcy-thought-history' });
+    const blob = blobs.find(b => b.pathname === 'dcy-thought-history.json');
+    if (!blob) return [];
+    const res = await fetch(blob.url, {
+      headers: { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` },
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
+
+async function saveThoughtHistory(history) {
+  try {
+    await put('dcy-thought-history.json', JSON.stringify(history), {
+      access: 'private', contentType: 'application/json', allowOverwrite: true,
+    });
+  } catch { /* non-fatal — history is best-effort */ }
+}
+
 export async function generateDailyInsight() {
   const [strc, sata, strc_nd, sata_nd] = await Promise.all([
     getStockQuote('STRC'),
@@ -253,21 +277,33 @@ export async function generateDailyInsight() {
   let motivation = 'Stay invested. Compound income builds real wealth.';
   let motivationB = 'Your money is working for you right now.';
 
+  const history = await loadThoughtHistory();
+  const recent  = history.slice(-7);
+
   if (process.env.ANTHROPIC_API_KEY) {
     try {
       const { default: Anthropic } = await import('@anthropic-ai/sdk');
       const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+      const recentBlock = recent.length
+        ? `\n\nDo not repeat or closely echo any of these recent thoughts:\n${recent.map(h => `- ${h.thoughtA}\n- ${h.thoughtB}`).join('\n')}`
+        : '';
+
       const msg = await client.messages.create({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 120,
+        max_tokens: 150,
         messages: [{
           role: 'user',
-          content: 'Give me exactly 2 short motivational thoughts for a dividend income investor. Each should be one or two sentences, fresh and specific — avoid clichés like "stay the course" or "time in the market". Focus on the psychology, mindset, or quiet satisfaction of building passive income. Return only the two thoughts, separated by a pipe character |, with no labels or extra text.',
+          content: `Give me exactly 2 short motivational thoughts for a dividend income investor. Each should be one or two sentences, fresh and specific — avoid clichés like "stay the course" or "time in the market". Focus on the psychology, mindset, or quiet satisfaction of building passive income. Return only the two thoughts, separated by a pipe character |, with no labels or extra text.${recentBlock}`,
         }],
       });
       const parts = msg.content[0].text.split('|').map(s => s.trim()).filter(Boolean);
       if (parts[0]) motivation = parts[0];
       if (parts[1]) motivationB = parts[1];
+
+      const today = new Date().toISOString().split('T')[0];
+      const updated = [...recent, { date: today, thoughtA: motivation, thoughtB: motivationB }].slice(-7);
+      await saveThoughtHistory(updated);
     } catch { /* fall back to defaults */ }
   }
 
