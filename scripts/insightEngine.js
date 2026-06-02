@@ -280,24 +280,29 @@ export async function generateDailyInsight() {
   const history = await loadThoughtHistory();
   const recent  = history.slice(-7);
 
-  if (process.env.ANTHROPIC_API_KEY) {
+  if (process.env.XAI_API_KEY) {
     try {
-      const { default: Anthropic } = await import('@anthropic-ai/sdk');
-      const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
       const recentBlock = recent.length
         ? `\n\nDo not repeat or closely echo any of these recent thoughts:\n${recent.map(h => `- ${h.thoughtA}\n- ${h.thoughtB}`).join('\n')}`
         : '';
 
-      const msg = await client.messages.create({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 150,
-        messages: [{
-          role: 'user',
-          content: `Give me exactly 2 short motivational thoughts for a dividend income investor. Each should be one or two sentences, fresh and specific — avoid clichés like "stay the course" or "time in the market". Focus on the psychology, mindset, or quiet satisfaction of building passive income. Return only the two thoughts, separated by a pipe character |, with no labels or extra text.${recentBlock}`,
-        }],
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.XAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          max_tokens: 150,
+          messages: [{
+            role: 'user',
+            content: `Give me exactly 2 short motivational thoughts for a dividend income investor. Each should be one or two sentences, fresh and specific — avoid clichés like "stay the course" or "time in the market". Focus on the psychology, mindset, or quiet satisfaction of building passive income. Return only the two thoughts, separated by a pipe character |, with no labels or extra text.${recentBlock}`,
+          }],
+        }),
       });
-      const parts = msg.content[0].text.split('|').map(s => s.trim()).filter(Boolean);
+      const data = await res.json();
+      const parts = data.choices[0].message.content.split('|').map(s => s.trim()).filter(Boolean);
       if (parts[0]) motivation = parts[0];
       if (parts[1]) motivationB = parts[1];
 
