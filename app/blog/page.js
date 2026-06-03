@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { articles } from '@/lib/articles';
+import AadsAd from '@/components/AadsAd';
 
 export const metadata = {
   alternates: { canonical: '/blog' },
@@ -66,6 +67,8 @@ export default function BlogPage() {
           </Link>
         ))}
       </div>
+
+      <AadsAd />
 
       <div className="mt-8 p-5 rounded-xl" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
         <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>Important Disclaimer</p>

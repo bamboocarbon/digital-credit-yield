@@ -1,5 +1,6 @@
 import SubNav from '@/components/SubNav';
 import AssetChartContent from '@/components/AssetChartContent';
+import AadsAd from '@/components/AadsAd';
 
 export default function AssetChartPage({ ticker }) {
   return (
@@ -7,6 +8,8 @@ export default function AssetChartPage({ ticker }) {
       <SubNav ticker={ticker} />
       <h1 className="text-2xl sm:text-3xl font-bold mb-6">{ticker} Effective Yield &amp; Price Chart</h1>
       <AssetChartContent ticker={ticker} />
+
+      <AadsAd />
 
       <div className="mt-8 p-5 rounded-xl" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
         <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>Important Disclaimer</p>

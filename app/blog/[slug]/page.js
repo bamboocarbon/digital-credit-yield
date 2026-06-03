@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { articles, getArticle } from '@/lib/articles';
+import AadsAd from '@/components/AadsAd';
 
 export async function generateStaticParams() {
   return articles.map(a => ({ slug: a.slug }));
@@ -120,6 +121,8 @@ export default async function ArticlePage({ params }) {
           financial adviser before making investment decisions.
         </p>
       </div>
+
+      <AadsAd />
     </div>
   );
 }
