@@ -256,7 +256,8 @@ async function run() {
       <div style="font-size:15px;line-height:1.7;color:#9ca3af;text-align:left;">${cleanInsight}</div>
     </div>
 
-    <div style="text-align:center;margin-top:20px;">
+    <div style="text-align:center;margin-top:20px;padding:0 12px;">
+      <p style="font-size:11px;color:#6b7280;margin:0 0 10px;">Not financial advice. For informational purposes only. Always do your own research before making any investment decisions.</p>
       <a href="https://digitalcredityield.com" style="font-size:13px;color:#ffffff;text-decoration:none;">digitalcredityield.com</a>
     </div>
 
