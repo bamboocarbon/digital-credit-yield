@@ -81,7 +81,8 @@ function renderTitle(text, fontSize) {
 }
 
 function chartFooter(y) {
-  return `<text x="${W / 2}" y="${y}" text-anchor="middle" fill="#ffffff" font-size="36" font-family="Geist">digitalcredityield.com</text>`;
+  return `<text x="${W / 2}" y="${y - 70}" text-anchor="middle" fill="#6b7280" font-size="20" font-family="Geist">Not financial advice. For informational purposes only. Always do your own research.</text>
+  <text x="${W / 2}" y="${y}" text-anchor="middle" fill="#ffffff" font-size="36" font-family="Geist">digitalcredityield.com</text>`;
 }
 
 // Price chart — fetches 6-month OHLC from the live API
@@ -116,8 +117,8 @@ async function buildPriceChart(ticker) {
       return `<text x="${xS(idx).toFixed(1)}" y="${H - 10}" text-anchor="middle" fill="#d1d5db" font-size="26" font-family="Geist">${date}</text>`;
     }).join('');
 
-    const svg = `<svg width="${W}" height="${H + 100}" xmlns="http://www.w3.org/2000/svg">
-<rect width="${W}" height="${H + 100}" fill="#111827" rx="8"/>
+    const svg = `<svg width="${W}" height="${H + 160}" xmlns="http://www.w3.org/2000/svg">
+<rect width="${W}" height="${H + 160}" fill="#111827" rx="8"/>
   <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#f5a623" stop-opacity="0.25"/>
     <stop offset="100%" stop-color="#f5a623" stop-opacity="0.02"/>
@@ -128,7 +129,7 @@ async function buildPriceChart(ticker) {
   ${xLabels}
   ${renderTitle(`${ticker} — 6 Month Price`, 36)}
   <text x="${W - pad.right}" y="48" text-anchor="end" fill="#f5a623" font-size="32" font-family="Geist" font-weight="700">$${closes.at(-1).toFixed(2)}</text>
-  ${chartFooter(H + 65)}
+  ${chartFooter(H + 120)}
 </svg>`;
 
     return svgToPng(svg);
@@ -180,14 +181,14 @@ function buildSeriesChart({ title, series, months }) {
       return `<text x="${x}" y="${y}" text-anchor="end" fill="${s.color}" font-size="26" font-family="Geist" font-weight="600">${s.label}</text>`;
     }).join('');
 
-    const svg = `<svg width="${W}" height="${H + 100}" xmlns="http://www.w3.org/2000/svg">
-<rect width="${W}" height="${H + 100}" fill="#111827" rx="8"/>
+    const svg = `<svg width="${W}" height="${H + 160}" xmlns="http://www.w3.org/2000/svg">
+<rect width="${W}" height="${H + 160}" fill="#111827" rx="8"/>
   ${yLines}
   ${lines}
   ${xLabels.join('')}
   ${legend}
   ${renderTitle(title, 36)}
-  ${chartFooter(H + 65)}
+  ${chartFooter(H + 120)}
 </svg>`;
 
     return svgToPng(svg);
