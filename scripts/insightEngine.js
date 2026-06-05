@@ -81,8 +81,9 @@ export function buildHeader(quotes) {
 function buildInsightPool(quotes, nextDates) {
   const today = new Date().toISOString().split('T')[0];
   const priority = [];
-  const normal   = [];
-  const add = (text, path, chartData) => normal.push({ text, path, chartData });
+  const byTicker = {};
+  for (const t of TICKERS) byTicker[t] = [];
+  const add = (text, path, chartData, ticker) => byTicker[ticker].push({ text, path, chartData });
 
   const eYields = {};
   for (const t of TICKERS) eYields[t] = effYield(t, quotes[t].price);
@@ -123,6 +124,7 @@ function buildInsightPool(quotes, nextDates) {
           title: `${amtStr(amount)} in ${t} vs alternatives (1yr, reinvested)`, months: 12,
           series: compSeries(t, assetData, tsyData, bankData),
         },
+        t,
       );
     }
 
@@ -141,6 +143,7 @@ function buildInsightPool(quotes, nextDates) {
         { type: 'comparison', title: `$10k: ${t} vs Treasuries vs Bank (5yr)`, months: 60,
           series: compSeries(t, asset5y, tsy5y, bank5y),
         },
+        t,
       );
     }
 
@@ -150,6 +153,7 @@ function buildInsightPool(quotes, nextDates) {
       { type: 'comparison', title: `$10k: ${t} vs Treasuries vs Bank (5yr)`, months: 60,
         series: compSeries(t, asset5y, tsy5y, bank5y),
       },
+      t,
     );
 
     // Portfolio growth for various horizons — 3 lines each
@@ -171,6 +175,7 @@ function buildInsightPool(quotes, nextDates) {
             title: `${amtStr(amount)} in ${t}: reinvested vs alternatives (${label})`, months,
             series: compSeries(t, assetData, tsyData, bankData),
           },
+          t,
         );
 
         // Monthly income growth — compare income streams, not portfolio totals
@@ -188,6 +193,7 @@ function buildInsightPool(quotes, nextDates) {
               { label: 'Bank Income',   color: COLOR.BANK,        values: bankIncome },
             ],
           },
+          t,
         );
       }
     }
@@ -198,6 +204,7 @@ function buildInsightPool(quotes, nextDates) {
         `🔍 ${t} is trading at $${price.toFixed(2)} — below its $100 par value. Today's effective yield: ${ey.toFixed(2)}%, above the stated ${ASSET_RATES[t]}%.`,
         `/${slug}/chart`,
         { type: 'price', ticker: t },
+        t,
       );
     }
   }
@@ -205,6 +212,7 @@ function buildInsightPool(quotes, nextDates) {
   // ── Cross-asset 4-line comparisons: STRC vs SATA vs Treasuries vs Bank ──
   const strc_ey = eYields['STRC'];
   const sata_ey = eYields['SATA'];
+  const crossAsset = [];
 
   for (const { label, months } of HORIZONS) {
     const rate = tsyRate(months);
@@ -217,18 +225,27 @@ function buildInsightPool(quotes, nextDates) {
       const sataFinal = sataData.at(-1).portfolio;
       const tsyFinal  = tsyData.at(-1).portfolio;
       const bankFinal = bankData.at(-1).portfolio;
-      add(
-        `📊 ${amtStr(amount)} reinvested over ${label}: STRC ~$${(strcFinal / 1000).toFixed(1)}k, SATA ~$${(sataFinal / 1000).toFixed(1)}k vs ~$${(tsyFinal / 1000).toFixed(1)}k in Treasuries and ~$${(bankFinal / 1000).toFixed(1)}k in a bank account.`,
-        `/strc/differentiator`,
-        { type: 'comparison',
+      crossAsset.push({
+        text: `📊 ${amtStr(amount)} reinvested over ${label}: STRC ~$${(strcFinal / 1000).toFixed(1)}k, SATA ~$${(sataFinal / 1000).toFixed(1)}k vs ~$${(tsyFinal / 1000).toFixed(1)}k in Treasuries and ~$${(bankFinal / 1000).toFixed(1)}k in a bank account.`,
+        path: `/strc/differentiator`,
+        chartData: { type: 'comparison',
           title: `${amtStr(amount)}: STRC vs SATA vs Treasuries vs Bank (${label})`, months,
           series: comp4Series(strcData, sataData, tsyData, bankData),
         },
-      );
+      });
     }
   }
 
-  return { priority, normal };
+  // Interleave per-ticker insights so STRC and SATA alternate day-to-day
+  const maxLen = Math.max(...TICKERS.map(t => byTicker[t].length));
+  const normal = [];
+  for (let i = 0; i < maxLen; i++) {
+    for (const t of TICKERS) {
+      if (byTicker[t][i]) normal.push(byTicker[t][i]);
+    }
+  }
+
+  return { priority, normal: [...normal, ...crossAsset] };
 }
 
 async function loadThoughtHistory() {

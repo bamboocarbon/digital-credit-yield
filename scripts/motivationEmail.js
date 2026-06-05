@@ -28,9 +28,10 @@ function buildHtml(thought, today) {
       <div style="font-size:22px;font-weight:700;line-height:1.5;color:#ffffff;">${thought}</div>
     </div>
 
-    <p style="text-align:center;margin-top:20px;">
+    <div style="text-align:center;margin-top:20px;padding:0 12px;">
+      <p style="font-size:11px;color:#6b7280;margin:0 0 10px;">Not financial advice. For informational purposes only. Always do your own research before making any investment decisions.</p>
       <a href="${SITE_URL}" style="font-size:13px;color:#ffffff;text-decoration:none;">digitalcredityield.com</a>
-    </p>
+    </div>
 
   </div>
 </body>
