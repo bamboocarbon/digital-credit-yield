@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react';
 
-export const metadata = undefined; // client component — no metadata export
-
 const TAGS = ['STRC', 'SATA', 'BMNP', 'Market'];
 
 const TAG_COLORS = {
