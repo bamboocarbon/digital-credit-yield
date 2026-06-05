@@ -41,7 +41,7 @@ export default function GrowthProjector({ ticker, liveYield }) {
   const priceForYield = form.inputMode === 'shares' ? Number(form.pricePerShare || 100) : 100;
   const effectiveYield = priceForYield > 0 ? Number(form.annualYield) * (100 / priceForYield) : Number(form.annualYield);
 
-  const paymentsPerYear = ticker === 'SATA' ? 250 : 12;
+  const paymentsPerYear = ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : 12;
 
   const history = useMemo(
     () => runProjection(startValue, effectiveYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months, paymentsPerYear),
@@ -229,6 +229,14 @@ export default function GrowthProjector({ ticker, liveYield }) {
                   Daily compounding: {computeAPY(effectiveYield, 250).toFixed(4)}% APY
                   <span style={{ color: 'var(--text-muted)' }}>
                     {' '}(+{((computeAPY(effectiveYield, 250) - computeAPY(effectiveYield, 12)) * 100).toFixed(1)} bps vs monthly)
+                  </span>
+                </p>
+              )}
+              {ticker === 'BMNP' && Number(form.reinvestmentPct) > 0 && (
+                <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
+                  Weekly compounding: {computeAPY(effectiveYield, 52).toFixed(4)}% APY
+                  <span style={{ color: 'var(--text-muted)' }}>
+                    {' '}(+{((computeAPY(effectiveYield, 52) - computeAPY(effectiveYield, 12)) * 100).toFixed(1)} bps vs monthly)
                   </span>
                 </p>
               )}

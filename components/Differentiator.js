@@ -46,8 +46,8 @@ export default function Differentiator({ ticker, liveYield }) {
 
   const step = months <= 24 ? 1 : 12;
 
-  // SATA uses 250 business-day compounding; benchmarks are monthly instruments so stay at 12
-  const paymentsPerYear = ticker === 'SATA' ? 250 : 12;
+  // SATA uses 250 business-day compounding; BMNP uses 52 weekly; benchmarks stay at 12
+  const paymentsPerYear = ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : 12;
 
   const assetData = useMemo(
     () => runProjection(startValue, effectiveYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months, paymentsPerYear),
@@ -300,6 +300,14 @@ export default function Differentiator({ ticker, liveYield }) {
                   Daily compounding: {computeAPY(effectiveYield, 250).toFixed(4)}% APY
                   <span style={{ color: 'var(--text-muted)' }}>
                     {' '}(+{((computeAPY(effectiveYield, 250) - computeAPY(effectiveYield, 12)) * 100).toFixed(1)} bps vs monthly)
+                  </span>
+                </p>
+              )}
+              {ticker === 'BMNP' && Number(form.reinvestmentPct) > 0 && (
+                <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
+                  Weekly compounding: {computeAPY(effectiveYield, 52).toFixed(4)}% APY
+                  <span style={{ color: 'var(--text-muted)' }}>
+                    {' '}(+{((computeAPY(effectiveYield, 52) - computeAPY(effectiveYield, 12)) * 100).toFixed(1)} bps vs monthly)
                   </span>
                 </p>
               )}

@@ -4,19 +4,19 @@ import AadsAd from '@/components/AadsAd';
 
 export const metadata = {
   alternates: { canonical: '/' },
-  title: 'STRC & SATA Preferred Stock Tracker — Up to 13% Annual Dividend',
-  description: 'Track STRC (11.50%) and SATA (13.00%) — preferred stocks on Nasdaq paying monthly dividends. Live prices, dividend history, and income projectors.',
+  title: 'STRC, SATA & BMNP Preferred Stock Tracker — Up to 13% Annual Dividend',
+  description: 'Track STRC (11.50%), SATA (13.00%) and BMNP (9.50%) — high-yield preferred stocks paying monthly and weekly dividends. Live prices, dividend history, and income projectors.',
   openGraph: {
-    title: 'STRC & SATA Preferred Stock Tracker — Up to 13% Annual Dividend',
-    description: 'Track STRC and SATA — two high-yield preferred stocks paying 11.50%–13.00% annually. Live prices, dividend history, and income projectors.',
+    title: 'STRC, SATA & BMNP Preferred Stock Tracker — Up to 13% Annual Dividend',
+    description: 'Track STRC, SATA and BMNP — high-yield preferred stocks paying 9.50%–13.00% annually. Live prices, dividend history, and income projectors.',
     type: 'website',
     url: 'https://digitalcredityield.com',
-    images: [{ url: '/api/og?title=STRC+%26+SATA+Tracker&sub=Up+to+13%25+Annual+Dividend' }],
+    images: [{ url: '/api/og?title=Preferred+Stock+Tracker&sub=Up+to+13%25+Annual+Dividend' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'STRC & SATA Preferred Stock Tracker — Up to 13% Annual Dividend',
-    description: 'Track STRC and SATA — two high-yield preferred stocks paying 11.50%–13.00% annually.',
+    title: 'STRC, SATA & BMNP Preferred Stock Tracker — Up to 13% Annual Dividend',
+    description: 'Track STRC, SATA and BMNP — high-yield preferred stocks paying 9.50%–13.00% annually.',
   },
 };
 
@@ -25,7 +25,7 @@ const jsonLd = {
   '@type': 'WebSite',
   name: 'Digital Credit Yield',
   url: 'https://digitalcredityield.com',
-  description: 'Independent tracker for STRC and SATA high-yield preferred stocks. Live prices, dividend history, and income projectors.',
+  description: 'Independent tracker for STRC, SATA and BMNP high-yield preferred stocks. Live prices, dividend history, and income projectors.',
   potentialAction: {
     '@type': 'SearchAction',
     target: 'https://digitalcredityield.com/{search_term_string}',
@@ -54,7 +54,7 @@ export default function HomePage() {
           fontFamily: 'Arial, Helvetica, sans-serif',
           marginBottom: '20px',
         }}>
-          Tracking STRC and SATA for growth
+          Tracking STRC, SATA and BMNP for growth
         </div>
         <p className="text-lg sm:text-xl max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
           Track, analyse and project the growth of next-generation income assets
@@ -62,9 +62,10 @@ export default function HomePage() {
       </div>
 
       {/* Asset selector cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         <AssetCard ticker="STRC" />
         <AssetCard ticker="SATA" />
+        <AssetCard ticker="BMNP" />
       </div>
 
       <GoogleAd slot="home-banner" />
@@ -75,17 +76,17 @@ export default function HomePage() {
         <h2 className="text-2xl font-bold mb-4">About Digital Credit Yield</h2>
         <p className="text-base leading-7 mb-6" style={{ color: 'var(--text-muted)' }}>
           Digital Credit Yield is an independent financial research and tracking tool built for
-          investors in high-yield digital credit instruments. The focus is specifically on STRC and
-          SATA — two preferred equity instruments that pay high-yield cash dividends far above
-          traditional savings — both paying monthly cash dividends.
+          investors in high-yield digital credit instruments. The focus is on STRC, SATA and BMNP —
+          preferred equity instruments that pay high-yield cash dividends far above traditional savings,
+          with monthly and weekly payment options.
           The tools help you track live pricing, understand current and effective yields, and model
           long-term portfolio growth.
         </p>
         <p className="text-base leading-7 mb-6" style={{ color: 'var(--text-muted)' }}>
-          These are relatively new products, with STRC launching in July 2025 and SATA in November
-          2025. As the market digests these innovative products and sees the demand that exists, I am
-          sure more companies will decide to enter this space. Through Digital Credit Yield I will monitor
-          and update the website as the landscape evolves.
+          These are relatively new products: STRC launched in July 2025, SATA in November 2025, and
+          BMNP is pending NYSE listing. More companies are entering this space as the market digests
+          the demand for high-yield preferred equity instruments. Through Digital Credit Yield I will
+          monitor and update the website as the landscape evolves.
         </p>
         <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
           I built this site because I believe retail investors need clear, accessible data on

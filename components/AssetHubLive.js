@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ASSET_RATES } from '@/lib/constants';
+import { ASSET_RATES, PAYMENT_FREQUENCY, PRE_LISTING_TICKERS } from '@/lib/constants';
 
 export default function AssetHubLive({ ticker }) {
   const [data, setData]   = useState(null);
@@ -20,13 +20,17 @@ export default function AssetHubLive({ ticker }) {
   const effectiveYield = data?.price != null
     ? (annualDividendDollars / data.price) * 100
     : ASSET_RATES[ticker];
+  const freq = PAYMENT_FREQUENCY[ticker] ?? { label: 'Monthly', perYear: 12, perPeriod: 'month' };
+  const isPreListing = PRE_LISTING_TICKERS.includes(ticker);
 
   return (
     <>
       {/* Live price header */}
       <div className="mb-8">
         {error ? (
-          <p className="text-sm" style={{ color: 'var(--accent-red)' }}>Price data temporarily unavailable — please refresh</p>
+          isPreListing
+            ? <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>Pre-IPO — not yet listed. Live price data will appear here once trading begins on NYSE.</p>
+            : <p className="text-sm" style={{ color: 'var(--accent-red)' }}>Price data temporarily unavailable — please refresh</p>
         ) : !data ? (
           <div className="animate-pulse space-y-2 mt-4">
             <div className="h-10 w-48 rounded" style={{ background: 'var(--bg-card)' }} />
@@ -77,9 +81,9 @@ export default function AssetHubLive({ ticker }) {
 
         <div className="card p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>Distribution Frequency</p>
-          <p className="text-2xl font-bold">Monthly</p>
+          <p className="text-2xl font-bold">{freq.label}</p>
           <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
-            ~{(annualDividendDollars / 12).toLocaleString('en-US', { style: 'currency', currency: 'USD' })} per share/month
+            ~{(annualDividendDollars / freq.perYear).toLocaleString('en-US', { style: 'currency', currency: 'USD' })} per share/{freq.perPeriod}
           </p>
         </div>
       </div>

@@ -2,21 +2,25 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { PRE_LISTING_TICKERS } from '@/lib/constants';
 
 const DESCRIPTIONS = {
   STRC: "Strategy's perpetual preferred stock paying 11.50% annual dividends in monthly cash. Dividend rate adjusts monthly to maintain trading near its $100 par value.",
   SATA: "Strive's publicly traded preferred equity paying 13.00% annualised in monthly cash dividends. Targets a $99–$101 trading range, backed by 18+ months of cash reserves and over 13,000 Bitcoin.",
+  BMNP: "BitMine Immersion Technologies' Series A perpetual preferred stock paying 9.50% annually in weekly cash dividends. Cumulative preferred, pending NYSE listing. Backed by Ethereum staking via the MAVAN platform.",
 };
 
 const INCOME_BADGE = {
   STRC: 'Monthly Income',
   SATA: 'Monthly Income',
+  BMNP: 'Weekly Income',
 };
 
 
 export default function AssetCard({ ticker }) {
   const [data, setData] = useState(null);
   const [error, setError] = useState(false);
+  const isPreListing = PRE_LISTING_TICKERS.includes(ticker);
 
   useEffect(() => {
     fetch(`/api/quote/${ticker}`)
@@ -43,7 +47,9 @@ export default function AssetCard({ ticker }) {
       <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{DESCRIPTIONS[ticker]}</p>
 
       {error ? (
-        <p className="text-sm" style={{ color: 'var(--accent-red)' }}>Price data temporarily unavailable — please refresh</p>
+        isPreListing
+          ? <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>Pre-IPO — pending NYSE listing. Live price data will appear here once trading begins.</p>
+          : <p className="text-sm" style={{ color: 'var(--accent-red)' }}>Price data temporarily unavailable — please refresh</p>
       ) : !data ? (
         <div className="animate-pulse space-y-2">
           <div className="h-8 rounded" style={{ background: 'var(--bg-card-hover)' }} />
