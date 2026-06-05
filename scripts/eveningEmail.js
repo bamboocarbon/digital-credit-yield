@@ -22,7 +22,7 @@ const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 const SITE_URL  = (process.env.SITE_URL || 'https://www.digitalcredityield.com').replace(/\/$/, '');
 
 const QUESTIONS = [
-  // STRC — Projector
+  // 2:1 interleave — STRC, STRC, SATA throughout
   {
     question: "How can I earn $500 interest in a year on a $10,000 investment?",
     teaser: "With STRC currently yielding over 11%, the math could work in your favor. See your exact 12-month income projection.",
@@ -32,6 +32,11 @@ const QUESTIONS = [
     question: "What monthly income would $50,000 invested in STRC generate?",
     teaser: "At today's rate, that's potentially over $450 every single month. See a full income breakdown.",
     path: "/strc/projector",
+  },
+  {
+    question: "How much passive income could $30,000 in SATA generate each month?",
+    teaser: "At 13% annual yield, SATA compounds faster than most income instruments. See how it adds up.",
+    path: "/sata/projector",
   },
   {
     question: "How much do you need to invest to earn $1,000 a month in passive income?",
@@ -44,6 +49,11 @@ const QUESTIONS = [
     path: "/strc/projector",
   },
   {
+    question: "How much would $75,000 in SATA earn you over the next 12 months?",
+    teaser: "At 13% annual yield, the income adds up every NYSE business day. See the full projection.",
+    path: "/sata/projector",
+  },
+  {
     question: "What would $100,000 in STRC earn you each month?",
     teaser: "At an 11.5% annual rate paid monthly, the income adds up quickly. Model your own scenario.",
     path: "/strc/projector",
@@ -52,6 +62,11 @@ const QUESTIONS = [
     question: "How much would you need to invest to cover a $500 monthly shortfall in retirement?",
     teaser: "Use the STRC income projector to model exactly how much capital generates the income you need.",
     path: "/strc/projector",
+  },
+  {
+    question: "Is SATA's yield worth it compared to Treasuries or a savings account?",
+    teaser: "At 13% annual yield, the income gap is significant. See a full side-by-side comparison.",
+    path: "/sata/differentiator",
   },
   {
     question: "How long would it take to earn back 10% of your STRC investment in income alone?",
@@ -63,7 +78,11 @@ const QUESTIONS = [
     teaser: "See a full 3-year income projection, with and without dividend reinvestment.",
     path: "/strc/projector",
   },
-  // STRC — Differentiator
+  {
+    question: "How does SATA's 13% yield compare to a high-yield savings account?",
+    teaser: "Most savings accounts offer 4–5% APY. See how SATA's income stacks up side by side.",
+    path: "/sata/differentiator",
+  },
   {
     question: "How does STRC compare to a high-yield savings account?",
     teaser: "Most savings accounts offer under 5% APY. See side-by-side how STRC stacks up over 1, 3, and 5 years.",
@@ -75,6 +94,11 @@ const QUESTIONS = [
     path: "/strc/differentiator",
   },
   {
+    question: "What would $10,000 in SATA generate over 12 months at 13% annual yield?",
+    teaser: "Model your own income projection on the SATA projector and see the full breakdown.",
+    path: "/sata/projector",
+  },
+  {
     question: "What's the income gap between STRC and a typical savings account over 5 years?",
     teaser: "The compounding effect of a higher yield is significant. See the numbers side by side.",
     path: "/strc/differentiator",
@@ -84,36 +108,9 @@ const QUESTIONS = [
     teaser: "The headline rate is 11.5% — but reinvesting dividends monthly pushes your effective return even higher.",
     path: "/strc/chart",
   },
-  // SATA — Projector
   {
-    question: "What would $10,000 in SATA earn you — paid every single business day?",
-    teaser: "SATA is set to become the world's first listed security paying daily dividends from June 2026. See your daily income.",
-    path: "/sata/projector",
-  },
-  {
-    question: "How much passive income could $30,000 in SATA generate each month?",
-    teaser: "At 13% annual yield paid every business day, SATA compounds faster than monthly payers. See how it adds up.",
-    path: "/sata/projector",
-  },
-  {
-    question: "Could SATA's daily dividends help you build wealth faster than monthly income?",
-    teaser: "Daily compounding at 13% gives an effective APY of 13.88%. See what that means for your money.",
-    path: "/sata/projector",
-  },
-  {
-    question: "How much would $75,000 in SATA earn you over the next 12 months?",
-    teaser: "At 13% annual yield paid daily, the income adds up every NYSE business day. See the full projection.",
-    path: "/sata/projector",
-  },
-  // SATA — Differentiator
-  {
-    question: "How does SATA's 13% daily dividend compare to a high-yield savings account?",
-    teaser: "Most savings accounts offer 4–5% APY. See how SATA's daily income stacks up side by side.",
-    path: "/sata/differentiator",
-  },
-  {
-    question: "Is SATA's yield worth it compared to Treasuries or a savings account?",
-    teaser: "At 13% paid every business day, the income gap is significant. See a full side-by-side comparison.",
+    question: "How does SATA's yield compare to US Treasuries over 3 years?",
+    teaser: "Treasury yields sit around 4–5%. SATA targets 13%. See the real income difference over time.",
     path: "/sata/differentiator",
   },
 ];
