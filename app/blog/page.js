@@ -19,13 +19,21 @@ function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-const categoryColour = {
-  Education: '#f87171',
+const tickerColour = {
   STRC: '#15803d',
   SATA: '#2563eb',
-  Comparison: '#67e8f9',
-  Guide: '#c4b5fd',
+  BMNP: '#fde047',
 };
+
+// Company tickers keep their brand colour; generic content categories
+// (Education, Guide, Comparison, …) use neutral white-on-grey to keep the
+// palette from sprawling as more issuers are added.
+function categoryStyle(category) {
+  const c = tickerColour[category];
+  return c
+    ? { background: c + '22', color: c }
+    : { background: '#1f2937', color: '#ffffff' };
+}
 
 export default function BlogPage() {
   const sorted = [...articles].sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -47,10 +55,7 @@ export default function BlogPage() {
           >
             <span
               className="text-xs font-semibold px-2 py-0.5 rounded-full mb-3 self-start"
-              style={{
-                background: (categoryColour[article.category] ?? '#6b7280') + '22',
-                color: categoryColour[article.category] ?? '#6b7280',
-              }}
+              style={categoryStyle(article.category)}
             >
               {article.category}
             </span>
