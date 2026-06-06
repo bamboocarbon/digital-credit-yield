@@ -10,7 +10,7 @@ export const metadata = {
     title: 'SATA vs US Treasuries — Strive Preferred Stock Income Compared',
     description: "Compare SATA's 13.00% monthly dividend against US Treasuries and bank savings.",
     type: 'website',
-    url: 'https://digitalcredityield.com/sata/differentiator',
+    url: 'https://www.digitalcredityield.com/sata/differentiator',
     images: [{ url: '/api/og?title=SATA+vs+Treasuries&sub=Compare+income+vs+Treasuries&tag=Comparison' }],
   },
 };

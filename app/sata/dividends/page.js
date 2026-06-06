@@ -10,7 +10,7 @@ export const metadata = {
     title: 'SATA Dividend History — Strive Monthly Dividend Payments',
     description: "Complete record of every SATA monthly dividend payment from Strive's preferred stock.",
     type: 'website',
-    url: 'https://digitalcredityield.com/sata/dividends',
+    url: 'https://www.digitalcredityield.com/sata/dividends',
     images: [{ url: '/api/og?title=SATA+Dividend+History&sub=Monthly+payment+records&rate=13.00%25' }],
   },
 };

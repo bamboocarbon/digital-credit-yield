@@ -22,7 +22,7 @@ export async function generateMetadata({ params }) {
       title: article.title,
       description: desc,
       type: 'article',
-      url: `https://digitalcredityield.com/blog/${slug}`,
+      url: `https://www.digitalcredityield.com/blog/${slug}`,
       publishedTime: article.date,
       images: [{ url: `/api/og?title=${encodeURIComponent(article.title)}&sub=${encodeURIComponent(article.category)}&tag=Blog` }],
     },
