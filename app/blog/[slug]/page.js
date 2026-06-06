@@ -114,6 +114,24 @@ export default async function ArticlePage({ params }) {
         <Content />
       </div>
 
+      <div className="mt-12 p-5 rounded-xl flex items-start gap-4" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+        <img
+          src="/about-photo.jpg?v=2"
+          alt="Robin Gillingham, founder of Digital Credit Yield"
+          className="rounded-full object-cover"
+          style={{ width: 56, height: 56, flexShrink: 0 }}
+        />
+        <div>
+          <p className="text-sm font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>About the author</p>
+          <p className="text-sm leading-6" style={{ color: 'var(--text-muted)' }}>
+            <strong>Robin Gillingham</strong> is the founder of Digital Credit Yield. After a career in
+            aircraft engineering, he moved into full-time trading in 2019 and now builds tools to track and
+            visualise high-yield preferred stocks such as STRC and SATA.{' '}
+            <Link href="/about" className="transition-opacity hover:opacity-75" style={{ color: 'var(--accent-gold)' }}>Read more →</Link>
+          </p>
+        </div>
+      </div>
+
       <div className="mt-10 p-5 rounded-xl" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
         <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>Important Disclaimer</p>
         <p className="text-sm mt-2 leading-6" style={{ color: 'var(--text-muted)' }}>
