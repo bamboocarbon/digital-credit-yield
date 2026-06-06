@@ -63,6 +63,8 @@ export default async function ArticlePage({ params }) {
     headline: article.title,
     description: desc,
     datePublished: article.date,
+    dateModified: article.date,
+    image: `https://www.digitalcredityield.com/api/og?title=${encodeURIComponent(article.title)}&sub=${encodeURIComponent(article.category)}&tag=Blog`,
     url: `https://www.digitalcredityield.com/blog/${slug}`,
     author: {
       '@type': 'Person',

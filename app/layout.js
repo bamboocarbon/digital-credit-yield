@@ -25,10 +25,21 @@ export const metadata = {
   },
 };
 
+const orgJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Digital Credit Yield',
+  url: 'https://www.digitalcredityield.com',
+  logo: 'https://www.digitalcredityield.com/logo-tweet.png',
+  description: 'Independent tracker for STRC and SATA high-yield preferred stocks — live prices, dividend history, and income projectors.',
+  sameAs: ['https://x.com/DCYieldHub'],
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className="flex flex-col min-h-screen">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
         <Navbar />
         <main className="flex-1 pt-16">
           {children}
