@@ -247,7 +247,7 @@ async function run() {
     </div>
 
     <div style="text-align:center;margin-bottom:20px;">
-      <span style="display:inline-block;color:#f5a623;border:1px solid #f5a623;border-radius:12px;padding:10px 24px;font-size:18px;font-weight:700;">Tracking STRC and SATA for growth</span>
+      <span style="display:inline-block;color:#f5a623;border:1px solid #f5a623;border-radius:12px;padding:10px 24px;font-size:18px;font-weight:700;">Tracking STRC, SATA and BMNP for growth</span>
     </div>
 
     <div style="background:#111827;border:1px solid #1e2a3a;border-radius:12px;padding:28px 24px;margin-bottom:16px;text-align:center;">
@@ -289,7 +289,7 @@ async function run() {
       <span style="font-size:15px;color:#6b7280;">Digital Credit Yield &middot; ${today}</span>
     </div>
     <div style="text-align:center;margin-bottom:20px;">
-      <span style="display:inline-block;color:#f5a623;border:1px solid #f5a623;border-radius:12px;padding:10px 24px;font-size:18px;font-weight:700;">Tracking STRC and SATA for growth</span>
+      <span style="display:inline-block;color:#f5a623;border:1px solid #f5a623;border-radius:12px;padding:10px 24px;font-size:18px;font-weight:700;">Tracking STRC, SATA and BMNP for growth</span>
     </div>
     <img src="data:image/png;base64,${chartImg.toString('base64')}" alt="chart" style="width:100%;border-radius:10px;display:block;">
     <div style="text-align:center;margin-top:20px;padding:0 12px;">
