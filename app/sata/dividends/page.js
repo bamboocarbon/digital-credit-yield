@@ -4,14 +4,14 @@ import DividendHistoryPage from '@/components/DividendHistoryPage';
 
 export const metadata = {
   alternates: { canonical: '/sata/dividends' },
-  title: 'SATA Dividend History — Strive Monthly Dividend Payments',
-  description: "Complete SATA dividend history. Strive's preferred stock pays 13.00% annually in monthly cash. Track per-share amounts and payment dates.",
+  title: 'SATA Dividend History — Strive Daily Dividend Payments',
+  description: "Complete SATA dividend history. Strive's preferred stock pays 13.00% annually in daily cash (~$0.052/share/day). Track per-share amounts and payment dates.",
   openGraph: {
-    title: 'SATA Dividend History — Strive Monthly Dividend Payments',
-    description: "Complete record of every SATA monthly dividend payment from Strive's preferred stock.",
+    title: 'SATA Dividend History — Strive Daily Dividend Payments',
+    description: "Complete record of every SATA daily dividend payment from Strive's preferred stock.",
     type: 'website',
     url: 'https://www.digitalcredityield.com/sata/dividends',
-    images: [{ url: '/api/og?title=SATA+Dividend+History&sub=Monthly+payment+records&rate=13.00%25' }],
+    images: [{ url: '/api/og?title=SATA+Dividend+History&sub=Daily+payment+records&rate=13.00%25' }],
   },
 };
 
