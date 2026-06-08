@@ -20,7 +20,7 @@ export default function LatestNews() {
   useEffect(() => {
     fetch('/api/news')
       .then(r => r.json())
-      .then(data => setItems([...data].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5)))
+      .then(data => setItems([...data].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10)))
       .catch(() => {});
   }, []);
 
