@@ -89,7 +89,7 @@ export default function HomePage() {
         </p>
         <p className="text-base leading-7 mb-6" style={{ color: 'var(--text-muted)' }}>
           These are relatively new products: STRC launched in July 2025, SATA in November 2025, and
-          BMNP is pending NYSE listing. More companies are entering this space as the market digests
+          BMNP listed on the NYSE in June 2026. More companies are entering this space as the market digests
           the demand for high-yield preferred equity instruments. Through Digital Credit Yield I will
           monitor and update the website as the landscape evolves.
         </p>
