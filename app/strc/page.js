@@ -8,7 +8,7 @@ export const metadata = {
     title: "STRC Stock — Strategy Preferred Stock | 11.50% Annual Dividend",
     description: "Strategy's preferred stock paying 11.50% annually in monthly cash dividends. Track live price, yield, and dividend history.",
     type: 'website',
-    url: 'https://digitalcredityield.com/strc',
+    url: 'https://www.digitalcredityield.com/strc',
     images: [{ url: '/api/og?title=STRC+Stock&sub=Strategy+Preferred+Stock&rate=11.50%25' }],
   },
   twitter: {
@@ -23,7 +23,7 @@ const jsonLd = {
   '@type': 'FinancialProduct',
   name: 'STRC — Strategy Perpetual Preferred Stock',
   description: "Strategy's perpetual preferred stock listed on Nasdaq, paying an 11.50% annual dividend distributed monthly in cash.",
-  url: 'https://digitalcredityield.com/strc',
+  url: 'https://www.digitalcredityield.com/strc',
   category: 'Preferred Stock',
   provider: {
     '@type': 'Organization',

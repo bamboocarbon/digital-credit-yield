@@ -7,7 +7,7 @@ const TAGS = ['STRC', 'SATA', 'BMNP', 'Market'];
 const TAG_COLORS = {
   STRC:   { bg: '#14532d', text: '#4ade80' },
   SATA:   { bg: '#1e3a8a', text: '#93c5fd' },
-  BMNP:   { bg: '#3b0764', text: '#c4b5fd' },
+  BMNP:   { bg: '#2d2000', text: '#fde047' },
   Market: { bg: '#1f2937', text: '#9ca3af' },
 };
 
@@ -24,8 +24,9 @@ export default function NewsAdmin() {
     description: '',
     url: '',
   });
-  const [saving, setSaving]   = useState(false);
+  const [saving, setSaving]     = useState(false);
   const [feedback, setFeedback] = useState('');
+  const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
     const stored = sessionStorage.getItem('news_admin_pw');
@@ -64,20 +65,44 @@ export default function NewsAdmin() {
     setLoading(false);
   }
 
+  function handleEdit(item) {
+    setEditingId(item.id);
+    setForm({ date: item.date, tag: item.tag, headline: item.headline, description: item.description, url: item.url });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function handleCancelEdit() {
+    setEditingId(null);
+    setForm({ date: new Date().toISOString().split('T')[0], tag: 'STRC', headline: '', description: '', url: '' });
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     if (!form.headline.trim()) return;
     setSaving(true);
     try {
-      const res = await fetch('/api/news', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${password}` },
-        body: JSON.stringify(form),
-      });
-      const item = await res.json();
-      setItems(prev => [item, ...prev]);
-      setForm(f => ({ ...f, headline: '', description: '', url: '' }));
-      setFeedback('Saved ✓');
+      if (editingId) {
+        const res = await fetch('/api/news', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${password}` },
+          body: JSON.stringify({ id: editingId, ...form }),
+        });
+        const updated = await res.json();
+        setItems(prev => prev.map(i => i.id === editingId ? updated : i));
+        setEditingId(null);
+        setForm({ date: new Date().toISOString().split('T')[0], tag: 'STRC', headline: '', description: '', url: '' });
+        setFeedback('Updated ✓');
+      } else {
+        const res = await fetch('/api/news', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${password}` },
+          body: JSON.stringify(form),
+        });
+        const item = await res.json();
+        setItems(prev => [item, ...prev]);
+        setForm(f => ({ ...f, headline: '', description: '', url: '' }));
+        setFeedback('Saved ✓');
+      }
       setTimeout(() => setFeedback(''), 2500);
     } catch {
       setFeedback('Error saving.');
@@ -126,7 +151,7 @@ export default function NewsAdmin() {
 
         {/* Add form */}
         <form onSubmit={handleSubmit} style={{ background: '#111827', border: '1px solid #1e2a3a', borderRadius: '16px', padding: '28px 24px', marginBottom: '32px' }}>
-          <h2 style={{ color: '#9ca3af', fontSize: '14px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '20px' }}>Add Item</h2>
+          <h2 style={{ color: '#9ca3af', fontSize: '14px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '20px' }}>{editingId ? 'Edit Item' : 'Add Item'}</h2>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
             <div>
@@ -161,11 +186,17 @@ export default function NewsAdmin() {
               style={{ width: '100%', background: '#1e2a3a', border: '1px solid #374151', borderRadius: '8px', padding: '10px 12px', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <button type="submit" disabled={saving || !form.headline.trim()}
               style={{ background: '#c8893a', color: '#0a0f1e', border: 'none', borderRadius: '10px', padding: '12px 28px', fontSize: '15px', fontWeight: '700', cursor: 'pointer', opacity: saving ? 0.6 : 1 }}>
-              {saving ? 'Saving…' : 'Add Item'}
+              {saving ? 'Saving…' : editingId ? 'Update Item' : 'Add Item'}
             </button>
+            {editingId && (
+              <button type="button" onClick={handleCancelEdit}
+                style={{ background: 'transparent', border: '1px solid #374151', color: '#9ca3af', borderRadius: '10px', padding: '12px 20px', fontSize: '15px', cursor: 'pointer' }}>
+                Cancel
+              </button>
+            )}
             {feedback && <span style={{ color: '#4ade80', fontSize: '14px' }}>{feedback}</span>}
           </div>
         </form>
@@ -190,10 +221,16 @@ export default function NewsAdmin() {
                 {item.description && <p style={{ color: '#9ca3af', fontSize: '13px', margin: '0 0 6px', lineHeight: '1.5' }}>{item.description}</p>}
                 {item.url && <a href={item.url} target="_blank" rel="noopener noreferrer" style={{ color: '#c8893a', fontSize: '12px' }}>Read article →</a>}
               </div>
-              <button onClick={() => handleDelete(item.id)}
-                style={{ background: 'transparent', border: '1px solid #374151', color: '#6b7280', borderRadius: '8px', padding: '6px 12px', fontSize: '12px', cursor: 'pointer', flexShrink: 0 }}>
-                Delete
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flexShrink: 0 }}>
+                <button onClick={() => handleEdit(item)}
+                  style={{ background: 'transparent', border: '1px solid #374151', color: '#c8893a', borderRadius: '8px', padding: '6px 12px', fontSize: '12px', cursor: 'pointer' }}>
+                  Edit
+                </button>
+                <button onClick={() => handleDelete(item.id)}
+                  style={{ background: 'transparent', border: '1px solid #374151', color: '#6b7280', borderRadius: '8px', padding: '6px 12px', fontSize: '12px', cursor: 'pointer' }}>
+                  Delete
+                </button>
+              </div>
             </div>
           );
         })}

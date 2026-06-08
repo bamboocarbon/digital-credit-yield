@@ -56,6 +56,19 @@ export async function POST(request) {
   return NextResponse.json(item, { status: 201 });
 }
 
+export async function PATCH(request) {
+  if (!isAuthorised(request)) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
+
+  const body = await request.json();
+  const { id, date, tag, headline, description, url } = body;
+  if (!id || !headline || !tag) return NextResponse.json({ error: 'id, headline and tag are required' }, { status: 400 });
+
+  const items = await loadNews();
+  const updated = items.map(i => i.id === id ? { id, date, tag, headline, description: description || '', url: url || '' } : i);
+  await saveNews(updated);
+  return NextResponse.json(updated.find(i => i.id === id));
+}
+
 export async function DELETE(request) {
   if (!isAuthorised(request)) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
 

@@ -20,7 +20,7 @@ function buildHtml(thought, today) {
     </div>
 
     <div style="text-align:center;margin-bottom:20px;">
-      <span style="display:inline-block;color:#f5a623;border:1px solid #f5a623;border-radius:12px;padding:10px 24px;font-size:18px;font-weight:700;">Tracking STRC and SATA for growth</span>
+      <span style="display:inline-block;color:#f5a623;border:1px solid #f5a623;border-radius:12px;padding:10px 24px;font-size:18px;font-weight:700;">Tracking STRC, SATA and BMNP for growth</span>
     </div>
 
     <div style="background:#111827;border:1px solid #1e2a3a;border-radius:12px;padding:28px 24px;text-align:center;">

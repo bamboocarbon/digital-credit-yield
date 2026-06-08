@@ -22,7 +22,7 @@ export async function generateMetadata({ params }) {
       title: article.title,
       description: desc,
       type: 'article',
-      url: `https://digitalcredityield.com/blog/${slug}`,
+      url: `https://www.digitalcredityield.com/blog/${slug}`,
       publishedTime: article.date,
       images: [{ url: `/api/og?title=${encodeURIComponent(article.title)}&sub=${encodeURIComponent(article.category)}&tag=Blog` }],
     },
@@ -38,13 +38,21 @@ function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-const categoryColour = {
-  Education: '#f87171',
+const tickerColour = {
   STRC: '#15803d',
   SATA: '#2563eb',
-  Comparison: '#67e8f9',
-  Guide: '#c4b5fd',
+  BMNP: '#fde047',
 };
+
+// Company tickers keep their brand colour; generic content categories
+// (Education, Guide, Comparison, …) use neutral white-on-grey to keep the
+// palette from sprawling as more issuers are added.
+function categoryStyle(category) {
+  const c = tickerColour[category];
+  return c
+    ? { background: c + '22', color: c }
+    : { background: '#1f2937', color: '#ffffff' };
+}
 
 export default async function ArticlePage({ params }) {
   const { slug } = await params;
@@ -63,6 +71,8 @@ export default async function ArticlePage({ params }) {
     headline: article.title,
     description: desc,
     datePublished: article.date,
+    dateModified: article.date,
+    image: `https://www.digitalcredityield.com/api/og?title=${encodeURIComponent(article.title)}&sub=${encodeURIComponent(article.category)}&tag=Blog`,
     url: `https://www.digitalcredityield.com/blog/${slug}`,
     author: {
       '@type': 'Person',
@@ -90,10 +100,7 @@ export default async function ArticlePage({ params }) {
 
       <span
         className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-4"
-        style={{
-          background: (categoryColour[article.category] ?? '#6b7280') + '22',
-          color: categoryColour[article.category] ?? '#6b7280',
-        }}
+        style={categoryStyle(article.category)}
       >
         {article.category}
       </span>
@@ -110,6 +117,24 @@ export default async function ArticlePage({ params }) {
 
       <div className="article-prose">
         <Content />
+      </div>
+
+      <div className="mt-12 p-5 rounded-xl flex items-start gap-4" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+        <img
+          src="/about-photo.jpg?v=2"
+          alt="Robin Gillingham, founder of Digital Credit Yield"
+          className="rounded-full object-cover"
+          style={{ width: 56, height: 56, flexShrink: 0 }}
+        />
+        <div>
+          <p className="text-sm font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>About the author</p>
+          <p className="text-sm leading-6" style={{ color: 'var(--text-muted)' }}>
+            <strong>Robin Gillingham</strong> is the founder of Digital Credit Yield. After a career in
+            aircraft engineering, he moved into full-time trading in 2019 and now builds programs to track and
+            visualise high-yield preferred stocks such as STRC, SATA and BMNP.{' '}
+            <Link href="/about" className="transition-opacity hover:opacity-75" style={{ color: 'var(--accent-gold)' }}>Read more →</Link>
+          </p>
+        </div>
       </div>
 
       <div className="mt-10 p-5 rounded-xl" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>

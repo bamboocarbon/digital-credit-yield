@@ -10,7 +10,7 @@ export const metadata = {
     title: 'BMNP vs US Treasuries — BitMine Preferred Stock Income Compared',
     description: "Compare BMNP's 9.50% annual dividend against US Treasuries and bank savings.",
     type: 'website',
-    url: 'https://digitalcredityield.com/bmnp/differentiator',
+    url: 'https://www.digitalcredityield.com/bmnp/differentiator',
     images: [{ url: '/api/og?title=BMNP+vs+Treasuries&sub=Compare+income+vs+Treasuries&tag=Comparison' }],
   },
 };

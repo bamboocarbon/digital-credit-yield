@@ -8,7 +8,7 @@ export const metadata = {
     title: "SATA Stock — Strive Preferred Stock | 13% Monthly Dividend",
     description: "Strive's preferred stock paying 13.00% annually in monthly cash dividends. Track live price, yield, and dividend history.",
     type: 'website',
-    url: 'https://digitalcredityield.com/sata',
+    url: 'https://www.digitalcredityield.com/sata',
     images: [{ url: '/api/og?title=SATA+Stock&sub=Strive+Preferred+Stock&rate=13.00%25' }],
   },
   twitter: {
@@ -23,7 +23,7 @@ const jsonLd = {
   '@type': 'FinancialProduct',
   name: 'SATA — Strive Perpetual Preferred Equity',
   description: "Strive's perpetual preferred equity listed on Nasdaq, paying a 13.00% annual dividend distributed as monthly cash dividends.",
-  url: 'https://digitalcredityield.com/sata',
+  url: 'https://www.digitalcredityield.com/sata',
   category: 'Preferred Stock',
   provider: {
     '@type': 'Organization',

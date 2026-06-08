@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 const TAG_COLORS = {
   STRC:   { bg: '#14532d', text: '#4ade80' },
   SATA:   { bg: '#1e3a8a', text: '#93c5fd' },
-  BMNP:   { bg: '#3b0764', text: '#c4b5fd' },
+  BMNP:   { bg: '#2d2000', text: '#fde047' },
   Market: { bg: '#1f2937', text: '#9ca3af' },
 };
 
@@ -20,7 +20,7 @@ export default function LatestNews() {
   useEffect(() => {
     fetch('/api/news')
       .then(r => r.json())
-      .then(data => setItems(data.slice(0, 5)))
+      .then(data => setItems([...data].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5)))
       .catch(() => {});
   }, []);
 

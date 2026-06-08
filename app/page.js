@@ -11,7 +11,7 @@ export const metadata = {
     title: 'STRC, SATA & BMNP Preferred Stock Tracker — Up to 13% Annual Dividend',
     description: 'Track STRC, SATA and BMNP — high-yield preferred stocks paying 9.50%–13.00% annually. Live prices, dividend history, and income projectors.',
     type: 'website',
-    url: 'https://digitalcredityield.com',
+    url: 'https://www.digitalcredityield.com',
     images: [{ url: '/api/og?title=Preferred+Stock+Tracker&sub=Up+to+13%25+Annual+Dividend' }],
   },
   twitter: {
@@ -25,11 +25,11 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'Digital Credit Yield',
-  url: 'https://digitalcredityield.com',
+  url: 'https://www.digitalcredityield.com',
   description: 'Independent tracker for STRC, SATA and BMNP high-yield preferred stocks. Live prices, dividend history, and income projectors.',
   potentialAction: {
     '@type': 'SearchAction',
-    target: 'https://digitalcredityield.com/{search_term_string}',
+    target: 'https://www.digitalcredityield.com/{search_term_string}',
     'query-input': 'required name=search_term_string',
   },
 };

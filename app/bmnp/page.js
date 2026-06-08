@@ -8,7 +8,7 @@ export const metadata = {
     title: "BMNP Stock — BitMine Preferred Stock | 9.50% Annual Weekly Dividend",
     description: "BitMine's preferred stock paying 9.50% annually in weekly cash dividends. Track live price, yield, and dividend history.",
     type: 'website',
-    url: 'https://digitalcredityield.com/bmnp',
+    url: 'https://www.digitalcredityield.com/bmnp',
     images: [{ url: '/api/og?title=BMNP+Stock&sub=BitMine+Preferred+Stock&rate=9.50%25' }],
   },
   twitter: {
@@ -23,7 +23,7 @@ const jsonLd = {
   '@type': 'FinancialProduct',
   name: 'BMNP — BitMine Immersion Technologies Series A Perpetual Preferred Stock',
   description: "BitMine Immersion Technologies' perpetual preferred stock pending NYSE listing, paying a 9.50% annual dividend distributed weekly in cash.",
-  url: 'https://digitalcredityield.com/bmnp',
+  url: 'https://www.digitalcredityield.com/bmnp',
   category: 'Preferred Stock',
   provider: {
     '@type': 'Organization',

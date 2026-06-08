@@ -6,7 +6,7 @@ export const metadata = {
     title: 'About — Digital Credit Yield',
     description: 'From aircraft engineering to full-time trading — the story behind Digital Credit Yield and its STRC and SATA tracking tools.',
     type: 'website',
-    url: 'https://digitalcredityield.com/about',
+    url: 'https://www.digitalcredityield.com/about',
     images: [{ url: '/api/og?title=About&sub=Digital+Credit+Yield' }],
   },
 };
