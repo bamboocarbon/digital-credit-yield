@@ -5,10 +5,10 @@ import { useState, useEffect } from 'react';
 const TAGS = ['STRC', 'SATA', 'BMNP', 'Market'];
 
 const TAG_COLORS = {
-  STRC:   { bg: '#14532d', text: '#4ade80' },
-  SATA:   { bg: '#1e3a8a', text: '#93c5fd' },
-  BMNP:   { bg: '#2d2000', text: '#fde047' },
-  Market: { bg: '#1f2937', text: '#9ca3af' },
+  STRC:   '#4ade80',
+  SATA:   '#93c5fd',
+  BMNP:   '#fde047',
+  Market: '#9ca3af',
 };
 
 export default function NewsAdmin() {
@@ -214,7 +214,7 @@ export default function NewsAdmin() {
             <div key={item.id} style={{ background: '#111827', border: '1px solid #1e2a3a', borderRadius: '12px', padding: '18px 20px', marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                  <span style={{ background: tc.bg, color: tc.text, fontSize: '11px', fontWeight: '700', padding: '3px 8px', borderRadius: '6px' }}>{item.tag}</span>
+                  <span style={{ color: tc, fontSize: '11px', fontWeight: '700' }}>{item.tag}</span>
                   <span style={{ color: '#6b7280', fontSize: '12px' }}>{item.date}</span>
                 </div>
                 <p style={{ color: '#ffffff', fontSize: '15px', fontWeight: '700', margin: '0 0 6px', lineHeight: '1.4' }}>{item.headline}</p>

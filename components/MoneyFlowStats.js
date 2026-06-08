@@ -28,27 +28,27 @@ export default function MoneyFlowStats() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-      <div className="rounded-2xl p-5 text-center" style={{ background: 'var(--bg-card)', border: '1px solid rgba(21,128,61,0.3)' }}>
-        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#15803d' }}>STRC Total Raised</p>
+      <div className="rounded-2xl p-5 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#4ade80' }}>STRC Total Raised</p>
         <p className="text-3xl font-bold">~$10.9B</p>
         <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Jul 2025 – May 2026</p>
         {lastStrc && (
-          <p className="text-xs mt-2 font-medium" style={{ color: '#15803d' }}>
+          <p className="text-xs mt-2 font-medium" style={{ color: '#4ade80' }}>
             Latest: {lastStrc.week} &middot; {fmt(lastStrc.value)}
           </p>
         )}
       </div>
-      <div className="rounded-2xl p-5 text-center" style={{ background: 'var(--bg-card)', border: '1px solid rgba(37,99,235,0.3)' }}>
-        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#2563eb' }}>SATA Total Raised</p>
+      <div className="rounded-2xl p-5 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#93c5fd' }}>SATA Total Raised</p>
         <p className="text-3xl font-bold">~$1.4B</p>
         <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Nov 2025 – May 2026</p>
         {lastSata && (
-          <p className="text-xs mt-2 font-medium" style={{ color: '#2563eb' }}>
+          <p className="text-xs mt-2 font-medium" style={{ color: '#93c5fd' }}>
             Latest: {lastSata.week} &middot; {fmt(lastSata.value)}
           </p>
         )}
       </div>
-      <div className="rounded-2xl p-5 text-center" style={{ background: 'var(--bg-card)', border: '1px solid rgba(253,224,71,0.3)' }}>
+      <div className="rounded-2xl p-5 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#fde047' }}>BMNP Total Raised</p>
         {lastBmnp ? (
           <>

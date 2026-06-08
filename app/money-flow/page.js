@@ -37,8 +37,8 @@ export default function MoneyFlowPage() {
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
               <span className="font-bold text-lg">STRC</span>
-              <span className="text-xs px-2 py-0.5 rounded-full font-medium"
-                style={{ background: 'rgba(21,128,61,0.15)', color: '#15803d' }}>Strategy Preferred</span>
+              <span className="text-xs font-medium"
+                style={{ color: '#4ade80' }}>Strategy Preferred</span>
             </div>
           </div>
           <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Jul 2025 · 11.50% · $4.2B ATM programme</p>
@@ -49,8 +49,8 @@ export default function MoneyFlowPage() {
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
               <span className="font-bold text-lg">SATA</span>
-              <span className="text-xs px-2 py-0.5 rounded-full font-medium"
-                style={{ background: 'rgba(37,99,235,0.15)', color: '#2563eb' }}>Strive Preferred</span>
+              <span className="text-xs font-medium"
+                style={{ color: '#93c5fd' }}>Strive Preferred</span>
             </div>
           </div>
           <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Nov 2025 · 13.00% · $500M ATM programme</p>
@@ -61,8 +61,8 @@ export default function MoneyFlowPage() {
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
               <span className="font-bold text-lg">BMNP</span>
-              <span className="text-xs px-2 py-0.5 rounded-full font-medium"
-                style={{ background: 'rgba(253,224,71,0.15)', color: '#fde047' }}>BitMine Preferred</span>
+              <span className="text-xs font-medium"
+                style={{ color: '#fde047' }}>BitMine Preferred</span>
             </div>
           </div>
           <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO expected Jun 2026 · TBC% · ATM programme TBC</p>
