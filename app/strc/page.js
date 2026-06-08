@@ -3,10 +3,10 @@ import AssetHub from '@/components/AssetHub';
 export const metadata = {
   alternates: { canonical: '/strc' },
   title: "STRC Stock — Strategy Preferred Stock | 11.50% Annual Dividend",
-  description: "Track STRC live price and yield. Strategy's preferred stock pays 11.50% annually in monthly cash. Listed on Nasdaq, backed by 800,000+ Bitcoin.",
+  description: "Track STRC live price and yield. Strategy's preferred stock pays 11.50% annually in semi-monthly cash. Listed on Nasdaq, backed by 800,000+ Bitcoin.",
   openGraph: {
     title: "STRC Stock — Strategy Preferred Stock | 11.50% Annual Dividend",
-    description: "Strategy's preferred stock paying 11.50% annually in monthly cash dividends. Track live price, yield, and dividend history.",
+    description: "Strategy's preferred stock paying 11.50% annually in semi-monthly cash dividends. Track live price, yield, and dividend history.",
     type: 'website',
     url: 'https://www.digitalcredityield.com/strc',
     images: [{ url: '/api/og?title=STRC+Stock&sub=Strategy+Preferred+Stock&rate=11.50%25' }],
@@ -14,7 +14,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "STRC Stock — Strategy Preferred Stock | 11.50% Annual Dividend",
-    description: "Strategy's preferred stock paying 11.50% annually in monthly cash dividends.",
+    description: "Strategy's preferred stock paying 11.50% annually in semi-monthly cash dividends.",
   },
 };
 
@@ -22,7 +22,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'FinancialProduct',
   name: 'STRC — Strategy Perpetual Preferred Stock',
-  description: "Strategy's perpetual preferred stock listed on Nasdaq, paying an 11.50% annual dividend distributed monthly in cash.",
+  description: "Strategy's perpetual preferred stock listed on Nasdaq, paying an 11.50% annual dividend distributed semi-monthly in cash.",
   url: 'https://www.digitalcredityield.com/strc',
   category: 'Preferred Stock',
   provider: {

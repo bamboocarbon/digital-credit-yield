@@ -4,14 +4,14 @@ import DividendHistoryPage from '@/components/DividendHistoryPage';
 
 export const metadata = {
   alternates: { canonical: '/strc/dividends' },
-  title: 'STRC Dividend History — Strategy Preferred Stock Monthly Payments',
-  description: "Complete STRC dividend history. Strategy's preferred stock pays 11.50% annually in monthly cash. Track per-share amounts and payment dates.",
+  title: 'STRC Dividend History — Strategy Preferred Stock Semi-Monthly Payments',
+  description: "Complete STRC dividend history. Strategy's preferred stock pays 11.50% annually in semi-monthly cash. Track per-share amounts and payment dates.",
   openGraph: {
-    title: 'STRC Dividend History — Strategy Preferred Stock Monthly Payments',
+    title: 'STRC Dividend History — Strategy Preferred Stock Semi-Monthly Payments',
     description: "Complete record of every STRC monthly dividend payment from Strategy's preferred stock.",
     type: 'website',
     url: 'https://www.digitalcredityield.com/strc/dividends',
-    images: [{ url: '/api/og?title=STRC+Dividend+History&sub=Monthly+payment+records&rate=11.50%25' }],
+    images: [{ url: '/api/og?title=STRC+Dividend+History&sub=Semi-monthly+payment+records&rate=11.50%25' }],
   },
 };
 
