@@ -49,6 +49,28 @@ const TOOLS = {
       description: 'A complete record of every SATA dividend payment — per-share amount, payment date, and record date. Enter your holding size to calculate exactly how much you received or will receive from each distribution.',
     },
   ],
+  BMNP: [
+    {
+      href: '/bmnp/chart',
+      label: 'Live Price Chart',
+      description: 'Track the BMNP market price in real time against its $100 par value. As the price moves, the effective yield changes — use the chart to spot when BMNP is trading at a premium or discount and understand what that means for your entry yield.',
+    },
+    {
+      href: '/bmnp/projector',
+      label: 'Growth Projector',
+      description: 'Enter an investment amount and time horizon to model your projected income and portfolio growth from holding BMNP. Adjust the reinvestment rate to see the compounding effect of weekly dividends, and compare returns against US Treasuries and bank savings.',
+    },
+    {
+      href: '/bmnp/differentiator',
+      label: 'Differentiator',
+      description: "See exactly how much more income BMNP's 9.50% annual dividend generates compared to US Treasuries and bank savings over any time period. Enter your investment amount and let the tool show you the income gap in dollar terms.",
+    },
+    {
+      href: '/bmnp/dividends',
+      label: 'Dividend History',
+      description: 'A complete record of every BMNP dividend payment — per-share amount, payment date, and record date. Enter your holding size to calculate exactly how much you received or will receive from each weekly distribution.',
+    },
+  ],
 };
 
 const DESCRIPTIONS = {
@@ -71,6 +93,17 @@ const DESCRIPTIONS = {
       <a href="https://www.strive.com" target="_blank" rel="noopener noreferrer"
         className="inline-block text-sm underline mt-1" style={{ color: 'var(--accent-gold)' }}>
         Visit Strive.com
+      </a>
+    </div>
+  ),
+  BMNP: (
+    <div className="space-y-3">
+      <p>BMNP is BitMine Immersion Technologies&apos; Series A Perpetual Preferred Stock, proposed for listing on the NYSE. It pays a 9.50% annual dividend distributed weekly in cash — making it one of the first publicly listed securities to offer weekly dividend payments. Dividends are cumulative: any unpaid amount accumulates and must be settled before common dividends can be declared. BMNP is pending NYSE approval and is not yet available to trade.</p>
+      <p>As preferred stock, BMNP sits above common equity in BitMine&apos;s capital structure. The instrument includes call provisions allowing the company to redeem shares at 110% of the $100 par value in the first 18 months, stepping down to 105% between 18 months and 3 years, then at par thereafter. These premiums are designed to compensate holders for early redemption risk. Unpaid dividends compound weekly at the stated rate plus a 5 basis point step-up per missed period, capped at 15% per annum.</p>
+      <p>BitMine Immersion Technologies (common stock: BMNR) is an Ethereum-focused digital asset company. Through its MAVAN staking infrastructure platform, BitMine operates Ethereum validators and staking nodes, generating yield from network validation rewards. The company plans to deploy proceeds from the BMNP offering into ETH acquisition and expanded staking infrastructure, positioning itself as an Ethereum treasury company.</p>
+      <a href="https://www.bitmine.com" target="_blank" rel="noopener noreferrer"
+        className="inline-block text-sm underline mt-1" style={{ color: 'var(--accent-gold)' }}>
+        Visit BitMine.com
       </a>
     </div>
   ),
