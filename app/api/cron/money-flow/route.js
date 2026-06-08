@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getMoneyFlowData, saveMoneyFlowData, buildCumulative, SEED_STRC_WEEKLY, SEED_SATA_WEEKLY } from '@/lib/moneyFlowStore';
+import { getMoneyFlowData, saveMoneyFlowData, buildCumulative, SEED_STRC_WEEKLY, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY } from '@/lib/moneyFlowStore';
 import { getRecentFilings, parseProceeds, weekLabel, weekDate } from '@/lib/edgarParser';
 
 export const maxDuration = 60;
@@ -15,11 +15,13 @@ export async function GET(request) {
     let existing = await getMoneyFlowData();
     let strcWeekly = existing?.strcWeekly ?? [...SEED_STRC_WEEKLY];
     let sataWeekly = existing?.sataWeekly ?? [...SEED_SATA_WEEKLY];
+    let bmnpWeekly = existing?.bmnpWeekly ?? [...SEED_BMNP_WEEKLY];
 
     const strcLastDate = strcWeekly.at(-1)?.date ?? '2026-05-25';
     const sataLastDate = sataWeekly.at(-1)?.date ?? '2026-05-25';
+    const bmnpLastDate = bmnpWeekly.at(-1)?.date ?? '2026-06-01';
 
-    const results = { strcAdded: 0, sataAdded: 0, errors: [] };
+    const results = { strcAdded: 0, sataAdded: 0, bmnpAdded: 0, errors: [] };
 
     // Fetch new STRC 8-Ks
     try {
@@ -52,9 +54,24 @@ export async function GET(request) {
       results.errors.push(`SATA: ${err.message}`);
     }
 
+    // Fetch new BMNP 8-Ks
+    try {
+      const filings = await getRecentFilings('BMNP', bmnpLastDate);
+      for (const filing of filings.reverse()) {
+        const proceeds = await parseProceeds('BMNP', filing);
+        if (!proceeds) continue;
+        const date = weekDate(filing.date);
+        if (bmnpWeekly.some(d => d.date === date)) continue;
+        bmnpWeekly.push({ week: weekLabel(filing.date), date, value: proceeds });
+        results.bmnpAdded++;
+      }
+    } catch (err) {
+      results.errors.push(`BMNP: ${err.message}`);
+    }
+
     // Rebuild cumulative and save
-    const cumulative = buildCumulative(strcWeekly, sataWeekly);
-    await saveMoneyFlowData({ strcWeekly, sataWeekly, cumulative });
+    const cumulative = buildCumulative(strcWeekly, sataWeekly, bmnpWeekly);
+    await saveMoneyFlowData({ strcWeekly, sataWeekly, bmnpWeekly, cumulative });
 
     return NextResponse.json({ ok: true, ...results });
   } catch (err) {

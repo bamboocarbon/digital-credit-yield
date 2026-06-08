@@ -1,15 +1,15 @@
 import AadsAd from '@/components/AadsAd';
-import { STRCMoneyFlowChart, SATAMoneyFlowChart } from '@/components/MoneyFlowChart';
+import { STRCMoneyFlowChart, SATAMoneyFlowChart, BMNPMoneyFlowChart } from '@/components/MoneyFlowChart';
 import CumulativeFlowChart from '@/components/CumulativeFlowChart';
 import MoneyFlowStats from '@/components/MoneyFlowStats';
 
 export const metadata = {
   alternates: { canonical: '/money-flow' },
-  title: 'Money Flow — STRC & SATA Capital Raised Since IPO',
-  description: 'Weekly capital raised by STRC and SATA tracked from SEC 8-K filings since each IPO. Bar charts and cumulative totals showing investor demand over time.',
+  title: 'Money Flow — STRC, SATA & BMNP Capital Raised Since IPO',
+  description: 'Weekly capital raised by STRC, SATA and BMNP tracked from SEC 8-K filings since each IPO. Bar charts and cumulative totals showing investor demand over time.',
   openGraph: {
-    title: 'Money Flow — STRC & SATA Capital Raised Since IPO',
-    description: 'Weekly capital raised by STRC and SATA from SEC 8-K filings since IPO. See cumulative totals and weekly bar charts.',
+    title: 'Money Flow — STRC, SATA & BMNP Capital Raised Since IPO',
+    description: 'Weekly capital raised by STRC, SATA and BMNP from SEC 8-K filings since IPO. See cumulative totals and weekly bar charts.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/money-flow',
     images: [{ url: '/api/og?title=Money+Flow&sub=Capital+raised+since+IPO&tag=Data' }],
@@ -23,7 +23,8 @@ export default function MoneyFlowPage() {
       <div className="text-center mb-10">
         <h1 className="text-4xl sm:text-5xl font-bold mb-3 tracking-tight">Money Flow</h1>
         <p className="text-lg max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
-          Weekly capital raised by STRC and SATA, compiled from SEC 8-K filings since each IPO.
+          Weekly capital raised by STRC, SATA and BMNP, compiled from SEC 8-K filings since each IPO.
+          BMNP IPO expected late June 2026.
         </p>
       </div>
 
@@ -31,7 +32,7 @@ export default function MoneyFlowPage() {
       <MoneyFlowStats />
 
       {/* Side-by-side weekly bars */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
@@ -54,6 +55,18 @@ export default function MoneyFlowPage() {
           </div>
           <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Nov 2025 · 13.00% · $500M ATM programme</p>
           <SATAMoneyFlowChart />
+        </div>
+
+        <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-lg">BMNP</span>
+              <span className="text-xs px-2 py-0.5 rounded-full font-medium"
+                style={{ background: 'rgba(253,224,71,0.15)', color: '#fde047' }}>BitMine Preferred</span>
+            </div>
+          </div>
+          <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO expected Jun 2026 · TBC% · ATM programme TBC</p>
+          <BMNPMoneyFlowChart />
         </div>
       </div>
 

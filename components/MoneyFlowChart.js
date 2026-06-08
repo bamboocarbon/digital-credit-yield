@@ -93,6 +93,8 @@ const STRC_GOLD = '#15803d';
 const STRC_GOLD_DIM = 'rgba(21,128,61,0.35)';
 const SATA_BLUE = '#2563eb';
 const SATA_BLUE_DIM = 'rgba(37,99,235,0.35)';
+const BMNP_YELLOW = '#fde047';
+const BMNP_YELLOW_DIM = 'rgba(253,224,71,0.35)';
 
 function fmt(v) {
   if (v >= 1000) return `$${(v / 1000).toFixed(2)}B`;
@@ -190,22 +192,21 @@ function RangeButtons({ range, setRange, activeColor }) {
   );
 }
 
-function useLiveWeekly(fallback) {
+const BMNP_WEEKS = [];
+
+function useLiveWeekly(fallback, key) {
   const [rows, setRows] = useState(fallback);
   useEffect(() => {
     fetch('/api/money-flow-data')
       .then(r => r.json())
-      .then(d => {
-        if (d?.strcWeekly && fallback === STRC_WEEKS) setRows(d.strcWeekly);
-        if (d?.sataWeekly && fallback === SATA_WEEKS) setRows(d.sataWeekly);
-      })
+      .then(d => { if (d?.[key]) setRows(d[key]); })
       .catch(() => {});
-  }, []);
+  }, [key]);
   return rows;
 }
 
 export function STRCMoneyFlowChart() {
-  const weeks = useLiveWeekly(STRC_WEEKS);
+  const weeks = useLiveWeekly(STRC_WEEKS, 'strcWeekly');
   const [range, setRange] = useState('all');
   const canvasRef = useRef(null);
   const filtered = filterByRange(weeks, range);
@@ -231,7 +232,7 @@ export function STRCMoneyFlowChart() {
 }
 
 export function SATAMoneyFlowChart() {
-  const weeks = useLiveWeekly(SATA_WEEKS);
+  const weeks = useLiveWeekly(SATA_WEEKS, 'sataWeekly');
   const [range, setRange] = useState('all');
   const canvasRef = useRef(null);
   const filtered = filterByRange(weeks, range);
@@ -251,6 +252,39 @@ export function SATAMoneyFlowChart() {
     <div>
       <RangeButtons range={range} setRange={setRange} activeColor={SATA_BLUE} />
       <div role="img" aria-label="SATA weekly capital raised bar chart" style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
+      <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering</p>
+    </div>
+  );
+}
+
+export function BMNPMoneyFlowChart() {
+  const weeks = useLiveWeekly(BMNP_WEEKS, 'bmnpWeekly');
+  const [range, setRange] = useState('all');
+  const canvasRef = useRef(null);
+  const filtered = filterByRange(weeks, range);
+  useBarChart({
+    canvasRef,
+    labels: filtered.map(d => d.week),
+    datasets: [{
+      data: filtered.map(d => d.value),
+      backgroundColor: filtered.map(d => d.ipo ? BMNP_YELLOW : BMNP_YELLOW_DIM),
+      borderColor: filtered.map(d => d.ipo ? BMNP_YELLOW : 'transparent'),
+      borderWidth: 1,
+      borderRadius: 3,
+    }],
+    logScale: false,
+  });
+  if (weeks.length === 0) {
+    return (
+      <div style={{ height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: '#6b7280', fontSize: 13, textAlign: 'center' }}>IPO expected late June 2026<br />Data will appear automatically after launch</p>
+      </div>
+    );
+  }
+  return (
+    <div>
+      <RangeButtons range={range} setRange={setRange} activeColor={BMNP_YELLOW} />
+      <div role="img" aria-label="BMNP weekly capital raised bar chart" style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
       <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering</p>
     </div>
   );
@@ -311,6 +345,14 @@ export function CombinedMoneyFlowChart() {
         borderWidth: 1,
         borderRadius: 3,
       },
+      {
+        label: 'BMNP',
+        data: ALL_WEEKS.map(d => lookup(BMNP_WEEKS, d)),
+        backgroundColor: BMNP_YELLOW_DIM,
+        borderColor: BMNP_YELLOW,
+        borderWidth: 1,
+        borderRadius: 3,
+      },
     ],
     logScale,
   });
@@ -326,6 +368,10 @@ export function CombinedMoneyFlowChart() {
           <span className="flex items-center gap-1.5">
             <span style={{ display:'inline-block', width:14, height:14, background:SATA_BLUE, borderRadius:2 }} />
             SATA
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span style={{ display:'inline-block', width:14, height:14, background:BMNP_YELLOW, borderRadius:2 }} />
+            BMNP
           </span>
         </div>
         <div className="flex gap-2">
