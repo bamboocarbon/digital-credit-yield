@@ -6,7 +6,7 @@ const TAGS = ['STRC', 'SATA', 'BMNP', 'Market'];
 
 const TAG_COLORS = {
   STRC:   '#4ade80',
-  SATA:   '#93c5fd',
+  SATA:   '#3b82f6',
   BMNP:   '#fde047',
   Market: '#9ca3af',
 };

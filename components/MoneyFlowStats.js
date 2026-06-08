@@ -39,11 +39,11 @@ export default function MoneyFlowStats() {
         )}
       </div>
       <div className="rounded-2xl p-5 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#93c5fd' }}>SATA Total Raised</p>
+        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#3b82f6' }}>SATA Total Raised</p>
         <p className="text-3xl font-bold">~$1.4B</p>
         <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Nov 2025 – May 2026</p>
         {lastSata && (
-          <p className="text-xs mt-2 font-medium" style={{ color: '#93c5fd' }}>
+          <p className="text-xs mt-2 font-medium" style={{ color: '#3b82f6' }}>
             Latest: {lastSata.week} &middot; {fmt(lastSata.value)}
           </p>
         )}
