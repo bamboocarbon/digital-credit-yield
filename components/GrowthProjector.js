@@ -41,7 +41,7 @@ export default function GrowthProjector({ ticker, liveYield }) {
   const priceForYield = form.inputMode === 'shares' ? Number(form.pricePerShare || 100) : 100;
   const effectiveYield = priceForYield > 0 ? Number(form.annualYield) * (100 / priceForYield) : Number(form.annualYield);
 
-  const paymentsPerYear = ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : 12;
+  const paymentsPerYear = ticker === 'STRC' ? 24 : ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : 12;
 
   const history = useMemo(
     () => runProjection(startValue, effectiveYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months, paymentsPerYear),

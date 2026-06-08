@@ -46,8 +46,8 @@ export default function Differentiator({ ticker, liveYield }) {
 
   const step = months <= 24 ? 1 : 12;
 
-  // SATA uses 250 business-day compounding; BMNP uses 52 weekly; benchmarks stay at 12
-  const paymentsPerYear = ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : 12;
+  // STRC uses 24 semi-monthly; SATA uses 250 business-day compounding; BMNP uses 52 weekly; benchmarks stay at 12
+  const paymentsPerYear = ticker === 'STRC' ? 24 : ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : 12;
 
   const assetData = useMemo(
     () => runProjection(startValue, effectiveYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months, paymentsPerYear),
