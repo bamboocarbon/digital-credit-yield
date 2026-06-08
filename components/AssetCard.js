@@ -7,7 +7,7 @@ import { PRE_LISTING_TICKERS } from '@/lib/constants';
 const DESCRIPTIONS = {
   STRC: "Strategy's perpetual preferred stock paying 11.50% annual dividends in monthly cash. Dividend rate adjusts monthly to maintain trading near its $100 par value.",
   SATA: "Strive's publicly traded preferred equity paying 13.00% annualised in monthly cash dividends. Targets a $99–$101 trading range, backed by 18+ months of cash reserves and over 13,000 Bitcoin.",
-  BMNP: "BitMine Immersion Technologies' Series A perpetual preferred stock paying 9.50% annually in weekly cash dividends. Cumulative preferred, pending NYSE listing. Backed by Ethereum staking via the MAVAN platform.",
+  BMNP: "BitMine Immersion Technologies' Series A perpetual preferred stock paying 9.50% annually in weekly cash dividends. NYSE listed June 2026. Backed by Ethereum staking via the MAVAN platform.",
 };
 
 const INCOME_BADGE = {

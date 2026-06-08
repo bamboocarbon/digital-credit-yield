@@ -24,7 +24,7 @@ export default function MoneyFlowPage() {
         <h1 className="text-4xl sm:text-5xl font-bold mb-3 tracking-tight">Money Flow</h1>
         <p className="text-lg max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
           Weekly capital raised by STRC, SATA and BMNP, compiled from SEC 8-K filings since each IPO.
-          BMNP IPO expected late June 2026.
+          BMNP listed on the NYSE in June 2026.
         </p>
       </div>
 
