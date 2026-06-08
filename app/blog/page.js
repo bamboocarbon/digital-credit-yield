@@ -21,7 +21,7 @@ function formatDate(dateStr) {
 
 const tickerColour = {
   STRC: '#4ade80',
-  SATA: '#93c5fd',
+  SATA: '#3b82f6',
   BMNP: '#fde047',
 };
 

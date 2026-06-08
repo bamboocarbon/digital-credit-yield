@@ -50,7 +50,7 @@ export default function MoneyFlowPage() {
             <div className="flex items-center gap-2">
               <span className="font-bold text-lg">SATA</span>
               <span className="text-xs font-medium"
-                style={{ color: '#93c5fd' }}>Strive Preferred</span>
+                style={{ color: '#3b82f6' }}>Strive Preferred</span>
             </div>
           </div>
           <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Nov 2025 · 13.00% · $500M ATM programme</p>
