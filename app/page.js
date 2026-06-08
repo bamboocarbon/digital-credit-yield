@@ -72,7 +72,9 @@ export default function HomePage() {
       <GoogleAd slot="home-banner" />
       <AadsAd />
 
-      <LatestNews />
+      <div className="max-w-3xl mx-auto">
+        <LatestNews />
+      </div>
 
       {/* About section */}
       <div className="mt-12 max-w-3xl mx-auto">
