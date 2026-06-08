@@ -20,19 +20,16 @@ function formatDate(dateStr) {
 }
 
 const tickerColour = {
-  STRC: '#15803d',
-  SATA: '#2563eb',
+  STRC: '#4ade80',
+  SATA: '#93c5fd',
   BMNP: '#fde047',
 };
 
-// Company tickers keep their brand colour; generic content categories
-// (Education, Guide, Comparison, …) use neutral white-on-grey to keep the
-// palette from sprawling as more issuers are added.
 function categoryStyle(category) {
   const c = tickerColour[category];
   return c
-    ? { background: c + '22', color: c }
-    : { background: '#1f2937', color: '#ffffff' };
+    ? { color: c }
+    : { color: '#9ca3af' };
 }
 
 export default function BlogPage() {

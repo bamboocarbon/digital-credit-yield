@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 
 const TAG_COLORS = {
-  STRC:   { bg: '#14532d', text: '#4ade80' },
-  SATA:   { bg: '#1e3a8a', text: '#93c5fd' },
-  BMNP:   { bg: '#2d2000', text: '#fde047' },
-  Market: { bg: '#1f2937', text: '#9ca3af' },
+  STRC:   '#4ade80',
+  SATA:   '#93c5fd',
+  BMNP:   '#fde047',
+  Market: '#9ca3af',
 };
 
 function formatDate(dateStr) {
@@ -38,7 +38,7 @@ export default function LatestNews() {
               style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
             >
               <div className="flex items-center gap-3 mb-3">
-                <span style={{ background: tc.bg, color: tc.text, fontSize: '11px', fontWeight: '700', padding: '3px 8px', borderRadius: '6px' }}>
+                <span style={{ color: tc, fontSize: '11px', fontWeight: '700' }}>
                   {item.tag}
                 </span>
                 <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{formatDate(item.date)}</span>
