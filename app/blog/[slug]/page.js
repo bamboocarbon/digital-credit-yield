@@ -51,6 +51,23 @@ function categoryStyle(category) {
     : { color: '#9ca3af' };
 }
 
+function CategoryTag({ category }) {
+  if (Array.isArray(category)) {
+    return (
+      <span className="inline-flex items-center gap-1.5 mb-4">
+        {category.map(c => (
+          <span key={c} className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full" style={categoryStyle(c)}>{c}</span>
+        ))}
+      </span>
+    );
+  }
+  return (
+    <span className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-4" style={categoryStyle(category)}>
+      {category}
+    </span>
+  );
+}
+
 export default async function ArticlePage({ params }) {
   const { slug } = await params;
   const article = getArticle(slug);
@@ -95,12 +112,7 @@ export default async function ArticlePage({ params }) {
         ← Back to Blog
       </Link>
 
-      <span
-        className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-4"
-        style={categoryStyle(article.category)}
-      >
-        {article.category}
-      </span>
+      <CategoryTag category={article.category} />
 
       <h1 className="text-3xl font-bold leading-tight mb-4">{article.title}</h1>
 

@@ -32,6 +32,23 @@ function categoryStyle(category) {
     : { color: '#9ca3af' };
 }
 
+function CategoryTag({ category }) {
+  if (Array.isArray(category)) {
+    return (
+      <span className="flex items-center gap-1.5 mb-3 self-start">
+        {category.map(c => (
+          <span key={c} className="text-xs font-semibold px-2 py-0.5 rounded-full" style={categoryStyle(c)}>{c}</span>
+        ))}
+      </span>
+    );
+  }
+  return (
+    <span className="text-xs font-semibold px-2 py-0.5 rounded-full mb-3 self-start" style={categoryStyle(category)}>
+      {category}
+    </span>
+  );
+}
+
 export default function BlogPage() {
   const sorted = [...articles].sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -50,12 +67,7 @@ export default function BlogPage() {
             className="flex flex-col rounded-xl p-5 transition-colors"
             style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
           >
-            <span
-              className="text-xs font-semibold px-2 py-0.5 rounded-full mb-3 self-start"
-              style={categoryStyle(article.category)}
-            >
-              {article.category}
-            </span>
+            <CategoryTag category={article.category} />
             <h2 className="text-base font-semibold leading-snug mb-2" style={{ color: 'var(--text-primary)' }}>
               {article.title}
             </h2>
