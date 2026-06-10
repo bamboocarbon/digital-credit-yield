@@ -13,6 +13,11 @@ export const metadata = {
     url: 'https://www.digitalcredityield.com/strc/projector',
     images: [{ url: '/api/og?title=STRC+Income+Calculator&sub=Model+your+dividend+income&tag=Income+Tool' }],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: "STRC Income Calculator — Strategy Preferred Stock Projector",
+    description: "Model your STRC income and compare Strategy's 11.50% preferred stock against US Treasuries and bank savings.",
+  },
 };
 
 export default async function STRCProjector() {

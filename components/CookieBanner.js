@@ -1,5 +1,8 @@
 'use client';
 
+// TODO (post-AdSense approval): replace this banner with AdSense "Privacy & messaging" GDPR CMP
+// (Google-certified, TCF-registered) to satisfy Google's EEA/UK consent requirement for ad serving.
+
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 

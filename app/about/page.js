@@ -1,13 +1,18 @@
 export const metadata = {
   alternates: { canonical: '/about' },
-  title: 'About — Digital Credit Yield',
-  description: 'The story behind Digital Credit Yield — from aircraft engineering to full-time trading and building tools for retail investors in STRC and SATA.',
+  title: 'About',
+  description: 'The story behind Digital Credit Yield — from aircraft engineering to full-time trading and building tools for retail investors in STRC, SATA and BMNP.',
   openGraph: {
-    title: 'About — Digital Credit Yield',
-    description: 'From aircraft engineering to full-time trading — the story behind Digital Credit Yield and its STRC and SATA tracking tools.',
+    title: 'About',
+    description: 'From aircraft engineering to full-time trading — the story behind Digital Credit Yield and its STRC, SATA and BMNP tracking tools.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/about',
     images: [{ url: '/api/og?title=About&sub=Digital+Credit+Yield' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About',
+    description: 'From aircraft engineering to full-time trading — the story behind Digital Credit Yield and its STRC, SATA and BMNP tracking tools.',
   },
 };
 
@@ -16,6 +21,11 @@ export default function AboutPage() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
 
       <h1 className="text-xl font-semibold mb-8">About Me</h1>
+
+      <p className="text-base leading-7 mb-6" style={{ color: 'var(--text-muted)' }}>
+        I&rsquo;ve been a full-time independent investor for seven years, and Digital Credit Yield is the
+        research and tracking platform I built to support this work.
+      </p>
 
       <div style={{ overflow: 'hidden' }}>
         <div className="rounded-2xl overflow-hidden mb-2 mr-6" style={{ border: '1px solid var(--border)', maxWidth: '160px', float: 'left' }}>
@@ -56,9 +66,10 @@ export default function AboutPage() {
 
       <p className="text-base leading-7 mb-6" style={{ color: 'var(--text-muted)' }}>
         Through research, trading and accounting I created spreadsheets and developed projections
-        and forecast charts. This website is an extension and progression of those ideas as a way
-        of trying to navigate and visualise the often complex financial products that are available
-        to retail investors.
+        and forecast charts. As new preferred equity instruments emerged offering yields far above
+        traditional savings, I found myself building more and more tools to analyse them. Digital
+        Credit Yield grew from those spreadsheets — a way of sharing the same clarity I was building
+        for myself with other retail investors navigating these products.
       </p>
 
       <p className="text-base leading-7 mb-12" style={{ color: 'var(--text-muted)' }}>
@@ -69,8 +80,9 @@ export default function AboutPage() {
       <h2 className="text-xl font-semibold mb-4">What I Track</h2>
       <div className="space-y-4 mb-8">
         {[
-          { ticker: 'STRC', name: "Strategy's Perpetual Preferred Stock", desc: "Pays 11.50% annual dividends monthly in cash. Dividend rate adjusts monthly to maintain trading near its $100 par value." },
-          { ticker: 'SATA', name: "Strive's Preferred Equity Instrument", desc: "Pays 13.00% annualised in monthly cash dividends. Targets a $99–$101 trading range, backed by 18+ months of cash reserves and over 13,000 Bitcoin." },
+          { ticker: 'STRC', name: "Strategy's Perpetual Preferred Stock", desc: "Pays 11.50% annual dividends in semi-monthly cash payments. Dividend rate adjusts monthly to maintain trading near its $100 par value." },
+          { ticker: 'SATA', name: "Strive's Preferred Equity Instrument", desc: "Pays 13.00% annualised in daily cash dividends from 16 June 2026. Targets a $99–$101 trading range, backed by 18+ months of cash reserves and over 19,000 Bitcoin." },
+          { ticker: 'BMNP', name: "Bitmine's Preferred Equity Instrument", desc: "Pays 9.50% annualised in weekly cash dividends. Bitmine's Ethereum treasury preferred equity instrument, funded by ETH staking rewards via the MAVAN validator network. Expected to list on the NYSE in June 2026." },
         ].map(asset => (
           <div key={asset.ticker} className="p-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
             <p className="font-semibold mb-1">{asset.ticker} — {asset.name}</p>

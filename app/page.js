@@ -27,11 +27,6 @@ const jsonLd = {
   name: 'Digital Credit Yield',
   url: 'https://www.digitalcredityield.com',
   description: 'Independent tracker for STRC, SATA and BMNP high-yield preferred stocks. Live prices, dividend history, and income projectors.',
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: 'https://www.digitalcredityield.com/{search_term_string}',
-    'query-input': 'required name=search_term_string',
-  },
 };
 
 export default function HomePage() {
@@ -78,27 +73,60 @@ export default function HomePage() {
 
       {/* About section */}
       <div className="mt-12 max-w-3xl mx-auto">
-        <h2 className="text-2xl font-bold mb-4">About Digital Credit Yield</h2>
-        <p className="text-base leading-7 mb-6" style={{ color: 'var(--text-muted)' }}>
-          Digital Credit Yield is an independent financial research and tracking tool built for
-          investors in high-yield digital credit instruments. The focus is on STRC, SATA and BMNP —
-          preferred equity instruments that pay high-yield cash dividends far above traditional savings,
-          with monthly and weekly payment options.
-          The tools help you track live pricing, understand current and effective yields, and model
-          long-term portfolio growth.
+        <h2 className="text-2xl font-bold mb-8">About Digital Credit Yield</h2>
+
+        <h3 className="text-lg font-semibold mb-3">Who&rsquo;s behind this</h3>
+        <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
+          I&rsquo;m Robin Gillingham and I created and run digitalcredityield.com.
         </p>
-        <p className="text-base leading-7 mb-6" style={{ color: 'var(--text-muted)' }}>
-          These are relatively new products: STRC launched in July 2025, SATA in November 2025, and
-          BMNP listed on the NYSE in June 2026. More companies are entering this space as the market digests
-          the demand for high-yield preferred equity instruments. Through Digital Credit Yield I will
-          monitor and update the website as the landscape evolves.
+        <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
+          Reading my profile you&rsquo;ll see I made an exciting career change and have been an independent retail investor for the last seven years, latterly enjoying developing financial software.
         </p>
         <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
-          I built this site because I believe retail investors need clear, accessible data on
-          emerging income assets — without the noise, paywalls, or complexity of institutional
-          platforms. Whether you're evaluating STRC or SATA for the first time or actively tracking
-          your existing position, my Growth Projector and Differentiator tools give you the clarity
-          to make informed decisions.
+          I could see a greater new path to financial gain and I studied hard. Apart from cycling gear for me and the bikes, my Birthday/Christmas list now included books on investing — always reading while travelling on planes and trains.
+        </p>
+
+        <h3 className="text-lg font-semibold mb-3">Why I built this site</h3>
+        <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
+          From 2020 my research and interest took me towards cryptocurrency, particularly Bitcoin where I first heard about Michael Saylor&rsquo;s groundbreaking plans for MicroStrategy putting Bitcoin on the company&rsquo;s treasury account.
+        </p>
+        <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
+          With the exciting Bitcoin plans from Strategy, launching STRC and later Strive launching SATA, I had the initial idea to build a website to highlight the difference between annual yield and effective yield. From here the website has expanded with growth projectors, differentiators, dividend charts and the latest money flow data. I think the website now brings together all the up to date info an investor would need in calculating preferred equity stocks.
+        </p>
+        <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
+          With Bitmine Immersion Technologies having recently launched their own preferred equity stock, BMNP, now listed on the NYSE, I have already updated this website and will in the future cover any more stocks in this category. So making Digital Credit Yield a great place to look for analysing all these products available in one location.
+        </p>
+
+        <h3 className="text-lg font-semibold mb-3">How I keep the data accurate</h3>
+        <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
+          Trust starts with sourcing, so here&rsquo;s exactly how the numbers are produced:
+        </p>
+        <ul className="text-base leading-7 mb-4 space-y-2" style={{ color: 'var(--text-muted)', paddingLeft: '1.25rem', listStyleType: 'disc' }}>
+          <li>Pricing and dividend data is fetched from public market sources (Yahoo Finance) and, for dividend rates, cross-checked against the issuers&rsquo; own SEC filings (8-Ks and prospectuses from Strategy, Strive and Bitmine).</li>
+          <li>Dividend history is stored and built up over time on my server from public data only — no personal data is ever involved.</li>
+          <li>Articles are researched against primary sources and fact-checked before publishing. Where I state a rate, a date, or a structural detail, it traces back to a filing or the issuer&rsquo;s own disclosure.</li>
+          <li>Updates: I revise pages as the instruments and the wider market evolves. Each article carries its publish date so you can judge how current it is.</li>
+        </ul>
+        <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
+          If you ever spot something that looks wrong, please tell me — corrections are welcome and I&rsquo;d rather fix an error fast than leave it standing.
+        </p>
+
+        <h3 className="text-lg font-semibold mb-3">Transparency and independence</h3>
+        <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
+          {/* TODO (post-AdSense approval): change to "Digital Credit Yield is supported by advertising. This never influences which assets I cover or what I say about them." */}
+          Digital Credit Yield is not yet funded by advertising. This never influences which assets I cover or what I say about them.
+        </p>
+        <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
+          Position disclosure — I currently hold positions in MSTR and ASST the common equity stocks of Strategy and Strive.
+          I have no relationship with Strategy Inc. Strive Inc. or Bitmine Immersion Technologies Inc. and am not compensated by them. This is an independent research product.
+        </p>
+
+        <h3 className="text-lg font-semibold mb-3">Get in touch</h3>
+        <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
+          Questions, corrections, or feedback are always welcome — reach me at{' '}
+          <a href="mailto:contact@digitalcredityield.com" style={{ color: 'var(--accent-gold)' }}>contact@digitalcredityield.com</a>{' '}
+          or on X at{' '}
+          <a href="https://x.com/DCYieldHub" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-gold)' }}>@DCYieldHub</a>.
         </p>
 
         <div className="p-5 rounded-xl" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>

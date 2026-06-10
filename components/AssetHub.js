@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { STRIVE_BTC_HOLDINGS } from '@/lib/constants';
 import SubNav from '@/components/SubNav';
 import GoogleAd from '@/components/GoogleAd';
 import AadsAd from '@/components/AadsAd';
@@ -88,9 +89,9 @@ const DESCRIPTIONS = {
   SATA: (
     <div className="space-y-3">
       <p>SATA is Strive&apos;s perpetual preferred equity instrument, listed on the Nasdaq. It pays a 13.00% annual dividend distributed daily in cash (~$0.052 per share per day, from 16 June 2026), with Strive targeting a $99–$101 trading range to minimise price volatility and provide a predictable income stream. SATA is available on most major brokerage platforms.</p>
-      <p>As preferred equity, SATA sits below debt but above common equity in Strive&apos;s capital structure. In the event of liquidation, preferred stockholders are paid before common shareholders, giving SATA a meaningful layer of protection relative to pure equity. Strive backs the instrument with over 13,000 Bitcoin in reserve assets and maintains 18 months of pre-funded cash reserves — providing the capacity to cover dividend payments for over 19 years.</p>
+      <p>As preferred equity, SATA sits below debt but above common equity in Strive&apos;s capital structure. In the event of liquidation, preferred stockholders are paid before common shareholders, giving SATA a meaningful layer of protection relative to pure equity. Strive backs the instrument with over {STRIVE_BTC_HOLDINGS} Bitcoin in reserve assets and maintains 18 months of pre-funded cash reserves — providing the capacity to cover dividend payments for over 19 years.</p>
       <p>Strive is a Nasdaq-listed financial services and Bitcoin treasury company, founded in 2022 by Vivek Ramaswamy. Strive has positioned itself as a Bitcoin-first asset manager, rejecting the ESG investment model in favour of a returns-focused approach it calls excellence capitalism. The company has made Bitcoin a cornerstone of both its treasury strategy and its financial product offering.</p>
-      <a href="https://www.strive.com" target="_blank" rel="noopener noreferrer"
+      <a href="https://strive.com" target="_blank" rel="noopener noreferrer"
         className="inline-block text-sm underline mt-1" style={{ color: 'var(--accent-gold)' }}>
         Visit Strive.com
       </a>
@@ -101,9 +102,9 @@ const DESCRIPTIONS = {
       <p>BMNP is BitMine Immersion Technologies&apos; Series A Perpetual Preferred Stock, listed on the NYSE in June 2026. It pays a 9.50% annual dividend distributed weekly in cash — making it one of the first publicly listed securities to offer weekly dividend payments. Dividends are cumulative: any unpaid amount accumulates and must be settled before common dividends can be declared.</p>
       <p>As preferred stock, BMNP sits above common equity in BitMine&apos;s capital structure. The instrument includes call provisions allowing the company to redeem shares at 110% of the $100 par value in the first 18 months, stepping down to 105% between 18 months and 3 years, then at par thereafter. These premiums are designed to compensate holders for early redemption risk. Unpaid dividends compound weekly at the stated rate plus a 5 basis point step-up per missed period, capped at 15% per annum.</p>
       <p>BitMine Immersion Technologies (common stock: BMNR) is an Ethereum-focused digital asset company. Through its MAVAN staking infrastructure platform, BitMine operates Ethereum validators and staking nodes, generating yield from network validation rewards. The company plans to deploy proceeds from the BMNP offering into ETH acquisition and expanded staking infrastructure, positioning itself as an Ethereum treasury company.</p>
-      <a href="https://www.bitmine.com" target="_blank" rel="noopener noreferrer"
+      <a href="https://www.bitminetech.io" target="_blank" rel="noopener noreferrer"
         className="inline-block text-sm underline mt-1" style={{ color: 'var(--accent-gold)' }}>
-        Visit BitMine.com
+        Visit BitMineTech.io
       </a>
     </div>
   ),

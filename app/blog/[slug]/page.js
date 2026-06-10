@@ -35,7 +35,7 @@ export async function generateMetadata({ params }) {
 }
 
 function formatDate(dateStr) {
-  return new Date(dateStr).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+  return new Date(dateStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 const tickerColour = {
@@ -85,7 +85,7 @@ export default async function ArticlePage({ params }) {
     headline: article.title,
     description: desc,
     datePublished: article.date,
-    dateModified: article.date,
+    dateModified: article.updated || article.date,
     image: `https://www.digitalcredityield.com/api/og?title=${encodeURIComponent(article.title)}&sub=${encodeURIComponent(article.category)}&tag=Blog`,
     url: `https://www.digitalcredityield.com/blog/${slug}`,
     author: {

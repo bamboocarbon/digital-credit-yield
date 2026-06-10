@@ -4,7 +4,7 @@ import AadsAd from '@/components/AadsAd';
 
 export const metadata = {
   alternates: { canonical: '/blog' },
-  title: 'Blog & Insights — Digital Credit Yield',
+  title: 'Blog & Insights',
   description: 'Educational articles on preferred equity, high-yield income assets, STRC, SATA, dividend investing, and the Bitcoin treasury model.',
   openGraph: {
     title: 'Blog & Insights — Digital Credit Yield',

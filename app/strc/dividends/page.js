@@ -13,6 +13,11 @@ export const metadata = {
     url: 'https://www.digitalcredityield.com/strc/dividends',
     images: [{ url: '/api/og?title=STRC+Dividend+History&sub=Semi-monthly+payment+records&rate=11.50%25' }],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: "STRC Dividend History — Strategy Preferred Stock Semi-Monthly Payments",
+    description: "Complete record of every STRC monthly dividend payment from Strategy's preferred stock.",
+  },
 };
 
 async function getDividends(ticker) {

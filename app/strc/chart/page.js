@@ -11,6 +11,11 @@ export const metadata = {
     url: 'https://www.digitalcredityield.com/strc/chart',
     images: [{ url: '/api/og?title=STRC+Price+Chart&sub=Strategy+Preferred+Stock&tag=Live+Chart' }],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: "STRC Live Price Chart — Strategy Preferred Stock Price & Yield",
+    description: "Live STRC price chart. Track Strategy's preferred stock relative to $100 par and see the effective yield.",
+  },
 };
 
 export default function STRCChart() {

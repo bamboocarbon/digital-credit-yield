@@ -1,22 +1,43 @@
 import './globals.css';
+import { DM_Sans, Roboto_Mono } from 'next/font/google';
 import Script from 'next/script';
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  weight: 'variable',
+  axes: ['opsz'],
+  style: ['normal', 'italic'],
+  variable: '--font-dm-sans',
+  display: 'swap',
+});
+
+const robotoMono = Roboto_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  style: ['normal', 'italic'],
+  variable: '--font-roboto-mono',
+  display: 'swap',
+});
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CookieBanner from '@/components/CookieBanner';
 
 export const metadata = {
   metadataBase: new URL('https://www.digitalcredityield.com'),
-  title: 'Digital Credit Yield — STRC & SATA Preferred Stock Tracker',
-  description: 'Independent tracker for STRC (11.50%) and SATA (13.00%) — high-yield preferred stocks on Nasdaq. Live prices, yields, and income projectors.',
+  title: {
+    default: 'Digital Credit Yield — STRC, SATA & BMNP Preferred Stock Tracker',
+    template: '%s — Digital Credit Yield',
+  },
+  description: 'Independent tracker for STRC, SATA and BMNP — high-yield preferred stocks. Live prices, dividend history, and income projectors.',
   openGraph: {
-    title: 'Digital Credit Yield — STRC & SATA Preferred Stock Tracker',
-    description: 'Track STRC and SATA high-yield preferred stocks. Live prices, dividend history, and income projectors.',
+    title: 'Digital Credit Yield — STRC, SATA & BMNP Preferred Stock Tracker',
+    description: 'Independent tracker for STRC, SATA and BMNP — high-yield preferred stocks. Live prices, dividend history, and income projectors.',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Digital Credit Yield — STRC & SATA Preferred Stock Tracker',
-    description: 'Track STRC and SATA high-yield preferred stocks. Live prices, dividend history, and income projectors.',
+    title: 'Digital Credit Yield — STRC, SATA & BMNP Preferred Stock Tracker',
+    description: 'Independent tracker for STRC, SATA and BMNP — high-yield preferred stocks. Live prices, dividend history, and income projectors.',
   },
   other: {
     'google-adsense-account': 'ca-pub-2860789238138317',
@@ -37,7 +58,7 @@ const orgJsonLd = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${dmSans.variable} ${robotoMono.variable}`}>
       <body className="flex flex-col min-h-screen">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
         <Navbar />

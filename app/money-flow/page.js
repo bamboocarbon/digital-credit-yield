@@ -14,6 +14,11 @@ export const metadata = {
     url: 'https://www.digitalcredityield.com/money-flow',
     images: [{ url: '/api/og?title=Money+Flow&sub=Capital+raised+since+IPO&tag=Data' }],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Money Flow — STRC, SATA & BMNP Capital Raised Since IPO",
+    description: "Weekly capital raised by STRC, SATA and BMNP from SEC 8-K filings since IPO. See cumulative totals and weekly bar charts.",
+  },
 };
 
 export default function MoneyFlowPage() {

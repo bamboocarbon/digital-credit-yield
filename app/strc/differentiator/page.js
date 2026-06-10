@@ -13,6 +13,11 @@ export const metadata = {
     url: 'https://www.digitalcredityield.com/strc/differentiator',
     images: [{ url: '/api/og?title=STRC+vs+Treasuries&sub=Compare+income+vs+Treasuries&tag=Comparison' }],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: "STRC vs US Treasuries — Strategy Preferred Stock Income Compared",
+    description: "Compare STRC's 11.50% annual dividend against US Treasuries and bank savings.",
+  },
 };
 
 export default async function STRCDifferentiator() {

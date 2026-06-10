@@ -29,7 +29,7 @@ export default function AssetHubLive({ ticker }) {
       <div className="mb-8">
         {error ? (
           isPreListing
-            ? <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>Pre-IPO — not yet listed. Live price data will appear here once trading begins on NYSE.</p>
+            ? <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>Pending launch — live price data will appear here once trading begins.</p>
             : <p className="text-sm" style={{ color: 'var(--accent-red)' }}>Price data temporarily unavailable — please refresh</p>
         ) : !data ? (
           <div className="animate-pulse space-y-2 mt-4">

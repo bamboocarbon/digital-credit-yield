@@ -1,14 +1,15 @@
 # Digital Credit Yield
 
-> Independent tracker for STRC and SATA — high-yield preferred stocks listed on Nasdaq. Live prices, dividend history, income projectors, and capital flow data. For information purposes only. Not financial advice.
+> Independent tracker for STRC, SATA and BMNP — high-yield preferred stocks paying up to 13% annually. Live prices, dividend history, income projectors, and capital flow data. For information purposes only. Not financial advice.
 
 ## Main Pages
 
-- [Home](https://www.digitalcredityield.com/): Overview of STRC and SATA with live prices and current yields.
-- [STRC Hub](https://www.digitalcredityield.com/strc): Full hub for STRC (Stripe Capital Preferred Stock, 11.50% annualised yield).
-- [SATA Hub](https://www.digitalcredityield.com/sata): Full hub for SATA (SoundHound AI Preferred Stock, 13.00% annualised yield).
-- [Money Flow](https://www.digitalcredityield.com/money-flow): Weekly capital raised by STRC and SATA from SEC 8-K filings since each IPO.
-- [Blog](https://www.digitalcredityield.com/blog): Articles on STRC, SATA, preferred stock investing, and dividend strategies.
+- [Home](https://www.digitalcredityield.com/): Overview of STRC, SATA and BMNP with live prices and current yields.
+- [STRC Hub](https://www.digitalcredityield.com/strc): Full hub for STRC (Strategy Inc Perpetual Preferred Stock, 11.50% annualised yield).
+- [SATA Hub](https://www.digitalcredityield.com/sata): Full hub for SATA (Strive Preferred Equity Instrument, 13.00% annualised yield).
+- [BMNP Hub](https://www.digitalcredityield.com/bmnp): Full hub for BMNP (Bitmine Immersion Technologies Series A Perpetual Preferred Stock, 9.50% annualised yield).
+- [Money Flow](https://www.digitalcredityield.com/money-flow): Weekly capital raised by STRC, SATA and BMNP from SEC 8-K filings since each IPO.
+- [Blog](https://www.digitalcredityield.com/blog): Articles on STRC, SATA, BMNP, preferred stock investing, and dividend strategies.
 
 ## STRC Tools
 
@@ -24,6 +25,13 @@
 - [SATA Growth Projector](https://www.digitalcredityield.com/sata/projector): Project income and portfolio growth from SATA dividends.
 - [SATA Differentiator](https://www.digitalcredityield.com/sata/differentiator): Compare SATA against other income assets.
 
+## BMNP Tools
+
+- [BMNP Live Chart](https://www.digitalcredityield.com/bmnp/chart): Live price chart for BMNP.
+- [BMNP Dividend History](https://www.digitalcredityield.com/bmnp/dividends): Historical dividend payments for BMNP.
+- [BMNP Growth Projector](https://www.digitalcredityield.com/bmnp/projector): Project income and portfolio growth from BMNP dividends.
+- [BMNP Differentiator](https://www.digitalcredityield.com/bmnp/differentiator): Compare BMNP against other income assets.
+
 ## Blog Articles
 
 - [What Is Preferred Stock?](https://www.digitalcredityield.com/blog/what-is-preferred-stock)
@@ -34,8 +42,18 @@
 - [Monthly vs Daily Dividends](https://www.digitalcredityield.com/blog/monthly-vs-daily-dividends)
 - [STRC vs SATA](https://www.digitalcredityield.com/blog/strc-vs-sata)
 - [How to Use the Growth Projector](https://www.digitalcredityield.com/blog/how-to-use-the-growth-projector)
+- [Reinvesting Dividends: How Compounding Works with STRC and SATA](https://www.digitalcredityield.com/blog/dividend-reinvestment-compounding)
+- [Strategy's Capital Structure: From Senior Debt to Common Stock — and Where STRC Fits](https://www.digitalcredityield.com/blog/strategy-capital-structure)
+- [Strive's Capital Structure: Why Being Debt-Free Changes Everything for SATA Investors](https://www.digitalcredityield.com/blog/strive-capital-structure)
+- [How STRC's Dividend Rate Is Set: The VWAP Mechanism Explained](https://www.digitalcredityield.com/blog/strc-vwap-dividend-mechanism)
+- [How SATA's Dividend Rate Is Set — And Why It Differs from STRC](https://www.digitalcredityield.com/blog/sata-dividend-rate-mechanism)
+- [How BMNP's Dividend Rate Is Set: Fixed Income, Weekly Payments, and Ethereum Staking](https://www.digitalcredityield.com/blog/bmnp-dividend-rate-mechanism)
+- [BMNP vs STRC and SATA: The Ethereum-Backed Alternative Explained](https://www.digitalcredityield.com/blog/bmnp-vs-strc-sata)
+- [STRC Goes Semi-Monthly and SATA Goes Daily: What Changes and When](https://www.digitalcredityield.com/blog/strc-sata-dividend-frequency-changes-june-2026)
 
 ## About
 
 - [About](https://www.digitalcredityield.com/about): About Digital Credit Yield and its author, Robin Gillingham.
-- [Contact](https://www.digitalcredityield.com/contact): Get in touch with questions about STRC, SATA, or dividend investing.
+- [Contact](https://www.digitalcredityield.com/contact): Get in touch with questions about STRC, SATA, BMNP, or dividend investing.
+- [Privacy Policy](https://www.digitalcredityield.com/privacy-policy): How Digital Credit Yield handles data and cookies.
+- [Terms of Use](https://www.digitalcredityield.com/terms): Terms governing use of this site.
