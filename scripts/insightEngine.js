@@ -19,7 +19,7 @@ try {
   }
 } catch { /* .env.local is optional on the server */ }
 
-export const TICKERS = ['STRC', 'SATA'];
+export const TICKERS = ['STRC', 'SATA', 'BMNP'];
 
 const BENCHMARKS = {
   TREASURY_1Y: 4.2,
@@ -27,10 +27,11 @@ const BENCHMARKS = {
   BANK:        0.5,
 };
 
-// Colors — consistent across all charts; STRC/SATA match DCY website tag colours
+// Colors — consistent across all charts; all three match DCY website tag colours
 const COLOR = {
   STRC:       '#4ade80',
   SATA:       '#3b82f6',
+  BMNP:       '#fde047',
   TREASURIES: '#60a5fa',
   BANK:       '#9ca3af',
 };
@@ -72,7 +73,7 @@ function comp4Series(strcData, sataData, tsyData, bankData) {
 }
 
 export function buildHeader(quotes) {
-  return '📊 ' + TICKERS.map(t => {
+  return '📊 ' + TICKERS.filter(t => quotes[t]?.price != null).map(t => {
     const { price, changePercent } = quotes[t];
     return `${t} $${price.toFixed(2)} ${dirArrow(changePercent)} ${Math.abs(changePercent).toFixed(2)}%`;
   }).join(' | ');
@@ -86,10 +87,13 @@ function buildInsightPool(quotes, nextDates) {
   const add = (text, path, chartData, ticker) => byTicker[ticker].push({ text, path, chartData });
 
   const eYields = {};
-  for (const t of TICKERS) eYields[t] = effYield(t, quotes[t].price);
+  for (const t of TICKERS) {
+    if (quotes[t]?.price != null) eYields[t] = effYield(t, quotes[t].price);
+  }
 
   // ── Per-ticker insights ──────────────────────────────────────────────────
   for (const t of TICKERS) {
+    if (eYields[t] == null) continue; // skip until ticker goes live
     const price = quotes[t].price;
     const ey    = eYields[t];
     const slug  = t.toLowerCase();
@@ -209,30 +213,60 @@ function buildInsightPool(quotes, nextDates) {
     }
   }
 
-  // ── Cross-asset 4-line comparisons: STRC vs SATA vs Treasuries vs Bank ──
+  // ── Cross-asset comparisons ────────────────────────────────────────────────
   const strc_ey = eYields['STRC'];
   const sata_ey = eYields['SATA'];
+  const bmnp_ey = eYields['BMNP']; // undefined until BMNP goes live
   const crossAsset = [];
 
-  for (const { label, months } of HORIZONS) {
-    const rate = tsyRate(months);
-    for (const amount of [5_000, 10_000, 25_000, 50_000]) {
-      const strcData  = runProjection(amount, strc_ey, 0, 100, months);
-      const sataData  = runProjection(amount, sata_ey, 0, 100, months);
-      const tsyData   = runProjection(amount, rate, 0, 100, months);
-      const bankData  = runProjection(amount, BENCHMARKS.BANK, 0, 100, months);
-      const strcFinal = strcData.at(-1).portfolio;
-      const sataFinal = sataData.at(-1).portfolio;
-      const tsyFinal  = tsyData.at(-1).portfolio;
-      const bankFinal = bankData.at(-1).portfolio;
-      crossAsset.push({
-        text: `📊 ${amtStr(amount)} reinvested over ${label}: STRC ~$${(strcFinal / 1000).toFixed(1)}k, SATA ~$${(sataFinal / 1000).toFixed(1)}k vs ~$${(tsyFinal / 1000).toFixed(1)}k in Treasuries and ~$${(bankFinal / 1000).toFixed(1)}k in a bank account.`,
-        path: `/strc/differentiator`,
-        chartData: { type: 'comparison',
-          title: `${amtStr(amount)}: STRC vs SATA vs Treasuries vs Bank (${label})`, months,
-          series: comp4Series(strcData, sataData, tsyData, bankData),
-        },
-      });
+  // 4-line: STRC vs SATA vs Treasuries vs Bank (always, when both are live)
+  if (strc_ey != null && sata_ey != null) {
+    for (const { label, months } of HORIZONS) {
+      const rate = tsyRate(months);
+      for (const amount of [5_000, 10_000, 25_000, 50_000]) {
+        const strcData  = runProjection(amount, strc_ey, 0, 100, months);
+        const sataData  = runProjection(amount, sata_ey, 0, 100, months);
+        const tsyData   = runProjection(amount, rate, 0, 100, months);
+        const bankData  = runProjection(amount, BENCHMARKS.BANK, 0, 100, months);
+        const strcFinal = strcData.at(-1).portfolio;
+        const sataFinal = sataData.at(-1).portfolio;
+        const tsyFinal  = tsyData.at(-1).portfolio;
+        const bankFinal = bankData.at(-1).portfolio;
+        crossAsset.push({
+          text: `📊 ${amtStr(amount)} reinvested over ${label}: STRC ~$${(strcFinal / 1000).toFixed(1)}k, SATA ~$${(sataFinal / 1000).toFixed(1)}k vs ~$${(tsyFinal / 1000).toFixed(1)}k in Treasuries and ~$${(bankFinal / 1000).toFixed(1)}k in a bank account.`,
+          path: `/strc/differentiator`,
+          chartData: { type: 'comparison',
+            title: `${amtStr(amount)}: STRC vs SATA vs Treasuries vs Bank (${label})`, months,
+            series: comp4Series(strcData, sataData, tsyData, bankData),
+          },
+        });
+      }
+    }
+  }
+
+  // 3-way: STRC vs SATA vs BMNP — only once all three are live
+  if (strc_ey != null && sata_ey != null && bmnp_ey != null) {
+    for (const { label, months } of HORIZONS) {
+      for (const amount of [5_000, 10_000, 25_000, 50_000]) {
+        const strcData  = runProjection(amount, strc_ey, 0, 100, months);
+        const sataData  = runProjection(amount, sata_ey, 0, 100, months);
+        const bmnpData  = runProjection(amount, bmnp_ey, 0, 100, months);
+        const strcFinal = strcData.at(-1).portfolio;
+        const sataFinal = sataData.at(-1).portfolio;
+        const bmnpFinal = bmnpData.at(-1).portfolio;
+        crossAsset.push({
+          text: `📊 ${amtStr(amount)} across all three over ${label}: SATA ~$${(sataFinal / 1000).toFixed(1)}k, STRC ~$${(strcFinal / 1000).toFixed(1)}k, BMNP ~$${(bmnpFinal / 1000).toFixed(1)}k — how each preferred stock compounds differently.`,
+          path: `/strc/differentiator`,
+          chartData: { type: 'comparison',
+            title: `${amtStr(amount)}: STRC vs SATA vs BMNP (${label})`, months,
+            series: [
+              { label: 'STRC', color: COLOR.STRC, values: strcData.map(d => d.portfolio) },
+              { label: 'SATA', color: COLOR.SATA, values: sataData.map(d => d.portfolio) },
+              { label: 'BMNP', color: COLOR.BMNP, values: bmnpData.map(d => d.portfolio) },
+            ],
+          },
+        });
+      }
     }
   }
 
@@ -272,16 +306,17 @@ async function saveThoughtHistory(history) {
 }
 
 export async function generateDailyInsight() {
-  const [strc, sata, bmnp, strc_nd, sata_nd] = await Promise.all([
+  const [strc, sata, bmnp, strc_nd, sata_nd, bmnp_nd] = await Promise.all([
     getStockQuote('STRC'),
     getStockQuote('SATA'),
     getStockQuote('BMNP').catch(() => null),
     fetchNextPaymentDate('STRC'),
     fetchNextPaymentDate('SATA'),
+    fetchNextPaymentDate('BMNP').catch(() => null),
   ]);
 
-  const quotes    = { STRC: strc, SATA: sata, ...(bmnp ? { BMNP: bmnp } : {}) };
-  const nextDates = { STRC: strc_nd, SATA: sata_nd };
+  const quotes    = { STRC: strc, SATA: sata, ...(bmnp?.price != null ? { BMNP: bmnp } : {}) };
+  const nextDates = { STRC: strc_nd, SATA: sata_nd, ...(bmnp_nd ? { BMNP: bmnp_nd } : {}) };
 
   const { priority, normal } = buildInsightPool(quotes, nextDates);
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
