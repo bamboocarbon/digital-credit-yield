@@ -220,7 +220,7 @@ async function run() {
   if (!process.env.RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
 
   console.log('Fetching market data...');
-  const { insight, quotes } = await generateDailyInsight();
+  const { insight, quotes, tweetText } = await generateDailyInsight();
 
   console.log(`Building chart (type: ${insight.chartData?.type ?? 'none'})...`);
   const chartImg = await buildChart(insight.chartData);
@@ -294,6 +294,13 @@ async function run() {
       <div style="text-align:center;font-size:10px;color:#3a4a62;line-height:1.5;">Not financial advice. For informational purposes only. Always do your own research before making any investment decisions.</div>
 
     </div>
+
+    <div style="margin-top:14px;background:#0b1422;border-radius:14px;border:1px solid #1e2a3a;padding:14px 16px;">
+      <div style="font-size:10px;font-weight:600;color:#8a9ab5;letter-spacing:0.08em;margin-bottom:10px;">POST TO X — SELECT ALL &amp; COPY</div>
+      <div style="font-size:13px;color:#e4eaf5;line-height:1.7;white-space:pre-wrap;font-family:monospace;">${tweetToHtml(tweetText)}</div>
+      <div style="margin-top:8px;font-size:10px;color:#3a4a62;">${tweetText.replace(/https?:\/\/\S+/g, 'x'.repeat(23)).length} / 280 chars (URLs counted as 23)</div>
+    </div>
+
   </div>
 </body>
 </html>`;
