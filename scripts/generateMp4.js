@@ -1,45 +1,45 @@
-// scripts/generateAnimatedGif.js
-// Animated GIF replicating the full strc-animation.html card layout
-// Sections: topbar · title-box · 3× snapshot cells · chart-wrap (subtitle + animated chart) · insight · legend · domain · disclaimer
+// scripts/generateMp4.js
+// Renders the DCY daily card as an H.264 MP4 via ffmpeg.
+// Canvas is drawn at 2× pixel density (920×976) then encoded at 25fps CRF 17.
 
 import { createCanvas } from '@napi-rs/canvas';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const GIFEncoder = require('gif-encoder-2');
+import { spawn }        from 'child_process';
 
-// ── Canvas dimensions ─────────────────────────────────────────────────────────
-const W  = 460;
-const H  = 488;
-const PX = 22;   // horizontal inner padding (mirrors card's 24px side padding)
+// ── Canvas dimensions (logical — all draw coordinates use these) ──────────────
+const W     = 460;
+const H     = 488;
+const SCALE = 2;      // render at 2× for sharp text and lines on X
+const PW    = W * SCALE;  // 920
+const PH    = H * SCALE;  // 976
 
-// ── Y layout — derived from the original HTML CSS measurements ────────────────
-// Card padding-top = 20px
-const TB_Y  = 30;   // topbar text baseline   (20px top pad + ~10px text descent)
-const TL_Y0 = 44;   // title-box top          (TB_Y + ~14)
-const TL_Y1 = 88;   // title-box bottom       (44px: 10px pad + 24px font + 10px pad)
-const SN_Y0 = 102;  // snapshot top           (TL_Y1 + 14px margin)
-const SN_Y1 = 166;  // snapshot bottom        (64px: 9px pad + 16+3+13+3+11 + 9px)
-const CW_Y0 = 180;  // chart-wrap top         (SN_Y1 + 14px margin)
-const CS_Y  = 205;  // chart-subtitle baseline (CW_Y0 + 4 top-pad + 10 text-pad + 11 font)
-const CI_Y0 = 211;  // chart canvas top       (CW_Y0 + 4 + 27subtitle)
-const CI_H  = 140;  // chart canvas height    (compressed from 200 for file-size)
-const CI_Y1 = 351;  // chart canvas bottom
-const XL_Y  = 363;  // x-labels baseline      (CI_Y1 + 4pad + 10font - 2)
-const CW_Y1 = 373;  // chart-wrap bottom      (XL_Y + 8bottom-pad + ~2)
-const IN_Y0 = 385;  // insight box top        (CW_Y1 + 12px margin)
-const IN_H  = 52;   // insight box height     (10px pad + ~2 lines 11.5px×1.55 + 10px)
+const PX = 22;
+
+// ── Y layout ──────────────────────────────────────────────────────────────────
+const TB_Y  = 30;
+const TL_Y0 = 44;
+const TL_Y1 = 88;
+const SN_Y0 = 102;
+const SN_Y1 = 166;
+const CW_Y0 = 180;
+const CS_Y  = 205;
+const CI_Y0 = 211;
+const CI_H  = 140;
+const CI_Y1 = 351;
+const XL_Y  = 363;
+const CW_Y1 = 373;
+const IN_Y0 = 385;
+const IN_H  = 52;
 const IN_Y1 = 437;
-const LG_Y  = 449;  // legend text baseline   (IN_Y1 + 12px margin)
-const DM_Y  = 462;  // domain text baseline   (LG_Y + 13)
-const DC_Y  = 475;  // disclaimer baseline    (DM_Y + 13)
-// Bottom: DC_Y + 9 + 13 bottom-pad ≈ 488 = H ✓
+const LG_Y  = 449;
+const DM_Y  = 462;
+const DC_Y  = 475;
 
-// ── Chart margins within CI area ─────────────────────────────────────────────
-const ML = 52;  // left margin (room for y-axis dollar labels)
-const MR = 14;  // right margin
-const CW_DRAW = W - ML - MR;  // 394px chart draw width
+// ── Chart margins ─────────────────────────────────────────────────────────────
+const ML      = 52;
+const MR      = 14;
+const CW_DRAW = W - ML - MR;
 
-// ── Brand colours ─────────────────────────────────────────────────────────────
+// ── Colours ───────────────────────────────────────────────────────────────────
 const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047' };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -163,20 +163,29 @@ function drawRocket(ctx, x, y, angle) {
 }
 
 // ── Frame renderer ────────────────────────────────────────────────────────────
-function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes, insightText) {
-  // Staged reveal — mirrors the original animation timings
-  // 80ms per frame → frame 0 = 0ms, frame 4 = 320ms, frame 7 = 560ms ...
-  const showTopbar   = frame >= 0;
-  const showTitle    = frame >= 4;
-  const showSnapshot = frame >= 7;
-  const showChart    = frame >= 10;
-  const DRAW_START   = 12;
-  const DRAW_FRAMES  = 52;
-  const END_START    = DRAW_START + DRAW_FRAMES;  // frame 64
-  const showEndLabels = frame >= END_START;
-  const showText     = frame >= END_START + 2;    // frame 66: insight, legend, domain, disc
+// Frame timing at 25fps:
+//   0–4    topbar fades in
+//   5–10   title box
+//   11–18  snapshot cells
+//   19–21  chart wrap background
+//   22–121 chart lines draw (100 frames = 4s)
+//   122–125 end labels appear
+//   126–250 full card hold (125 frames = 5s)
+const DRAW_START  = 22;
+const DRAW_FRAMES = 100;
+const END_START   = DRAW_START + DRAW_FRAMES;  // 122
+const TEXT_START  = END_START + 4;             // 126
+const TOTAL_FRAMES = TEXT_START + 125;         // 251  ≈ 10s loop
 
-  const STEPS = 120;
+function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes, insightText) {
+  const showTopbar    = frame >= 0;
+  const showTitle     = frame >= 5;
+  const showSnapshot  = frame >= 11;
+  const showChart     = frame >= 19;
+  const showEndLabels = frame >= END_START;
+  const showText      = frame >= TEXT_START;
+
+  const STEPS = 200;
   let drawProgress = 0;
   if (frame >= DRAW_START && frame < END_START) {
     drawProgress = easeInOut((frame - DRAW_START) / DRAW_FRAMES);
@@ -195,7 +204,6 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
   if (showTopbar) {
     ctx.fillStyle = '#f5a623';
     roundRect(ctx, PX, TB_Y - 9, 11, 11, 2); ctx.fill();
-
     ctx.fillStyle = '#8a9ab5';
     ctx.font = '11px Arial, sans-serif';
     ctx.textAlign = 'left';
@@ -208,33 +216,28 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
     ctx.fillStyle = 'rgba(245,166,35,0.035)';
     roundRect(ctx, PX, TL_Y0, W - 2*PX, TL_Y1 - TL_Y0, 12);
     ctx.fill(); ctx.stroke();
-
     ctx.fillStyle = '#f5a623';
     ctx.font = 'bold 15px Arial, sans-serif';
     ctx.textAlign = 'center';
-    ctx.letterSpacing = '0.04em';
     ctx.fillText('Tracking STRC, SATA & BMNP for Growth', W / 2, (TL_Y0 + TL_Y1) / 2 + 5);
-    ctx.letterSpacing = '0';
   }
 
   // ── Snapshot strip ──────────────────────────────────────────────────────────
   if (showSnapshot) {
     const gapBetween = 10;
-    const cellW = (W - 2*PX - 2*gapBetween) / 3; // ~132px
+    const cellW = (W - 2*PX - 2*gapBetween) / 3;
 
     ['STRC', 'SATA', 'BMNP'].forEach((t, i) => {
       const cx = PX + i * (cellW + gapBetween);
       ctx.fillStyle = '#0b1422';
-      roundRect(ctx, cx, SN_Y0, cellW, SN_Y1 - SN_Y0, 10);
-      ctx.fill();
+      roundRect(ctx, cx, SN_Y0, cellW, SN_Y1 - SN_Y0, 10); ctx.fill();
       ctx.strokeStyle = '#1a2740'; ctx.lineWidth = 1; ctx.stroke();
 
       const col = TICKER_COLOUR[t];
       const q   = quotes[t];
-      const innerX = cx + 10;
+      const innerX  = cx + 10;
       const lineGap = 16;
 
-      // Ticker label
       ctx.fillStyle = col;
       ctx.font = 'bold 14px Arial, sans-serif';
       ctx.textAlign = 'left';
@@ -261,11 +264,9 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
   // ── Chart wrap ──────────────────────────────────────────────────────────────
   if (showChart) {
     ctx.fillStyle = '#08101e';
-    roundRect(ctx, PX - 4, CW_Y0, W - 2*(PX - 4), CW_Y1 - CW_Y0, 14);
-    ctx.fill();
+    roundRect(ctx, PX - 4, CW_Y0, W - 2*(PX - 4), CW_Y1 - CW_Y0, 14); ctx.fill();
     ctx.strokeStyle = '#111d2e'; ctx.lineWidth = 1; ctx.stroke();
 
-    // Chart subtitle
     ctx.fillStyle = '#e4eaf5';
     ctx.font = 'bold 11px Arial, sans-serif';
     ctx.textAlign = 'center';
@@ -277,7 +278,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
     }
     ctx.fillText(sub, W / 2, CS_Y);
 
-    // Grid lines + Y-axis labels
+    // Grid + Y-axis labels
     const GRID_STEPS = 5;
     ctx.font = '9px Arial, sans-serif';
     ctx.textAlign = 'right';
@@ -286,25 +287,18 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
       const y = yPx(v, yMin, yMax);
       ctx.strokeStyle = '#1a2740'; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(ML, y); ctx.lineTo(W - MR, y); ctx.stroke();
-      if (i > 0) {
-        ctx.fillStyle = '#8a9ab5';
-        ctx.fillText(fmtVal(v), ML - 6, y + 3);
-      }
+      if (i > 0) { ctx.fillStyle = '#8a9ab5'; ctx.fillText(fmtVal(v), ML - 6, y + 3); }
     }
-
-    // Vertical grid lines at 25% intervals
     [0, 0.25, 0.5, 0.75, 1].forEach(t => {
       ctx.strokeStyle = '#111e2f'; ctx.lineWidth = 0.8;
-      ctx.beginPath();
-      ctx.moveTo(xPx(t), CI_Y0); ctx.lineTo(xPx(t), CI_Y1); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(xPx(t), CI_Y0); ctx.lineTo(xPx(t), CI_Y1); ctx.stroke();
     });
 
     // X-axis labels
-    const xLbls = buildXLabels(months);
     ctx.fillStyle = '#8a9ab5';
     ctx.font = '9px Arial, sans-serif';
     ctx.textAlign = 'center';
-    xLbls.forEach(({ t, label }) => ctx.fillText(label, xPx(t), XL_Y));
+    buildXLabels(months).forEach(({ t, label }) => ctx.fillText(label, xPx(t), XL_Y));
   }
 
   // ── Area fill under featured series ─────────────────────────────────────────
@@ -323,15 +317,16 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
     ctx.fillStyle = fill; ctx.fill();
   }
 
-  // ── Series lines — non-featured drawn first so featured sits on top ───────
+  // ── Series lines ─────────────────────────────────────────────────────────────
   if (pts >= 1) {
     [...series].reverse().forEach((s, ri) => {
       const isFeatured = ri === series.length - 1;
       ctx.beginPath();
       ctx.strokeStyle = s.color;
-      ctx.lineWidth = isFeatured ? 2.4 : 1.8;
-      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-      if (isFeatured) { ctx.shadowColor = s.color + 'aa'; ctx.shadowBlur = 5; }
+      ctx.lineWidth   = isFeatured ? 2.4 : 1.8;
+      ctx.lineCap  = 'round';
+      ctx.lineJoin = 'round';
+      if (isFeatured) { ctx.shadowColor = s.color + 'bb'; ctx.shadowBlur = 6; }
       ctx.moveTo(xPx(0), yPx(getAt(s.values, 0), yMin, yMax));
       for (let i = 1; i <= pts; i++) {
         ctx.lineTo(xPx(i / STEPS), yPx(getAt(s.values, i / STEPS), yMin, yMax));
@@ -341,8 +336,8 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
     });
   }
 
-  // ── Rocket at featured line tip ──────────────────────────────────────────
-  if (pts > 4) {
+  // ── Rocket ────────────────────────────────────────────────────────────────
+  if (pts > 4 && pts < STEPS) {
     const tipT  = pts / STEPS;
     const prevT = Math.max(0, (pts - 6) / STEPS);
     const tipX  = xPx(tipT);
@@ -352,7 +347,6 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
       tipX - xPx(prevT),
     ) + Math.PI / 2;
 
-    // Glow halo
     const glow = ctx.createRadialGradient(tipX, tipY, 0, tipX, tipY, 20);
     glow.addColorStop(0, series[0].color + '44');
     glow.addColorStop(1, series[0].color + '00');
@@ -361,7 +355,6 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
 
     drawRocket(ctx, tipX, tipY, angle);
 
-    // Live value label beside rocket
     ctx.font = 'bold 10px Arial, sans-serif';
     ctx.fillStyle = series[0].color;
     ctx.textAlign = 'left';
@@ -370,7 +363,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
     ctx.shadowBlur = 0;
   }
 
-  // ── End-state labels (appear once drawing completes) ────────────────────
+  // ── End-state labels ──────────────────────────────────────────────────────
   if (showEndLabels) {
     series.forEach(s => {
       const endX = xPx(1);
@@ -384,41 +377,30 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
     });
   }
 
-  // ── Insight box ─────────────────────────────────────────────────────────
+  // ── Insight box ──────────────────────────────────────────────────────────
   if (showText) {
-    // Box background
     ctx.fillStyle = '#0b1422';
-    roundRect(ctx, PX, IN_Y0, W - 2*PX, IN_H, 10);
-    ctx.fill();
-    // Gold left border
+    roundRect(ctx, PX, IN_Y0, W - 2*PX, IN_H, 10); ctx.fill();
     ctx.fillStyle = '#f5a623';
-    roundRect(ctx, PX, IN_Y0, 3, IN_H, 1);
-    ctx.fill();
+    roundRect(ctx, PX, IN_Y0, 3, IN_H, 1); ctx.fill();
 
-    // Insight text — 2 lines max
     const insightMaxW = W - 2*PX - 3 - 14 - 10;
     ctx.fillStyle = '#c8d4e8';
     ctx.font = '11px Arial, sans-serif';
     ctx.textAlign = 'left';
-    const lines = wrapText(ctx, insightText, insightMaxW, 3);
-    lines.forEach((line, idx) => {
-      ctx.fillText(line, PX + 16, IN_Y0 + 13 + idx * 14);
-    });
+    wrapText(ctx, insightText, insightMaxW, 3)
+      .forEach((line, idx) => ctx.fillText(line, PX + 16, IN_Y0 + 13 + idx * 14));
   }
 
-  // ── Legend ──────────────────────────────────────────────────────────────
+  // ── Legend ────────────────────────────────────────────────────────────────
   if (showText) {
-    // Centre the legend items
     ctx.font = '10px Arial, sans-serif';
     const itemWidths = series.map(s => 18 + 5 + ctx.measureText(s.label).width);
     const totalW = itemWidths.reduce((a, b) => a + b, 0) + (series.length - 1) * 14;
     let lx = (W - totalW) / 2;
     series.forEach((s, i) => {
-      // Swatch
       ctx.fillStyle = s.color;
-      roundRect(ctx, lx, LG_Y - 4, 16, 3, 1);
-      ctx.fill();
-      // Label
+      roundRect(ctx, lx, LG_Y - 4, 16, 3, 1); ctx.fill();
       ctx.fillStyle = '#8a9ab5';
       ctx.textAlign = 'left';
       ctx.fillText(s.label, lx + 21, LG_Y);
@@ -426,7 +408,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
     });
   }
 
-  // ── Domain ──────────────────────────────────────────────────────────────
+  // ── Domain ────────────────────────────────────────────────────────────────
   if (showText) {
     ctx.fillStyle = '#8a9ab5';
     ctx.font = 'bold 11px Arial, sans-serif';
@@ -434,7 +416,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
     ctx.fillText('digitalcredityield.com', W / 2, DM_Y);
   }
 
-  // ── Disclaimer ──────────────────────────────────────────────────────────
+  // ── Disclaimer ────────────────────────────────────────────────────────────
   if (showText) {
     ctx.fillStyle = '#3a4a62';
     ctx.font = '9px Arial, sans-serif';
@@ -444,7 +426,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
 }
 
 // ── Public entry point ────────────────────────────────────────────────────────
-export async function generateAnimatedGif(insight, quotes, date) {
+export async function generateMp4(insight, quotes, date) {
   const chartData = insight?.chartData;
   if (!chartData || chartData.type !== 'comparison' || !chartData.series?.length) return null;
 
@@ -453,30 +435,63 @@ export async function generateAnimatedGif(insight, quotes, date) {
   const rawMin  = Math.min(...allVals);
   const rawMax  = Math.max(...allVals);
   const range   = Math.max(rawMax - rawMin, 10);
-  // Zoom in: start just below the lowest value so lines spread visibly apart
-  const yPad = range * 0.22;
-  const yMin = Math.max(0, Math.floor((rawMin - yPad) / 5) * 5);
-  const yMax = Math.ceil((rawMax + yPad * 0.4) / 5) * 5;
+  const yPad    = range * 0.22;
+  const yMin    = Math.max(0, Math.floor((rawMin - yPad) / 5) * 5);
+  const yMax    = Math.ceil((rawMax + yPad * 0.4) / 5) * 5;
 
   const insightText = stripEmoji(insight.text);
 
-  const ANIM_FRAMES = 66;  // staged reveal + chart draw + text appears  (~5.3s @ 80ms)
-  const HOLD_FRAMES = 42;  // full card visible hold                      (~5.0s @ 120ms)
-  const TOTAL       = ANIM_FRAMES + HOLD_FRAMES;
+  const canvas = createCanvas(PW, PH);
+  const ctx    = canvas.getContext('2d');
+  ctx.scale(SCALE, SCALE);  // draw at logical coords; canvas pixels are 2×
 
-  const canvas  = createCanvas(W, H);
-  const ctx     = canvas.getContext('2d');
-  const encoder = new GIFEncoder(W, H, 'neuquant', true);
-  encoder.setRepeat(0);
-  encoder.setQuality(15);
-  encoder.start();
+  return new Promise((resolve, reject) => {
+    const ffmpeg = spawn('ffmpeg', [
+      '-f', 'rawvideo',
+      '-pixel_format', 'rgba',
+      '-video_size', `${PW}x${PH}`,
+      '-framerate', '25',
+      '-i', 'pipe:0',
+      '-c:v', 'libx264',
+      '-preset', 'slow',
+      '-crf', '17',
+      '-pix_fmt', 'yuv420p',
+      '-movflags', 'frag_keyframe+empty_moov+faststart',
+      '-f', 'mp4',
+      'pipe:1',
+    ]);
 
-  for (let f = 0; f < TOTAL; f++) {
-    encoder.setDelay(f < ANIM_FRAMES ? 80 : 120);
-    renderFrame(ctx, f, series, yMin, yMax, title, date, months, quotes, insightText);
-    encoder.addFrame(ctx);
-  }
+    const chunks = [];
+    ffmpeg.stdout.on('data', chunk => chunks.push(chunk));
+    ffmpeg.stdout.on('end', () => resolve(Buffer.concat(chunks)));
+    ffmpeg.on('error', reject);
+    ffmpeg.stderr.on('data', () => {});  // suppress ffmpeg progress output
 
-  encoder.finish();
-  return encoder.out.getData();
+    (async () => {
+      const LOOPS = 3;  // bake 3 repetitions so it loops in any player
+
+      // Respect backpressure — wait for drain when the pipe buffer fills
+      ffmpeg.stdin.setMaxListeners(0);
+      function writeFrame(buf) {
+        return new Promise((res, rej) => {
+          const ok = ffmpeg.stdin.write(buf);
+          if (ok) { res(); return; }
+          const onDrain = () => { ffmpeg.stdin.removeListener('error', onErr); res(); };
+          const onErr   = (e) => { ffmpeg.stdin.removeListener('drain', onDrain); rej(e); };
+          ffmpeg.stdin.once('drain', onDrain);
+          ffmpeg.stdin.once('error', onErr);
+        });
+      }
+
+      for (let loop = 0; loop < LOOPS; loop++) {
+        for (let f = 0; f < TOTAL_FRAMES; f++) {
+          ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
+          renderFrame(ctx, f, series, yMin, yMax, title, date, months, quotes, insightText);
+          const imageData = ctx.getImageData(0, 0, PW, PH);
+          await writeFrame(Buffer.from(imageData.data.buffer));
+        }
+      }
+      ffmpeg.stdin.end();
+    })().catch(err => { ffmpeg.stdin.destroy(); reject(err); });
+  });
 }

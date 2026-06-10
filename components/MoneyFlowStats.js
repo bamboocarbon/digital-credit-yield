@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { BMNP_ENABLED } from '@/lib/constants';
 
 function fmt(v) {
   if (v >= 1000) return `$${(v / 1000).toFixed(2)}B`;
@@ -27,7 +28,7 @@ export default function MoneyFlowStats() {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <div className={`grid grid-cols-1 gap-4 mb-6 ${BMNP_ENABLED ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
       <div className="rounded-2xl p-5 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#4ade80' }}>STRC Total Raised</p>
         <p className="text-3xl font-bold">~$10.9B</p>
@@ -48,23 +49,25 @@ export default function MoneyFlowStats() {
           </p>
         )}
       </div>
-      <div className="rounded-2xl p-5 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#fde047' }}>BMNP Total Raised</p>
-        {lastBmnp ? (
-          <>
-            <p className="text-3xl font-bold">{fmt(lastBmnp.value)}</p>
-            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Jun 2026 – present</p>
-            <p className="text-xs mt-2 font-medium" style={{ color: '#fde047' }}>
-              Latest: {lastBmnp.week} &middot; {fmt(lastBmnp.value)}
-            </p>
-          </>
-        ) : (
-          <>
-            <p className="text-3xl font-bold">—</p>
-            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>IPO expected late June 2026</p>
-          </>
-        )}
-      </div>
+      {BMNP_ENABLED && (
+        <div className="rounded-2xl p-5 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#fde047' }}>BMNP Total Raised</p>
+          {lastBmnp ? (
+            <>
+              <p className="text-3xl font-bold">{fmt(lastBmnp.value)}</p>
+              <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Jun 2026 – present</p>
+              <p className="text-xs mt-2 font-medium" style={{ color: '#fde047' }}>
+                Latest: {lastBmnp.week} &middot; {fmt(lastBmnp.value)}
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-3xl font-bold">—</p>
+              <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>IPO expected late June 2026</p>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }

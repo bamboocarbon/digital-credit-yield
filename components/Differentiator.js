@@ -7,6 +7,12 @@ import NumericInput from '@/components/NumericInput';
 
 const pct = (a, b) => (((a - b) / b) * 100).toFixed(1);
 
+// Brand colours — must stay in sync with insightEngine.js and generateMp4.js
+const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047' };
+const TICKER_BG     = { STRC: 'rgba(74,222,128,0.08)', SATA: 'rgba(59,130,246,0.08)', BMNP: 'rgba(253,224,71,0.08)' };
+const C_TREASURY    = '#d1d5db';   // light cool grey
+const C_HIGH_YIELD  = '#b8a99a';   // warm taupe grey  — distinct hue from both other greys
+const C_BANK        = '#9ca3af';   // medium cool grey
 
 const defaultBenchmarks = { bank: 0.5, highYield: 4.2, treasury: 5.0 };
 
@@ -108,10 +114,10 @@ export default function Differentiator({ ticker, liveYield }) {
         data: {
           labels,
           datasets: [
-            { label: ticker, data: indices.map(i => assetData[i].portfolio + assetData[i].cashDistributions), borderColor: '#c8893a', backgroundColor: 'rgba(200,137,58,0.05)', tension: 0.3, borderWidth: 2 },
-            { label: `US Treasuries (~ ${benchmarks.treasury}%)`, data: indices.map(i => treasuryData[i].portfolio + treasuryData[i].cashDistributions), borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.05)', tension: 0.3, borderWidth: 2 },
-            { label: `High-Yield Savings (~ ${benchmarks.highYield}%)`, data: indices.map(i => highYieldData[i].portfolio + highYieldData[i].cashDistributions), borderColor: '#14b8a6', backgroundColor: 'rgba(20,184,166,0.05)', tension: 0.3, borderWidth: 2 },
-            { label: `Bank Savings (~ ${benchmarks.bank}%)`, data: indices.map(i => bankData[i].portfolio + bankData[i].cashDistributions), borderColor: '#6b7280', backgroundColor: 'rgba(107,114,128,0.05)', tension: 0.3, borderWidth: 2 },
+            { label: ticker, data: indices.map(i => assetData[i].portfolio + assetData[i].cashDistributions), borderColor: TICKER_COLOUR[ticker], backgroundColor: TICKER_BG[ticker], tension: 0.3, borderWidth: 2 },
+            { label: `US Treasuries (~ ${benchmarks.treasury}%)`, data: indices.map(i => treasuryData[i].portfolio + treasuryData[i].cashDistributions), borderColor: C_TREASURY, backgroundColor: 'rgba(209,213,219,0.05)', tension: 0.3, borderWidth: 2 },
+            { label: `High-Yield Savings (~ ${benchmarks.highYield}%)`, data: indices.map(i => highYieldData[i].portfolio + highYieldData[i].cashDistributions), borderColor: C_HIGH_YIELD, backgroundColor: 'rgba(184,169,154,0.05)', tension: 0.3, borderWidth: 2 },
+            { label: `Bank Savings (~ ${benchmarks.bank}%)`, data: indices.map(i => bankData[i].portfolio + bankData[i].cashDistributions), borderColor: C_BANK, backgroundColor: 'rgba(156,163,175,0.05)', tension: 0.3, borderWidth: 2 },
           ],
         },
         options: {
@@ -157,14 +163,14 @@ export default function Differentiator({ ticker, liveYield }) {
           datasets: [{
             label: `Advantage over US Treasuries ($)`,
             data: diffData,
-            borderColor: '#c8893a',
-            backgroundColor: 'rgba(200,137,58,0.15)',
+            borderColor: TICKER_COLOUR[ticker],
+            backgroundColor: TICKER_BG[ticker],
             fill: true,
             tension: 0.3,
             borderWidth: 2,
             segment: {
-              borderColor: ctx => ctx.p0.parsed.y < 0 ? '#ef4444' : '#c8893a',
-              backgroundColor: ctx => ctx.p0.parsed.y < 0 ? 'rgba(239,68,68,0.1)' : 'rgba(200,137,58,0.15)',
+              borderColor: ctx => ctx.p0.parsed.y < 0 ? '#ef4444' : TICKER_COLOUR[ticker],
+              backgroundColor: ctx => ctx.p0.parsed.y < 0 ? 'rgba(239,68,68,0.1)' : TICKER_BG[ticker],
             },
           }],
         },
@@ -187,10 +193,10 @@ export default function Differentiator({ ticker, liveYield }) {
   }, [assetData, treasuryData, indices, step]);
 
   const rows = [
-    { label: ticker, final: assetFinal, color: 'var(--accent-gold)' },
-    { label: `US Treasuries (~ ${benchmarks.treasury}%)`, final: treasuryFinal, color: 'var(--text-primary)' },
-    { label: `High-Yield Savings (~ ${benchmarks.highYield}%)`, final: highYieldFinal, color: 'var(--text-primary)' },
-    { label: `Bank Savings (~ ${benchmarks.bank}%)`, final: bankFinal, color: 'var(--text-muted)' },
+    { label: ticker, final: assetFinal, color: TICKER_COLOUR[ticker] },
+    { label: `US Treasuries (~ ${benchmarks.treasury}%)`, final: treasuryFinal, color: C_TREASURY },
+    { label: `High-Yield Savings (~ ${benchmarks.highYield}%)`, final: highYieldFinal, color: C_HIGH_YIELD },
+    { label: `Bank Savings (~ ${benchmarks.bank}%)`, final: bankFinal, color: C_BANK },
   ];
 
   return (
@@ -364,10 +370,10 @@ export default function Differentiator({ ticker, liveYield }) {
         </div>
         <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-3 px-1 sm:flex sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-2">
           {[
-            { color: '#c8893a', name: ticker, rate: null },
-            { color: '#3b82f6', name: 'US Treasuries', rate: `~ ${benchmarks.treasury}%` },
-            { color: '#14b8a6', name: 'High-Yield Savings', rate: `~ ${benchmarks.highYield}%` },
-            { color: '#6b7280', name: 'Bank Savings', rate: `~ ${benchmarks.bank}%` },
+            { color: TICKER_COLOUR[ticker], name: ticker, rate: null },
+            { color: C_TREASURY,   name: 'US Treasuries',     rate: `~ ${benchmarks.treasury}%` },
+            { color: C_HIGH_YIELD, name: 'High-Yield Savings', rate: `~ ${benchmarks.highYield}%` },
+            { color: C_BANK,       name: 'Bank Savings',       rate: `~ ${benchmarks.bank}%` },
           ].map(({ color, name, rate }) => (
             <div key={name} className="flex items-center gap-2 min-w-0">
               <span className="inline-block w-3 h-3 rounded-sm flex-shrink-0" style={{ background: color }} />
@@ -409,7 +415,7 @@ export default function Differentiator({ ticker, liveYield }) {
                 {i !== rows.length - 1 && (
                   <div className="col-span-2 mt-1 pt-1" style={{ borderTop: '1px solid var(--border)' }}>
                     <p style={{ color: 'var(--text-muted)' }}>vs Bank Savings</p>
-                    <p className="font-mono-data" style={{ fontFamily: "'Roboto Mono','Courier New',monospace", color: i === 0 ? 'var(--accent-gold)' : 'var(--text-muted)' }}>+{fmt(row.final - bankFinal)} more</p>
+                    <p className="font-mono-data" style={{ fontFamily: "'Roboto Mono','Courier New',monospace", color: i === 0 ? TICKER_COLOUR[ticker] : 'var(--text-muted)' }}>+{fmt(row.final - bankFinal)} more</p>
                   </div>
                 )}
               </div>
@@ -429,13 +435,13 @@ export default function Differentiator({ ticker, liveYield }) {
             </thead>
             <tbody>
               {rows.map((row, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid var(--border)', background: i === 0 ? 'rgba(200,137,58,0.05)' : 'transparent' }}>
+                <tr key={i} style={{ borderBottom: '1px solid var(--border)', background: i === 0 ? TICKER_BG[ticker] : 'transparent' }}>
                   <td className="py-2 px-3 font-medium" style={{ color: row.color }}>{row.label}</td>
                   <td className="py-2 px-3 font-mono-data" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: row.color }}>{fmt(row.final)}</td>
                   <td className="py-2 px-3 font-mono-data" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: row.final > startValue ? 'var(--accent-green)' : 'var(--accent-red)' }}>
                     <span style={{marginRight:'2px'}}>+</span>{fmt(row.final - startValue)}
                   </td>
-                  <td className="py-2 px-3 font-mono-data" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: i === 0 ? 'var(--accent-gold)' : 'var(--text-muted)' }}>
+                  <td className="py-2 px-3 font-mono-data" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: i === 0 ? TICKER_COLOUR[ticker] : 'var(--text-muted)' }}>
                     {i === rows.length - 1 ? '—' : <><span style={{marginRight:'2px'}}>+</span>{fmt(row.final - bankFinal)} more</>}
                   </td>
                 </tr>

@@ -3,17 +3,19 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { BMNP_ENABLED } from '@/lib/constants';
 
-const links = [
+const allLinks = [
   { label: 'Home', href: '/' },
   { label: 'STRC', href: '/strc' },
   { label: 'SATA', href: '/sata' },
-  { label: 'BMNP', href: '/bmnp' },
+  { label: 'BMNP', href: '/bmnp', bmnpOnly: true },
   { label: 'Money Flow', href: '/money-flow' },
   { label: 'Blog', href: '/blog' },
   { label: 'About Me', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ];
+const links = allLinks.filter(l => !l.bmnpOnly || BMNP_ENABLED);
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);

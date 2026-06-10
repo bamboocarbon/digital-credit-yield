@@ -32,7 +32,7 @@ const COLOR = {
   STRC:       '#4ade80',
   SATA:       '#3b82f6',
   BMNP:       '#fde047',
-  TREASURIES: '#60a5fa',
+  TREASURIES: '#d1d5db',
   BANK:       '#9ca3af',
 };
 
@@ -321,8 +321,15 @@ export async function generateDailyInsight() {
 
   const { priority, normal } = buildInsightPool(quotes, nextDates);
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-  const pool      = [...priority, ...normal];
-  const insight   = pool[dayOfYear % pool.length];
+
+  // Weight comparison insights towards longer horizons so the video chart shows
+  // pronounced compound curves. 1yr → 1 slot, 3yr → 2, 5yr → 3, 10yr/20yr → 4.
+  const weighted = [...priority, ...normal].flatMap(item => {
+    const months = item.chartData?.type === 'comparison' ? (item.chartData.months ?? 12) : 0;
+    const reps   = months >= 120 ? 4 : months >= 60 ? 3 : months >= 36 ? 2 : 1;
+    return Array(reps).fill(item);
+  });
+  const insight = weighted[dayOfYear % weighted.length];
 
   const header    = buildHeader(quotes);
   const siteBase  = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');

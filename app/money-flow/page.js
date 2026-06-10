@@ -1,25 +1,30 @@
 import AadsAd from '@/components/AadsAd';
-import { STRCMoneyFlowChart, SATAMoneyFlowChart, BMNPMoneyFlowChart } from '@/components/MoneyFlowChart';
+import { STRCMoneyFlowChart, SATAMoneyFlowChart, BMNPMoneyFlowChart } from '@/components/MoneyFlowChart';  // BMNPMoneyFlowChart only rendered when BMNP_ENABLED
 import CumulativeFlowChart from '@/components/CumulativeFlowChart';
 import MoneyFlowStats from '@/components/MoneyFlowStats';
+import { BMNP_ENABLED } from '@/lib/constants';
 
-export const metadata = {
-  alternates: { canonical: '/money-flow' },
-  title: 'Money Flow — STRC, SATA & BMNP Capital Raised Since IPO',
-  description: 'Weekly capital raised by STRC, SATA and BMNP tracked from SEC 8-K filings since each IPO. Bar charts and cumulative totals showing investor demand over time.',
-  openGraph: {
-    title: 'Money Flow — STRC, SATA & BMNP Capital Raised Since IPO',
-    description: 'Weekly capital raised by STRC, SATA and BMNP from SEC 8-K filings since IPO. See cumulative totals and weekly bar charts.',
-    type: 'website',
-    url: 'https://www.digitalcredityield.com/money-flow',
-    images: [{ url: '/api/og?title=Money+Flow&sub=Capital+raised+since+IPO&tag=Data' }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: "Money Flow — STRC, SATA & BMNP Capital Raised Since IPO",
-    description: "Weekly capital raised by STRC, SATA and BMNP from SEC 8-K filings since IPO. See cumulative totals and weekly bar charts.",
-  },
-};
+export function generateMetadata() {
+  const instruments = BMNP_ENABLED ? 'STRC, SATA & BMNP' : 'STRC & SATA';
+  const desc = `Weekly capital raised by ${instruments} tracked from SEC 8-K filings since each IPO. Bar charts and cumulative totals showing investor demand over time.`;
+  return {
+    alternates: { canonical: '/money-flow' },
+    title: `Money Flow — ${instruments} Capital Raised Since IPO`,
+    description: desc,
+    openGraph: {
+      title: `Money Flow — ${instruments} Capital Raised Since IPO`,
+      description: desc,
+      type: 'website',
+      url: 'https://www.digitalcredityield.com/money-flow',
+      images: [{ url: '/api/og?title=Money+Flow&sub=Capital+raised+since+IPO&tag=Data' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `Money Flow — ${instruments} Capital Raised Since IPO`,
+      description: desc,
+    },
+  };
+}
 
 export default function MoneyFlowPage() {
   return (
@@ -28,8 +33,9 @@ export default function MoneyFlowPage() {
       <div className="text-center mb-10">
         <h1 className="text-4xl sm:text-5xl font-bold mb-3 tracking-tight">Money Flow</h1>
         <p className="text-lg max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
-          Weekly capital raised by STRC, SATA and BMNP, compiled from SEC 8-K filings since each IPO.
-          BMNP listed on the NYSE in June 2026.
+          Weekly capital raised by {BMNP_ENABLED ? 'STRC, SATA and BMNP' : 'STRC and SATA'}, compiled
+          from SEC 8-K filings since each IPO.
+          {BMNP_ENABLED && ' BMNP listed on the NYSE in June 2026.'}
         </p>
       </div>
 
@@ -37,7 +43,7 @@ export default function MoneyFlowPage() {
       <MoneyFlowStats />
 
       {/* Side-by-side weekly bars */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div className={`grid grid-cols-1 gap-6 mb-6 ${BMNP_ENABLED ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
         <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
@@ -62,17 +68,19 @@ export default function MoneyFlowPage() {
           <SATAMoneyFlowChart />
         </div>
 
-        <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-          <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-lg">BMNP</span>
-              <span className="text-xs font-medium"
-                style={{ color: '#fde047' }}>BitMine Preferred</span>
+        {BMNP_ENABLED && (
+          <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-lg">BMNP</span>
+                <span className="text-xs font-medium"
+                  style={{ color: '#fde047' }}>BitMine Preferred</span>
+              </div>
             </div>
+            <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO expected Jun 2026 · TBC% · ATM programme TBC</p>
+            <BMNPMoneyFlowChart />
           </div>
-          <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO expected Jun 2026 · TBC% · ATM programme TBC</p>
-          <BMNPMoneyFlowChart />
-        </div>
+        )}
       </div>
 
       {/* Cumulative line chart */}

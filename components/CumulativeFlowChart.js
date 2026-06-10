@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BMNP_ENABLED } from '@/lib/constants';
 
 // Cumulative capital raised ($M) from SEC 8-K filings
 const data = [
@@ -114,7 +115,7 @@ export default function CumulativeFlowChart() {
           {[
             { color: '#15803d', label: 'STRC', sub: 'Strategy · IPO Jul 2025' },
             { color: '#2563eb', label: 'SATA', sub: 'Strive · IPO Nov 2025' },
-            { color: '#fde047', label: 'BMNP', sub: 'BitMine · IPO Jun 2026' },
+            ...(BMNP_ENABLED ? [{ color: '#fde047', label: 'BMNP', sub: 'BitMine · IPO Jun 2026' }] : []),
           ].map(i => (
             <div key={i.label} className="flex items-center gap-2">
               <div style={{ width: 24, height: 2, background: i.color, borderRadius: 2 }} />
@@ -169,7 +170,7 @@ export default function CumulativeFlowChart() {
               <Tooltip content={<TooltipLinear />} />
               <Line type="monotone" dataKey="strc" name="STRC" stroke="#15803d" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
               <Line type="monotone" dataKey="sata" name="SATA" stroke="#2563eb" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
-              <Line type="monotone" dataKey="bmnp" name="BMNP" stroke="#fde047" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
+              {BMNP_ENABLED && <Line type="monotone" dataKey="bmnp" name="BMNP" stroke="#fde047" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />}
             </LineChart>
           </ResponsiveContainer>
           </div>
@@ -194,7 +195,7 @@ export default function CumulativeFlowChart() {
               <Tooltip content={<TooltipLog />} />
               <Line type="monotone" dataKey="strc" name="STRC" stroke="#15803d" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
               <Line type="monotone" dataKey="sata" name="SATA" stroke="#2563eb" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
-              <Line type="monotone" dataKey="bmnp" name="BMNP" stroke="#fde047" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
+              {BMNP_ENABLED && <Line type="monotone" dataKey="bmnp" name="BMNP" stroke="#fde047" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />}
             </LineChart>
           </ResponsiveContainer>
           </div>

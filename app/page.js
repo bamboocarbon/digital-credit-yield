@@ -2,24 +2,31 @@ import AssetCard from '@/components/AssetCard';
 import GoogleAd from '@/components/GoogleAd';
 import AadsAd from '@/components/AadsAd';
 import LatestNews from '@/components/LatestNews';
+import { BMNP_ENABLED } from '@/lib/constants';
 
-export const metadata = {
-  alternates: { canonical: '/' },
-  title: 'STRC, SATA & BMNP Preferred Stock Tracker — Up to 13% Annual Dividend',
-  description: 'Track STRC (11.50%), SATA (13.00%) and BMNP (9.50%) — high-yield preferred stocks paying monthly and weekly dividends. Live prices, dividend history, and income projectors.',
-  openGraph: {
-    title: 'STRC, SATA & BMNP Preferred Stock Tracker — Up to 13% Annual Dividend',
-    description: 'Track STRC, SATA and BMNP — high-yield preferred stocks paying 9.50%–13.00% annually. Live prices, dividend history, and income projectors.',
-    type: 'website',
-    url: 'https://www.digitalcredityield.com',
-    images: [{ url: '/api/og?title=Preferred+Stock+Tracker&sub=Up+to+13%25+Annual+Dividend' }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'STRC, SATA & BMNP Preferred Stock Tracker — Up to 13% Annual Dividend',
-    description: 'Track STRC, SATA and BMNP — high-yield preferred stocks paying 9.50%–13.00% annually.',
-  },
-};
+export function generateMetadata() {
+  const instruments = BMNP_ENABLED ? 'STRC, SATA & BMNP' : 'STRC & SATA';
+  const yieldRange  = BMNP_ENABLED ? '9.50%-13.00%' : '11.50%-13.00%';
+  const desc = `Track ${instruments} — high-yield preferred stocks paying ${yieldRange} annually. Live prices, dividend history, and income projectors.`;
+  return {
+    metadataBase: new URL('https://www.digitalcredityield.com'),
+    alternates: { canonical: '/' },
+    title: `${instruments} Preferred Stock Tracker — Up to 13% Annual Dividend`,
+    description: desc,
+    openGraph: {
+      title: `${instruments} Preferred Stock Tracker — Up to 13% Annual Dividend`,
+      description: desc,
+      type: 'website',
+      url: 'https://www.digitalcredityield.com',
+      images: [{ url: '/api/og?title=Digital+Credit+Yield&sub=Preferred+Stock+Tracker' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${instruments} Preferred Stock Tracker — Up to 13% Annual Dividend`,
+      description: desc,
+    },
+  };
+}
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -50,7 +57,7 @@ export default function HomePage() {
           fontFamily: 'Arial, Helvetica, sans-serif',
           marginBottom: '20px',
         }}>
-          Tracking STRC, SATA and BMNP for growth
+          Tracking {BMNP_ENABLED ? 'STRC, SATA and BMNP' : 'STRC and SATA'} for growth
         </div>
         <p className="text-lg sm:text-xl max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
           Track, analyse and project the growth of next-generation income assets
@@ -58,10 +65,10 @@ export default function HomePage() {
       </div>
 
       {/* Asset selector cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div className={`grid grid-cols-1 gap-6 mb-12 ${BMNP_ENABLED ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
         <AssetCard ticker="STRC" />
         <AssetCard ticker="SATA" />
-        <AssetCard ticker="BMNP" />
+        {BMNP_ENABLED && <AssetCard ticker="BMNP" />}
       </div>
 
       <GoogleAd slot="home-banner" />
@@ -93,9 +100,11 @@ export default function HomePage() {
         <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
           With the exciting Bitcoin plans from Strategy, launching STRC and later Strive launching SATA, I had the initial idea to build a website to highlight the difference between annual yield and effective yield. From here the website has expanded with growth projectors, differentiators, dividend charts and the latest money flow data. I think the website now brings together all the up to date info an investor would need in calculating preferred equity stocks.
         </p>
-        <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
-          With Bitmine Immersion Technologies having recently launched their own preferred equity stock, BMNP, now listed on the NYSE, I have already updated this website and will in the future cover any more stocks in this category. So making Digital Credit Yield a great place to look for analysing all these products available in one location.
-        </p>
+        {BMNP_ENABLED && (
+          <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
+            With Bitmine Immersion Technologies having recently launched their own preferred equity stock, BMNP, now listed on the NYSE, I have already updated this website and will in the future cover any more stocks in this category. So making Digital Credit Yield a great place to look for analysing all these products available in one location.
+          </p>
+        )}
 
         <h3 className="text-lg font-semibold mb-3">How I keep the data accurate</h3>
         <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
