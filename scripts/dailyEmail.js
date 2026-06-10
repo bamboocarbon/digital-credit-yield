@@ -7,6 +7,7 @@ import sharp from 'sharp';
 import { Resend } from 'resend';
 import { put, list } from '@vercel/blob';
 import { generateDailyInsight } from './insightEngine.js';
+import { generateAnimatedGif } from './generateAnimatedGif.js';
 import { NOTO_400 } from './fontData.js';
 
 function cleanForApp(text) {
@@ -226,6 +227,13 @@ async function run() {
   const chartImg = await buildChart(insight.chartData);
 
   const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+  console.log('Building animated GIF...');
+  const gifBuffer = await generateAnimatedGif(insight, today).catch(err => {
+    console.warn(`GIF generation failed: ${err.message}`);
+    return null;
+  });
+
   const cleanInsight = cleanForApp(insight.text);
 
   // ── Snapshot cells ─────────────────────────────────────────────────────────
@@ -296,7 +304,7 @@ async function run() {
     </div>
 
     <div style="margin-top:14px;background:#0b1422;border-radius:14px;border:1px solid #1e2a3a;padding:14px 16px;">
-      <div style="font-size:10px;font-weight:600;color:#8a9ab5;letter-spacing:0.08em;margin-bottom:10px;">POST TO X — SELECT ALL &amp; COPY</div>
+      <div style="font-size:10px;font-weight:600;color:#8a9ab5;letter-spacing:0.08em;margin-bottom:10px;">POST TO X — SELECT ALL &amp; COPY${gifBuffer ? ' · GIF ATTACHED' : ''}</div>
       <div style="font-size:13px;color:#e4eaf5;line-height:1.7;white-space:pre-wrap;font-family:monospace;">${tweetToHtml(tweetText)}</div>
       <div style="margin-top:8px;font-size:10px;color:#3a4a62;">${tweetText.replace(/https?:\/\/\S+/g, 'x'.repeat(23)).length} / 280 chars (URLs counted as 23)</div>
     </div>
@@ -306,11 +314,15 @@ async function run() {
 </html>`;
 
   const resend = new Resend(process.env.RESEND_API_KEY);
+  const attachments = gifBuffer
+    ? [{ filename: 'dcy-daily.gif', content: gifBuffer.toString('base64') }]
+    : [];
   const { error } = await resend.emails.send({
     from: 'Digital Credit Yield <contact@digitalcredityield.com>',
     to: RECIPIENT,
     subject: `Daily — ${today}`,
     html,
+    attachments,
   });
   if (error) throw new Error(`Resend error: ${JSON.stringify(error)}`);
   console.log(`Email sent to ${RECIPIENT}`);
@@ -329,6 +341,11 @@ async function run() {
   if (chartImg) {
     await put('dcy-daily-chart.png', chartImg, {
       access: 'private', contentType: 'image/png', allowOverwrite: true,
+    });
+  }
+  if (gifBuffer) {
+    await put('dcy-daily.gif', gifBuffer, {
+      access: 'private', contentType: 'image/gif', allowOverwrite: true,
     });
   }
   console.log('DCY card saved to Blob');
