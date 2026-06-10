@@ -41,6 +41,7 @@ const HORIZONS = [
   { label: '3 years',  months: 36  },
   { label: '5 years',  months: 60  },
   { label: '10 years', months: 120 },
+  { label: '20 years', months: 240 },
 ];
 
 const AMOUNTS = [1_000, 5_000, 10_000, 25_000, 50_000, 100_000];
