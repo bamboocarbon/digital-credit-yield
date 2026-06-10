@@ -272,14 +272,15 @@ async function saveThoughtHistory(history) {
 }
 
 export async function generateDailyInsight() {
-  const [strc, sata, strc_nd, sata_nd] = await Promise.all([
+  const [strc, sata, bmnp, strc_nd, sata_nd] = await Promise.all([
     getStockQuote('STRC'),
     getStockQuote('SATA'),
+    getStockQuote('BMNP').catch(() => null),
     fetchNextPaymentDate('STRC'),
     fetchNextPaymentDate('SATA'),
   ]);
 
-  const quotes    = { STRC: strc, SATA: sata };
+  const quotes    = { STRC: strc, SATA: sata, ...(bmnp ? { BMNP: bmnp } : {}) };
   const nextDates = { STRC: strc_nd, SATA: sata_nd };
 
   const { priority, normal } = buildInsightPool(quotes, nextDates);

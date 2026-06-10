@@ -227,7 +227,8 @@ async function run() {
   const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
   const cleanInsight = cleanForApp(insight.text);
-  const pricesHtml   = ['STRC', 'SATA'].map(ticker => {
+  const displayTickers = ['STRC', 'SATA', ...(quotes['BMNP'] ? ['BMNP'] : [])];
+  const pricesHtml   = displayTickers.map(ticker => {
     const { price, changePercent } = quotes[ticker];
     const up    = changePercent >= 0;
     const color = up ? '#22c55e' : '#ef4444';
@@ -312,9 +313,14 @@ async function run() {
 
   // Save daily card to Blob for DCY app
   const updatedAt = new Date().toISOString();
+  const cardBox2 = displayTickers.map(t => {
+    const { price, changePercent } = quotes[t];
+    const arrow = changePercent >= 0 ? '▲' : '▼';
+    return `${t} $${price.toFixed(2)} ${arrow} ${Math.abs(changePercent).toFixed(2)}%`;
+  }).join(' | ');
   const cardPayload = JSON.stringify({
     box1: 'Snapshot',
-    box2: cleanForApp(header),
+    box2: cardBox2,
     box3: cleanForApp(insight.text),
     hasChart: !!chartImg,
     updatedAt,
