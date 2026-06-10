@@ -40,6 +40,9 @@ function setupFonts() {
 const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 const SITE_URL  = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');
 
+// DCY website brand colours — match the ticker tag colours on digitalcredityield.com
+const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047' };
+
 const W = 900, H = 800;
 const pad = { top: 165, right: 30, bottom: 100, left: 120 };
 const cW  = W - pad.left - pad.right;
@@ -116,18 +119,19 @@ async function buildPriceChart(ticker) {
       return `<text x="${xS(idx).toFixed(1)}" y="${H - 10}" text-anchor="middle" fill="#d1d5db" font-size="26" font-family="Geist">${date}</text>`;
     }).join('');
 
+    const c = TICKER_COLOUR[ticker] || '#f5a623';
     const svg = `<svg width="${W}" height="${H + 100}" xmlns="http://www.w3.org/2000/svg">
 <rect width="${W}" height="${H + 100}" fill="#111827" rx="8"/>
   <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#f5a623" stop-opacity="0.25"/>
-    <stop offset="100%" stop-color="#f5a623" stop-opacity="0.02"/>
+    <stop offset="0%" stop-color="${c}" stop-opacity="0.25"/>
+    <stop offset="100%" stop-color="${c}" stop-opacity="0.02"/>
   </linearGradient></defs>
   ${yLines}
   <path d="${area}" fill="url(#g)"/>
-  <path d="${line}" fill="none" stroke="#f5a623" stroke-width="7"/>
+  <path d="${line}" fill="none" stroke="${c}" stroke-width="7"/>
   ${xLabels}
   ${renderTitle(`${ticker} — 6 Month Price`, 36)}
-  <text x="${W - pad.right}" y="48" text-anchor="end" fill="#f5a623" font-size="32" font-family="Geist" font-weight="700">$${closes.at(-1).toFixed(2)}</text>
+  <text x="${W - pad.right}" y="48" text-anchor="end" fill="${c}" font-size="32" font-family="Geist" font-weight="700">$${closes.at(-1).toFixed(2)}</text>
   ${chartFooter(H + 65)}
 </svg>`;
 
@@ -216,118 +220,105 @@ async function run() {
   if (!process.env.RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
 
   console.log('Fetching market data...');
-  const { insight, tweetText, header, quotes } = await generateDailyInsight();
-
-  const ticker   = insight.path.startsWith('/sata') ? 'SATA' : 'STRC';
-  const chartUrl = `${SITE_URL}/${ticker.toLowerCase()}/chart`;
+  const { insight, quotes } = await generateDailyInsight();
 
   console.log(`Building chart (type: ${insight.chartData?.type ?? 'none'})...`);
   const chartImg = await buildChart(insight.chartData);
 
   const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-
   const cleanInsight = cleanForApp(insight.text);
-  const displayTickers = ['STRC', 'SATA', ...(quotes['BMNP'] ? ['BMNP'] : [])];
-  const pricesHtml   = displayTickers.map(ticker => {
-    const { price, changePercent } = quotes[ticker];
-    const up    = changePercent >= 0;
-    const color = up ? '#22c55e' : '#ef4444';
-    const arrow = up ? '▲' : '▼';
-    return `<div>${ticker} $${price.toFixed(2)} <span style="color:${color}">${arrow}</span> ${Math.abs(changePercent).toFixed(2)}%</div>`;
-  }).join('');
 
+  // ── Snapshot cells ─────────────────────────────────────────────────────────
+  function snapCell(t) {
+    const colour = TICKER_COLOUR[t] || '#ffffff';
+    const q = quotes[t];
+    let priceLine, changeLine;
+    if (q?.price != null) {
+      const up = (q.changePercent ?? 0) >= 0;
+      priceLine  = `<div style="font-size:13px;font-weight:700;color:#e4eaf5;margin-top:3px;">$${q.price.toFixed(2)}</div>`;
+      changeLine = `<div style="font-size:11px;margin-top:2px;color:${up ? '#4ade80' : '#ef4444'};">${up ? '▲' : '▼'} ${Math.abs(q.changePercent ?? 0).toFixed(2)}%</div>`;
+    } else {
+      const rates = { STRC: '11.5%', SATA: '13.0%', BMNP: '9.5%' };
+      priceLine  = `<div style="font-size:11px;font-weight:600;color:#8a9ab5;margin-top:3px;">Listing soon</div>`;
+      changeLine = `<div style="font-size:11px;margin-top:2px;color:#8a9ab5;">${rates[t] || ''} fixed</div>`;
+    }
+    return `<div style="flex:1;background:#0b1422;border-radius:10px;padding:8px 10px;border:1px solid #1a2740;">` +
+      `<div style="font-size:15px;font-weight:700;color:${colour};letter-spacing:0.05em;">${t}</div>` +
+      priceLine + changeLine + `</div>`;
+  }
+
+  // ── Chart subtitle + legend ────────────────────────────────────────────────
+  const chartTitle = insight.chartData?.title
+    ?? (insight.chartData?.type === 'price' ? `${insight.chartData.ticker} — 6-month price` : '');
+
+  const series = insight.chartData?.series ?? [];
+  const legendHtml = series.map(s =>
+    `<span style="display:inline-flex;align-items:center;gap:5px;font-size:10px;color:#8a9ab5;">` +
+    `<span style="display:inline-block;width:16px;height:3px;border-radius:2px;background:${s.color};"></span>${s.label}` +
+    `</span>`
+  ).join('<span style="color:#1e2a3a;margin:0 6px;">·</span>');
+
+  const chartB64 = chartImg ? chartImg.toString('base64') : null;
+
+  // ── Combined card email ────────────────────────────────────────────────────
   const html = `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#0a0f1e;font-family:Arial,Helvetica,sans-serif;color:#fff;">
-  <div style="max-width:600px;margin:0 auto;padding:28px 20px;">
+  <div style="max-width:520px;margin:0 auto;padding:20px 16px;">
+    <div style="background:linear-gradient(160deg,#151b27 0%,#0e1520 100%);border-radius:18px;padding:20px 22px 16px;border:1px solid #1e2a3a;box-shadow:0 20px 60px rgba(0,0,0,0.8);">
 
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-      <div style="width:10px;height:10px;background:#f5a623;border-radius:2px;flex-shrink:0;"></div>
-      <span style="font-size:15px;color:#6b7280;">Digital Credit Yield &middot; ${today}</span>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <div style="width:10px;height:10px;background:#f5a623;border-radius:2px;flex-shrink:0;"></div>
+        <span style="font-size:12px;color:#8a9ab5;">Digital Credit Yield &middot; ${today}</span>
+      </div>
+
+      <div style="border:1.5px solid #f5a623;border-radius:12px;padding:10px 18px;text-align:center;margin-bottom:16px;background:rgba(245,166,35,0.03);">
+        <span style="font-size:20px;font-weight:700;color:#f5a623;letter-spacing:0.04em;">Tracking STRC, SATA &amp; BMNP for Growth</span>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        ${snapCell('STRC')}
+        ${snapCell('SATA')}
+        ${snapCell('BMNP')}
+      </div>
+
+      ${chartTitle ? `<div style="text-align:center;font-size:11px;font-weight:600;color:#e4eaf5;padding:4px 4px 8px;">${chartTitle}</div>` : ''}
+      ${chartB64 ? `<div style="background:#08101e;border-radius:14px;padding:4px 4px 0;margin-bottom:12px;border:1px solid #111d2e;"><img src="data:image/png;base64,${chartB64}" alt="chart" style="width:100%;border-radius:10px;display:block;"></div>` : ''}
+
+      <div style="background:#0b1422;border-radius:10px;border-left:3px solid #f5a623;padding:10px 14px;margin-bottom:${legendHtml ? '10px' : '12px'};font-size:12px;color:#c8d4e8;line-height:1.55;">${cleanInsight}</div>
+
+      ${legendHtml ? `<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;">${legendHtml}</div>` : ''}
+
+      <div style="text-align:center;font-size:12px;font-weight:600;color:#8a9ab5;letter-spacing:0.05em;margin-bottom:4px;">digitalcredityield.com</div>
+      <div style="text-align:center;font-size:10px;color:#3a4a62;line-height:1.5;">Not financial advice. For informational purposes only. Always do your own research before making any investment decisions.</div>
+
     </div>
-
-    <div style="text-align:center;margin-bottom:20px;">
-      <span style="display:inline-block;color:#f5a623;border:1px solid #f5a623;border-radius:12px;padding:10px 24px;font-size:18px;font-weight:700;">Tracking STRC, SATA and BMNP for growth</span>
-    </div>
-
-    <div style="background:#111827;border:1px solid #1e2a3a;border-radius:12px;padding:28px 24px;margin-bottom:16px;text-align:center;">
-      <div style="font-size:16px;font-weight:700;color:#9ca3af;margin-bottom:18px;">Snapshot</div>
-      <div style="font-size:20px;font-weight:700;line-height:1.8;color:#ffffff;margin-bottom:18px;">${pricesHtml}</div>
-      <div style="font-size:15px;line-height:1.7;color:#9ca3af;text-align:left;">${cleanInsight}</div>
-    </div>
-
-    <div style="text-align:center;margin-top:20px;padding:0 12px;">
-      <p style="font-size:11px;color:#6b7280;margin:0 0 10px;">Not financial advice. For informational purposes only. Always do your own research before making any investment decisions.</p>
-      <a href="https://digitalcredityield.com" style="font-size:13px;color:#ffffff;text-decoration:none;">digitalcredityield.com</a>
-    </div>
-
   </div>
 </body>
 </html>`;
 
   const resend = new Resend(process.env.RESEND_API_KEY);
-
-  // Email 1 — text only
   const { error } = await resend.emails.send({
     from: 'Digital Credit Yield <contact@digitalcredityield.com>',
     to: RECIPIENT,
-    subject: `Snapshot — ${today}`,
+    subject: `Daily — ${today}`,
     html,
   });
-  if (error) throw new Error(`Resend error (text): ${JSON.stringify(error)}`);
-  console.log(`Text email sent to ${RECIPIENT}`);
-
-  // Email 2 — chart only
-  if (chartImg) {
-    const chartHtml = `<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#0a0f1e;font-family:Arial,Helvetica,sans-serif;">
-  <div style="max-width:600px;margin:0 auto;padding:28px 20px;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-      <div style="width:10px;height:10px;background:#f5a623;border-radius:2px;flex-shrink:0;"></div>
-      <span style="font-size:15px;color:#6b7280;">Digital Credit Yield &middot; ${today}</span>
-    </div>
-    <div style="text-align:center;margin-bottom:20px;">
-      <span style="display:inline-block;color:#f5a623;border:1px solid #f5a623;border-radius:12px;padding:10px 24px;font-size:18px;font-weight:700;">Tracking STRC, SATA and BMNP for growth</span>
-    </div>
-    <img src="data:image/png;base64,${chartImg.toString('base64')}" alt="chart" style="width:100%;border-radius:10px;display:block;">
-    <div style="text-align:center;margin-top:20px;padding:0 12px;">
-      <p style="font-size:11px;color:#6b7280;margin:0 0 10px;">Not financial advice. For informational purposes only. Always do your own research before making any investment decisions.</p>
-      <a href="https://digitalcredityield.com" style="font-size:13px;color:#ffffff;text-decoration:none;">digitalcredityield.com</a>
-    </div>
-  </div>
-</body>
-</html>`;
-
-    const { error: chartError } = await resend.emails.send({
-      from: 'Digital Credit Yield <contact@digitalcredityield.com>',
-      to: RECIPIENT,
-      subject: `Chart — ${today}`,
-      html: chartHtml,
-    });
-    if (chartError) console.warn(`Chart email failed: ${JSON.stringify(chartError)}`);
-    else console.log(`Chart email sent to ${RECIPIENT}`);
-  }
+  if (error) throw new Error(`Resend error: ${JSON.stringify(error)}`);
+  console.log(`Email sent to ${RECIPIENT}`);
 
   // Save daily card to Blob for DCY app
-  const updatedAt = new Date().toISOString();
+  const displayTickers = ['STRC', 'SATA', ...(quotes['BMNP']?.price != null ? ['BMNP'] : [])];
   const cardBox2 = displayTickers.map(t => {
-    const { price, changePercent } = quotes[t];
-    const arrow = changePercent >= 0 ? '▲' : '▼';
-    return `${t} $${price.toFixed(2)} ${arrow} ${Math.abs(changePercent).toFixed(2)}%`;
+    const q = quotes[t];
+    const arrow = (q.changePercent ?? 0) >= 0 ? '▲' : '▼';
+    return `${t} $${q.price.toFixed(2)} ${arrow} ${Math.abs(q.changePercent ?? 0).toFixed(2)}%`;
   }).join(' | ');
-  const cardPayload = JSON.stringify({
-    box1: 'Snapshot',
-    box2: cardBox2,
-    box3: cleanForApp(insight.text),
-    hasChart: !!chartImg,
-    updatedAt,
-  });
-  await put('dcy-daily-card.json', cardPayload, {
-    access: 'private', contentType: 'application/json', allowOverwrite: true,
-  });
+  await put('dcy-daily-card.json', JSON.stringify({
+    box1: 'Snapshot', box2: cardBox2, box3: cleanForApp(insight.text),
+    hasChart: !!chartImg, updatedAt: new Date().toISOString(),
+  }), { access: 'private', contentType: 'application/json', allowOverwrite: true });
   if (chartImg) {
     await put('dcy-daily-chart.png', chartImg, {
       access: 'private', contentType: 'image/png', allowOverwrite: true,

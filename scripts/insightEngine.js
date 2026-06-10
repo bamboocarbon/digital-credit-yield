@@ -27,10 +27,10 @@ const BENCHMARKS = {
   BANK:        0.5,
 };
 
-// Colors — consistent across all charts
+// Colors — consistent across all charts; STRC/SATA match DCY website tag colours
 const COLOR = {
-  STRC:       '#f5a623',
-  SATA:       '#10b981',
+  STRC:       '#4ade80',
+  SATA:       '#3b82f6',
   TREASURIES: '#60a5fa',
   BANK:       '#9ca3af',
 };
