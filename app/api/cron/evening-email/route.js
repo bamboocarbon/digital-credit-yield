@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { run } from '../../../../scripts/eveningEmail.js';
 
+export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 async function handler(request) {
