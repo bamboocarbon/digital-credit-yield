@@ -11,7 +11,7 @@ export function generateMetadata() {
   return {
     metadataBase: new URL('https://www.digitalcredityield.com'),
     alternates: { canonical: '/' },
-    title: `${instruments} Preferred Stock Tracker — Up to 13% Annual Dividend`,
+    title: `${instruments} Dividend Tracker`,
     description: desc,
     openGraph: {
       title: `${instruments} Preferred Stock Tracker — Up to 13% Annual Dividend`,

@@ -4,7 +4,7 @@ import { ASSET_RATES } from '@/lib/constants';
 
 export const metadata = {
   alternates: { canonical: '/strc/projector' },
-  title: 'STRC Income Calculator — Strategy Preferred Stock Projector',
+  title: 'STRC Income Calculator',
   description: "Model STRC income and portfolio growth. Compare Strategy's 11.50% preferred stock against US Treasuries and bank savings over 1–20 years.",
   openGraph: {
     title: 'STRC Income Calculator — Strategy Preferred Stock Projector',

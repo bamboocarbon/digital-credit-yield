@@ -5,7 +5,7 @@ const rate = ASSET_RATES.BMNP.toFixed(2);
 
 export const metadata = {
   alternates: { canonical: '/bmnp' },
-  title: `BMNP Stock — BitMine Preferred Stock | ${rate}% Annual Weekly Dividend`,
+  title: `BMNP Stock — ${rate}% Annual Dividend`,
   description: `Track BMNP live price and yield. BitMine Immersion Technologies' preferred stock pays ${rate}% annually in weekly cash dividends. Expected to list on the NYSE in June 2026, backed by Ethereum staking via MAVAN.`,
   openGraph: {
     title: `BMNP Stock — BitMine Preferred Stock | ${rate}% Annual Weekly Dividend`,

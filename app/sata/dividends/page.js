@@ -4,7 +4,7 @@ import DividendHistoryPage from '@/components/DividendHistoryPage';
 
 export const metadata = {
   alternates: { canonical: '/sata/dividends' },
-  title: 'SATA Dividend History — Strive Daily Dividend Payments',
+  title: 'SATA Dividend History',
   description: "Complete SATA dividend history. Strive's preferred stock pays 13.00% annually in daily cash (~$0.052/share/day, from 16 June 2026). Track per-share amounts and payment dates.",
   openGraph: {
     title: 'SATA Dividend History — Strive Daily Dividend Payments',

@@ -4,7 +4,7 @@ import { ASSET_RATES } from '@/lib/constants';
 
 export const metadata = {
   alternates: { canonical: '/bmnp/differentiator' },
-  title: 'BMNP vs US Treasuries — BitMine Preferred Stock Income Compared',
+  title: 'BMNP vs US Treasuries',
   description: "Compare BMNP's 9.50% weekly dividend against US Treasuries and bank savings. See how much more income BitMine's preferred stock generates over any time horizon.",
   openGraph: {
     title: 'BMNP vs US Treasuries — BitMine Preferred Stock Income Compared',

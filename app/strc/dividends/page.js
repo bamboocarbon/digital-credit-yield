@@ -4,7 +4,7 @@ import DividendHistoryPage from '@/components/DividendHistoryPage';
 
 export const metadata = {
   alternates: { canonical: '/strc/dividends' },
-  title: 'STRC Dividend History — Strategy Preferred Stock Semi-Monthly Payments',
+  title: 'STRC Dividend History',
   description: "Complete STRC dividend history. Strategy's preferred stock pays 11.50% annually in semi-monthly cash. Track per-share amounts and payment dates.",
   openGraph: {
     title: 'STRC Dividend History — Strategy Preferred Stock Semi-Monthly Payments',

@@ -5,7 +5,7 @@ const rate = ASSET_RATES.STRC.toFixed(2);
 
 export const metadata = {
   alternates: { canonical: '/strc' },
-  title: `STRC Stock — Strategy Preferred Stock | ${rate}% Annual Dividend`,
+  title: `STRC Stock — ${rate}% Annual Dividend`,
   description: `Track STRC live price and yield. Strategy's preferred stock pays ${rate}% annually in semi-monthly cash. Listed on Nasdaq, backed by 800,000+ Bitcoin.`,
   openGraph: {
     title: `STRC Stock — Strategy Preferred Stock | ${rate}% Annual Dividend`,

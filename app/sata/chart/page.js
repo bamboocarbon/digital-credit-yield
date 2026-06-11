@@ -2,7 +2,7 @@ import AssetChartPage from '@/components/AssetChartPage';
 
 export const metadata = {
   alternates: { canonical: '/sata/chart' },
-  title: 'SATA Live Price Chart — Strive Preferred Stock Price & Yield',
+  title: 'SATA Live Price Chart',
   description: "Live SATA price chart for Strive's preferred stock. Track the price vs $100 par and see how the effective 13.00% yield changes with the market price.",
   openGraph: {
     title: 'SATA Live Price Chart — Strive Preferred Stock Price & Yield',

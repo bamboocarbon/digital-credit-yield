@@ -9,7 +9,7 @@ export function generateMetadata() {
   const desc = `Weekly capital raised by ${instruments} tracked from SEC 8-K filings since each IPO. Bar charts and cumulative totals showing investor demand over time.`;
   return {
     alternates: { canonical: '/money-flow' },
-    title: `Money Flow — ${instruments} Capital Raised Since IPO`,
+    title: `Money Flow — ${instruments}`,
     description: desc,
     openGraph: {
       title: `Money Flow — ${instruments} Capital Raised Since IPO`,

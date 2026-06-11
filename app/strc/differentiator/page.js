@@ -4,7 +4,7 @@ import { ASSET_RATES } from '@/lib/constants';
 
 export const metadata = {
   alternates: { canonical: '/strc/differentiator' },
-  title: 'STRC vs US Treasuries — Strategy Preferred Stock Income Compared',
+  title: 'STRC vs US Treasuries',
   description: "Compare STRC's 11.50% dividend against US Treasuries and bank savings. See how much more income Strategy's preferred stock generates over any time horizon.",
   openGraph: {
     title: 'STRC vs US Treasuries — Strategy Preferred Stock Income Compared',

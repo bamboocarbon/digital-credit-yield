@@ -4,7 +4,7 @@ import { ASSET_RATES } from '@/lib/constants';
 
 export const metadata = {
   alternates: { canonical: '/bmnp/projector' },
-  title: 'BMNP Income Calculator — BitMine Preferred Stock Returns Projector',
+  title: 'BMNP Income Calculator',
   description: "Model BMNP income and portfolio growth. Compare BitMine's 9.50% preferred stock against US Treasuries and bank savings over 1–20 years.",
   openGraph: {
     title: 'BMNP Income Calculator — BitMine Preferred Stock Returns Projector',

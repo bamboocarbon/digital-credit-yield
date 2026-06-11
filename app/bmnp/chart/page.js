@@ -2,7 +2,7 @@ import AssetChartPage from '@/components/AssetChartPage';
 
 export const metadata = {
   alternates: { canonical: '/bmnp/chart' },
-  title: 'BMNP Live Price Chart — BitMine Preferred Stock Price & Yield',
+  title: 'BMNP Live Price Chart',
   description: "Live BMNP price chart for BitMine's preferred stock. Track the price vs $100 par and see how the effective 9.50% yield changes with the market price.",
   openGraph: {
     title: 'BMNP Live Price Chart — BitMine Preferred Stock Price & Yield',

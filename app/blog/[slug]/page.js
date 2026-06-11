@@ -15,7 +15,7 @@ export async function generateMetadata({ params }) {
     ? article.excerpt.slice(0, 152).replace(/\s\S*$/, '') + '...'
     : article.excerpt;
   return {
-    title: article.title,
+    title: article.metaTitle || article.title,
     description: desc,
     alternates: { canonical: `/blog/${slug}` },
     openGraph: {

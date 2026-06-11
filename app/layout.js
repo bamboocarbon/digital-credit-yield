@@ -25,7 +25,7 @@ import CookieBanner from '@/components/CookieBanner';
 export const metadata = {
   metadataBase: new URL('https://www.digitalcredityield.com'),
   title: {
-    default: 'Digital Credit Yield — STRC, SATA & BMNP Preferred Stock Tracker',
+    default: 'Digital Credit Yield — STRC, SATA & BMNP Tracker',
     template: '%s — Digital Credit Yield',
   },
   description: 'Independent tracker for STRC, SATA and BMNP — high-yield preferred stocks. Live prices, dividend history, and income projectors.',

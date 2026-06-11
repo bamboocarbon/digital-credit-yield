@@ -4,7 +4,7 @@ import { ASSET_RATES } from '@/lib/constants';
 
 export const metadata = {
   alternates: { canonical: '/sata/projector' },
-  title: 'SATA Income Calculator — Strive Preferred Stock Returns Projector',
+  title: 'SATA Income Calculator',
   description: "Model SATA income and portfolio growth. Compare Strive's 13.00% preferred stock against US Treasuries and bank savings over 1–20 years.",
   openGraph: {
     title: 'SATA Income Calculator — Strive Preferred Stock Returns Projector',

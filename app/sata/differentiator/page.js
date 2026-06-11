@@ -4,7 +4,7 @@ import { ASSET_RATES } from '@/lib/constants';
 
 export const metadata = {
   alternates: { canonical: '/sata/differentiator' },
-  title: 'SATA vs US Treasuries — Strive Preferred Stock Income Compared',
+  title: 'SATA vs US Treasuries',
   description: "Compare SATA's 13.00% dividend against US Treasuries and bank savings. See how much more income Strive's preferred stock generates over any time horizon.",
   openGraph: {
     title: 'SATA vs US Treasuries — Strive Preferred Stock Income Compared',

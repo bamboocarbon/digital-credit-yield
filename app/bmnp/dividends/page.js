@@ -4,7 +4,7 @@ import DividendHistoryPage from '@/components/DividendHistoryPage';
 
 export const metadata = {
   alternates: { canonical: '/bmnp/dividends' },
-  title: 'BMNP Dividend History — BitMine Preferred Stock Weekly Payments',
+  title: 'BMNP Dividend History',
   description: "Complete BMNP dividend history. BitMine's preferred stock pays 9.50% annually in weekly cash. Track per-share amounts and payment dates.",
   openGraph: {
     title: 'BMNP Dividend History — BitMine Preferred Stock Weekly Payments',
