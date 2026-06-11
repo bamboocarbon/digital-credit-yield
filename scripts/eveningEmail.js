@@ -6,18 +6,6 @@ import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-try {
-  const __dir = dirname(fileURLToPath(import.meta.url));
-  const env = readFileSync(join(__dir, '..', '.env.local'), 'utf8');
-  for (const line of env.split('\n')) {
-    const t = line.trim();
-    if (!t || t.startsWith('#')) continue;
-    const i = t.indexOf('=');
-    if (i === -1) continue;
-    process.env[t.slice(0, i).trim()] ??= t.slice(i + 1).trim().replace(/^["']|["']$/g, '');
-  }
-} catch { /* env optional on server */ }
-
 const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 const SITE_URL  = (process.env.SITE_URL || 'https://www.digitalcredityield.com').replace(/\/$/, '');
 
@@ -122,6 +110,18 @@ function getDayOfYear() {
 }
 
 export async function run() {
+  try {
+    const __dir = dirname(fileURLToPath(import.meta.url));
+    const env = readFileSync(join(__dir, '..', '.env.local'), 'utf8');
+    for (const line of env.split('\n')) {
+      const t = line.trim();
+      if (!t || t.startsWith('#')) continue;
+      const i = t.indexOf('=');
+      if (i === -1) continue;
+      process.env[t.slice(0, i).trim()] ??= t.slice(i + 1).trim().replace(/^["']|["']$/g, '');
+    }
+  } catch { /* env optional on server */ }
+
   if (!process.env.RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
 
   const q = QUESTIONS[getDayOfYear() % QUESTIONS.length];
