@@ -19,7 +19,7 @@ const TOOLS = {
     },
     {
       href: '/strc/differentiator',
-      label: 'Differentiator',
+      label: 'vs Treasuries',
       description: "See exactly how much more income STRC's 11.50% annual dividend generates compared to US Treasuries and bank savings over any time period. Enter your investment amount and let the tool show you the income gap in dollar terms.",
     },
     {
@@ -41,7 +41,7 @@ const TOOLS = {
     },
     {
       href: '/sata/differentiator',
-      label: 'Differentiator',
+      label: 'vs Treasuries',
       description: "See exactly how much more income SATA's 13.00% annual dividend generates compared to US Treasuries and bank savings over any time period. Enter your investment amount and let the tool show you the income gap in dollar terms.",
     },
     {
@@ -63,7 +63,7 @@ const TOOLS = {
     },
     {
       href: '/bmnp/differentiator',
-      label: 'Differentiator',
+      label: 'vs Treasuries',
       description: "See exactly how much more income BMNP's 9.50% annual dividend generates compared to US Treasuries and bank savings over any time period. Enter your investment amount and let the tool show you the income gap in dollar terms.",
     },
     {
@@ -144,6 +144,13 @@ export default function AssetHub({ ticker, name }) {
             </Link>
           ))}
         </div>
+      </div>
+
+      <div className="mb-6 p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+        <p className="text-sm leading-6" style={{ color: 'var(--text-muted)' }}>
+          High yield always comes with risk — board discretion over dividends, rate changes, and crypto-collateral volatility among them.{' '}
+          <Link href="/risks" style={{ color: 'var(--accent-gold)' }}>Read the plain-English risk guide →</Link>
+        </p>
       </div>
 
       <GoogleAd slot={`${ticker.toLowerCase()}-hub`} />

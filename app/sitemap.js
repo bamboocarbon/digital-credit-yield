@@ -41,6 +41,9 @@ export default function sitemap() {
       { url: `${base}/bmnp/differentiator`, lastModified: '2026-06-08', changeFrequency: 'monthly', priority: 0.6 },
     ] : []),
     // Rarely-changing pages — fix dates, update manually when content changes
+    { url: `${base}/faq`,                 lastModified: '2026-06-11', changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${base}/risks`,               lastModified: '2026-06-11', changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${base}/glossary`,            lastModified: '2026-06-11', changeFrequency: 'monthly', priority: 0.5 },
     { url: `${base}/about`,               lastModified: '2026-06-10', changeFrequency: 'monthly', priority: 0.5 },
     { url: `${base}/contact`,             lastModified: '2026-06-10', changeFrequency: 'yearly',  priority: 0.5 },
     { url: `${base}/privacy-policy`,      lastModified: '2026-06-10', changeFrequency: 'yearly',  priority: 0.3 },

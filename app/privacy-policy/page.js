@@ -38,6 +38,7 @@ export default function PrivacyPolicyPage() {
           <li>Cookie consent preferences stored locally in your browser via your browser's local storage</li>
           <li>Calculator inputs (investment amounts, share counts, yield rates, time horizons) stored locally in your browser via your browser's local storage to preserve your settings between sessions — this data is never transmitted to our servers or any third party</li>
           <li>Contact form submissions (name, email address, message content) sent directly to our email address</li>
+          <li>Newsletter subscriptions (email address and subscription date) when you sign up for the daily snapshot email</li>
         </ul>
         <p>We do not collect financial data, account information, or payment details.</p>
       </Section>
@@ -47,6 +48,7 @@ export default function PrivacyPolicyPage() {
         <ul className="list-disc pl-5 space-y-1">
           <li>Understand how visitors use the site (analytics) in order to improve it</li>
           <li>Respond to enquiries submitted via the contact form</li>
+          <li>Send the daily snapshot email to newsletter subscribers — you can unsubscribe at any time via the link in every email or at <a href="/unsubscribe" className="underline" style={{ color: 'var(--accent-gold)' }}>digitalcredityield.com/unsubscribe</a>, and your address is removed immediately</li>
           <li>Serve relevant advertisements via Google AdSense (only with your consent)</li>
           <li>Preserve your calculator settings (Growth Projector, Differentiator, and Dividend History income calculator inputs) between visits for your convenience</li>
           <li>Build and maintain a long-term dividend payment history for STRC, SATA and BMNP — when you visit a Dividend History page, our server may fetch the latest public dividend data from Yahoo Finance and store it on our server to grow this record over time. This process involves no personal data whatsoever; only publicly available market information is stored.</li>
@@ -63,7 +65,8 @@ export default function PrivacyPolicyPage() {
           <li><strong>Web fonts</strong> — DM Sans and Roboto Mono are self-hosted at build time via Next.js. No requests are made to Google Fonts or any third-party CDN for font files.</li>
           <li><strong>TradingView (lightweight-charts)</strong> — open-source charting library used to render price and yield charts. Runs entirely client-side with no external requests to TradingView servers and no user data is collected or transmitted.</li>
           <li><strong>Yahoo Finance</strong> — live price and dividend data, fetched server-side (no user data shared).</li>
-          <li><strong>Vercel</strong> — hosting platform and Blob storage. Our server stores non-personal market data (capital flow records, daily card data) in Vercel's Blob storage service. No personal data is stored in Blob. <a href="https://vercel.com/legal/privacy-policy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Vercel Privacy Policy</a></li>
+          <li><strong>Vercel</strong> — hosting platform and Blob storage. Our server stores non-personal market data (capital flow records, daily card data) in Vercel's Blob storage service. If you subscribe to the newsletter, your email address is stored in private Blob storage and used solely to send the daily snapshot. <a href="https://vercel.com/legal/privacy-policy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Vercel Privacy Policy</a></li>
+          <li><strong>Resend</strong> — email delivery service used to send contact form messages and the daily snapshot email to subscribers. <a href="https://resend.com/legal/privacy-policy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Resend Privacy Policy</a></li>
         </ul>
       </Section>
 

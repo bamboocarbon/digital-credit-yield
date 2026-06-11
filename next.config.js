@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ['yahoo-finance2', 'sharp', '@napi-rs/canvas'],
+  serverExternalPackages: ['yahoo-finance2', 'sharp', '@napi-rs/canvas', 'ffmpeg-static'],
   allowedDevOrigins: ['192.168.1.70'],
 };
 

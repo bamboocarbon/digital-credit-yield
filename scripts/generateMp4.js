@@ -4,6 +4,10 @@
 
 import { createCanvas } from '@napi-rs/canvas';
 import { spawn }        from 'child_process';
+import ffmpegPath       from 'ffmpeg-static';
+
+// Bundled binary on Vercel (no system ffmpeg there); falls back to PATH locally
+const FFMPEG = ffmpegPath || 'ffmpeg';
 
 // ── Canvas dimensions (logical — all draw coordinates use these) ──────────────
 const W     = 460;
@@ -446,7 +450,7 @@ export async function generateMp4(insight, quotes, date) {
   ctx.scale(SCALE, SCALE);  // draw at logical coords; canvas pixels are 2×
 
   return new Promise((resolve, reject) => {
-    const ffmpeg = spawn('ffmpeg', [
+    const ffmpeg = spawn(FFMPEG, [
       '-f', 'rawvideo',
       '-pixel_format', 'rgba',
       '-video_size', `${PW}x${PH}`,

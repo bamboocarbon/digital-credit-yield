@@ -11,7 +11,7 @@ export default function SubNav({ ticker }) {
     { label: 'Hub', href: base },
     { label: 'Chart', href: `${base}/chart` },
     { label: 'Growth Projector', href: `${base}/projector`, shortLabel: 'Projector' },
-    { label: 'Differentiator', href: `${base}/differentiator` },
+    { label: 'vs Treasuries', href: `${base}/differentiator` },
     { label: 'Dividends', href: `${base}/dividends` },
   ];
 

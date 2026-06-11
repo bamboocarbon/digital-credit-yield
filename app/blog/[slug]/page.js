@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { articles, getArticle } from '@/lib/articles';
 import AadsAd from '@/components/AadsAd';
+import { BMNP_ENABLED } from '@/lib/constants';
 
 export async function generateStaticParams() {
   return articles.map(a => ({ slug: a.slug }));
@@ -123,6 +124,14 @@ export default async function ArticlePage({ params }) {
         <span style={{ color: 'var(--border)' }}>·</span>
         <span>By <Link href="/about" className="transition-opacity hover:opacity-75" style={{ color: 'var(--accent-gold)' }}>Robin Gillingham</Link></span>
       </div>
+
+      {!BMNP_ENABLED && [].concat(article.category).includes('BMNP') && (
+        <div className="mb-8 p-4 rounded-xl text-sm leading-6"
+          style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
+          BMNP tracking tools — live chart, projector and dividend history — launch on this site when
+          BMNP begins trading. Until then, this article covers everything announced so far.
+        </div>
+      )}
 
       <div className="article-prose">
         <Content />

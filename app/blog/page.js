@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import { articles } from '@/lib/articles';
 import AadsAd from '@/components/AadsAd';
+import BlogIndex from '@/components/BlogIndex';
 
 export const metadata = {
   alternates: { canonical: '/blog' },
@@ -15,72 +15,19 @@ export const metadata = {
   },
 };
 
-function formatDate(dateStr) {
-  return new Date(dateStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-}
-
-const tickerColour = {
-  STRC: '#4ade80',
-  SATA: '#3b82f6',
-  BMNP: '#fde047',
-};
-
-function categoryStyle(category) {
-  const c = tickerColour[category];
-  return c
-    ? { color: c }
-    : { color: '#9ca3af' };
-}
-
-function CategoryTag({ category }) {
-  if (Array.isArray(category)) {
-    return (
-      <span className="flex items-center gap-1.5 mb-3 self-start">
-        {category.map(c => (
-          <span key={c} className="text-xs font-semibold px-2 py-0.5 rounded-full" style={categoryStyle(c)}>{c}</span>
-        ))}
-      </span>
-    );
-  }
-  return (
-    <span className="text-xs font-semibold px-2 py-0.5 rounded-full mb-3 self-start" style={categoryStyle(category)}>
-      {category}
-    </span>
-  );
-}
-
 export default function BlogPage() {
-  const sorted = [...articles].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const sorted = [...articles]
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .map(({ slug, title, date, excerpt, readTime, category }) => ({ slug, title, date, excerpt, readTime, category }));
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <h1 className="text-3xl font-bold mb-3">Blog &amp; Insights</h1>
-      <p className="text-base mb-10" style={{ color: 'var(--text-muted)' }}>
+      <p className="text-base mb-6" style={{ color: 'var(--text-muted)' }}>
         Educational articles on preferred equity, dividend income, and the assets we track.
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sorted.map(article => (
-          <Link
-            key={article.slug}
-            href={`/blog/${article.slug}`}
-            className="flex flex-col rounded-xl p-5 transition-colors"
-            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
-          >
-            <CategoryTag category={article.category} />
-            <h2 className="text-base font-semibold leading-snug mb-2" style={{ color: 'var(--text-primary)' }}>
-              {article.title}
-            </h2>
-            <p className="text-sm leading-6 flex-1 mb-4" style={{ color: 'var(--text-muted)' }}>
-              {article.excerpt}
-            </p>
-            <div className="flex items-center justify-between text-xs" style={{ color: 'var(--text-muted)' }}>
-              <span>{formatDate(article.date)}</span>
-              <span>{article.readTime}</span>
-            </div>
-          </Link>
-        ))}
-      </div>
+      <BlogIndex articles={sorted} />
 
       <AadsAd />
 

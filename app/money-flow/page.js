@@ -4,6 +4,9 @@ import CumulativeFlowChart from '@/components/CumulativeFlowChart';
 import MoneyFlowStats from '@/components/MoneyFlowStats';
 import { BMNP_ENABLED } from '@/lib/constants';
 
+// Date the narrative zones below were last revised — shown next to the story heading
+const STORY_UPDATED = '11 June 2026';
+
 export function generateMetadata() {
   const instruments = BMNP_ENABLED ? 'STRC, SATA & BMNP' : 'STRC & SATA';
   const desc = `Weekly capital raised by ${instruments} tracked from SEC 8-K filings since each IPO. Bar charts and cumulative totals showing investor demand over time.`;
@@ -92,9 +95,12 @@ export default function MoneyFlowPage() {
         <CumulativeFlowChart />
       </div>
 
-      {/* Story zones */}
+      {/* Story zones — update STORY_UPDATED whenever a zone is added or revised */}
       <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-        <h2 className="text-lg font-bold mb-5">The Story Behind the Charts</h2>
+        <div className="flex flex-wrap items-baseline justify-between gap-2 mb-5">
+          <h2 className="text-lg font-bold">The Story Behind the Charts</h2>
+          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Story last updated: {STORY_UPDATED}</p>
+        </div>
 
         <div className="space-y-5">
 

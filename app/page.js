@@ -2,6 +2,8 @@ import AssetCard from '@/components/AssetCard';
 import GoogleAd from '@/components/GoogleAd';
 import AadsAd from '@/components/AadsAd';
 import LatestNews from '@/components/LatestNews';
+import SubscribeBox from '@/components/SubscribeBox';
+import CompareTable from '@/components/CompareTable';
 import { BMNP_ENABLED } from '@/lib/constants';
 
 export function generateMetadata() {
@@ -60,7 +62,7 @@ export default function HomePage() {
           Tracking {BMNP_ENABLED ? 'STRC, SATA and BMNP' : 'STRC and SATA'} for growth
         </div>
         <p className="text-lg sm:text-xl max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
-          Track, analyse and project the growth of next-generation income assets
+          Live prices, dividend tracking and income projections for next-generation high-yield preferred stocks
         </p>
       </div>
 
@@ -71,6 +73,8 @@ export default function HomePage() {
         {BMNP_ENABLED && <AssetCard ticker="BMNP" />}
       </div>
 
+      <CompareTable />
+
       <GoogleAd slot="home-banner" />
       <AadsAd />
 
@@ -78,33 +82,21 @@ export default function HomePage() {
         <LatestNews />
       </div>
 
+      <SubscribeBox />
+
       {/* About section */}
       <div className="mt-12 max-w-3xl mx-auto">
         <h2 className="text-2xl font-bold mb-8">About Digital Credit Yield</h2>
 
         <h3 className="text-lg font-semibold mb-3">Who&rsquo;s behind this</h3>
         <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
-          I&rsquo;m Robin Gillingham and I created and run digitalcredityield.com.
-        </p>
-        <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
-          Reading my profile you&rsquo;ll see I made an exciting career change and have been an independent retail investor for the last seven years, latterly enjoying developing financial software.
+          I&rsquo;m Robin Gillingham — a full-time independent investor for seven years. I built this site to highlight the
+          difference between annual yield and effective yield on the new generation of high-yield preferred stocks,
+          and it has grown into growth projectors, dividend charts, and weekly money flow data{BMNP_ENABLED ? ' across STRC, SATA and BMNP' : ''}.
         </p>
         <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
-          I could see a greater new path to financial gain and I studied hard. Apart from cycling gear for me and the bikes, my Birthday/Christmas list now included books on investing — always reading while travelling on planes and trains.
+          <a href="/about" style={{ color: 'var(--accent-gold)' }}>Read the full story on the About page →</a>
         </p>
-
-        <h3 className="text-lg font-semibold mb-3">Why I built this site</h3>
-        <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
-          From 2020 my research and interest took me towards cryptocurrency, particularly Bitcoin where I first heard about Michael Saylor&rsquo;s groundbreaking plans for MicroStrategy putting Bitcoin on the company&rsquo;s treasury account.
-        </p>
-        <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
-          With the exciting Bitcoin plans from Strategy, launching STRC and later Strive launching SATA, I had the initial idea to build a website to highlight the difference between annual yield and effective yield. From here the website has expanded with growth projectors, differentiators, dividend charts and the latest money flow data. I think the website now brings together all the up to date info an investor would need in calculating preferred equity stocks.
-        </p>
-        {BMNP_ENABLED && (
-          <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
-            With Bitmine Immersion Technologies having recently launched their own preferred equity stock, BMNP, now listed on the NYSE, I have already updated this website and will in the future cover any more stocks in this category. So making Digital Credit Yield a great place to look for analysing all these products available in one location.
-          </p>
-        )}
 
         <h3 className="text-lg font-semibold mb-3">How I keep the data accurate</h3>
         <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>

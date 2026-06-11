@@ -9,6 +9,7 @@ import { put, list } from '@vercel/blob';
 import { generateDailyInsight } from './insightEngine.js';
 import { generateMp4 } from './generateMp4.js';
 import { NOTO_400 } from './fontData.js';
+import { isNyseMarketDay } from '../lib/marketDays.js';
 
 function cleanForApp(text) {
   return text
@@ -40,6 +41,45 @@ function setupFonts() {
 
 const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 const SITE_URL  = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');
+
+// News items added via the news admin in the last `hours` — item.id is its creation timestamp
+async function loadRecentNews(hours = 24) {
+  try {
+    const { blobs } = await list({ prefix: 'dcy-news' });
+    const blob = blobs.find(b => b.pathname === 'dcy-news.json');
+    if (!blob) return [];
+    const res = await fetch(blob.url, {
+      headers: { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` },
+    });
+    if (!res.ok) return [];
+    const items = await res.json();
+    const cutoff = Date.now() - hours * 3600 * 1000;
+    return items
+      .filter(i => {
+        const ts = Number(i.id);
+        if (Number.isFinite(ts) && ts > 0) return ts >= cutoff;
+        return new Date(i.date).getTime() >= cutoff - 86400000; // legacy items without timestamp ids
+      })
+      .slice(0, 4);
+  } catch {
+    return [];
+  }
+}
+
+async function loadSubscribers() {
+  try {
+    const { blobs } = await list({ prefix: 'dcy-subscribers' });
+    const blob = blobs.find(b => b.pathname === 'dcy-subscribers.json');
+    if (!blob) return [];
+    const res = await fetch(blob.url, {
+      headers: { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` },
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
 
 // DCY website brand colours — match the ticker tag colours on digitalcredityield.com
 const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047' };
@@ -268,13 +308,26 @@ async function run() {
 
   const chartB64 = chartImg ? chartImg.toString('base64') : null;
 
+  // ── Latest News block (items added via news admin in the last 24h) ─────────
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const newsItems = await loadRecentNews();
+  const newsHtml = newsItems.length ? `<div style="background:#0b1422;border-radius:10px;border:1px solid #1a2740;padding:10px 14px;margin-bottom:12px;">
+        <div style="font-size:10px;font-weight:600;color:#8a9ab5;letter-spacing:0.08em;margin-bottom:8px;">LATEST NEWS</div>
+        ${newsItems.map(n => {
+          const colour = TICKER_COLOUR[n.tag] || '#9ca3af';
+          const headline = n.url
+            ? `<a href="${esc(n.url)}" style="color:#e4eaf5;text-decoration:none;">${esc(n.headline)}</a>`
+            : esc(n.headline);
+          return `<div style="margin-bottom:6px;font-size:12px;line-height:1.5;">` +
+            `<span style="font-weight:700;color:${colour};">${esc(n.tag)}</span>` +
+            `<span style="color:#3a4a62;margin:0 5px;">·</span>` +
+            `<span style="color:#c8d4e8;">${headline}</span>` +
+            `</div>`;
+        }).join('')}
+      </div>` : '';
+
   // ── Combined card email ────────────────────────────────────────────────────
-  const html = `<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#0a0f1e;font-family:Arial,Helvetica,sans-serif;color:#fff;">
-  <div style="max-width:520px;margin:0 auto;padding:20px 16px;">
-    <div style="background:linear-gradient(160deg,#151b27 0%,#0e1520 100%);border-radius:18px;padding:20px 22px 16px;border:1px solid #1e2a3a;box-shadow:0 20px 60px rgba(0,0,0,0.8);">
+  const cardHtml = `<div style="background:linear-gradient(160deg,#151b27 0%,#0e1520 100%);border-radius:18px;padding:20px 22px 16px;border:1px solid #1e2a3a;box-shadow:0 20px 60px rgba(0,0,0,0.8);">
 
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
         <div style="width:10px;height:10px;background:#f5a623;border-radius:2px;flex-shrink:0;"></div>
@@ -298,10 +351,29 @@ async function run() {
 
       ${legendHtml ? `<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;">${legendHtml}</div>` : ''}
 
+      ${newsHtml}
+
       <div style="text-align:center;font-size:12px;font-weight:600;color:#8a9ab5;letter-spacing:0.05em;margin-bottom:4px;">digitalcredityield.com</div>
       <div style="text-align:center;font-size:10px;color:#3a4a62;line-height:1.5;">Not financial advice. For informational purposes only. Always do your own research before making any investment decisions.</div>
 
-    </div>
+    </div>`;
+
+  function wrapEmail(inner) {
+    return `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#0a0f1e;font-family:Arial,Helvetica,sans-serif;color:#fff;">
+  <div style="max-width:520px;margin:0 auto;padding:20px 16px;">
+    ${inner}
+  </div>
+</body>
+</html>`;
+  }
+
+  const subscribers = await loadSubscribers();
+  const marketDay = isNyseMarketDay();
+
+  const html = wrapEmail(`${cardHtml}
 
     <div style="margin-top:14px;background:#0b1422;border-radius:14px;border:1px solid #1e2a3a;padding:14px 16px;">
       <div style="font-size:10px;font-weight:600;color:#8a9ab5;letter-spacing:0.08em;margin-bottom:10px;">POST TO X — SELECT ALL &amp; COPY${mp4Buffer ? ' · MP4 ATTACHED' : ''}</div>
@@ -309,9 +381,16 @@ async function run() {
       <div style="margin-top:8px;font-size:10px;color:#3a4a62;">${tweetText.replace(/https?:\/\/\S+/g, 'x'.repeat(23)).length} / 280 chars (URLs counted as 23)</div>
     </div>
 
-  </div>
-</body>
-</html>`;
+    <div style="margin-top:10px;text-align:center;font-size:11px;color:#8a9ab5;">
+      Newsletter subscribers: ${subscribers.length} · snapshot ${subscribers.length === 0 ? 'not sent (no subscribers)' : marketDay ? 'sent' : 'not sent (market closed)'}
+    </div>`);
+
+  const subscriberHtml = wrapEmail(`${cardHtml}
+
+    <div style="margin-top:14px;text-align:center;font-size:10px;color:#3a4a62;line-height:1.6;">
+      You're receiving this because you subscribed at <a href="${SITE_URL}" style="color:#8a9ab5;text-decoration:none;">digitalcredityield.com</a>.<br>
+      <a href="${SITE_URL}/unsubscribe" style="color:#8a9ab5;">Unsubscribe</a>
+    </div>`);
 
   const resend = new Resend(process.env.RESEND_API_KEY);
   const attachments = mp4Buffer
@@ -326,6 +405,26 @@ async function run() {
   });
   if (error) throw new Error(`Resend error: ${JSON.stringify(error)}`);
   console.log(`Email sent to ${RECIPIENT}`);
+
+  // ── Send clean snapshot (no X block, no attachment) to newsletter subscribers ──
+  // Market days only — matches the "every market day" promise on the signup box
+  if (subscribers.length > 0 && marketDay) {
+    // Resend caps recipients per request — send in batches of 49 BCC
+    for (let i = 0; i < subscribers.length; i += 49) {
+      const batch = subscribers.slice(i, i + 49).map(s => s.email);
+      const { error: subError } = await resend.emails.send({
+        from: 'Digital Credit Yield <contact@digitalcredityield.com>',
+        to: 'contact@digitalcredityield.com',
+        bcc: batch,
+        subject: `Daily Snapshot — ${today}`,
+        html: subscriberHtml,
+      });
+      if (subError) console.warn(`Subscriber batch failed: ${JSON.stringify(subError)}`);
+    }
+    console.log(`Snapshot sent to ${subscribers.length} subscriber(s)`);
+  } else if (subscribers.length > 0) {
+    console.log(`Market closed — skipped snapshot for ${subscribers.length} subscriber(s)`);
+  }
 
   // Save daily card to Blob for DCY app
   const displayTickers = ['STRC', 'SATA', ...(quotes['BMNP']?.price != null ? ['BMNP'] : [])];
