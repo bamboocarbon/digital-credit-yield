@@ -7,6 +7,11 @@ const nextConfig = {
   async rewrites() {
     return [{ source: '/og', destination: '/api/og' }];
   },
+  // generateMp4.js registers these with @napi-rs/canvas at runtime
+  // (Vercel lambdas have no system fonts); the dynamic path isn't traceable.
+  outputFileTracingIncludes: {
+    '/api/cron/daily-email': ['./public/fonts/**'],
+  },
 };
 
 export default nextConfig;

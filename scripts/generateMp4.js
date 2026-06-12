@@ -2,12 +2,21 @@
 // Renders the DCY daily card as an H.264 MP4 via ffmpeg.
 // Canvas is drawn at 2× pixel density (920×976) then encoded at 25fps CRF 17.
 
-import { createCanvas } from '@napi-rs/canvas';
+import { createCanvas, GlobalFonts } from '@napi-rs/canvas';
 import { spawn }        from 'child_process';
+import path             from 'path';
 import ffmpegPath       from 'ffmpeg-static';
 
 // Bundled binary on Vercel (no system ffmpeg there); falls back to PATH locally
 const FFMPEG = ffmpegPath || 'ffmpeg';
+
+// Vercel lambdas have no system fonts (Arial etc.), so fillText draws nothing
+// unless a font is registered. Register the site's bundled Inter files.
+for (const file of ['inter-400.ttf', 'inter-700.ttf']) {
+  try {
+    GlobalFonts.registerFromPath(path.join(process.cwd(), 'public', 'fonts', file), 'Inter');
+  } catch { /* local dev falls back to system Arial */ }
+}
 
 // ── Canvas dimensions (logical — all draw coordinates use these) ──────────────
 const W     = 460;
@@ -209,7 +218,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
     ctx.fillStyle = '#f5a623';
     roundRect(ctx, PX, TB_Y - 9, 11, 11, 2); ctx.fill();
     ctx.fillStyle = '#8a9ab5';
-    ctx.font = '11px Arial, sans-serif';
+    ctx.font = '11px Inter, Arial, sans-serif';
     ctx.textAlign = 'left';
     ctx.fillText(`Digital Credit Yield  ·  ${date}`, PX + 16, TB_Y);
   }
@@ -221,7 +230,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
     roundRect(ctx, PX, TL_Y0, W - 2*PX, TL_Y1 - TL_Y0, 12);
     ctx.fill(); ctx.stroke();
     ctx.fillStyle = '#f5a623';
-    ctx.font = 'bold 15px Arial, sans-serif';
+    ctx.font = 'bold 15px Inter, Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('Tracking STRC, SATA & BMNP for Growth', W / 2, (TL_Y0 + TL_Y1) / 2 + 5);
   }
@@ -243,22 +252,22 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
       const lineGap = 16;
 
       ctx.fillStyle = col;
-      ctx.font = 'bold 14px Arial, sans-serif';
+      ctx.font = 'bold 14px Inter, Arial, sans-serif';
       ctx.textAlign = 'left';
       ctx.fillText(t, innerX, SN_Y0 + 20);
 
       if (q?.price != null) {
         const up = (q.changePercent ?? 0) >= 0;
         ctx.fillStyle = '#e4eaf5';
-        ctx.font = 'bold 12px Arial, sans-serif';
+        ctx.font = 'bold 12px Inter, Arial, sans-serif';
         ctx.fillText(`$${q.price.toFixed(2)}`, innerX, SN_Y0 + 20 + lineGap);
         ctx.fillStyle = up ? '#4ade80' : '#e05555';
-        ctx.font = '11px Arial, sans-serif';
+        ctx.font = '11px Inter, Arial, sans-serif';
         ctx.fillText(`${up ? '▲' : '▼'} ${Math.abs(q.changePercent ?? 0).toFixed(2)}%`, innerX, SN_Y0 + 20 + lineGap * 2);
       } else {
         const RATES = { STRC: '11.5%', SATA: '13.0%', BMNP: '9.5%' };
         ctx.fillStyle = '#8a9ab5';
-        ctx.font = '11px Arial, sans-serif';
+        ctx.font = '11px Inter, Arial, sans-serif';
         ctx.fillText('Listing soon', innerX, SN_Y0 + 20 + lineGap);
         ctx.fillText(`${RATES[t] || ''} fixed`, innerX, SN_Y0 + 20 + lineGap * 2);
       }
@@ -272,7 +281,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
     ctx.strokeStyle = '#111d2e'; ctx.lineWidth = 1; ctx.stroke();
 
     ctx.fillStyle = '#e4eaf5';
-    ctx.font = 'bold 11px Arial, sans-serif';
+    ctx.font = 'bold 11px Inter, Arial, sans-serif';
     ctx.textAlign = 'center';
     let sub = title;
     const maxSubW = W - 2*PX - 16;
@@ -284,7 +293,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
 
     // Grid + Y-axis labels
     const GRID_STEPS = 5;
-    ctx.font = '9px Arial, sans-serif';
+    ctx.font = '9px Inter, Arial, sans-serif';
     ctx.textAlign = 'right';
     for (let i = 0; i <= GRID_STEPS; i++) {
       const v = yMin + (yMax - yMin) * (i / GRID_STEPS);
@@ -300,7 +309,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
 
     // X-axis labels
     ctx.fillStyle = '#8a9ab5';
-    ctx.font = '9px Arial, sans-serif';
+    ctx.font = '9px Inter, Arial, sans-serif';
     ctx.textAlign = 'center';
     buildXLabels(months).forEach(({ t, label }) => ctx.fillText(label, xPx(t), XL_Y));
   }
@@ -359,7 +368,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
 
     drawRocket(ctx, tipX, tipY, angle);
 
-    ctx.font = 'bold 10px Arial, sans-serif';
+    ctx.font = 'bold 10px Inter, Arial, sans-serif';
     ctx.fillStyle = series[0].color;
     ctx.textAlign = 'left';
     ctx.shadowColor = series[0].color; ctx.shadowBlur = 6;
@@ -374,7 +383,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
       const endY = yPx(s.values.at(-1), yMin, yMax);
       ctx.beginPath(); ctx.arc(endX, endY, 4, 0, Math.PI * 2);
       ctx.fillStyle = s.color; ctx.fill();
-      ctx.font = 'bold 9px Arial, sans-serif';
+      ctx.font = 'bold 9px Inter, Arial, sans-serif';
       ctx.fillStyle = s.color;
       ctx.textAlign = 'right';
       ctx.fillText(`${s.label}  ${fmtVal(s.values.at(-1))}`, endX - 6, endY - 6);
@@ -390,7 +399,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
 
     const insightMaxW = W - 2*PX - 3 - 14 - 10;
     ctx.fillStyle = '#c8d4e8';
-    ctx.font = '11px Arial, sans-serif';
+    ctx.font = '11px Inter, Arial, sans-serif';
     ctx.textAlign = 'left';
     wrapText(ctx, insightText, insightMaxW, 3)
       .forEach((line, idx) => ctx.fillText(line, PX + 16, IN_Y0 + 13 + idx * 14));
@@ -398,7 +407,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
 
   // ── Legend ────────────────────────────────────────────────────────────────
   if (showText) {
-    ctx.font = '10px Arial, sans-serif';
+    ctx.font = '10px Inter, Arial, sans-serif';
     const itemWidths = series.map(s => 18 + 5 + ctx.measureText(s.label).width);
     const totalW = itemWidths.reduce((a, b) => a + b, 0) + (series.length - 1) * 14;
     let lx = (W - totalW) / 2;
@@ -415,7 +424,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
   // ── Domain ────────────────────────────────────────────────────────────────
   if (showText) {
     ctx.fillStyle = '#8a9ab5';
-    ctx.font = 'bold 11px Arial, sans-serif';
+    ctx.font = 'bold 11px Inter, Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('digitalcredityield.com', W / 2, DM_Y);
   }
@@ -423,7 +432,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
   // ── Disclaimer ────────────────────────────────────────────────────────────
   if (showText) {
     ctx.fillStyle = '#3a4a62';
-    ctx.font = '9px Arial, sans-serif';
+    ctx.font = '9px Inter, Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('Not financial advice. For information purposes only. Always do your own research.', W / 2, DC_Y);
   }
