@@ -2,25 +2,31 @@
 // Sends a nightly engagement question email linking to a relevant site page.
 
 import { Resend } from 'resend';
+import { ASSET_RATES } from '../lib/constants.js';
 
 const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 const SITE_URL  = (process.env.SITE_URL || 'https://www.digitalcredityield.com').replace(/\/$/, '');
+
+const STRC_RATE = ASSET_RATES.STRC;
+const SATA_RATE = ASSET_RATES.SATA;
+// monthly income on $50,000 at the current STRC rate, floored to the nearest $10
+const MONTHLY_ON_50K = Math.floor((50000 * STRC_RATE) / 1200 / 10) * 10;
 
 const QUESTIONS = [
   // 2:1 interleave — STRC, STRC, SATA throughout
   {
     question: "How can I earn $500 interest in a year on a $10,000 investment?",
-    teaser: "With STRC currently yielding over 11%, the math could work in your favor. See your exact 12-month income projection.",
+    teaser: `With STRC currently yielding ${STRC_RATE}%, the math could work in your favor. See your exact 12-month income projection.`,
     path: "/strc/projector",
   },
   {
     question: "What monthly income would $50,000 invested in STRC generate?",
-    teaser: "At today's rate, that's potentially over $450 every single month. See a full income breakdown.",
+    teaser: `At today's ${STRC_RATE}% rate, that's potentially over $${MONTHLY_ON_50K} a month, paid semi-monthly. See a full income breakdown.`,
     path: "/strc/projector",
   },
   {
-    question: "How much passive income could $30,000 in SATA generate each month?",
-    teaser: "At 13% annual yield, SATA compounds faster than most income instruments. See how it adds up.",
+    question: "How much passive income could $30,000 in SATA generate?",
+    teaser: `At ${SATA_RATE}% annual yield, SATA compounds faster than most income instruments. See how it adds up.`,
     path: "/sata/projector",
   },
   {
@@ -35,12 +41,12 @@ const QUESTIONS = [
   },
   {
     question: "How much would $75,000 in SATA earn you over the next 12 months?",
-    teaser: "At 13% annual yield, the income adds up every NYSE business day. See the full projection.",
+    teaser: `At ${SATA_RATE}% annual yield, the income adds up every NYSE business day. See the full projection.`,
     path: "/sata/projector",
   },
   {
     question: "What would $100,000 in STRC earn you each month?",
-    teaser: "At an 11.5% annual rate paid monthly, the income adds up quickly. Model your own scenario.",
+    teaser: `With STRC's ${STRC_RATE}% annual rate paid semi-monthly, the income adds up quickly. Model your own scenario.`,
     path: "/strc/projector",
   },
   {
@@ -50,7 +56,7 @@ const QUESTIONS = [
   },
   {
     question: "Is SATA's yield worth it compared to Treasuries or a savings account?",
-    teaser: "At 13% annual yield, the income gap is significant. See a full side-by-side comparison.",
+    teaser: `At ${SATA_RATE}% annual yield, the income gap is significant. See a full side-by-side comparison.`,
     path: "/sata/differentiator",
   },
   {
@@ -64,7 +70,7 @@ const QUESTIONS = [
     path: "/strc/projector",
   },
   {
-    question: "How does SATA's 13% yield compare to a high-yield savings account?",
+    question: `How does SATA's ${SATA_RATE}% yield compare to a high-yield savings account?`,
     teaser: "Most savings accounts offer 4–5% APY. See how SATA's income stacks up side by side.",
     path: "/sata/differentiator",
   },
@@ -75,11 +81,11 @@ const QUESTIONS = [
   },
   {
     question: "Is STRC a better income option than US Treasuries?",
-    teaser: "Treasury yields sit around 4–5%. STRC targets 11.5%. See the real income difference over time.",
+    teaser: `Treasury yields sit around 4–5%. STRC targets ${STRC_RATE}%. See the real income difference over time.`,
     path: "/strc/differentiator",
   },
   {
-    question: "What would $10,000 in SATA generate over 12 months at 13% annual yield?",
+    question: `What would $10,000 in SATA generate over 12 months at ${SATA_RATE}% annual yield?`,
     teaser: "Model your own income projection on the SATA projector and see the full breakdown.",
     path: "/sata/projector",
   },
@@ -89,13 +95,13 @@ const QUESTIONS = [
     path: "/strc/differentiator",
   },
   {
-    question: "What's the real annual yield on STRC after monthly compounding?",
-    teaser: "The headline rate is 11.5% — but reinvesting dividends monthly pushes your effective return even higher.",
+    question: "What's the real annual yield on STRC after semi-monthly compounding?",
+    teaser: `The headline rate is ${STRC_RATE}% — but reinvesting dividends twice a month pushes your effective return even higher.`,
     path: "/strc/chart",
   },
   {
     question: "How does SATA's yield compare to US Treasuries over 3 years?",
-    teaser: "Treasury yields sit around 4–5%. SATA targets 13%. See the real income difference over time.",
+    teaser: `Treasury yields sit around 4–5%. SATA targets ${SATA_RATE}%. See the real income difference over time.`,
     path: "/sata/differentiator",
   },
 ];
