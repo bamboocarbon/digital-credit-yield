@@ -5,7 +5,7 @@ export const runtime = 'edge';
 const GOLD   = '#f5a623';
 const NAVY   = '#0a0f1e';
 const CARD   = '#111827';
-const MUTED  = '#6b7280';
+const MUTED  = '#b9c0cc'; // light grey — must stay readable over the photo background
 const BORDER = '#1e2a3a';
 
 let fontRegular = null;
@@ -43,10 +43,27 @@ export async function GET(request) {
     (
       <div style={{
         width: '100%', height: '100%',
-        display: 'flex', flexDirection: 'column',
-        background: NAVY, padding: '56px 64px',
+        display: 'flex', position: 'relative',
+        background: NAVY,
         fontFamily: fonts.length ? 'Inter' : 'sans-serif',
       }}>
+
+        {/* Photo background + legibility overlay */}
+        <img
+          src={`${origin}/og-bg.jpg`}
+          width={1200}
+          height={630}
+          style={{ position: 'absolute', top: 0, left: 0, objectFit: 'cover' }}
+        />
+        <div style={{
+          position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+          background: 'linear-gradient(180deg, rgba(10,15,30,0.35) 0%, rgba(10,15,30,0.45) 45%, rgba(10,15,30,0.84) 100%)',
+        }} />
+
+        <div style={{
+          display: 'flex', flexDirection: 'column',
+          width: '100%', height: '100%', padding: '56px 64px',
+        }}>
 
         {/* Top bar — branding */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 'auto' }}>
@@ -107,6 +124,8 @@ export async function GET(request) {
             <span style={{ color: '#ffffff', fontSize: 24, fontWeight: 700 }}>digitalcredityield.com</span>
             <span style={{ color: MUTED, fontSize: 18, fontWeight: 400 }}>Preferred Stock Tracker</span>
           </div>
+        </div>
+
         </div>
 
       </div>
