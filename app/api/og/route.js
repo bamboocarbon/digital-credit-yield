@@ -60,9 +60,11 @@ export async function GET(request) {
           background: 'linear-gradient(180deg, rgba(10,15,30,0.35) 0%, rgba(10,15,30,0.45) 45%, rgba(10,15,30,0.84) 100%)',
         }} />
 
+        {/* Extra bottom padding keeps the footer clear of X's black caption
+            overlay, which covers roughly the bottom 90px of the card */}
         <div style={{
           display: 'flex', flexDirection: 'column',
-          width: '100%', height: '100%', padding: '56px 64px',
+          width: '100%', height: '100%', padding: '56px 64px 130px',
         }}>
 
         {/* Top bar — branding */}

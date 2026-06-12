@@ -7,7 +7,7 @@ export const metadata = {
     description: 'From aircraft engineering to full-time trading — the story behind Digital Credit Yield and its STRC, SATA and BMNP tracking tools.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/about',
-    images: [{ url: '/og?v=2&title=About&sub=Digital+Credit+Yield' }],
+    images: [{ url: '/og?v=3&title=About&sub=Digital+Credit+Yield' }],
   },
   twitter: {
     card: 'summary_large_image',

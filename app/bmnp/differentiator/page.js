@@ -11,7 +11,7 @@ export const metadata = {
     description: "Compare BMNP's 9.50% annual dividend against US Treasuries and bank savings.",
     type: 'website',
     url: 'https://www.digitalcredityield.com/bmnp/differentiator',
-    images: [{ url: '/og?v=2&title=BMNP+vs+Treasuries&sub=Compare+income+vs+Treasuries&tag=Comparison' }],
+    images: [{ url: '/og?v=3&title=BMNP+vs+Treasuries&sub=Compare+income+vs+Treasuries&tag=Comparison' }],
   },
   twitter: {
     card: 'summary_large_image',

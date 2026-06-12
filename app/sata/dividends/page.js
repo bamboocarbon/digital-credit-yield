@@ -11,7 +11,7 @@ export const metadata = {
     description: "Complete record of every SATA daily dividend payment from Strive's preferred stock.",
     type: 'website',
     url: 'https://www.digitalcredityield.com/sata/dividends',
-    images: [{ url: '/og?v=2&title=SATA+Dividend+History&sub=Daily+payment+records&rate=13.00%25' }],
+    images: [{ url: '/og?v=3&title=SATA+Dividend+History&sub=Daily+payment+records&rate=13.00%25' }],
   },
   twitter: {
     card: 'summary_large_image',

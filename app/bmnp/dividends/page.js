@@ -11,7 +11,7 @@ export const metadata = {
     description: "Complete record of every BMNP weekly dividend payment from BitMine's preferred stock.",
     type: 'website',
     url: 'https://www.digitalcredityield.com/bmnp/dividends',
-    images: [{ url: '/og?v=2&title=BMNP+Dividend+History&sub=Weekly+payment+records&rate=9.50%25' }],
+    images: [{ url: '/og?v=3&title=BMNP+Dividend+History&sub=Weekly+payment+records&rate=9.50%25' }],
   },
   twitter: {
     card: 'summary_large_image',

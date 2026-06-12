@@ -7,7 +7,7 @@ export const metadata = {
     description: 'How we collect, use, and protect your data on Digital Credit Yield.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/privacy-policy',
-    images: [{ url: '/og?v=2&title=Privacy+Policy&sub=Digital+Credit+Yield' }],
+    images: [{ url: '/og?v=3&title=Privacy+Policy&sub=Digital+Credit+Yield' }],
   },
   twitter: {
     card: 'summary_large_image',

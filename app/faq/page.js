@@ -10,7 +10,7 @@ export const metadata = {
     description: 'Answers to common questions about STRC and SATA preferred stocks.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/faq',
-    images: [{ url: '/og?v=2&title=FAQ&sub=Frequently+Asked+Questions' }],
+    images: [{ url: '/og?v=3&title=FAQ&sub=Frequently+Asked+Questions' }],
   },
   twitter: {
     card: 'summary_large_image',
