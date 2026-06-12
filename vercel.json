@@ -1,12 +1,3 @@
 {
-  "crons": [
-    {
-      "path": "/api/cron/money-flow",
-      "schedule": "30 13 * * 1"
-    },
-    {
-      "path": "/api/cron/money-flow",
-      "schedule": "0 22 * * 1"
-    }
-  ]
+  "crons": []
 }
