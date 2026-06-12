@@ -1,0 +1,48 @@
+name: Email crons
+
+# Email triggers moved here from Vercel crons: the Vercel Hobby plan delays
+# cron invocations by up to an hour, while Actions schedules fire within a
+# few minutes. Paired schedules approximate UK time across BST/GMT.
+on:
+  schedule:
+    - cron: '0 15 * 4-10 *'      # daily email     — 4pm UK (BST months)
+    - cron: '0 16 * 1-3,11,12 *' # daily email     — 4pm UK (GMT months)
+    - cron: '0 16 * 4-10 *'      # motivation      — 5pm UK (BST months)
+    - cron: '0 17 * 1-3,11,12 *' # motivation      — 5pm UK (GMT months)
+    - cron: '0 20 * 4-10 *'      # evening email   — 9pm UK (BST months)
+    - cron: '0 21 * 1-3,11,12 *' # evening email   — 9pm UK (GMT months)
+  workflow_dispatch:
+    inputs:
+      email:
+        description: 'Which email to trigger'
+        required: true
+        type: choice
+        options: [daily-email, motivation-email, evening-email]
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve endpoint
+        id: endpoint
+        run: |
+          case "${{ github.event_name == 'workflow_dispatch' && inputs.email || github.event.schedule }}" in
+            "0 15 * 4-10 *"|"0 16 * 1-3,11,12 *"|daily-email)        echo "path=daily-email" >> "$GITHUB_OUTPUT" ;;
+            "0 16 * 4-10 *"|"0 17 * 1-3,11,12 *"|motivation-email)   echo "path=motivation-email" >> "$GITHUB_OUTPUT" ;;
+            "0 20 * 4-10 *"|"0 21 * 1-3,11,12 *"|evening-email)      echo "path=evening-email" >> "$GITHUB_OUTPUT" ;;
+            *) echo "Unknown schedule: ${{ github.event.schedule }}" >&2; exit 1 ;;
+          esac
+
+      - name: Trigger ${{ steps.endpoint.outputs.path }}
+        run: |
+          for attempt in 1 2 3; do
+            code=$(curl -s -o /tmp/body -w '%{http_code}' --max-time 120 \
+              "https://www.digitalcredityield.com/api/cron/${{ steps.endpoint.outputs.path }}" \
+              -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}")
+            echo "attempt $attempt → HTTP $code"
+            cat /tmp/body; echo
+            [ "$code" = "200" ] && exit 0
+            sleep 30
+          done
+          echo "::error::${{ steps.endpoint.outputs.path }} failed after 3 attempts (last HTTP $code)"
+          exit 1
