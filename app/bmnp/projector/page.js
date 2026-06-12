@@ -11,7 +11,7 @@ export const metadata = {
     description: "Model your BMNP income and compare BitMine's 9.50% preferred stock against US Treasuries and bank savings.",
     type: 'website',
     url: 'https://www.digitalcredityield.com/bmnp/projector',
-    images: [{ url: '/api/og?title=BMNP+Income+Calculator&sub=Model+your+dividend+income&tag=Income+Tool' }],
+    images: [{ url: '/api/og?v=2&title=BMNP+Income+Calculator&sub=Model+your+dividend+income&tag=Income+Tool' }],
   },
   twitter: {
     card: 'summary_large_image',

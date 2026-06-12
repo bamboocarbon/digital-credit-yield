@@ -11,7 +11,7 @@ export const metadata = {
     description: "Compare SATA's 13.00% monthly dividend against US Treasuries and bank savings.",
     type: 'website',
     url: 'https://www.digitalcredityield.com/sata/differentiator',
-    images: [{ url: '/api/og?title=SATA+vs+Treasuries&sub=Compare+income+vs+Treasuries&tag=Comparison' }],
+    images: [{ url: '/api/og?v=2&title=SATA+vs+Treasuries&sub=Compare+income+vs+Treasuries&tag=Comparison' }],
   },
   twitter: {
     card: 'summary_large_image',

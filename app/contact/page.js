@@ -9,7 +9,7 @@ export const metadata = {
     description: 'Get in touch with Robin Gillingham at Digital Credit Yield. Questions about STRC, SATA, BMNP, or dividend investing?',
     type: 'website',
     url: 'https://www.digitalcredityield.com/contact',
-    images: [{ url: '/api/og?title=Contact&sub=Digital+Credit+Yield' }],
+    images: [{ url: '/api/og?v=2&title=Contact&sub=Digital+Credit+Yield' }],
   },
   twitter: {
     card: 'summary_large_image',

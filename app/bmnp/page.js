@@ -12,7 +12,7 @@ export const metadata = {
     description: `BitMine's preferred stock paying ${rate}% annually in weekly cash dividends. Track live price, yield, and dividend history.`,
     type: 'website',
     url: 'https://www.digitalcredityield.com/bmnp',
-    images: [{ url: `/api/og?title=BMNP+Stock&sub=BitMine+Preferred+Stock&rate=${rate}%25` }],
+    images: [{ url: `/api/og?v=2&title=BMNP+Stock&sub=BitMine+Preferred+Stock&rate=${rate}%25` }],
   },
   twitter: {
     card: 'summary_large_image',

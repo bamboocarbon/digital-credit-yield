@@ -25,7 +25,7 @@ export async function generateMetadata({ params }) {
       type: 'article',
       url: `https://www.digitalcredityield.com/blog/${slug}`,
       publishedTime: article.date,
-      images: [{ url: `/api/og?title=${encodeURIComponent(article.title)}&sub=${encodeURIComponent(article.category)}&tag=Blog` }],
+      images: [{ url: `/api/og?v=2&title=${encodeURIComponent(article.title)}&sub=${encodeURIComponent(article.category)}&tag=Blog` }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -87,7 +87,7 @@ export default async function ArticlePage({ params }) {
     description: desc,
     datePublished: article.date,
     dateModified: article.updated || article.date,
-    image: `https://www.digitalcredityield.com/api/og?title=${encodeURIComponent(article.title)}&sub=${encodeURIComponent(article.category)}&tag=Blog`,
+    image: `https://www.digitalcredityield.com/api/og?v=2&title=${encodeURIComponent(article.title)}&sub=${encodeURIComponent(article.category)}&tag=Blog`,
     url: `https://www.digitalcredityield.com/blog/${slug}`,
     author: {
       '@type': 'Person',

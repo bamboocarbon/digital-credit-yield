@@ -19,7 +19,7 @@ export function generateMetadata() {
       description: desc,
       type: 'website',
       url: 'https://www.digitalcredityield.com/money-flow',
-      images: [{ url: '/api/og?title=Money+Flow&sub=Capital+raised+since+IPO&tag=Data' }],
+      images: [{ url: '/api/og?v=2&title=Money+Flow&sub=Capital+raised+since+IPO&tag=Data' }],
     },
     twitter: {
       card: 'summary_large_image',

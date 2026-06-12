@@ -12,7 +12,7 @@ export const metadata = {
     description: `Strive's preferred stock paying ${rate}% annually in daily cash dividends. Track live price, yield, and dividend history.`,
     type: 'website',
     url: 'https://www.digitalcredityield.com/sata',
-    images: [{ url: `/api/og?title=SATA+Stock&sub=Strive+Preferred+Stock&rate=${rate}%25` }],
+    images: [{ url: `/api/og?v=2&title=SATA+Stock&sub=Strive+Preferred+Stock&rate=${rate}%25` }],
   },
   twitter: {
     card: 'summary_large_image',
