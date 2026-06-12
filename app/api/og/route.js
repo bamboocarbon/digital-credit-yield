@@ -110,12 +110,8 @@ export async function GET(request) {
               <span style={{ color: GOLD, fontSize: 54, fontWeight: 700, lineHeight: 1 }}>{rate}</span>
             </div>
           ) : (
-            <div style={{
-              display: 'flex',
-              background: CARD, border: `1px solid ${BORDER}`,
-              borderRadius: 14, padding: '16px 28px',
-            }}>
-              <span style={{ color: MUTED, fontSize: 20, fontWeight: 400 }}>
+            <div style={{ display: 'flex' }}>
+              <span style={{ color: GOLD, fontSize: 20, fontWeight: 400 }}>
                 Tracking STRC and SATA for growth
               </span>
             </div>
