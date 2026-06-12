@@ -11,7 +11,7 @@ export const metadata = {
     description: "Model your SATA income and compare Strive's 13.00% preferred stock against US Treasuries and bank savings.",
     type: 'website',
     url: 'https://www.digitalcredityield.com/sata/projector',
-    images: [{ url: '/api/og?v=2&title=SATA+Income+Calculator&sub=Model+your+dividend+income&tag=Income+Tool' }],
+    images: [{ url: '/og?v=2&title=SATA+Income+Calculator&sub=Model+your+dividend+income&tag=Income+Tool' }],
   },
   twitter: {
     card: 'summary_large_image',

@@ -7,7 +7,7 @@ export const metadata = {
     description: 'Terms for using Digital Credit Yield. Independent tracker, not financial advice.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/terms',
-    images: [{ url: '/api/og?v=2&title=Terms+%26+Conditions&sub=Digital+Credit+Yield' }],
+    images: [{ url: '/og?v=2&title=Terms+%26+Conditions&sub=Digital+Credit+Yield' }],
   },
   twitter: {
     card: 'summary_large_image',

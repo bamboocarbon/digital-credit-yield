@@ -10,7 +10,7 @@ export const metadata = {
     description: 'A plain-English guide to the risks of high-yield preferred stocks like STRC and SATA.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/risks',
-    images: [{ url: '/api/og?v=2&title=Understanding+the+Risks&sub=Read+before+you+invest' }],
+    images: [{ url: '/og?v=2&title=Understanding+the+Risks&sub=Read+before+you+invest' }],
   },
   twitter: {
     card: 'summary_large_image',

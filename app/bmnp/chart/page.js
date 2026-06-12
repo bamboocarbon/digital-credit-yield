@@ -9,7 +9,7 @@ export const metadata = {
     description: "Live BMNP price chart. Track BitMine's preferred stock relative to $100 par and see the effective yield.",
     type: 'website',
     url: 'https://www.digitalcredityield.com/bmnp/chart',
-    images: [{ url: '/api/og?v=2&title=BMNP+Price+Chart&sub=BitMine+Preferred+Stock&tag=Live+Chart' }],
+    images: [{ url: '/og?v=2&title=BMNP+Price+Chart&sub=BitMine+Preferred+Stock&tag=Live+Chart' }],
   },
   twitter: {
     card: 'summary_large_image',
