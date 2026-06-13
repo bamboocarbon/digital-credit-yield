@@ -6,7 +6,6 @@ const GOLD   = '#f5a623';
 const NAVY   = '#0a0f1e';
 const CARD   = '#111827';
 const MUTED  = '#b9c0cc'; // light grey — must stay readable over the photo background
-const BORDER = '#1e2a3a';
 
 let fontRegular = null;
 let fontBold    = null;

@@ -43,6 +43,8 @@ const tickerColour = {
   STRC: '#4ade80',
   SATA: '#3b82f6',
   BMNP: '#fde047',
+  SOL: '#a78bfa',
+  Metaplanet: '#7dd3fc',
 };
 
 function categoryStyle(category) {
@@ -101,9 +103,24 @@ export default async function ArticlePage({ params }) {
     },
   };
 
+  const faqJsonLd = article.faq?.length
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: article.faq.map(({ q, a }) => ({
+          '@type': 'Question',
+          name: q,
+          acceptedAnswer: { '@type': 'Answer', text: a },
+        })),
+      }
+    : null;
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      {faqJsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      )}
 
       <Link
         href="/blog"
@@ -136,6 +153,20 @@ export default async function ArticlePage({ params }) {
       <div className="article-prose">
         <Content />
       </div>
+
+      {article.faq?.length > 0 && (
+        <div className="mt-12">
+          <h2 className="text-xl font-bold mb-5" style={{ color: 'var(--text-primary)' }}>Frequently Asked Questions</h2>
+          <div className="flex flex-col gap-4">
+            {article.faq.map(({ q, a }) => (
+              <div key={q} className="p-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+                <p className="text-sm font-semibold mb-2" style={{ color: 'var(--accent-gold)' }}>{q}</p>
+                <p className="text-sm leading-6" style={{ color: 'var(--text-muted)' }}>{a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mt-12 p-5 rounded-xl flex items-start gap-4" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <img

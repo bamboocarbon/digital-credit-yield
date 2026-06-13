@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 
-const TAGS = ['STRC', 'SATA', 'BMNP', 'Market'];
+const TAGS = ['STRC', 'SATA', 'BMNP', 'Metaplanet', 'Market'];
 
 const TAG_COLORS = {
-  STRC:   '#4ade80',
-  SATA:   '#3b82f6',
-  BMNP:   '#fde047',
-  Market: '#9ca3af',
+  STRC:       '#4ade80',
+  SATA:       '#3b82f6',
+  BMNP:       '#fde047',
+  Metaplanet: '#7dd3fc',
+  Market:     '#9ca3af',
 };
 
 export default function NewsAdmin() {

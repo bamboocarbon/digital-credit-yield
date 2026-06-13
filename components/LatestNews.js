@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 
 const TAG_COLORS = {
-  STRC:   '#4ade80',
-  SATA:   '#3b82f6',
-  BMNP:   '#fde047',
-  Market: '#9ca3af',
+  STRC:       '#4ade80',
+  SATA:       '#3b82f6',
+  BMNP:       '#fde047',
+  Metaplanet: '#7dd3fc',
+  Market:     '#9ca3af',
 };
 
 function formatDate(dateStr) {

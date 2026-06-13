@@ -11,6 +11,8 @@ const tickerColour = {
   STRC: '#4ade80',
   SATA: '#3b82f6',
   BMNP: '#fde047',
+  SOL: '#a78bfa',
+  Metaplanet: '#7dd3fc',
 };
 
 function categoryStyle(category) {
@@ -40,7 +42,13 @@ function CategoryTag({ category }) {
 export default function BlogIndex({ articles }) {
   const [filter, setFilter] = useState('All');
 
-  const categories = ['All', ...new Set(articles.flatMap(a => [].concat(a.category)))];
+  const tail = ['Education', 'Guide'];
+  const allCats = [...new Set(articles.flatMap(a => [].concat(a.category)))];
+  const categories = [
+    'All',
+    ...allCats.filter(c => !tail.includes(c)).sort(),
+    ...tail.filter(c => allCats.includes(c)),
+  ];
   const shown = filter === 'All'
     ? articles
     : articles.filter(a => [].concat(a.category).includes(filter));

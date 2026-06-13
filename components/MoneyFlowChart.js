@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // Weekly capital raised ($M) compiled from SEC 8-K filings.
 // Confirmed data points: STRC IPO $2,521M (Jul 29 2025), Oct 6-12 $27.3M,

@@ -27,12 +27,6 @@ const data = [
   { period: 'May wk4',     strc: 10926, sata: 1386 },
 ];
 
-const logData = data.map(d => ({
-  ...d,
-  strc: d.strc ? Math.log10(d.strc) : null,
-  sata: d.sata ? Math.log10(d.sata) : null,
-}));
-
 const fmtLinear = v => v >= 1000 ? `$${(v / 1000).toFixed(1)}B` : `$${v}M`;
 const fmtLog    = v => { const a = Math.pow(10, v); return a >= 1000 ? `$${(a / 1000).toFixed(1)}B` : `$${Math.round(a)}M`; };
 

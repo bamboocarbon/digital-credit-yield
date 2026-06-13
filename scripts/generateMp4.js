@@ -42,7 +42,6 @@ const XL_Y  = 363;
 const CW_Y1 = 373;
 const IN_Y0 = 385;
 const IN_H  = 52;
-const IN_Y1 = 437;
 const LG_Y  = 449;
 const DM_Y  = 462;
 const DC_Y  = 475;

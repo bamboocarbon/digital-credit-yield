@@ -50,7 +50,7 @@ export default function PrivacyPolicyPage() {
           <li>Respond to enquiries submitted via the contact form</li>
           <li>Send the daily snapshot email to newsletter subscribers — you can unsubscribe at any time via the link in every email or at <a href="/unsubscribe" className="underline" style={{ color: 'var(--accent-gold)' }}>digitalcredityield.com/unsubscribe</a>, and your address is removed immediately</li>
           <li>Serve relevant advertisements via Google AdSense (only with your consent)</li>
-          <li>Preserve your calculator settings (Growth Projector, Differentiator, and Dividend History income calculator inputs) between visits for your convenience</li>
+          <li>Preserve your calculator settings (Growth Projector, vs Treasuries, and Dividend History income calculator inputs) between visits for your convenience</li>
           <li>Build and maintain a long-term dividend payment history for STRC, SATA and BMNP — when you visit a Dividend History page, our server may fetch the latest public dividend data from Yahoo Finance and store it on our server to grow this record over time. This process involves no personal data whatsoever; only publicly available market information is stored.</li>
           <li>Display weekly capital flow data for STRC, SATA and BMNP on the Money Flow page — this data is compiled from publicly available SEC 8-K filings and stored on our server. No personal data is involved; only publicly available regulatory filings are used.</li>
         </ul>
@@ -74,7 +74,7 @@ export default function PrivacyPolicyPage() {
         <p>We use cookies for the following purposes:</p>
         <ul className="list-disc pl-5 space-y-1">
           <li><strong>Essential cookies</strong>: your cookie consent preference is stored in your browser's local storage</li>
-          <li><strong>Calculator preferences</strong>: Growth Projector and Differentiator inputs are stored in your browser's local storage for your convenience — these are not consent-dependent as no personal data is involved and nothing is transmitted externally</li>
+          <li><strong>Calculator preferences</strong>: Growth Projector and vs Treasuries inputs are stored in your browser's local storage for your convenience — these are not consent-dependent as no personal data is involved and nothing is transmitted externally</li>
           <li><strong>Analytics cookies</strong> (Google Analytics): only set if you accept cookies</li>
           <li><strong>Advertising cookies</strong> (Google AdSense): only set if you accept cookies</li>
         </ul>

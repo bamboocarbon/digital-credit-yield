@@ -6,7 +6,7 @@ export default function GoogleAd({ slot, format = 'auto' }) {
   useEffect(() => {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {}
+    } catch {}
   }, []);
 
   if (process.env.NODE_ENV === 'development') {
