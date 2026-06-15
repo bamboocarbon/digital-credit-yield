@@ -430,8 +430,8 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
 
   // ── Disclaimer ────────────────────────────────────────────────────────────
   if (showText) {
-    ctx.fillStyle = '#3a4a62';
-    ctx.font = '9px Inter, Arial, sans-serif';
+    ctx.fillStyle = '#8a9ab5';
+    ctx.font = '10px Inter, Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('Not financial advice. For information purposes only. Always do your own research.', W / 2, DC_Y);
   }
