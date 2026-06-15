@@ -3,6 +3,7 @@
 
 import { Resend } from 'resend';
 import { ASSET_RATES } from '../lib/constants.js';
+import { alreadySentToday, markSentToday } from '../lib/sendGuard.js';
 
 const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 const SITE_URL  = (process.env.SITE_URL || 'https://www.digitalcredityield.com').replace(/\/$/, '');
@@ -115,6 +116,11 @@ function getDayOfYear() {
 export async function run() {
   if (!process.env.RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
 
+  if (await alreadySentToday('evening-email')) {
+    console.log('evening-email already sent today — skipping');
+    return;
+  }
+
   const q = QUESTIONS[getDayOfYear() % QUESTIONS.length];
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
@@ -159,6 +165,8 @@ export async function run() {
   });
 
   if (error) throw new Error(`Resend error: ${JSON.stringify(error)}`);
+
+  await markSentToday('evening-email');
   console.log(`Evening email sent to ${RECIPIENT}`);
 }
 

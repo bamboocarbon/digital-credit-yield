@@ -3,6 +3,7 @@
 
 import { Resend } from 'resend';
 import { generateDailyInsight } from './insightEngine.js';
+import { alreadySentToday, markSentToday } from '../lib/sendGuard.js';
 
 const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 const SITE_URL  = (process.env.SITE_URL || 'https://www.digitalcredityield.com').replace(/\/$/, '');
@@ -41,6 +42,11 @@ function buildHtml(thought, today) {
 export async function run() {
   if (!process.env.RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
 
+  if (await alreadySentToday('motivation-email')) {
+    console.log('motivation-email already sent today — skipping');
+    return;
+  }
+
   const { motivation, motivationB } = await generateDailyInsight();
 
   const today = new Date().toLocaleDateString('en-GB', {
@@ -64,6 +70,7 @@ export async function run() {
     }),
   ]);
 
+  await markSentToday('motivation-email');
   console.log(`Thought A & B sent to ${RECIPIENT}`);
 }
 

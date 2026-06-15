@@ -10,6 +10,7 @@ import { generateDailyInsight } from './insightEngine.js';
 import { generateMp4 } from './generateMp4.js';
 import { NOTO_400 } from './fontData.js';
 import { isNyseMarketDay } from '../lib/marketDays.js';
+import { alreadySentToday, markSentToday } from '../lib/sendGuard.js';
 
 function cleanForApp(text) {
   return text
@@ -260,6 +261,11 @@ async function run() {
   setupFonts();
   if (!process.env.RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
 
+  if (await alreadySentToday('daily-email')) {
+    console.log('daily-email already sent today — skipping');
+    return;
+  }
+
   console.log('Fetching market data...');
   const { insight, quotes, tweetText } = await generateDailyInsight();
 
@@ -404,6 +410,7 @@ async function run() {
     attachments,
   });
   if (error) throw new Error(`Resend error: ${JSON.stringify(error)}`);
+  await markSentToday('daily-email');
   console.log(`Email sent to ${RECIPIENT}`);
 
   // ── Send clean snapshot (no X block, no attachment) to newsletter subscribers ──
