@@ -6,7 +6,7 @@ const rate = ASSET_RATES.BMNP.toFixed(2);
 export const metadata = {
   alternates: { canonical: '/bmnp' },
   title: `BMNP Stock — ${rate}% Annual Dividend`,
-  description: `Track BMNP live price and yield. BitMine Immersion Technologies' preferred stock pays ${rate}% annually in weekly cash dividends. Expected to list on the NYSE in June 2026, backed by Ethereum staking via MAVAN.`,
+  description: `Track BMNP live price and yield. BitMine Immersion Technologies' preferred stock pays ${rate}% annually in weekly cash dividends. Began trading on the NYSE June 16, 2026, backed by Ethereum staking via MAVAN.`,
   openGraph: {
     title: `BMNP Stock — BitMine Preferred Stock | ${rate}% Annual Weekly Dividend`,
     description: `BitMine's preferred stock paying ${rate}% annually in weekly cash dividends. Track live price, yield, and dividend history.`,
@@ -25,7 +25,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'FinancialProduct',
   name: 'BMNP — BitMine Immersion Technologies Series A Perpetual Preferred Stock',
-  description: `BitMine Immersion Technologies' perpetual preferred stock expected to list on the NYSE in June 2026, paying a ${rate}% annual dividend distributed weekly in cash.`,
+  description: `BitMine Immersion Technologies' perpetual preferred stock, trading on the NYSE since June 16, 2026, paying a ${rate}% annual dividend distributed weekly in cash.`,
   url: 'https://www.digitalcredityield.com/bmnp',
   category: 'Preferred Stock',
   provider: {

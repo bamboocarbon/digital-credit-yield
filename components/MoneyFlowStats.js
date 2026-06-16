@@ -63,7 +63,7 @@ export default function MoneyFlowStats() {
           ) : (
             <>
               <p className="text-3xl font-bold">—</p>
-              <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>IPO expected late June 2026</p>
+              <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Listed Jun 16, 2026 — capital flow data pending</p>
             </>
           )}
         </div>

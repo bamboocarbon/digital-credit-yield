@@ -277,7 +277,7 @@ export function BMNPMoneyFlowChart() {
   if (weeks.length === 0) {
     return (
       <div style={{ height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: '#6b7280', fontSize: 13, textAlign: 'center' }}>IPO expected late June 2026<br />Data will appear automatically after launch</p>
+        <p style={{ color: '#6b7280', fontSize: 13, textAlign: 'center' }}>Listed on the NYSE June 16, 2026<br />Capital flow data will appear automatically once filed</p>
       </div>
     );
   }

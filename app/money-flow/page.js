@@ -80,7 +80,7 @@ export default function MoneyFlowPage() {
                   style={{ color: '#fde047' }}>BitMine Preferred</span>
               </div>
             </div>
-            <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO expected Jun 2026 · TBC% · ATM programme TBC</p>
+            <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Jun 2026 · 9.50% · ATM programme TBC</p>
             <BMNPMoneyFlowChart />
           </div>
         )}
