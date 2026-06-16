@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { loadProjectorState } from '@/lib/projectorState';
 import { ASSET_RATES } from '@/lib/constants';
-import { SATA_DAILY_START, getBusinessDaysInMonth, getSataDailyDividend, getSataMonthlyTotal, getSataMonthProgress, isSataDailyDividend } from '@/lib/sataBusinessDays';
+import { SATA_DAILY_START, getBusinessDaysInMonth, getSataDailyDividend, getSataExpectedPeriodAmount, getSataMonthProgress, isSataDailyDividend } from '@/lib/sataBusinessDays';
 
 const MONO = { fontFamily: "'Roboto Mono', 'Courier New', monospace" };
 const fmtMoney = v => v.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
@@ -77,7 +77,7 @@ function SataMonthlyProgress({ monthlyByMonth, dailyByMonth, todayYM, annualRate
           const monthlyPaid = (monthlyByMonth[ym] ?? []).reduce((s, d) => s + d.amount, 0);
           const dailyArr     = dailyByMonth[ym] ?? [];
           const dailyPaid    = dailyArr.reduce((s, d) => s + d.amount, 0);
-          const { paid, expected, fillPct } = getSataMonthProgress({ monthlyPaid, dailyPaid, annualRate });
+          const { paid, expected, fillPct } = getSataMonthProgress({ monthlyPaid, dailyPaid, annualRate, yearMonth: ym });
           const dailyCount = dailyArr.length;
           const dailyTotal = getBusinessDaysInMonth(ym) ?? 21;
           const isCurrentMonth = ym === todayYM;
@@ -169,7 +169,7 @@ export default function DividendInteractive({ ticker }) {
       ? { date: today, amount: projectedToday ?? 0 }
       : dailyDivs[dailyDivs.length - 1];
     const currentMonthPaid = (dailyByMonth[todayYM] ?? []).reduce((s, d) => s + d.amount, 0);
-    const expectedMonthlyTotal = getSataMonthlyTotal(annualRate);
+    const expectedMonthlyTotal = getSataExpectedPeriodAmount(todayYM, annualRate);
     return { latest, currentMonthPaid, expectedMonthlyTotal, isProjected };
   }, [ticker, dailyDivs, dailyByMonth, todayYM, today]);
 
@@ -218,7 +218,7 @@ export default function DividendInteractive({ ticker }) {
           if (ym < '2026-06') return totals[i];
           const monthlyPaid = (monthlyByMonth[ym] ?? []).reduce((s, d) => s + d.amount, 0);
           const dailyPaid   = (dailyByMonth[ym] ?? []).reduce((s, d) => s + d.amount, 0);
-          return getSataMonthProgress({ monthlyPaid, dailyPaid, annualRate: ASSET_RATES.SATA }).expected;
+          return getSataMonthProgress({ monthlyPaid, dailyPaid, annualRate: ASSET_RATES.SATA, yearMonth: ym }).expected;
         });
         const remaining = months.map((ym, i) => Math.max(0, expected[i] - totals[i]));
 
@@ -366,7 +366,7 @@ export default function DividendInteractive({ ticker }) {
           <div>
             <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>Expected this month</p>
             <p className="text-lg font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>
-              ${getSataMonthlyTotal(ASSET_RATES.SATA).toFixed(4)}
+              ${getSataExpectedPeriodAmount(todayYM, ASSET_RATES.SATA).toFixed(4)}
             </p>
           </div>
           <p className="text-xs sm:ml-auto" style={{ color: 'var(--text-muted)' }}>
@@ -423,9 +423,9 @@ export default function DividendInteractive({ ticker }) {
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>Expected monthly</p>
+                    <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>Expected this period</p>
                     <p className="text-lg font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>
-                      {fmtMoney(sharesNum * getSataMonthlyTotal(ASSET_RATES.SATA))}
+                      {fmtMoney(sharesNum * getSataExpectedPeriodAmount(todayYM, ASSET_RATES.SATA))}
                     </p>
                   </div>
                   <div>
