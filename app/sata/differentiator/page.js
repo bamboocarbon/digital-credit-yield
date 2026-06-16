@@ -8,7 +8,7 @@ export const metadata = {
   description: "Compare SATA's 13.00% dividend against US Treasuries and bank savings. See how much more income Strive's preferred stock generates over any time horizon.",
   openGraph: {
     title: 'SATA vs US Treasuries — Strive Preferred Stock Income Compared',
-    description: "Compare SATA's 13.00% monthly dividend against US Treasuries and bank savings.",
+    description: "Compare SATA's 13.00% daily dividend against US Treasuries and bank savings.",
     type: 'website',
     url: 'https://www.digitalcredityield.com/sata/differentiator',
     images: [{ url: '/og?v=3&title=SATA+vs+Treasuries&sub=Compare+income+vs+Treasuries&tag=Comparison' }],
@@ -16,7 +16,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "SATA vs US Treasuries — Strive Preferred Stock Income Compared",
-    description: "Compare SATA's 13.00% monthly dividend against US Treasuries and bank savings.",
+    description: "Compare SATA's 13.00% daily dividend against US Treasuries and bank savings.",
   },
 };
 
