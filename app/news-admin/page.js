@@ -18,6 +18,7 @@ export default function NewsAdmin() {
   const [authError, setAuthError] = useState('');
   const [items, setItems]         = useState([]);
   const [loading, setLoading]     = useState(false);
+  const [subscriberCount, setSubscriberCount] = useState(null);
   const [form, setForm]           = useState({
     date: new Date().toISOString().split('T')[0],
     tag: 'STRC',
@@ -60,10 +61,20 @@ export default function NewsAdmin() {
       setAuthError('');
       const data = await (await fetch('/api/news')).json();
       setItems(data);
+      fetchSubscriberCount(pw);
     } catch {
       setAuthError('Something went wrong.');
     }
     setLoading(false);
+  }
+
+  async function fetchSubscriberCount(pw) {
+    try {
+      const res = await fetch('/api/subscribe', { headers: { Authorization: `Bearer ${pw}` } });
+      if (!res.ok) return;
+      const data = await res.json();
+      setSubscriberCount(data.count);
+    } catch {}
   }
 
   function handleEdit(item) {
@@ -148,7 +159,13 @@ export default function NewsAdmin() {
     <div style={{ minHeight: '100vh', background: '#0a0f1e', padding: '32px 20px', fontFamily: 'Arial, Helvetica, sans-serif' }}>
       <div style={{ maxWidth: '600px', margin: '0 auto' }}>
 
-        <h1 style={{ color: '#ffffff', fontSize: '22px', fontWeight: '700', marginBottom: '28px' }}>Latest News</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
+          <h1 style={{ color: '#ffffff', fontSize: '22px', fontWeight: '700', margin: 0 }}>Latest News</h1>
+          <div style={{ background: '#111827', border: '1px solid #1e2a3a', borderRadius: '10px', padding: '8px 16px', textAlign: 'right' }}>
+            <p style={{ color: '#6b7280', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>Newsletter Subscribers</p>
+            <p style={{ color: '#c8893a', fontSize: '18px', fontWeight: '700', margin: 0 }}>{subscriberCount === null ? '…' : subscriberCount}</p>
+          </div>
+        </div>
 
         {/* Add form */}
         <form onSubmit={handleSubmit} style={{ background: '#111827', border: '1px solid #1e2a3a', borderRadius: '16px', padding: '28px 24px', marginBottom: '32px' }}>
