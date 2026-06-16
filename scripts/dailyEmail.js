@@ -11,6 +11,7 @@ import { generateMp4 } from './generateMp4.js';
 import { NOTO_400 } from './fontData.js';
 import { isNyseMarketDay } from '../lib/marketDays.js';
 import { alreadySentToday, markSentToday } from '../lib/sendGuard.js';
+import { ASSET_RATES } from '../lib/constants.js';
 
 function cleanForApp(text) {
   return text
@@ -43,8 +44,8 @@ function setupFonts() {
 const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 const SITE_URL  = (process.env.SITE_URL || 'https://digitalcredityield.com').replace(/\/$/, '');
 
-// News items added via the news admin in the last `hours` — item.id is its creation timestamp
-async function loadRecentNews(hours = 24) {
+// News items added via the news admin in the last `days` — item.id is its creation timestamp
+async function loadRecentNews(days = 5) {
   try {
     const { blobs } = await list({ prefix: 'dcy-news' });
     const blob = blobs.find(b => b.pathname === 'dcy-news.json');
@@ -54,17 +55,42 @@ async function loadRecentNews(hours = 24) {
     });
     if (!res.ok) return [];
     const items = await res.json();
-    const cutoff = Date.now() - hours * 3600 * 1000;
+    const cutoff = Date.now() - days * 86400000;
     return items
       .filter(i => {
         const ts = Number(i.id);
         if (Number.isFinite(ts) && ts > 0) return ts >= cutoff;
         return new Date(i.date).getTime() >= cutoff - 86400000; // legacy items without timestamp ids
       })
-      .slice(0, 4);
+      .sort((a, b) => (Number(b.id) || 0) - (Number(a.id) || 0));
   } catch {
     return [];
   }
+}
+
+// Blog metadata (slug/title/date/excerpt/category) — fetched from the live site
+// rather than imported directly, since lib/articles.js contains JSX that this
+// plain-Node script can't parse.
+async function loadBlogs() {
+  try {
+    const res = await fetch(`${SITE_URL}/api/blogs`);
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
+
+// Blogs published in the last `days`; if none qualify, fall back to 3 random posts
+// so the email always has something to link to.
+function pickBlogsForEmail(blogs, days = 7) {
+  const cutoff = Date.now() - days * 86400000;
+  const recent = blogs
+    .filter(b => new Date(b.date).getTime() >= cutoff)
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
+  if (recent.length > 0) return { items: recent, isRandom: false };
+  const shuffled = [...blogs].sort(() => Math.random() - 0.5);
+  return { items: shuffled.slice(0, 3), isRandom: true };
 }
 
 async function loadSubscribers() {
@@ -84,6 +110,21 @@ async function loadSubscribers() {
 
 // DCY website brand colours — match the ticker tag colours on digitalcredityield.com
 const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047' };
+
+// Matches the category tag colours used on /blog (components/BlogIndex.js)
+const BLOG_CATEGORY_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', SOL: '#a78bfa', Metaplanet: '#7dd3fc' };
+
+const CARD_BG = '#131a28';
+
+// Wraps inner HTML in a single-cell table with a solid background/border — some mail
+// clients (e.g. Spark on macOS) strip background-color/border styling from plain
+// <div>s but reliably honour it on table cells, so every "box" in the email body
+// is built with this instead of a styled div.
+function box(inner, { bg = '#0b1422', border = '#1a2740', borderLeft, padding = '10px 14px', marginBottom = '0' } = {}) {
+  const borderStyle = borderLeft ? `border-left:3px solid ${borderLeft};` : `border:1px solid ${border};`;
+  const bgcolorAttr = bg.startsWith('#') ? ` bgcolor="${bg}"` : '';
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin-bottom:${marginBottom};"><tr><td${bgcolorAttr} style="background-color:${bg};${borderStyle}padding:${padding};border-radius:10px;">${inner}</td></tr></table>`;
+}
 
 const W = 900, H = 800;
 const pad = { top: 165, right: 30, bottom: 100, left: 120 };
@@ -249,14 +290,6 @@ async function buildChart(chartData) {
   return buildSeriesChart(chartData);
 }
 
-function tweetToHtml(text) {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/\n/g, '<br>');
-}
-
 async function run() {
   setupFonts();
   if (!process.env.RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
@@ -267,7 +300,7 @@ async function run() {
   }
 
   console.log('Fetching market data...');
-  const { insight, quotes, tweetText } = await generateDailyInsight();
+  const { insight, quotes } = await generateDailyInsight();
 
   console.log(`Building chart (type: ${insight.chartData?.type ?? 'none'})...`);
   const chartImg = await buildChart(insight.chartData);
@@ -286,19 +319,22 @@ async function run() {
   function snapCell(t) {
     const colour = TICKER_COLOUR[t] || '#ffffff';
     const q = quotes[t];
-    let priceLine, changeLine;
+    let priceLine, changeLine, yieldLine;
     if (q?.price != null) {
       const up = (q.changePercent ?? 0) >= 0;
+      const effYield = ASSET_RATES[t] != null ? (ASSET_RATES[t] / q.price) * 100 : null;
       priceLine  = `<div style="font-size:13px;font-weight:700;color:#e4eaf5;margin-top:3px;">$${q.price.toFixed(2)}</div>`;
       changeLine = `<div style="font-size:11px;margin-top:2px;color:${up ? '#4ade80' : '#ef4444'};">${up ? '▲' : '▼'} ${Math.abs(q.changePercent ?? 0).toFixed(2)}%</div>`;
+      yieldLine  = effYield != null ? `<div style="font-size:11px;margin-top:2px;color:#8a9ab5;">${effYield.toFixed(2)}% yield</div>` : '';
     } else {
       const rates = { STRC: '11.5%', SATA: '13.0%', BMNP: '9.5%' };
       priceLine  = `<div style="font-size:11px;font-weight:600;color:#8a9ab5;margin-top:3px;">Listing soon</div>`;
       changeLine = `<div style="font-size:11px;margin-top:2px;color:#8a9ab5;">${rates[t] || ''} fixed</div>`;
+      yieldLine  = '';
     }
-    return `<div style="flex:1;background:#0b1422;border-radius:10px;padding:8px 10px;border:1px solid #1a2740;">` +
+    return `<td width="33%" valign="top" bgcolor="#0b1422" style="background-color:#0b1422;border:1px solid #1a2740;border-radius:10px;padding:8px 10px;">` +
       `<div style="font-size:15px;font-weight:700;color:${colour};letter-spacing:0.05em;">${t}</div>` +
-      priceLine + changeLine + `</div>`;
+      priceLine + changeLine + yieldLine + `</td>`;
   }
 
   // ── Chart subtitle + legend ────────────────────────────────────────────────
@@ -307,17 +343,18 @@ async function run() {
 
   const series = insight.chartData?.series ?? [];
   const legendHtml = series.map(s =>
-    `<span style="display:inline-flex;align-items:center;gap:5px;font-size:10px;color:#8a9ab5;">` +
-    `<span style="display:inline-block;width:16px;height:3px;border-radius:2px;background:${s.color};"></span>${s.label}` +
-    `</span>`
-  ).join('<span style="color:#1e2a3a;margin:0 6px;">·</span>');
+    `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="display:inline-table;vertical-align:middle;margin:0 6px;"><tr>` +
+    `<td width="16" height="3" bgcolor="${s.color}" style="background-color:${s.color};font-size:1px;line-height:3px;">&nbsp;</td>` +
+    `<td style="padding-left:5px;font-size:10px;color:#8a9ab5;white-space:nowrap;">${s.label}</td>` +
+    `</tr></table>`
+  ).join('');
 
   const chartB64 = chartImg ? chartImg.toString('base64') : null;
 
-  // ── Latest News block (items added via news admin in the last 24h) ─────────
+  // ── Latest News block (items added via news admin in the last 5 days) ──────
   const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const newsItems = await loadRecentNews();
-  const newsHtml = newsItems.length ? `<div style="background:#0b1422;border-radius:10px;border:1px solid #1a2740;padding:10px 14px;margin-bottom:12px;">
+  const newsItems = await loadRecentNews(5);
+  const newsHtml = newsItems.length ? box(`
         <div style="font-size:10px;font-weight:600;color:#8a9ab5;letter-spacing:0.08em;margin-bottom:8px;">LATEST NEWS</div>
         ${newsItems.map(n => {
           const colour = TICKER_COLOUR[n.tag] || '#9ca3af';
@@ -328,50 +365,81 @@ async function run() {
             `<span style="font-weight:700;color:${colour};">${esc(n.tag)}</span>` +
             `<span style="color:#3a4a62;margin:0 5px;">·</span>` +
             `<span style="color:#c8d4e8;">${headline}</span>` +
+            (n.description ? `<div style="color:#8a9ab5;font-size:11px;margin-top:2px;line-height:1.4;">${esc(n.description)}</div>` : '') +
             `</div>`;
         }).join('')}
-      </div>` : '';
+      `, { marginBottom: '12px' }) : '';
+
+  // ── Latest Blogs block (posts from the last 7 days, else 3 random posts) ───
+  const allBlogs = await loadBlogs();
+  const { items: blogItems, isRandom: blogsAreRandom } = pickBlogsForEmail(allBlogs, 7);
+  const blogsHtml = blogItems.length ? box(`
+        <div style="font-size:10px;font-weight:600;color:#8a9ab5;letter-spacing:0.08em;margin-bottom:8px;">${blogsAreRandom ? 'FROM THE BLOG' : 'LATEST FROM THE BLOG'}</div>
+        ${blogItems.map(b => {
+          const cats = Array.isArray(b.category) ? b.category : [b.category];
+          const tags = cats.map(c => `<span style="font-weight:700;color:${BLOG_CATEGORY_COLOUR[c] || '#9ca3af'};">${esc(c)}</span>`).join('<span style="color:#3a4a62;margin:0 3px;">/</span>');
+          return `<div style="margin-bottom:8px;font-size:12px;line-height:1.5;">` +
+            `${tags}<span style="color:#3a4a62;margin:0 5px;">&middot;</span>` +
+            `<a href="${SITE_URL}/blog/${esc(b.slug)}" style="color:#e4eaf5;text-decoration:none;font-weight:600;">${esc(b.title)}</a>` +
+            `</div>`;
+        }).join('')}
+      `, { marginBottom: '12px' }) : '';
 
   // ── Combined card email ────────────────────────────────────────────────────
-  const cardHtml = `<div style="background:linear-gradient(160deg,#151b27 0%,#0e1520 100%);border-radius:18px;padding:20px 22px 16px;border:1px solid #1e2a3a;box-shadow:0 20px 60px rgba(0,0,0,0.8);">
+  const headerHtml = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:12px;"><tr>
+        <td width="10" height="10" bgcolor="#f5a623" style="background-color:#f5a623;font-size:1px;line-height:10px;">&nbsp;</td>
+        <td style="padding-left:8px;font-size:12px;color:#8a9ab5;">Digital Credit Yield &middot; ${today}</td>
+      </tr></table>`;
 
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-        <div style="width:10px;height:10px;background:#f5a623;border-radius:2px;flex-shrink:0;"></div>
-        <span style="font-size:12px;color:#8a9ab5;">Digital Credit Yield &middot; ${today}</span>
-      </div>
+  const titleHtml = box(
+    `<div style="text-align:center;font-size:20px;font-weight:700;color:#f5a623;letter-spacing:0.04em;">Tracking STRC, SATA &amp; BMNP for Growth</div>`,
+    { bg: '#181307', border: '#f5a623', padding: '10px 18px', marginBottom: '16px' }
+  );
 
-      <div style="border:1.5px solid #f5a623;border-radius:12px;padding:10px 18px;text-align:center;margin-bottom:16px;background:rgba(245,166,35,0.03);">
-        <span style="font-size:20px;font-weight:700;color:#f5a623;letter-spacing:0.04em;">Tracking STRC, SATA &amp; BMNP for Growth</span>
-      </div>
+  const snapRow = `<table role="presentation" width="100%" cellpadding="0" cellspacing="8" border="0" bgcolor="${CARD_BG}" style="width:100%;background-color:${CARD_BG};margin-bottom:14px;"><tr>${snapCell('STRC')}${snapCell('SATA')}${snapCell('BMNP')}</tr></table>`;
 
-      <div style="display:flex;gap:8px;margin-bottom:14px;">
-        ${snapCell('STRC')}
-        ${snapCell('SATA')}
-        ${snapCell('BMNP')}
-      </div>
+  const chartHtml = chartB64 ? box(
+    `<img src="data:image/png;base64,${chartB64}" alt="chart" style="width:100%;display:block;">`,
+    { bg: '#08101e', border: '#111d2e', padding: '4px 4px 0', marginBottom: '12px' }
+  ) : '';
+
+  const insightHtml = box(
+    `<div style="font-size:12px;color:#c8d4e8;line-height:1.55;">${cleanInsight}</div>`,
+    { bg: '#0b1422', borderLeft: '#f5a623', padding: '10px 14px', marginBottom: legendHtml ? '10px' : '12px' }
+  );
+
+  const cardHtml = box(`
+      ${headerHtml}
+
+      ${titleHtml}
+
+      ${snapRow}
 
       ${chartTitle ? `<div style="text-align:center;font-size:11px;font-weight:600;color:#e4eaf5;padding:4px 4px 8px;">${chartTitle}</div>` : ''}
-      ${chartB64 ? `<div style="background:#08101e;border-radius:14px;padding:4px 4px 0;margin-bottom:12px;border:1px solid #111d2e;"><img src="data:image/png;base64,${chartB64}" alt="chart" style="width:100%;border-radius:10px;display:block;"></div>` : ''}
+      ${chartHtml}
 
-      <div style="background:#0b1422;border-radius:10px;border-left:3px solid #f5a623;padding:10px 14px;margin-bottom:${legendHtml ? '10px' : '12px'};font-size:12px;color:#c8d4e8;line-height:1.55;">${cleanInsight}</div>
+      ${insightHtml}
 
-      ${legendHtml ? `<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;">${legendHtml}</div>` : ''}
+      ${legendHtml ? `<div style="text-align:center;margin-bottom:12px;">${legendHtml}</div>` : ''}
 
       ${newsHtml}
 
+      ${blogsHtml}
+
       <div style="text-align:center;font-size:12px;font-weight:600;color:#8a9ab5;letter-spacing:0.05em;margin-bottom:4px;">digitalcredityield.com</div>
       <div style="text-align:center;font-size:10px;color:#3a4a62;line-height:1.5;">Not financial advice. For informational purposes only. Always do your own research before making any investment decisions.</div>
-
-    </div>`;
+    `, { bg: CARD_BG, border: '#1e2a3a', padding: '20px 22px 16px', marginBottom: '0' });
 
   function wrapEmail(inner) {
     return `<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#0a0f1e;font-family:Arial,Helvetica,sans-serif;color:#fff;">
-  <div style="max-width:520px;margin:0 auto;padding:20px 16px;">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta name="supported-color-schemes" content="light"></head>
+<body bgcolor="#0a0f1e" style="margin:0;padding:0;background-color:#0a0f1e;font-family:Arial,Helvetica,sans-serif;color:#fff;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0a0f1e" style="width:100%;background-color:#0a0f1e;"><tr><td align="center" style="padding:20px 16px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:520px;"><tr><td>
     ${inner}
-  </div>
+  </td></tr></table>
+  </td></tr></table>
 </body>
 </html>`;
   }
@@ -380,12 +448,6 @@ async function run() {
   const marketDay = isNyseMarketDay();
 
   const html = wrapEmail(`${cardHtml}
-
-    <div style="margin-top:14px;background:#0b1422;border-radius:14px;border:1px solid #1e2a3a;padding:14px 16px;">
-      <div style="font-size:10px;font-weight:600;color:#8a9ab5;letter-spacing:0.08em;margin-bottom:10px;">POST TO X — SELECT ALL &amp; COPY${mp4Buffer ? ' · MP4 ATTACHED' : ''}</div>
-      <div style="font-size:13px;color:#e4eaf5;line-height:1.7;white-space:pre-wrap;font-family:monospace;">${tweetToHtml(tweetText)}</div>
-      <div style="margin-top:8px;font-size:10px;color:#3a4a62;">${tweetText.replace(/https?:\/\/\S+/g, 'x'.repeat(23)).length} / 280 chars (URLs counted as 23)</div>
-    </div>
 
     <div style="margin-top:10px;text-align:center;font-size:11px;color:#8a9ab5;">
       Newsletter subscribers: ${subscribers.length} · snapshot ${subscribers.length === 0 ? 'not sent (no subscribers)' : marketDay ? 'sent' : 'not sent (market closed)'}
