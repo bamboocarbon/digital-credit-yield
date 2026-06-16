@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { loadProjectorState } from '@/lib/projectorState';
 import { ASSET_RATES } from '@/lib/constants';
 import { SATA_DAILY_START, getBusinessDaysInMonth, getSataDailyDividend, getSataExpectedPeriodAmount, getSataMonthProgress, isSataDailyDividend } from '@/lib/sataBusinessDays';
+import { getBmnpExpectedMonthlyTotal } from '@/lib/bmnpSchedule';
 
 const MONO = { fontFamily: "'Roboto Mono', 'Courier New', monospace" };
 const fmtMoney = v => v.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
@@ -159,6 +160,8 @@ export default function DividendInteractive({ ticker }) {
   // of whether Yahoo has recorded a daily event yet, and fall back to the published
   // formula for "today's" amount until the first recorded event catches up.
   const inDailyEra = ticker === 'SATA' && today >= SATA_DAILY_START;
+  const isBmnp = ticker === 'BMNP';
+  const showGhostedChart = inDailyEra || isBmnp;
 
   const sataDailyStats = useMemo(() => {
     if (ticker !== 'SATA') return null;
@@ -188,7 +191,8 @@ export default function DividendInteractive({ ticker }) {
   const incomeAnnual      = sharesNum * impliedAnnual;
 
   useEffect(() => {
-    if (!dividends?.length) return;
+    if (dividends === null) return;
+    if (!dividends.length && ticker !== 'BMNP') return;
     let destroyed = false;
     async function draw() {
       const { Chart, registerables } = await import('chart.js');
@@ -257,6 +261,58 @@ export default function DividendInteractive({ ticker }) {
             },
           },
         });
+      } else if (ticker === 'BMNP') {
+        const allByMonth = {};
+        dividends.forEach(d => {
+          const ym = d.date.slice(0, 7);
+          allByMonth[ym] = (allByMonth[ym] ?? 0) + d.amount;
+        });
+        // Bitmine has announced the schedule but no payment has actually landed yet —
+        // always include every month from listing through today so the chart shows
+        // the planned dividends ghosted out, even with zero real data on record.
+        const monthsSet = new Set(Object.keys(allByMonth));
+        let [y, m] = [2026, 6];
+        const [endY, endM] = todayYM.split('-').map(Number);
+        while (y < endY || (y === endY && m <= endM)) {
+          monthsSet.add(`${y}-${String(m).padStart(2, '0')}`);
+          m++; if (m > 12) { m = 1; y++; }
+        }
+        const rangeLimit = chartRange === '12M' ? 12 : chartRange === '24M' ? 24 : Infinity;
+        const allMonths  = Array.from(monthsSet).sort();
+        const months     = rangeLimit === Infinity ? allMonths : allMonths.slice(-rangeLimit);
+        const totals     = months.map(ym => allByMonth[ym] ?? 0);
+        const expected   = months.map((ym, i) => Math.max(totals[i], getBmnpExpectedMonthlyTotal(ym, ASSET_RATES.BMNP)));
+        const remaining  = months.map((ym, i) => Math.max(0, expected[i] - totals[i]));
+
+        chartInstance.current = new Chart(ctx, {
+          type: 'bar',
+          data: { labels: months.map(ymToLabel), datasets: [
+            {
+              label: 'Paid', data: totals, stack: 'income',
+              backgroundColor: '#fde047', borderColor: '#eab308', borderWidth: 1, borderRadius: 3,
+            },
+            {
+              label: 'Remaining (expected)', data: remaining, stack: 'income',
+              backgroundColor: 'rgba(253,224,71,0.25)', borderColor: 'rgba(253,224,71,0.7)',
+              borderWidth: 1, borderDash: [3, 3], borderRadius: 3,
+            },
+          ] },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: { filter: c => c.datasetIndex === 0, callbacks: { label: c => {
+                const amount = `$${Number(c.raw).toFixed(4)}/share`;
+                const exp = expected[c.dataIndex];
+                return remaining[c.dataIndex] > 0 ? `${amount} of ~$${exp.toFixed(4)} expected` : amount;
+              }}},
+            },
+            scales: {
+              x: { stacked: true, ticks: { color: '#6b7280', maxTicksLimit: 12, font: { size: 10 } }, grid: { color: '#1f2937' } },
+              y: { stacked: true, ticks: { color: '#6b7280', callback: v => `$${Number(v).toFixed(2)}` }, grid: { color: '#1f2937' } },
+            },
+          },
+        });
       } else {
         const sourceDivs = ticker === 'SATA' ? monthlyDivs : dividends;
         if (!sourceDivs.length) return;
@@ -298,7 +354,7 @@ export default function DividendInteractive({ ticker }) {
     }
     draw();
     return () => { destroyed = true; };
-  }, [dividends, ticker, dailyDivs, monthlyDivs, dailyByMonth, monthlyByMonth, chartRange]);
+  }, [dividends, ticker, dailyDivs, monthlyDivs, dailyByMonth, monthlyByMonth, chartRange, todayYM]);
 
   if (fetchError) return (
     <div className="p-4 rounded-lg mb-6 text-sm" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', color: '#ef4444' }}>
@@ -310,7 +366,7 @@ export default function DividendInteractive({ ticker }) {
     <div className="text-center py-8 text-sm" style={{ color: 'var(--text-muted)' }}>Loading latest data…</div>
   );
 
-  if (dividends.length === 0) return null;
+  if (dividends.length === 0 && !isBmnp) return null;
 
   return (
     <>
@@ -412,7 +468,7 @@ export default function DividendInteractive({ ticker }) {
               placeholder="e.g. 100" className="w-28 px-3 py-2 rounded-lg text-sm text-center"
               style={{ ...MONO, background: 'var(--bg-card-hover)', border: '1px solid var(--border)', color: 'var(--text-primary)' }} />
           </div>
-          {sharesNum > 0 && (
+          {sharesNum > 0 && (inDailyEra || monthlyDivs.length > 0) && (
             <div className="flex flex-wrap gap-6">
               {inDailyEra ? (
                 <>
@@ -471,7 +527,7 @@ export default function DividendInteractive({ ticker }) {
       {/* Chart */}
       <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">{inDailyEra ? 'Monthly Income Per Share' : 'Payment History'}</h2>
+          <h2 className="text-lg font-semibold">{showGhostedChart ? 'Monthly Income Per Share' : 'Payment History'}</h2>
           <div className="flex rounded overflow-hidden" style={{ border: '1px solid var(--border)', fontSize: '11px' }}>
             {['12M', '24M', 'All'].map(r => (
               <button key={r} type="button" onClick={() => setChartRange(r)} className="px-3 py-1 font-medium"
@@ -483,7 +539,7 @@ export default function DividendInteractive({ ticker }) {
         <div style={{ position: 'relative', height: '240px' }} className="md:h-72">
           <canvas ref={chartRef} aria-label="Dividend payment history chart" role="img" />
         </div>
-        {!inDailyEra && prediction && (
+        {!showGhostedChart && prediction && (
           <div className="flex justify-center gap-6 mt-3">
             <div className="flex items-center gap-2">
               <span className="inline-block w-3 h-3 rounded-sm" style={{ background: 'rgba(200,137,58,0.75)' }} />
@@ -495,14 +551,14 @@ export default function DividendInteractive({ ticker }) {
             </div>
           </div>
         )}
-        {inDailyEra && (
+        {showGhostedChart && (
           <div className="flex justify-center gap-6 mt-3">
             <div className="flex items-center gap-2">
-              <span className="inline-block w-3 h-3 rounded-sm" style={{ background: 'rgba(200,137,58,0.85)' }} />
+              <span className="inline-block w-3 h-3 rounded-sm" style={{ background: isBmnp ? '#fde047' : 'rgba(200,137,58,0.85)' }} />
               <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Paid so far</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="inline-block w-3 h-3 rounded-sm" style={{ background: 'rgba(245,166,35,0.3)', border: '1px dashed rgba(245,166,35,0.7)' }} />
+              <span className="inline-block w-3 h-3 rounded-sm" style={{ background: isBmnp ? 'rgba(253,224,71,0.25)' : 'rgba(245,166,35,0.3)', border: isBmnp ? '1px dashed rgba(253,224,71,0.7)' : '1px dashed rgba(245,166,35,0.7)' }} />
               <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Still expected this month</span>
             </div>
           </div>

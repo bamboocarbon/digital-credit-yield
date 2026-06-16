@@ -19,6 +19,7 @@ export default function DividendHistoryPage({ ticker, dividends }) {
   const isStrcComingSoon = ticker === 'STRC' && today < STRC_SEMI_MONTHLY_START;
   const isBmnpComingSoon = ticker === 'BMNP' && today < BMNP_DIVIDEND_SCHEDULE[BMNP_DIVIDEND_SCHEDULE.length - 1].paymentDate;
   const isComingSoon = isSataComingSoon || isStrcComingSoon || isBmnpComingSoon;
+  const isBmnp = ticker === 'BMNP';
 
   const monthlyDivs = ticker === 'SATA'
     ? dividends.filter(d => !isSataDailyDividend(d))
@@ -70,13 +71,13 @@ export default function DividendHistoryPage({ ticker, dividends }) {
         </div>
       )}
 
-      {dividends.length === 0 && (
+      {dividends.length === 0 && !isBmnp && (
         <div className="text-center py-16 text-sm" style={{ color: 'var(--text-muted)' }}>
           No dividend payments recorded yet for {ticker}. Data will appear after the first payment is made.
         </div>
       )}
 
-      {dividends.length > 0 && (
+      {(dividends.length > 0 || isBmnp) && (
         <>
           {/* Interactive section — client-rendered (stats, banners, calculator, chart, SATA daily table) */}
           <DividendInteractive ticker={ticker} />
