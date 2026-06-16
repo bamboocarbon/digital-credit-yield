@@ -130,6 +130,17 @@ export default function HomePage() {
           <a href="https://x.com/DCYieldHub" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-gold)' }}>@DCYieldHub</a>.
         </p>
 
+        <h3 className="text-lg font-semibold mb-3">Recommended reading</h3>
+        <p className="text-base leading-7 mb-2" style={{ color: 'var(--text-muted)' }}>
+          A book I recommend to anyone thinking seriously about long-term wealth and income:{' '}
+          <a href="https://sovrn.co/1p9n6mx" target="_blank" rel="sponsored noopener" style={{ color: 'var(--accent-gold)' }}>
+            The Psychology of Money by Morgan Housel
+          </a>.
+        </p>
+        <p className="text-xs leading-6 mb-8" style={{ color: 'var(--text-muted)' }}>
+          Affiliate link — if you buy through it, Digital Credit Yield may earn a small commission at no extra cost to you.
+        </p>
+
         <div className="p-5 rounded-xl" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
           <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>Important Disclaimer</p>
           <p className="text-sm mt-2 leading-6" style={{ color: 'var(--text-muted)' }}>
