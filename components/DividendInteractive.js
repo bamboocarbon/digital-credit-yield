@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { loadProjectorState } from '@/lib/projectorState';
 import { ASSET_RATES } from '@/lib/constants';
-import { SATA_DAILY_START, getBusinessDaysInMonth, getSataDailyDividend, getSataMonthlyTotal, isSataDailyDividend } from '@/lib/sataBusinessDays';
+import { SATA_DAILY_START, getBusinessDaysInMonth, getSataDailyDividend, getSataMonthlyTotal, getSataMonthProgress, isSataDailyDividend } from '@/lib/sataBusinessDays';
 
 const MONO = { fontFamily: "'Roboto Mono', 'Courier New', monospace" };
 const fmtMoney = v => v.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
@@ -57,7 +57,7 @@ function predictNextDividend(dividends, confirmedDate = null) {
   return { date: nextDate, amount: nextAmount, dateConfirmed: !!confirmedDate };
 }
 
-function SataMonthlyProgress({ byMonth, todayYM }) {
+function SataMonthlyProgress({ monthlyByMonth, dailyByMonth, todayYM, annualRate }) {
   const displayMonths = [];
   let [y, m] = [2026, 6];
   const [endY, endM] = todayYM.split('-').map(Number);
@@ -70,18 +70,21 @@ function SataMonthlyProgress({ byMonth, todayYM }) {
     <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
       <h2 className="text-lg font-semibold mb-1">Monthly Payment Progress</h2>
       <p className="text-xs mb-5" style={{ color: 'var(--text-muted)' }}>
-        Each box represents one calendar month. Gold fill indicates the proportion of expected NYSE business-day payments received.
+        Each box represents one calendar month. Gold fill indicates the proportion of expected income received so far.
       </p>
       <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 sm:gap-3">
         {displayMonths.map(ym => {
-          const paid    = byMonth[ym]?.length ?? 0;
-          const total   = getBusinessDaysInMonth(ym) ?? 21;
-          const fillPct = total > 0 ? Math.min(paid / total, 1) : 0;
+          const monthlyPaid = (monthlyByMonth[ym] ?? []).reduce((s, d) => s + d.amount, 0);
+          const dailyArr     = dailyByMonth[ym] ?? [];
+          const dailyPaid    = dailyArr.reduce((s, d) => s + d.amount, 0);
+          const { paid, expected, fillPct } = getSataMonthProgress({ monthlyPaid, dailyPaid, annualRate });
+          const dailyCount = dailyArr.length;
+          const dailyTotal = getBusinessDaysInMonth(ym) ?? 21;
           const isCurrentMonth = ym === todayYM;
           const isComplete = fillPct >= 1;
           return (
             <div key={ym} className="flex flex-col items-center gap-1">
-              <div title={`${paid} of ${total} payments made`}
+              <div title={`$${paid.toFixed(4)} of $${expected.toFixed(4)} expected`}
                 style={{ position: 'relative', width: '100%', height: 52,
                   border: `2px solid ${isCurrentMonth ? '#f5a623' : 'rgba(200,137,58,0.5)'}`,
                   borderRadius: 6, overflow: 'hidden', background: '#111827' }}>
@@ -94,7 +97,7 @@ function SataMonthlyProgress({ byMonth, todayYM }) {
                 {ymToLabel(ym)}
               </span>
               <span style={{ fontSize: 10, ...MONO, color: paid > 0 ? 'var(--accent-gold)' : 'var(--text-muted)' }}>
-                {paid}/{total}
+                {dailyCount}/{dailyTotal}
               </span>
             </div>
           );
@@ -149,7 +152,8 @@ export default function DividendInteractive({ ticker }) {
     };
   }, [dividends, ticker]);
 
-  const dailyByMonth = useMemo(() => groupByMonth(dailyDivs), [dailyDivs]);
+  const dailyByMonth   = useMemo(() => groupByMonth(dailyDivs), [dailyDivs]);
+  const monthlyByMonth = useMemo(() => groupByMonth(monthlyDivs), [monthlyDivs]);
   // Yahoo's dividend feed can lag a few days behind the actual payment schedule —
   // once SATA_DAILY_START arrives, treat the page as in the daily era regardless
   // of whether Yahoo has recorded a daily event yet, and fall back to the published
@@ -204,29 +208,52 @@ export default function DividendInteractive({ ticker }) {
         const allMonths  = Object.keys(allByMonth).sort();
         const months     = rangeLimit === Infinity ? allMonths : allMonths.slice(-rangeLimit);
         const totals     = months.map(ym => allByMonth[ym]);
+
+        // A month in progress (paid < expected) shows its real paid total as a solid bar
+        // plus a translucent "remaining" segment stacked on top — so it reads as partial
+        // instead of looking like the tallest, most-complete bar on the chart the moment
+        // any single payment lands. Past/complete months get a zero-height remaining
+        // segment, so they render as a single solid bar exactly as before.
+        const expected = months.map((ym, i) => {
+          if (ym < '2026-06') return totals[i];
+          const monthlyPaid = (monthlyByMonth[ym] ?? []).reduce((s, d) => s + d.amount, 0);
+          const dailyPaid   = (dailyByMonth[ym] ?? []).reduce((s, d) => s + d.amount, 0);
+          return getSataMonthProgress({ monthlyPaid, dailyPaid, annualRate: ASSET_RATES.SATA }).expected;
+        });
+        const remaining = months.map((ym, i) => Math.max(0, expected[i] - totals[i]));
+
         chartInstance.current = new Chart(ctx, {
           type: 'bar',
-          data: { labels: months.map(ymToLabel), datasets: [{
-            label: 'Monthly income / share ($)', data: totals,
-            backgroundColor: months.map(ym => ym < '2026-06' ? 'rgba(200,137,58,0.5)' : 'rgba(200,137,58,0.75)'),
-            borderColor: '#c8893a', borderWidth: 1, borderRadius: 3,
-          }] },
+          data: { labels: months.map(ymToLabel), datasets: [
+            {
+              label: 'Paid', data: totals, stack: 'income',
+              backgroundColor: months.map(ym => ym < '2026-06' ? '#c8893a' : 'rgba(200,137,58,0.85)'),
+              borderColor: '#c8893a', borderWidth: 1, borderRadius: 3,
+            },
+            {
+              label: 'Remaining (expected)', data: remaining, stack: 'income',
+              backgroundColor: 'rgba(245,166,35,0.3)', borderColor: 'rgba(245,166,35,0.7)',
+              borderWidth: 1, borderDash: [3, 3], borderRadius: 3,
+            },
+          ] },
           options: {
             responsive: true, maintainAspectRatio: false,
             plugins: {
               legend: { display: false },
-              tooltip: { callbacks: { label: c => {
+              tooltip: { filter: c => c.datasetIndex === 0, callbacks: { label: c => {
                 const ym = months[c.dataIndex];
                 const amount = `$${Number(c.raw).toFixed(4)}/share`;
                 if (ym < '2026-06') return amount;
                 const paid = dailyByMonth[ym]?.length ?? 0;
                 const total = getBusinessDaysInMonth(ym) ?? '?';
-                return `${amount} (${paid}/${total} days)`;
+                const exp = expected[c.dataIndex];
+                const suffix = `(${paid}/${total} days)`;
+                return remaining[c.dataIndex] > 0 ? `${amount} of ~$${exp.toFixed(4)} expected ${suffix}` : `${amount} ${suffix}`;
               }}},
             },
             scales: {
-              x: { ticks: { color: '#6b7280', maxTicksLimit: 12, font: { size: 10 } }, grid: { color: '#1f2937' } },
-              y: { ticks: { color: '#6b7280', callback: v => `$${Number(v).toFixed(2)}` }, grid: { color: '#1f2937' } },
+              x: { stacked: true, ticks: { color: '#6b7280', maxTicksLimit: 12, font: { size: 10 } }, grid: { color: '#1f2937' } },
+              y: { stacked: true, ticks: { color: '#6b7280', callback: v => `$${Number(v).toFixed(2)}` }, grid: { color: '#1f2937' } },
             },
           },
         });
@@ -271,7 +298,7 @@ export default function DividendInteractive({ ticker }) {
     }
     draw();
     return () => { destroyed = true; };
-  }, [dividends, ticker, dailyDivs, monthlyDivs, chartRange]);
+  }, [dividends, ticker, dailyDivs, monthlyDivs, dailyByMonth, monthlyByMonth, chartRange]);
 
   if (fetchError) return (
     <div className="p-4 rounded-lg mb-6 text-sm" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', color: '#ef4444' }}>
@@ -432,7 +459,14 @@ export default function DividendInteractive({ ticker }) {
       </div>
 
       {/* Fill boxes — SATA daily era only */}
-      {inDailyEra && <SataMonthlyProgress byMonth={dailyByMonth} todayYM={todayYM} />}
+      {inDailyEra && (
+        <SataMonthlyProgress
+          monthlyByMonth={monthlyByMonth}
+          dailyByMonth={dailyByMonth}
+          todayYM={todayYM}
+          annualRate={ASSET_RATES.SATA}
+        />
+      )}
 
       {/* Chart */}
       <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
@@ -458,6 +492,18 @@ export default function DividendInteractive({ ticker }) {
             <div className="flex items-center gap-2">
               <span className="inline-block w-3 h-3 rounded-sm" style={{ background: 'rgba(200,137,58,0.15)', border: '2px solid #c8893a' }} />
               <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Estimated next (*)</span>
+            </div>
+          </div>
+        )}
+        {inDailyEra && (
+          <div className="flex justify-center gap-6 mt-3">
+            <div className="flex items-center gap-2">
+              <span className="inline-block w-3 h-3 rounded-sm" style={{ background: 'rgba(200,137,58,0.85)' }} />
+              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Paid so far</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="inline-block w-3 h-3 rounded-sm" style={{ background: 'rgba(245,166,35,0.3)', border: '1px dashed rgba(245,166,35,0.7)' }} />
+              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Still expected this month</span>
             </div>
           </div>
         )}
