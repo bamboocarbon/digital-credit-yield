@@ -21,6 +21,7 @@ const robotoMono = Roboto_Mono({
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CookieBanner from '@/components/CookieBanner';
+import EzoicRouteRefresh from '@/components/EzoicRouteRefresh';
 
 export const metadata = {
   metadataBase: new URL('https://www.digitalcredityield.com'),
@@ -72,6 +73,7 @@ export default function RootLayout({ children }) {
           ezstandalone.cmd = ezstandalone.cmd || [];
         `}</Script>
         <Script id="ezoic-analytics" strategy="beforeInteractive" src="//ezoicanalytics.com/analytics.js" />
+        <EzoicRouteRefresh />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
         <Navbar />
         <main className="flex-1 pt-16">
