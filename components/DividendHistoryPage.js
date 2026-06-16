@@ -3,7 +3,7 @@ import GoogleAd from '@/components/GoogleAd';
 import AadsAd from '@/components/AadsAd';
 import DividendInteractive from '@/components/DividendInteractive';
 import { SATA_DAILY_START, isSataDailyDividend } from '@/lib/sataBusinessDays';
-import { STRC_SEMI_MONTHLY_START } from '@/lib/constants';
+import { STRC_SEMI_MONTHLY_START, BMNP_DIVIDEND_SCHEDULE } from '@/lib/constants';
 
 const MONO = { fontFamily: "'Roboto Mono', 'Courier New', monospace" };
 
@@ -17,7 +17,8 @@ export default function DividendHistoryPage({ ticker, dividends }) {
   const today = new Date().toISOString().slice(0, 10);
   const isSataComingSoon = ticker === 'SATA' && today < SATA_DAILY_START;
   const isStrcComingSoon = ticker === 'STRC' && today < STRC_SEMI_MONTHLY_START;
-  const isComingSoon = isSataComingSoon || isStrcComingSoon;
+  const isBmnpComingSoon = ticker === 'BMNP' && today < BMNP_DIVIDEND_SCHEDULE[BMNP_DIVIDEND_SCHEDULE.length - 1].paymentDate;
+  const isComingSoon = isSataComingSoon || isStrcComingSoon || isBmnpComingSoon;
 
   const monthlyDivs = ticker === 'SATA'
     ? dividends.filter(d => !isSataDailyDividend(d))
@@ -53,6 +54,18 @@ export default function DividendHistoryPage({ ticker, dividends }) {
             Shareholders approved the move to semi-monthly dividends on <strong>June 8, 2026</strong>, but STRC still pays monthly today — the first
             semi-monthly payment is scheduled for <strong>July 15, 2026</strong>. The monthly income total remains the same (~$0.958/share); it will
             simply be split into two payments per month instead of one.
+          </p>
+        </div>
+      )}
+
+      {isBmnpComingSoon && (
+        <div className="p-4 rounded-xl mb-6" style={{ background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.4)' }}>
+          <p className="text-xs font-semibold tracking-wide mb-1" style={{ color: 'var(--accent-gold)' }}>UPCOMING: FIRST DIVIDEND PAYMENTS</p>
+          <p className="text-sm">
+            BMNP began trading on the NYSE on <strong>June 16, 2026</strong>. The first dividend, <strong>$0.316667/share</strong>, covers amounts
+            accrued since the June 10 issue date and pays on <strong>June 22, 2026</strong> (record date June 12). A second payment of{' '}
+            <strong>$0.105556/share</strong> follows on <strong>June 26, 2026</strong> (record date June 16). Full weekly dividends of
+            ~$0.1827/share begin after that.
           </p>
         </div>
       )}
