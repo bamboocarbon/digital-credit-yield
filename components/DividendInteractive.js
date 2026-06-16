@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { loadProjectorState } from '@/lib/projectorState';
 import { ASSET_RATES } from '@/lib/constants';
-import { SATA_DAILY_START, getBusinessDaysInMonth, getSataDailyDividend, getSataMonthlyTotal } from '@/lib/sataBusinessDays';
+import { SATA_DAILY_START, getBusinessDaysInMonth, getSataDailyDividend, getSataMonthlyTotal, isSataDailyDividend } from '@/lib/sataBusinessDays';
 
 const MONO = { fontFamily: "'Roboto Mono', 'Courier New', monospace" };
 const fmtMoney = v => v.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
@@ -144,8 +144,8 @@ export default function DividendInteractive({ ticker }) {
     if (!dividends) return { monthlyDivs: [], dailyDivs: [] };
     if (ticker !== 'SATA') return { monthlyDivs: dividends, dailyDivs: [] };
     return {
-      monthlyDivs: dividends.filter(d => d.date < SATA_DAILY_START),
-      dailyDivs:   dividends.filter(d => d.date >= SATA_DAILY_START),
+      monthlyDivs: dividends.filter(d => !isSataDailyDividend(d)),
+      dailyDivs:   dividends.filter(d => isSataDailyDividend(d)),
     };
   }, [dividends, ticker]);
 

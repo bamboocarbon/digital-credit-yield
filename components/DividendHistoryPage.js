@@ -2,7 +2,7 @@ import SubNav from '@/components/SubNav';
 import GoogleAd from '@/components/GoogleAd';
 import AadsAd from '@/components/AadsAd';
 import DividendInteractive from '@/components/DividendInteractive';
-import { SATA_DAILY_START } from '@/lib/sataBusinessDays';
+import { SATA_DAILY_START, isSataDailyDividend } from '@/lib/sataBusinessDays';
 import { STRC_SEMI_MONTHLY_START } from '@/lib/constants';
 
 const MONO = { fontFamily: "'Roboto Mono', 'Courier New', monospace" };
@@ -20,9 +20,9 @@ export default function DividendHistoryPage({ ticker, dividends }) {
   const isComingSoon = isSataComingSoon || isStrcComingSoon;
 
   const monthlyDivs = ticker === 'SATA'
-    ? dividends.filter(d => d.date < SATA_DAILY_START)
+    ? dividends.filter(d => !isSataDailyDividend(d))
     : dividends;
-  const inDailyEra = ticker === 'SATA' && dividends.some(d => d.date >= SATA_DAILY_START);
+  const inDailyEra = ticker === 'SATA' && dividends.some(d => isSataDailyDividend(d));
 
   const tableData = ticker === 'SATA' ? monthlyDivs : dividends;
 
