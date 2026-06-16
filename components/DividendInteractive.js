@@ -289,7 +289,7 @@ export default function DividendInteractive({ ticker }) {
           data: { labels: months.map(ymToLabel), datasets: [
             {
               label: 'Paid', data: totals, stack: 'income',
-              backgroundColor: '#fde047', borderColor: '#eab308', borderWidth: 1, borderRadius: 3,
+              backgroundColor: 'rgba(200,137,58,0.85)', borderColor: '#c8893a', borderWidth: 1, borderRadius: 3,
             },
             {
               label: 'Remaining (expected)', data: remaining, stack: 'income',
@@ -554,7 +554,7 @@ export default function DividendInteractive({ ticker }) {
         {showGhostedChart && (
           <div className="flex justify-center gap-6 mt-3">
             <div className="flex items-center gap-2">
-              <span className="inline-block w-3 h-3 rounded-sm" style={{ background: isBmnp ? '#fde047' : 'rgba(200,137,58,0.85)' }} />
+              <span className="inline-block w-3 h-3 rounded-sm" style={{ background: 'rgba(200,137,58,0.85)' }} />
               <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Paid so far</span>
             </div>
             <div className="flex items-center gap-2">
