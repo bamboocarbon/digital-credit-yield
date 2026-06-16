@@ -150,16 +150,24 @@ export default function DividendInteractive({ ticker }) {
   }, [dividends, ticker]);
 
   const dailyByMonth = useMemo(() => groupByMonth(dailyDivs), [dailyDivs]);
-  const inDailyEra   = ticker === 'SATA' && dailyDivs.length > 0;
+  // Yahoo's dividend feed can lag a few days behind the actual payment schedule —
+  // once SATA_DAILY_START arrives, treat the page as in the daily era regardless
+  // of whether Yahoo has recorded a daily event yet, and fall back to the published
+  // formula for "today's" amount until the first recorded event catches up.
+  const inDailyEra = ticker === 'SATA' && today >= SATA_DAILY_START;
 
   const sataDailyStats = useMemo(() => {
-    if (!dailyDivs.length) return null;
+    if (ticker !== 'SATA') return null;
     const annualRate = ASSET_RATES.SATA;
-    const latest = dailyDivs[dailyDivs.length - 1];
+    const projectedToday = getSataDailyDividend(annualRate, todayYM);
+    const isProjected = dailyDivs.length === 0;
+    const latest = isProjected
+      ? { date: today, amount: projectedToday ?? 0 }
+      : dailyDivs[dailyDivs.length - 1];
     const currentMonthPaid = (dailyByMonth[todayYM] ?? []).reduce((s, d) => s + d.amount, 0);
     const expectedMonthlyTotal = getSataMonthlyTotal(annualRate);
-    return { latest, currentMonthPaid, expectedMonthlyTotal };
-  }, [dailyDivs, dailyByMonth, todayYM]);
+    return { latest, currentMonthPaid, expectedMonthlyTotal, isProjected };
+  }, [ticker, dailyDivs, dailyByMonth, todayYM, today]);
 
   const latestMonthly = monthlyDivs.length > 0 ? monthlyDivs[monthlyDivs.length - 1] : null;
   const avgMonthly    = monthlyDivs.length > 0 ? monthlyDivs.reduce((s, d) => s + d.amount, 0) / monthlyDivs.length : 0;
@@ -284,7 +292,7 @@ export default function DividendInteractive({ ticker }) {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
           {[
             { label: 'Daily Payments on Record', value: String(dailyDivs.length) },
-            { label: 'Latest Daily Amount',      value: `$${sataDailyStats.latest.amount.toFixed(6)}`,     gold: true },
+            { label: sataDailyStats.isProjected ? "Today's Projected Amount" : 'Latest Daily Amount', value: `$${sataDailyStats.latest.amount.toFixed(6)}`, gold: true },
             { label: 'This Month Received',      value: `$${sataDailyStats.currentMonthPaid.toFixed(4)}`,  gold: true },
             { label: 'Expected Monthly Total',   value: `$${sataDailyStats.expectedMonthlyTotal.toFixed(4)}`, gold: true },
           ].map(stat => (
@@ -460,6 +468,12 @@ export default function DividendInteractive({ ticker }) {
         <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <h2 className="text-lg font-semibold mb-4">All Payments</h2>
           <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--accent-gold)' }}>Daily Dividend Period (from June 16, 2026)</h3>
+
+          {dailyDivs.length === 0 && (
+            <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>
+              No daily payments recorded yet — Yahoo Finance typically reports new dividend events with a short lag. This table will populate automatically once the first daily payment is confirmed.
+            </p>
+          )}
 
           <div className="sm:hidden space-y-2 mb-6">
             {Object.keys(dailyByMonth).sort().reverse().map(ym => {
