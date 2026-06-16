@@ -301,6 +301,14 @@ export default function Differentiator({ ticker, liveYield }) {
                 onChange={e => update('reinvestmentPct', e.target.value)}
                 aria-label={`Reinvestment percentage: ${form.reinvestmentPct}%`}
                 className="w-full" style={{ accentColor: 'var(--accent-gold)' }} />
+              {ticker === 'STRC' && Number(form.reinvestmentPct) > 0 && (
+                <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
+                  Semi-monthly compounding: {computeAPY(effectiveYield, 24).toFixed(4)}% APY
+                  <span style={{ color: 'var(--text-muted)' }}>
+                    {' '}(+{((computeAPY(effectiveYield, 24) - computeAPY(effectiveYield, 12)) * 100).toFixed(1)} bps vs monthly)
+                  </span>
+                </p>
+              )}
               {ticker === 'SATA' && Number(form.reinvestmentPct) > 0 && (
                 <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
                   Daily compounding: {computeAPY(effectiveYield, 250).toFixed(4)}% APY
