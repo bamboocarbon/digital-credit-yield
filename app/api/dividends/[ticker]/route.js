@@ -23,7 +23,15 @@ export async function GET(request, { params }) {
       fetchNextPaymentDate(upper),
     ]);
     const merged = mergeDividends(stored, live);
-    await writeDividends(upper, merged);
+
+    // Best-effort persistence only — production's filesystem is read-only at
+    // request time, so this throws (EROFS) on every call there. The merged
+    // result above is still correct and must be served regardless; only a
+    // manual edit + redeploy actually grows the permanent on-disk record.
+    try {
+      await writeDividends(upper, merged);
+    } catch {}
+
     return NextResponse.json({ history: merged, nextPaymentDate }, {
       headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=300' },
     });
