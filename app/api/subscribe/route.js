@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { put, list } from '@vercel/blob';
+import { put } from '@vercel/blob';
+import { blobUrl } from '@/lib/blobUrl';
 import { Resend } from 'resend';
 
 export const revalidate = 0;
@@ -9,10 +10,7 @@ const SITE_URL = 'https://www.digitalcredityield.com';
 
 async function loadSubscribers() {
   try {
-    const { blobs } = await list({ prefix: 'dcy-subscribers' });
-    const blob = blobs.find(b => b.pathname === 'dcy-subscribers.json');
-    if (!blob) return [];
-    const res = await fetch(blob.url, {
+    const res = await fetch(blobUrl('dcy-subscribers.json'), {
       headers: { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` },
     });
     if (!res.ok) return [];

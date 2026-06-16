@@ -5,7 +5,8 @@
 import fs from 'fs';
 import sharp from 'sharp';
 import { Resend } from 'resend';
-import { put, list } from '@vercel/blob';
+import { put } from '@vercel/blob';
+import { blobUrl } from '../lib/blobUrl.js';
 import { generateDailyInsight } from './insightEngine.js';
 import { generateMp4 } from './generateMp4.js';
 import { NOTO_400 } from './fontData.js';
@@ -47,10 +48,7 @@ const SITE_URL  = (process.env.SITE_URL || 'https://digitalcredityield.com').rep
 // News items added via the news admin in the last `days` — item.id is its creation timestamp
 async function loadRecentNews(days = 5) {
   try {
-    const { blobs } = await list({ prefix: 'dcy-news' });
-    const blob = blobs.find(b => b.pathname === 'dcy-news.json');
-    if (!blob) return [];
-    const res = await fetch(blob.url, {
+    const res = await fetch(blobUrl('dcy-news.json'), {
       headers: { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` },
     });
     if (!res.ok) return [];
@@ -95,10 +93,7 @@ function pickBlogsForEmail(blogs, days = 7) {
 
 async function loadSubscribers() {
   try {
-    const { blobs } = await list({ prefix: 'dcy-subscribers' });
-    const blob = blobs.find(b => b.pathname === 'dcy-subscribers.json');
-    if (!blob) return [];
-    const res = await fetch(blob.url, {
+    const res = await fetch(blobUrl('dcy-subscribers.json'), {
       headers: { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` },
     });
     if (!res.ok) return [];

@@ -1,14 +1,12 @@
 import { NextResponse } from 'next/server';
-import { put, list } from '@vercel/blob';
+import { put } from '@vercel/blob';
+import { blobUrl } from '@/lib/blobUrl';
 
 export const revalidate = 0;
 
 async function loadNews() {
   try {
-    const { blobs } = await list({ prefix: 'dcy-news' });
-    const blob = blobs.find(b => b.pathname === 'dcy-news.json');
-    if (!blob) return [];
-    const res = await fetch(blob.url, {
+    const res = await fetch(blobUrl('dcy-news.json'), {
       headers: { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` },
     });
     if (!res.ok) return [];

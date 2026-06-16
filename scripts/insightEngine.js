@@ -1,7 +1,8 @@
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { put, list } from '@vercel/blob';
+import { put } from '@vercel/blob';
+import { blobUrl } from '../lib/blobUrl.js';
 import { getStockQuote, fetchNextPaymentDate } from '../lib/fetchStockData.js';
 import { runProjection } from '../lib/projectorEngine.js';
 import { ASSET_RATES } from '../lib/constants.js';
@@ -285,10 +286,7 @@ function buildInsightPool(quotes, nextDates) {
 
 async function loadThoughtHistory() {
   try {
-    const { blobs } = await list({ prefix: 'dcy-thought-history' });
-    const blob = blobs.find(b => b.pathname === 'dcy-thought-history.json');
-    if (!blob) return [];
-    const res = await fetch(blob.url, {
+    const res = await fetch(blobUrl('dcy-thought-history.json'), {
       headers: { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` },
     });
     if (!res.ok) return [];
