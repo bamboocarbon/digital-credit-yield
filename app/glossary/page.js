@@ -66,7 +66,7 @@ const terms = [
   },
   {
     term: 'Dividend frequency',
-    def: 'How often payments arrive: STRC pays semi-monthly (24 times a year), SATA pays daily on NYSE business days (~250 times a year, from 16 June 2026), and BMNP pays weekly. Annual yield is unaffected by frequency, but faster payments mean more frequent compounding if you reinvest.',
+    def: 'How often payments arrive: STRC pays semi-monthly (24 times a year), SATA pays daily on NYSE business days (~250 times a year), and BMNP pays weekly. Annual yield is unaffected by frequency, but faster payments mean more frequent compounding if you reinvest.',
     link: { href: '/blog/monthly-vs-daily-dividends', label: 'Does frequency matter?' },
   },
   {

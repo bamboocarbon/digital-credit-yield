@@ -6,7 +6,7 @@ const rate = ASSET_RATES.SATA.toFixed(2);
 export const metadata = {
   alternates: { canonical: '/sata' },
   title: `SATA Stock — ${rate}% Daily Dividend`,
-  description: `Track SATA live price and yield. Strive's preferred stock pays ${rate}% annually in daily cash (~$0.052/share/day, from 16 June 2026). Listed on Nasdaq, backed by 18+ months cash reserves.`,
+  description: `Track SATA live price and yield. Strive's preferred stock pays ${rate}% annually in daily cash (~$0.052/share/day). Listed on Nasdaq, backed by 18+ months cash reserves.`,
   openGraph: {
     title: `SATA Stock — Strive Preferred Stock | ${rate}% Daily Dividend`,
     description: `Strive's preferred stock paying ${rate}% annually in daily cash dividends. Track live price, yield, and dividend history.`,

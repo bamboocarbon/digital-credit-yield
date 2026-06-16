@@ -19,7 +19,7 @@ const ROWS = [
   {
     label: 'Payment frequency',
     STRC: `${PAYMENT_FREQUENCY.STRC.label} (${PAYMENT_FREQUENCY.STRC.perYear}/year)`,
-    SATA: `${PAYMENT_FREQUENCY.SATA.label} (~${PAYMENT_FREQUENCY.SATA.perYear}/year, from 16 June 2026)`,
+    SATA: `${PAYMENT_FREQUENCY.SATA.label} (~${PAYMENT_FREQUENCY.SATA.perYear}/year)`,
     BMNP: `${PAYMENT_FREQUENCY.BMNP.label} (${PAYMENT_FREQUENCY.BMNP.perYear}/year)`,
   },
   {
