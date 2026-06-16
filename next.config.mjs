@@ -7,6 +7,16 @@ const nextConfig = {
   async rewrites() {
     return [{ source: '/og', destination: '/api/og' }];
   },
+  // Ezoic manages ads.txt centrally; 301 /ads.txt to its hosted manager so the
+  // authorized-seller list stays current without redeploys. Redirects run
+  // before the public/ filesystem, so no static ads.txt file is needed.
+  async redirects() {
+    return [{
+      source: '/ads.txt',
+      destination: 'https://srv.adstxtmanager.com/19390/digitalcredityield.com',
+      statusCode: 301,
+    }];
+  },
   // generateMp4.js registers these with @napi-rs/canvas at runtime
   // (Vercel lambdas have no system fonts); the dynamic path isn't traceable.
   outputFileTracingIncludes: {
