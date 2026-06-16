@@ -3,6 +3,7 @@ import GoogleAd from '@/components/GoogleAd';
 import AadsAd from '@/components/AadsAd';
 import DividendInteractive from '@/components/DividendInteractive';
 import { SATA_DAILY_START } from '@/lib/sataBusinessDays';
+import { STRC_SEMI_MONTHLY_START } from '@/lib/constants';
 
 const MONO = { fontFamily: "'Roboto Mono', 'Courier New', monospace" };
 
@@ -14,7 +15,9 @@ function formatDate(dateStr) {
 
 export default function DividendHistoryPage({ ticker, dividends }) {
   const today = new Date().toISOString().slice(0, 10);
-  const isComingSoon = ticker === 'SATA' && today < SATA_DAILY_START;
+  const isSataComingSoon = ticker === 'SATA' && today < SATA_DAILY_START;
+  const isStrcComingSoon = ticker === 'STRC' && today < STRC_SEMI_MONTHLY_START;
+  const isComingSoon = isSataComingSoon || isStrcComingSoon;
 
   const monthlyDivs = ticker === 'SATA'
     ? dividends.filter(d => d.date < SATA_DAILY_START)
@@ -33,12 +36,23 @@ export default function DividendHistoryPage({ ticker, dividends }) {
           : `All recorded dividend payments for ${ticker}. Fetched from Yahoo Finance and stored on this server — building a permanent record that grows over time.`}
       </p>
 
-      {isComingSoon && (
+      {isSataComingSoon && (
         <div className="p-4 rounded-xl mb-6" style={{ background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.4)' }}>
           <p className="text-xs font-semibold tracking-wide mb-1" style={{ color: 'var(--accent-gold)' }}>UPCOMING: DAILY DIVIDENDS</p>
           <p className="text-sm">
             Starting <strong>June 16, 2026</strong>, SATA will switch from monthly to daily dividend payments — one payment for each NYSE market business day.
             The monthly income total remains the same (~$1.0833/share); it is simply distributed across ~21 business days per month.
+          </p>
+        </div>
+      )}
+
+      {isStrcComingSoon && (
+        <div className="p-4 rounded-xl mb-6" style={{ background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.4)' }}>
+          <p className="text-xs font-semibold tracking-wide mb-1" style={{ color: 'var(--accent-gold)' }}>UPCOMING: SEMI-MONTHLY PAYMENTS</p>
+          <p className="text-sm">
+            Shareholders approved the move to semi-monthly dividends on <strong>June 8, 2026</strong>, but STRC still pays monthly today — the first
+            semi-monthly payment is scheduled for <strong>July 15, 2026</strong>. The monthly income total remains the same (~$0.958/share); it will
+            simply be split into two payments per month instead of one.
           </p>
         </div>
       )}
