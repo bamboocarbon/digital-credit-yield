@@ -49,7 +49,7 @@ export default async function ThoughtOfTheDayPage() {
 
       <XPostGrid kind="thoughts" initialItems={thoughts} />
 
-      <section className="max-w-3xl mt-14">
+      <section className="max-w-3xl mx-auto mt-14">
         <h2 className="text-2xl font-bold mb-4">Why a thought a day?</h2>
         <div className="space-y-4 text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
           <p>

@@ -49,7 +49,7 @@ export default async function QuizPage() {
 
       <XPostGrid kind="quiz" initialItems={quiz} />
 
-      <section className="max-w-3xl mt-14">
+      <section className="max-w-3xl mx-auto mt-14">
         <h2 className="text-2xl font-bold mb-4">How the quiz works</h2>
         <div className="space-y-4 text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
           <p>
