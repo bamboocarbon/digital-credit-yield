@@ -21,15 +21,13 @@ function TextCard({ item }) {
         />
         <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{formatDate(item.date)}</span>
       </div>
-      {item.text ? (
+      {item.text && (
         <p
           className="text-base"
           style={{ color: 'var(--text-primary)', lineHeight: '1.7', whiteSpace: 'pre-wrap' }}
         >
           {item.text}
         </p>
-      ) : (
-        <p className="text-base" style={{ color: 'var(--text-muted)' }}>This post couldn’t be loaded.</p>
       )}
       {item.url && (
         <a
@@ -67,31 +65,34 @@ function AnswerReveal({ answer }) {
       >
         {open ? 'Hide answer' : 'Reveal answer'}
       </button>
-      {open && (
-        <div
-          className="mt-2 p-4 rounded-xl"
-          style={{ background: 'var(--bg-card)', border: '1px solid var(--accent-gold)' }}
-        >
-          <p className="text-xs font-semibold mb-2" style={{ color: 'var(--accent-gold)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Answer</p>
-          <p className="text-base" style={{ color: 'var(--text-primary)', lineHeight: '1.7', whiteSpace: 'pre-wrap' }}>{answer}</p>
-        </div>
-      )}
+      {/* Rendered in the DOM always (so the answer text is in the server HTML /
+          crawlable), just visually hidden until revealed. */}
+      <div
+        className="mt-2 p-4 rounded-xl"
+        style={{ background: 'var(--bg-card)', border: '1px solid var(--accent-gold)', display: open ? 'block' : 'none' }}
+      >
+        <p className="text-xs font-semibold mb-2" style={{ color: 'var(--accent-gold)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Answer</p>
+        <p className="text-base" style={{ color: 'var(--text-primary)', lineHeight: '1.7', whiteSpace: 'pre-wrap' }}>{answer}</p>
+      </div>
     </div>
   );
 }
 
-export default function XPostGrid({ kind = 'thoughts' }) {
-  const [items, setItems] = useState(null);
+export default function XPostGrid({ kind = 'thoughts', initialItems = null }) {
+  const [items, setItems] = useState(initialItems);
   const isQuiz = kind === 'quiz';
 
   useEffect(() => {
+    // When the server already provided the list (SSR), use it as-is — the page
+    // is rendered fresh per request, so no client refetch is needed.
+    if (initialItems) return;
     fetch(`/api/thoughts?kind=${kind}`)
       .then(r => r.json())
       .then(data => setItems(
         [...data].sort((a, b) => (b.date.localeCompare(a.date)) || (b.id.localeCompare(a.id)))
       ))
       .catch(() => setItems([]));
-  }, [kind]);
+  }, [kind, initialItems]);
 
   if (items === null) {
     return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Loading…</p>;

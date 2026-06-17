@@ -68,20 +68,13 @@ export default function TweetEmbed({ tweetId, fallback }) {
     return () => { cancelled = true; };
   }, [inView, tweetId]);
 
+  // The text fallback is shown server-side and until the live embed renders,
+  // then it is replaced by the embed. This keeps the thought text in the
+  // server HTML (visible to crawlers) while users still get the rich X post.
   return (
     <div ref={containerRef}>
       <div ref={tweetRef} />
-      {status !== 'done' && status !== 'failed' && (
-        <div
-          className="card p-5 rounded-xl flex items-center justify-center"
-          style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', minHeight: '240px' }}
-        >
-          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            {status === 'loading' ? 'Loading post…' : ''}
-          </p>
-        </div>
-      )}
-      {status === 'failed' && fallback}
+      {status !== 'done' && fallback}
     </div>
   );
 }
