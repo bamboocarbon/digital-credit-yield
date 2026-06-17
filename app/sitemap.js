@@ -31,6 +31,8 @@ export default function sitemap() {
       { url: `${base}/bmnp/dividends`,      lastModified: now,          changeFrequency: 'weekly',  priority: 0.7 },
     ] : []),
     { url: `${base}/blog`,                lastModified: now,          changeFrequency: 'weekly',  priority: 0.7 },
+    { url: `${base}/thought-of-the-day`,  lastModified: now,          changeFrequency: 'daily',   priority: 0.6 },
+    { url: `${base}/quiz`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.6 },
     // Static tools — content doesn't change between deployments
     { url: `${base}/strc/projector`,      lastModified: '2026-06-08', changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/strc/differentiator`, lastModified: '2026-06-08', changeFrequency: 'monthly', priority: 0.6 },

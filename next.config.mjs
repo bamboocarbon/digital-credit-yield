@@ -11,11 +11,16 @@ const nextConfig = {
   // authorized-seller list stays current without redeploys. Redirects run
   // before the public/ filesystem, so no static ads.txt file is needed.
   async redirects() {
-    return [{
-      source: '/ads.txt',
-      destination: 'https://srv.adstxtmanager.com/19390/digitalcredityield.com',
-      statusCode: 301,
-    }];
+    return [
+      {
+        source: '/ads.txt',
+        destination: 'https://srv.adstxtmanager.com/19390/digitalcredityield.com',
+        statusCode: 301,
+      },
+      // The news + thoughts/quiz admins were merged into a single /admin page.
+      { source: '/news-admin', destination: '/admin', permanent: false },
+      { source: '/thoughts-admin', destination: '/admin', permanent: false },
+    ];
   },
   // generateMp4.js registers these with @napi-rs/canvas at runtime
   // (Vercel lambdas have no system fonts); the dynamic path isn't traceable.

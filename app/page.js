@@ -8,15 +8,14 @@ import { BMNP_ENABLED } from '@/lib/constants';
 
 export function generateMetadata() {
   const instruments = BMNP_ENABLED ? 'STRC, SATA & BMNP' : 'STRC & SATA';
-  const yieldRange  = BMNP_ENABLED ? '9.50%-13.00%' : '11.50%-13.00%';
-  const desc = `Track ${instruments} — high-yield preferred stocks paying ${yieldRange} annually. Live prices, dividend history, and income projectors.`;
+  const desc = `Track ${instruments} preferred stocks — live prices, dividend history, effective-yield charts and income projection tools.`;
   return {
     metadataBase: new URL('https://www.digitalcredityield.com'),
     alternates: { canonical: '/' },
     title: `${instruments} Dividend Tracker`,
     description: desc,
     openGraph: {
-      title: `${instruments} Preferred Stock Tracker — Up to 13% Annual Dividend`,
+      title: `${instruments} — Preferred Stock Tracker`,
       description: desc,
       type: 'website',
       url: 'https://www.digitalcredityield.com',
@@ -24,7 +23,7 @@ export function generateMetadata() {
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${instruments} Preferred Stock Tracker — Up to 13% Annual Dividend`,
+      title: `${instruments} — Preferred Stock Tracker`,
       description: desc,
     },
   };
@@ -35,7 +34,7 @@ const jsonLd = {
   '@type': 'WebSite',
   name: 'Digital Credit Yield',
   url: 'https://www.digitalcredityield.com',
-  description: 'Independent tracker for STRC, SATA and BMNP high-yield preferred stocks. Live prices, dividend history, and income projectors.',
+  description: 'Independent tracker for STRC, SATA and BMNP preferred stocks. Live prices, dividend history, and income projectors.',
 };
 
 export default function HomePage() {

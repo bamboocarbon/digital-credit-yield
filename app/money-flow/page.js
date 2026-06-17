@@ -5,7 +5,7 @@ import MoneyFlowStats from '@/components/MoneyFlowStats';
 import { BMNP_ENABLED } from '@/lib/constants';
 
 // Date the narrative zones below were last revised — shown next to the story heading
-const STORY_UPDATED = '11 June 2026';
+const STORY_UPDATED = '17 June 2026';
 
 export function generateMetadata() {
   const instruments = BMNP_ENABLED ? 'STRC, SATA & BMNP' : 'STRC & SATA';
@@ -153,6 +153,18 @@ export default function MoneyFlowPage() {
               </p>
             </div>
           </div>
+
+          {BMNP_ENABLED && (
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-1 rounded-full" style={{ background: '#fde047' }} />
+              <div>
+                <p className="font-semibold text-sm mb-1">Zone 6 — A Third Entrant <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Jun 2026</span></p>
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                  June 2026 brought a new issuer onto the chart. BitMine Immersion Technologies — chaired by Tom Lee — priced its 9.50% Series A Perpetual Preferred (BMNP) on June 4, upsizing the deal to 3.5M shares at $80 for roughly $274M in net proceeds. The shares began trading on the NYSE on June 16 and pay dividends weekly. Unlike STRC and SATA, BitMine is an Ethereum treasury: proceeds are earmarked for ETH and staking infrastructure, with the company adding ~76,881 ETH (about $136M) shortly after the raise. BMNP&apos;s single yellow IPO bar marks the start of what could become a third weekly capital line to watch.
+                </p>
+              </div>
+            </div>
+          )}
 
         </div>
       </div>

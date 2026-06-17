@@ -56,18 +56,24 @@ export default function AssetCard({ ticker }) {
           <div className="h-4 w-1/2 rounded" style={{ background: 'var(--bg-card-hover)' }} />
         </div>
       ) : (
-        <div className="space-y-2">
-          <div className="font-mono-data text-3xl font-bold" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace" }}>
-            {data.price?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+        <div className="flex items-start justify-between gap-3">
+          {/* Latest price (left) */}
+          <div>
+            <div className="font-mono-data text-3xl font-bold" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace" }}>
+              {data.price?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+            </div>
+            <div className="text-sm font-mono-data mt-1" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: data.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
+              <span style={{marginRight:'2px'}}>{data.change >= 0 ? '+' : '-'}</span>{Math.abs(data.change)?.toFixed(2)} (<span style={{marginRight:'2px'}}>{data.changePercent >= 0 ? '+' : '-'}</span>{Math.abs(data.changePercent)?.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>)
+            </div>
           </div>
-          <div className="text-sm font-mono-data" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: data.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
-            <span style={{marginRight:'2px'}}>{data.change >= 0 ? '+' : '-'}</span>{Math.abs(data.change)?.toFixed(2)} (<span style={{marginRight:'2px'}}>{data.changePercent >= 0 ? '+' : '-'}</span>{Math.abs(data.changePercent)?.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>)
-          </div>
-          {data.dividendYield != null && (
-            <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
-              Yield: <span className="font-bold" style={{ color: 'var(--accent-gold)' }}>
-                {data.dividendYield.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8em' }}>%</span>
-              </span>
+
+          {/* Effective yield (right) — annual dividend ÷ current price, par $100 */}
+          {data.price > 0 && ASSET_RATES[ticker] != null && (
+            <div className="text-right">
+              <div className="text-xs uppercase" style={{ color: 'var(--text-muted)', letterSpacing: '0.04em' }}>Effective Yield</div>
+              <div className="font-mono-data text-3xl font-bold mt-1" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: 'var(--accent-gold)' }}>
+                {((ASSET_RATES[ticker] / data.price) * 100).toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8em' }}>%</span>
+              </div>
             </div>
           )}
         </div>

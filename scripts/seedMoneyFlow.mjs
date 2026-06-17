@@ -93,29 +93,42 @@ const SEED_SATA_WEEKLY = [
   { week: 'May 25', date: '2026-05-25', value: 79 },
 ];
 
-function buildCumulative(strcWeekly, sataWeekly) {
+const SEED_BMNP_WEEKLY = [
+  // BMNP IPO — see lib/moneyFlowStore.js for sourcing detail.
+  { week: 'Jun 8', date: '2026-06-08', value: 274, ipo: true },
+];
+
+function buildCumulative(strcWeekly, sataWeekly, bmnpWeekly = []) {
   const strcByDate = Object.fromEntries(strcWeekly.map(d => [d.date, d.value]));
   const sataByDate = Object.fromEntries(sataWeekly.map(d => [d.date, d.value]));
-  const allDates = [...new Set([...strcWeekly.map(d => d.date), ...sataWeekly.map(d => d.date)])].sort();
-  let strcTotal = 0, sataTotal = 0;
+  const bmnpByDate = Object.fromEntries(bmnpWeekly.map(d => [d.date, d.value]));
+  const allDates = [...new Set([
+    ...strcWeekly.map(d => d.date),
+    ...sataWeekly.map(d => d.date),
+    ...bmnpWeekly.map(d => d.date),
+  ])].sort();
+  let strcTotal = 0, sataTotal = 0, bmnpTotal = 0;
   return allDates.map(date => {
     if (strcByDate[date]) strcTotal += strcByDate[date];
     if (sataByDate[date]) sataTotal += sataByDate[date];
+    if (bmnpByDate[date]) bmnpTotal += bmnpByDate[date];
     const d = new Date(date + 'T12:00:00Z');
     const mon = d.toLocaleString('en-GB', { month: 'short', timeZone: 'UTC' });
     return {
       period: `${mon} ${d.getUTCDate()} '${String(d.getUTCFullYear()).slice(2)}`,
       strc: strcTotal > 0 ? Math.round(strcTotal) : null,
       sata: sataTotal > 0 ? Math.round(sataTotal) : null,
+      bmnp: bmnpTotal > 0 ? Math.round(bmnpTotal) : null,
     };
   });
 }
 
-const cumulative = buildCumulative(SEED_STRC_WEEKLY, SEED_SATA_WEEKLY);
+const cumulative = buildCumulative(SEED_STRC_WEEKLY, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY);
 
 const payload = JSON.stringify({
   strcWeekly: SEED_STRC_WEEKLY,
   sataWeekly: SEED_SATA_WEEKLY,
+  bmnpWeekly: SEED_BMNP_WEEKLY,
   cumulative,
   lastUpdated: new Date().toISOString(),
 });

@@ -155,7 +155,7 @@ export default function CumulativeFlowChart() {
           <p style={{ margin: '0 0 16px 44px', fontSize: 11, color: '#4b5563', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
             Linear Scale · Absolute Size
           </p>
-          <div role="img" aria-label="STRC and SATA cumulative capital raised — linear scale line chart">
+          <div role="img" aria-label={`STRC, SATA${BMNP_ENABLED ? ' and BMNP' : ''} cumulative capital raised — linear scale line chart`}>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={displayData} margin={{ top: 4, right: 20, left: 8, bottom: 55 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
@@ -164,7 +164,7 @@ export default function CumulativeFlowChart() {
               <Tooltip content={<TooltipLinear />} />
               <Line type="monotone" dataKey="strc" name="STRC" stroke="#15803d" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
               <Line type="monotone" dataKey="sata" name="SATA" stroke="#2563eb" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
-              {BMNP_ENABLED && <Line type="monotone" dataKey="bmnp" name="BMNP" stroke="#fde047" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />}
+              {BMNP_ENABLED && <Line type="monotone" dataKey="bmnp" name="BMNP" stroke="#fde047" strokeWidth={2} dot={{ r: 3, fill: '#fde047', strokeWidth: 0 }} activeDot={{ r: 4 }} connectNulls={false} />}
             </LineChart>
           </ResponsiveContainer>
           </div>
@@ -177,10 +177,10 @@ export default function CumulativeFlowChart() {
           <p style={{ margin: '0 0 16px 44px', fontSize: 11, color: '#4b5563', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
             Log Scale · Growth Trajectory
           </p>
-          <div role="img" aria-label="STRC and SATA cumulative capital raised — log scale line chart">
+          <div role="img" aria-label={`STRC, SATA${BMNP_ENABLED ? ' and BMNP' : ''} cumulative capital raised — log scale line chart`}>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart
-              data={displayData.map(d => ({ ...d, strc: d.strc ? Math.log10(d.strc) : null, sata: d.sata ? Math.log10(d.sata) : null }))}
+              data={displayData.map(d => ({ ...d, strc: d.strc ? Math.log10(d.strc) : null, sata: d.sata ? Math.log10(d.sata) : null, bmnp: d.bmnp ? Math.log10(d.bmnp) : null }))}
               margin={{ top: 4, right: 20, left: 8, bottom: 55 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
@@ -189,7 +189,7 @@ export default function CumulativeFlowChart() {
               <Tooltip content={<TooltipLog />} />
               <Line type="monotone" dataKey="strc" name="STRC" stroke="#15803d" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
               <Line type="monotone" dataKey="sata" name="SATA" stroke="#2563eb" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
-              {BMNP_ENABLED && <Line type="monotone" dataKey="bmnp" name="BMNP" stroke="#fde047" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />}
+              {BMNP_ENABLED && <Line type="monotone" dataKey="bmnp" name="BMNP" stroke="#fde047" strokeWidth={2} dot={{ r: 3, fill: '#fde047', strokeWidth: 0 }} activeDot={{ r: 4 }} connectNulls={false} />}
             </LineChart>
           </ResponsiveContainer>
           </div>

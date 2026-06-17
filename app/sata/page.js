@@ -5,10 +5,10 @@ const rate = ASSET_RATES.SATA.toFixed(2);
 
 export const metadata = {
   alternates: { canonical: '/sata' },
-  title: `SATA Stock — ${rate}% Daily Dividend`,
+  title: `SATA — Strive Preferred Stock`,
   description: `Track SATA live price and yield. Strive's preferred stock pays ${rate}% annually in daily cash (~$0.052/share/day). Listed on Nasdaq, backed by 18+ months cash reserves.`,
   openGraph: {
-    title: `SATA Stock — Strive Preferred Stock | ${rate}% Daily Dividend`,
+    title: `SATA — Strive Preferred Stock Tracker`,
     description: `Strive's preferred stock paying ${rate}% annually in daily cash dividends. Track live price, yield, and dividend history.`,
     type: 'website',
     url: 'https://www.digitalcredityield.com/sata',
@@ -16,7 +16,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: `SATA Stock — Strive Preferred Stock | ${rate}% Daily Dividend`,
+    title: `SATA — Strive Preferred Stock Tracker`,
     description: `Strive's preferred stock paying ${rate}% annually in daily cash dividends.`,
   },
 };

@@ -5,10 +5,10 @@ const rate = ASSET_RATES.STRC.toFixed(2);
 
 export const metadata = {
   alternates: { canonical: '/strc' },
-  title: `STRC Stock — ${rate}% Annual Dividend`,
+  title: `STRC — Strategy Preferred Stock`,
   description: `Track STRC live price and yield. Strategy's preferred stock pays ${rate}% annually in semi-monthly cash. Listed on Nasdaq, backed by 800,000+ Bitcoin.`,
   openGraph: {
-    title: `STRC Stock — Strategy Preferred Stock | ${rate}% Annual Dividend`,
+    title: `STRC — Strategy Preferred Stock Tracker`,
     description: `Strategy's preferred stock paying ${rate}% annually in semi-monthly cash dividends. Track live price, yield, and dividend history.`,
     type: 'website',
     url: 'https://www.digitalcredityield.com/strc',
@@ -16,7 +16,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: `STRC Stock — Strategy Preferred Stock | ${rate}% Annual Dividend`,
+    title: `STRC — Strategy Preferred Stock Tracker`,
     description: `Strategy's preferred stock paying ${rate}% annually in semi-monthly cash dividends.`,
   },
 };

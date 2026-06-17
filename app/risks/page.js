@@ -7,7 +7,7 @@ export const metadata = {
   description: 'A plain-English guide to the risks of STRC and SATA: board discretion over dividends, rate changes, crypto-collateral volatility, liquidity, and perpetual structure.',
   openGraph: {
     title: 'Understanding the Risks',
-    description: 'A plain-English guide to the risks of high-yield preferred stocks like STRC and SATA.',
+    description: 'A plain-English guide to the risks of preferred stocks like STRC and SATA.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/risks',
     images: [{ url: '/og?v=3&title=Understanding+the+Risks&sub=Read+before+you+invest' }],
@@ -15,7 +15,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Understanding the Risks',
-    description: 'A plain-English guide to the risks of high-yield preferred stocks like STRC and SATA.',
+    description: 'A plain-English guide to the risks of preferred stocks like STRC and SATA.',
   },
 };
 
