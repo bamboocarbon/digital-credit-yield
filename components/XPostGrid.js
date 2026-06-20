@@ -78,7 +78,7 @@ function AnswerReveal({ answer }) {
   );
 }
 
-export default function XPostGrid({ kind = 'thoughts', initialItems = null }) {
+export default function XPostGrid({ kind = 'thoughts', initialItems = null, trailing = null }) {
   const [items, setItems] = useState(initialItems);
   const isQuiz = kind === 'quiz';
 
@@ -121,6 +121,7 @@ export default function XPostGrid({ kind = 'thoughts', initialItems = null }) {
           </div>
         );
       })}
+      {trailing}
     </div>
   );
 }

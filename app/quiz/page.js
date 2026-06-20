@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import XPostGrid from '@/components/XPostGrid';
 import { blobUrl } from '@/lib/blobUrl';
 
@@ -43,38 +42,23 @@ export default async function QuizPage() {
       <h1 className="text-3xl sm:text-4xl font-bold mb-3">Quiz</h1>
       <p className="text-base mb-10 max-w-3xl" style={{ color: 'var(--text-muted)' }}>
         Have some fun with the quiz posts I share on{' '}
-        <a href="https://x.com/DCYieldHub" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-gold)' }}>X</a>
-        {' '}— covering preferred stock, dividends and Bitcoin treasury companies. Read each question, then hit <span style={{ color: 'var(--text-primary)' }}>Reveal answer</span>. Newest first.
+        <a href="https://x.com/DCYieldHub" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-gold)' }}>X</a>.
       </p>
 
-      <XPostGrid kind="quiz" initialItems={quiz} />
-
-      <section className="max-w-3xl mx-auto mt-14">
-        <h2 className="text-2xl font-bold mb-4">How the quiz works</h2>
-        <div className="space-y-4 text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-          <p>
-            Each quiz is a short question I post on X about preferred stocks, dividends, capital structure,
-            and the Bitcoin and Ethereum treasury companies behind{' '}
-            <Link href="/strc" style={{ color: 'var(--accent-gold)' }}>STRC</Link>,{' '}
-            <Link href="/sata" style={{ color: 'var(--accent-gold)' }}>SATA</Link> and{' '}
-            <Link href="/bmnp" style={{ color: 'var(--accent-gold)' }}>BMNP</Link>. Read the question, have a
-            guess, then hit <span style={{ color: 'var(--text-primary)' }}>Reveal answer</span> to check yourself.
-          </p>
-          <p>
-            The questions are designed to make the details stick — things like where a preferred series sits in
-            a company&apos;s capital structure, how a dividend rate is actually set, or why these instruments
-            tend to trade near their $100 par value. Getting one wrong is part of the point; the answer is
-            always there to learn from.
-          </p>
-          <p>
-            Want to brush up first? The <Link href="/blog" style={{ color: 'var(--accent-gold)' }}>blog</Link>{' '}
-            covers each instrument in depth, the{' '}
-            <Link href="/glossary" style={{ color: 'var(--accent-gold)' }}>glossary</Link> explains the jargon,
-            and the <Link href="/faq" style={{ color: 'var(--accent-gold)' }}>FAQ</Link> answers the most
-            common questions.
-          </p>
-        </div>
-      </section>
+      <XPostGrid
+        kind="quiz"
+        initialItems={quiz}
+        trailing={
+          <div className="self-start sm:col-span-1 lg:col-span-2 flex items-start justify-center px-4 pt-6">
+            <p
+              className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight text-center"
+              style={{ color: 'var(--accent-gold)' }}
+            >
+              Watch this space !
+            </p>
+          </div>
+        }
+      />
     </div>
   );
 }
