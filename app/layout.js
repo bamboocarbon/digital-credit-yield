@@ -21,7 +21,6 @@ const robotoMono = Roboto_Mono({
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CookieBanner from '@/components/CookieBanner';
-import EzoicRouteRefresh from '@/components/EzoicRouteRefresh';
 
 export const metadata = {
   metadataBase: new URL('https://www.digitalcredityield.com'),
@@ -61,19 +60,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${robotoMono.variable}`}>
       <body className="flex flex-col min-h-screen">
-        {/* Ezoic — privacy (CMP) scripts MUST load before the header script.
-            beforeInteractive injects these into the top of <head>; source order
-            here is preserved, so privacy → header → analytics. */}
-        <Script id="ezoic-cmp-1" strategy="beforeInteractive" data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js" />
-        <Script id="ezoic-cmp-2" strategy="beforeInteractive" data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js" />
-        {/* Ezoic — header script (initialises the ad system) */}
-        <Script id="ezoic-sa" strategy="beforeInteractive" async src="//www.ezojs.com/ezoic/sa.min.js" />
-        <Script id="ezoic-standalone-init" strategy="beforeInteractive">{`
-          window.ezstandalone = window.ezstandalone || {};
-          ezstandalone.cmd = ezstandalone.cmd || [];
-        `}</Script>
-        <Script id="ezoic-analytics" strategy="beforeInteractive" src="//ezoicanalytics.com/analytics.js" />
-        <EzoicRouteRefresh />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
         <Navbar />
         <main className="flex-1 pt-16 md:pt-24">

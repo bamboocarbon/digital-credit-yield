@@ -109,7 +109,7 @@ export default function CumulativeFlowChart() {
           {[
             { color: '#15803d', label: 'STRC', sub: 'Strategy · IPO Jul 2025' },
             { color: '#2563eb', label: 'SATA', sub: 'Strive · IPO Nov 2025' },
-            ...(BMNP_ENABLED ? [{ color: '#fde047', label: 'BMNP', sub: 'BitMine · IPO Jun 2026' }] : []),
+            ...(BMNP_ENABLED ? [{ color: '#fde047', label: 'BMNP', sub: 'Bitmine · IPO Jun 2026' }] : []),
           ].map(i => (
             <div key={i.label} className="flex items-center gap-2">
               <div style={{ width: 24, height: 2, background: i.color, borderRadius: 2 }} />

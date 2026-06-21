@@ -179,8 +179,8 @@ export default async function ArticlePage({ params }) {
           <p className="text-sm font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>About the author</p>
           <p className="text-sm leading-6" style={{ color: 'var(--text-muted)' }}>
             <strong>Robin Gillingham</strong> is the founder of Digital Credit Yield. After a career in
-            aircraft engineering, he moved into full-time trading in 2019 and now builds programs to track and
-            visualise high-yield preferred stocks such as STRC, SATA and BMNP.{' '}
+            aircraft engineering, he moved into full-time trading in 2019 and now builds tools to track and
+            visualise preferred stocks such as STRC, SATA and BMNP.{' '}
             <Link href="/about" className="transition-opacity hover:opacity-75" style={{ color: 'var(--accent-gold)' }}>Read more →</Link>
           </p>
         </div>

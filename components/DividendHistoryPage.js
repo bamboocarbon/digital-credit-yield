@@ -1,4 +1,3 @@
-import SubNav from '@/components/SubNav';
 import GoogleAd from '@/components/GoogleAd';
 import AadsAd from '@/components/AadsAd';
 import DividendInteractive from '@/components/DividendInteractive';
@@ -29,9 +28,7 @@ export default function DividendHistoryPage({ ticker, dividends }) {
   const tableData = ticker === 'SATA' ? monthlyDivs : dividends;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <SubNav ticker={ticker} />
-      <h1 className="text-2xl sm:text-3xl font-bold mb-2">{ticker} Dividend History</h1>
+    <div>
       <p className="mb-6 text-sm" style={{ color: 'var(--text-muted)' }}>
         {ticker === 'SATA'
           ? 'All recorded dividend payments for SATA. Monthly payments through June 15, 2026; daily business-day payments from June 16, 2026 onward.'
@@ -148,7 +145,7 @@ export default function DividendHistoryPage({ ticker, dividends }) {
         </>
       )}
 
-      <GoogleAd slot={`${ticker.toLowerCase()}-dividends`} />
+      <GoogleAd slot="dividends" />
       <AadsAd />
 
       <div className="mt-8 p-5 rounded-xl" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>

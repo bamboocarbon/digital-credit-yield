@@ -16,7 +16,6 @@ const primaryLinks = [
 ];
 const secondaryLinks = [
   { label: 'Thoughts', href: '/thought-of-the-day' },
-  { label: 'Quiz', href: '/quiz' },
   { label: 'Blog', href: '/blog' },
   { label: 'About Me', href: '/about' },
 ];

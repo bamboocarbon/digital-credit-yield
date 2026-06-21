@@ -1,3 +1,15 @@
+// The per-ticker tool pages (/strc/chart, /sata/projector, …) were consolidated
+// into single selectable pages. 301 the old indexed URLs to the new routes,
+// preserving which stock was selected via ?stock=.
+const TOOL_REDIRECTS = ['strc', 'sata', 'bmnp'].flatMap(t =>
+  Object.entries({ chart: 'chart', projector: 'projector', differentiator: 'vs-treasuries', dividends: 'dividends' })
+    .map(([oldTool, newRoute]) => ({
+      source: `/${t}/${oldTool}`,
+      destination: `/${newRoute}?stock=${t}`,
+      permanent: true,
+    }))
+);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   serverExternalPackages: ['yahoo-finance2', 'sharp', '@napi-rs/canvas', 'ffmpeg-static', 'resend'],
@@ -7,19 +19,12 @@ const nextConfig = {
   async rewrites() {
     return [{ source: '/og', destination: '/api/og' }];
   },
-  // Ezoic manages ads.txt centrally; 301 /ads.txt to its hosted manager so the
-  // authorized-seller list stays current without redeploys. Redirects run
-  // before the public/ filesystem, so no static ads.txt file is needed.
   async redirects() {
     return [
-      {
-        source: '/ads.txt',
-        destination: 'https://srv.adstxtmanager.com/19390/digitalcredityield.com',
-        statusCode: 301,
-      },
       // The news + thoughts/quiz admins were merged into a single /admin page.
       { source: '/news-admin', destination: '/admin', permanent: false },
       { source: '/thoughts-admin', destination: '/admin', permanent: false },
+      ...TOOL_REDIRECTS,
     ];
   },
   // generateMp4.js registers these with @napi-rs/canvas at runtime

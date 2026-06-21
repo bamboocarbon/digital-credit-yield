@@ -3,7 +3,6 @@ import Link from 'next/link';
 const footerLinks = [
   { label: 'Money Flow', href: '/money-flow' },
   { label: 'Thought of the Day', href: '/thought-of-the-day' },
-  { label: 'Quiz', href: '/quiz' },
   { label: 'FAQ', href: '/faq' },
   { label: 'Risks', href: '/risks' },
   { label: 'Glossary', href: '/glossary' },

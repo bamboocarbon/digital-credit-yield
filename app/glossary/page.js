@@ -3,18 +3,18 @@ import Link from 'next/link';
 export const metadata = {
   alternates: { canonical: '/glossary' },
   title: 'Glossary of Key Terms',
-  description: 'Plain-English definitions of the terms used across this site: par value, effective yield, perpetual preferred stock, ATM programme, VWAP, cumulative dividends and more.',
+  description: 'Clear definitions of the terms used across this site: par value, effective yield, perpetual preferred stock, ATM programme, VWAP, cumulative dividends and more.',
   openGraph: {
     title: 'Glossary of Key Terms',
-    description: 'Plain-English definitions of the preferred stock terms used across Digital Credit Yield.',
+    description: 'Clear definitions of the preferred stock terms used across Digital Credit Yield.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/glossary',
-    images: [{ url: '/og?v=3&title=Glossary&sub=Key+terms+in+plain+English' }],
+    images: [{ url: '/og?v=3&title=Glossary&sub=Key+terms+explained' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Glossary of Key Terms',
-    description: 'Plain-English definitions of the preferred stock terms used across Digital Credit Yield.',
+    description: 'Clear definitions of the preferred stock terms used across Digital Credit Yield.',
   },
 };
 
@@ -66,13 +66,23 @@ const terms = [
   },
   {
     term: 'Dividend frequency',
-    def: 'How often payments arrive: STRC pays semi-monthly (24 times a year), SATA pays daily on NYSE business days (~250 times a year), and BMNP pays weekly. Annual yield is unaffected by frequency, but faster payments mean more frequent compounding if you reinvest.',
+    def: 'How often payments arrive: STRC pays semi-monthly (24 times a year), SATA pays daily on US market business days (~250 times a year), and BMNP pays weekly. Annual yield is unaffected by frequency, but faster payments mean more frequent compounding if you reinvest.',
     link: { href: '/blog/monthly-vs-daily-dividends', label: 'Does frequency matter?' },
   },
   {
     term: 'Bitcoin treasury company',
-    def: 'A public company that holds Bitcoin as a core treasury asset and typically raises capital — often via preferred stock — to buy more. Strategy and Strive are the two issuers tracked here.',
+    def: 'A public company that holds Bitcoin as a core treasury asset and typically raises capital — often via preferred stock — to buy more. Strategy (STRC) and Strive (SATA) are the two Bitcoin-treasury issuers tracked here; Bitmine (BMNP) follows the same playbook with Ethereum instead.',
     link: { href: '/blog/bitcoin-treasury-companies', label: 'Why they issue preferred equity' },
+  },
+  {
+    term: 'Staking (proof-of-stake)',
+    def: 'Locking up cryptocurrency to help run a proof-of-stake network like Ethereum, earning rewards in return. Bitmine stakes its Ethereum through its MAVAN validator network, and those rewards are what fund BMNP’s dividend — unlike STRC and SATA, whose Bitcoin earns nothing and simply has to hold its value.',
+    link: { href: '/blog/bmnp-dividend-rate-mechanism', label: 'How BMNP is funded' },
+  },
+  {
+    term: 'Redemption premium',
+    def: 'An above-par price an issuer must pay to buy its preferred shares back early. BMNP can be bought back at 110% of par ($110) in the first 18 months, then 105%, then par — which helps anchor its price near term, the job STRC and SATA hand to their adjustable rate instead.',
+    link: { href: '/blog/bmnp-dividend-rate-mechanism', label: 'BMNP’s price anchor' },
   },
 ];
 
@@ -81,7 +91,7 @@ export default function GlossaryPage() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
       <h1 className="text-3xl sm:text-4xl font-bold mb-3">Glossary</h1>
       <p className="text-base mb-10" style={{ color: 'var(--text-muted)' }}>
-        Every term used across this site, in plain English. Each entry links to the article that covers it in depth.
+        Every term used across this site, explained simply. Each entry links to the article that covers it in depth.
       </p>
 
       <div className="space-y-5">

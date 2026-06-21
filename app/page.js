@@ -61,7 +61,7 @@ export default function HomePage() {
           Tracking {BMNP_ENABLED ? 'STRC, SATA and BMNP' : 'STRC and SATA'} for growth
         </div>
         <p className="text-lg sm:text-xl max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
-          Live prices, dividend tracking and income projections for next-generation high-yield preferred stocks
+          Live prices, dividend tracking and income projections for the preferred stocks issued by Bitcoin and Ethereum treasury companies
         </p>
       </div>
 
@@ -90,7 +90,7 @@ export default function HomePage() {
         <h3 className="text-lg font-semibold mb-3">Who&rsquo;s behind this</h3>
         <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
           I&rsquo;m Robin Gillingham — a full-time independent investor for seven years. I built this site to highlight the
-          difference between annual yield and effective yield on the new generation of high-yield preferred stocks,
+          difference between annual yield and effective yield on the new preferred stocks issued by Bitcoin and Ethereum treasury companies,
           and it has grown into growth projectors, dividend charts, and weekly money flow data{BMNP_ENABLED ? ' across STRC, SATA and BMNP' : ''}.
         </p>
         <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
@@ -117,8 +117,8 @@ export default function HomePage() {
           Digital Credit Yield is not yet funded by advertising. This never influences which assets I cover or what I say about them.
         </p>
         <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
-          Position disclosure — I currently hold positions in MSTR and ASST the common equity stocks of Strategy and Strive.
-          I have no relationship with Strategy Inc. Strive Inc. or Bitmine Immersion Technologies Inc. and am not compensated by them. This is an independent research product.
+          Position disclosure — I currently hold positions in MSTR and ASST, the common equity stocks of Strategy and Strive.
+          I have no relationship with Strategy Inc., Strive Inc. or Bitmine Immersion Technologies Inc., and am not compensated by them. This is an independent research product.
         </p>
 
         <h3 className="text-lg font-semibold mb-3">Get in touch</h3>

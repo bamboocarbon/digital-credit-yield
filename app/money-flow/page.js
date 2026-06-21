@@ -77,7 +77,7 @@ export default function MoneyFlowPage() {
               <div className="flex items-center gap-2">
                 <span className="font-bold text-lg">BMNP</span>
                 <span className="text-xs font-medium"
-                  style={{ color: '#fde047' }}>BitMine Preferred</span>
+                  style={{ color: '#fde047' }}>Bitmine Preferred</span>
               </div>
             </div>
             <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Jun 2026 · 9.50% · ATM programme TBC</p>
@@ -160,7 +160,7 @@ export default function MoneyFlowPage() {
               <div>
                 <p className="font-semibold text-sm mb-1">Zone 6 — A Third Entrant <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Jun 2026</span></p>
                 <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                  June 2026 brought a new issuer onto the chart. BitMine Immersion Technologies — chaired by Tom Lee — priced its 9.50% Series A Perpetual Preferred (BMNP) on June 4, upsizing the deal to 3.5M shares at $80 for roughly $274M in net proceeds. The shares began trading on the NYSE on June 16 and pay dividends weekly. Unlike STRC and SATA, BitMine is an Ethereum treasury: proceeds are earmarked for ETH and staking infrastructure, with the company adding ~76,881 ETH (about $136M) shortly after the raise. BMNP&apos;s single yellow IPO bar marks the start of what could become a third weekly capital line to watch.
+                  June 2026 brought a new issuer onto the chart. Bitmine Immersion Technologies — chaired by Tom Lee — priced its 9.50% Series A Perpetual Preferred (BMNP) on June 4, upsizing the deal to 3.5M shares at $80 for roughly $274M in net proceeds. The shares began trading on the NYSE on June 16 and pay dividends weekly. Unlike STRC and SATA, Bitmine is an Ethereum treasury: proceeds are earmarked for ETH and staking infrastructure, with the company adding ~76,881 ETH (about $136M) shortly after the raise. BMNP&apos;s single yellow IPO bar marks the start of what could become a third weekly capital line to watch.
                 </p>
               </div>
             </div>

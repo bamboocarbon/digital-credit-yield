@@ -19,6 +19,7 @@ async function getQuiz() {
 
 export const metadata = {
   alternates: { canonical: '/quiz' },
+  robots: { index: false, follow: true },
   title: 'Quiz',
   description: 'Test your knowledge of preferred stock, dividends and Bitcoin treasury companies with the @DCYieldHub quiz posts — reveal the answer to each, newest first.',
   openGraph: {

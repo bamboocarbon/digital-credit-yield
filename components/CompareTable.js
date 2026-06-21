@@ -36,7 +36,7 @@ const ROWS = [
   },
   {
     label: 'What backs it',
-    STRC: '800,000+ Bitcoin treasury',
+    STRC: '880,000+ Bitcoin treasury',
     SATA: `${STRIVE_BTC_HOLDINGS}+ Bitcoin plus an 18-month cash reserve`,
     BMNP: 'Ethereum staking income via the MAVAN validator network',
   },

@@ -16,7 +16,7 @@ const C_BANK        = '#9ca3af';   // medium cool grey
 
 const defaultBenchmarks = { bank: 0.5, highYield: 4.2, treasury: 5.0 };
 
-export default function Differentiator({ ticker, liveYield }) {
+export default function Differentiator({ ticker, liveYield, livePrice }) {
   const mainChartRef = useRef(null);
   const mainChartInstance = useRef(null);
   const diffChartRef = useRef(null);
@@ -30,8 +30,12 @@ export default function Differentiator({ ticker, liveYield }) {
 
   useEffect(() => {
     const saved = loadProjectorState(ticker);
-    if (saved) setForm(prev => ({ ...prev, ...saved }));
-    else if (liveYield != null) setForm(prev => ({ ...prev, annualYield: liveYield }));
+    // The yield is live market data, not a saved preference — always anchor it to
+    // the current rate. Restoring it from old state can resurrect a stale yield
+    // (e.g. STRC's original 9% IPO rate) and override today's announced rate.
+    const yld = liveYield ?? defaultProjectorState.annualYield;
+    if (saved) setForm(prev => ({ ...prev, ...saved, annualYield: yld }));
+    else setForm(prev => ({ ...prev, annualYield: yld }));
   }, [ticker, liveYield]);
 
   function update(field, value) {
@@ -47,8 +51,17 @@ export default function Differentiator({ ticker, liveYield }) {
     ? rawShares * Number(form.pricePerShare || 100)
     : rawAmount;
 
-  const priceForYield = form.inputMode === 'shares' ? Number(form.pricePerShare || 100) : 100;
+  // Effective yield needs a buy price. In shares mode that's the user's stated cost;
+  // in dollar mode there's no input price, so use the live market price (your dollars
+  // buy at the market, not at $100 par) — this is what lets the Annual/Effective
+  // toggle change the dollar-mode output. Falls back to par if no live price.
+  const dollarModePrice = livePrice && livePrice > 0 ? livePrice : 100;
+  const priceForYield = form.inputMode === 'shares' ? Number(form.pricePerShare || 100) : dollarModePrice;
   const effectiveYield = priceForYield > 0 ? Number(form.annualYield) * (100 / priceForYield) : Number(form.annualYield);
+
+  // Which yield drives the comparison. In dollar mode (price = par) the two are
+  // identical, so the toggle only changes the result when shares are priced off par.
+  const yieldForProjection = form.yieldBasis === 'effective' ? effectiveYield : Number(form.annualYield);
 
   const step = months <= 24 ? 1 : 12;
 
@@ -56,8 +69,8 @@ export default function Differentiator({ ticker, liveYield }) {
   const paymentsPerYear = ticker === 'STRC' ? 24 : ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : 12;
 
   const assetData = useMemo(
-    () => runProjection(startValue, effectiveYield, Number(form.monthlyContribution), Number(form.reinvestmentPct), months, paymentsPerYear),
-    [startValue, effectiveYield, form.monthlyContribution, form.reinvestmentPct, months, paymentsPerYear]
+    () => runProjection(startValue, yieldForProjection, Number(form.monthlyContribution), Number(form.reinvestmentPct), months, paymentsPerYear),
+    [startValue, yieldForProjection, form.monthlyContribution, form.reinvestmentPct, months, paymentsPerYear]
   );
   const treasuryData = useMemo(
     () => runProjection(startValue, benchmarks.treasury, Number(form.monthlyContribution), Number(form.reinvestmentPct), months),
@@ -81,13 +94,13 @@ export default function Differentiator({ ticker, liveYield }) {
   const highYieldFinal = highYieldData[months].portfolio + highYieldData[months].cashDistributions;
   const bankFinal = bankData[months].portfolio + bankData[months].cashDistributions;
 
-  const annualYield = Number(form.annualYield);
-  const assetMonthlyStart = startValue > 0 ? (startValue * effectiveYield) / 100 / 12 : 0;
+  const annualYield = yieldForProjection;
+  const assetMonthlyStart = startValue > 0 ? (startValue * yieldForProjection) / 100 / 12 : 0;
   const treasuryMonthlyStart = startValue > 0 ? (startValue * benchmarks.treasury) / 100 / 12 : 0;
   const highYieldMonthlyStart = startValue > 0 ? (startValue * benchmarks.highYield) / 100 / 12 : 0;
   const bankMonthlyStart = startValue > 0 ? (startValue * benchmarks.bank) / 100 / 12 : 0;
 
-  const assetMonthlyEnd = (assetData[months].portfolio * effectiveYield) / 100 / 12;
+  const assetMonthlyEnd = (assetData[months].portfolio * yieldForProjection) / 100 / 12;
   const treasuryMonthlyEnd = (treasuryData[months].portfolio * benchmarks.treasury) / 100 / 12;
   const highYieldMonthlyEnd = (highYieldData[months].portfolio * benchmarks.highYield) / 100 / 12;
   const bankMonthlyEnd = (bankData[months].portfolio * benchmarks.bank) / 100 / 12;
@@ -210,6 +223,24 @@ export default function Differentiator({ ticker, liveYield }) {
 
           <div className="space-y-3">
 
+            {/* Yield basis — stated annual yield vs price-adjusted effective yield */}
+            <div className="flex items-center justify-between">
+              <label className="text-xs" style={{ color: 'var(--text-muted)' }}>Yield basis</label>
+              <div className="flex rounded overflow-hidden" style={{ border: '1px solid var(--border)' }}>
+                {[{ key: 'annual', label: 'Annual' }, { key: 'effective', label: 'Effective' }].map(({ key, label }) => (
+                  <button key={key} type="button" onClick={() => update('yieldBasis', key)}
+                    aria-label={key === 'annual' ? 'Compare on the stated annual yield' : 'Compare on the effective yield from your price per share'}
+                    className="px-3 py-1 text-xs font-medium"
+                    style={{
+                      background: form.yieldBasis === key ? 'var(--accent-gold)' : 'var(--bg-card-hover)',
+                      color: form.yieldBasis === key ? 'var(--text-primary)' : 'var(--text-muted)',
+                    }}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Row 1 — 3 columns: Amount/Shares | Price per Share | Annual Yield */}
             <div className="grid grid-cols-3 gap-x-3 gap-y-1">
               {/* label row — grid makes all three cells the same height */}
@@ -235,7 +266,9 @@ export default function Differentiator({ ticker, liveYield }) {
                 <label className="text-xs" style={{ color: 'var(--text-muted)' }}>Price per Share ($)</label>
               </div>
               <div className="flex items-center">
-                <label className="text-xs" style={{ color: 'var(--text-muted)' }}>Annual Yield (%)</label>
+                <label className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                  {form.yieldBasis === 'effective' ? 'Effective Yield (%)' : 'Annual Yield (%)'}
+                </label>
               </div>
 
               {/* input row */}
@@ -263,9 +296,12 @@ export default function Differentiator({ ticker, liveYield }) {
                   style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)', color: 'var(--text-primary)' }} />
               </div>
               <div>
-                <NumericInput value={form.annualYield} step={0.1} min={0}
+                <NumericInput
+                  value={form.yieldBasis === 'effective' ? effectiveYield.toFixed(2) : form.annualYield}
+                  step={0.1} min={0}
                   onChange={val => update('annualYield', val)}
-                  aria-label="Annual yield percentage"
+                  readOnly={form.yieldBasis === 'effective'}
+                  aria-label={form.yieldBasis === 'effective' ? 'Effective yield percentage (calculated from your price)' : 'Annual yield percentage'}
                   className="w-full px-3 py-2 rounded-lg text-sm font-mono-data text-center"
                   style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)', color: 'var(--text-primary)' }} />
               </div>
@@ -303,25 +339,25 @@ export default function Differentiator({ ticker, liveYield }) {
                 className="w-full" style={{ accentColor: 'var(--accent-gold)' }} />
               {ticker === 'STRC' && Number(form.reinvestmentPct) > 0 && (
                 <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
-                  Semi-monthly compounding: {computeAPY(effectiveYield, 24).toFixed(4)}% APY
+                  Semi-monthly compounding: {computeAPY(yieldForProjection, 24).toFixed(4)}% APY
                   <span style={{ color: 'var(--text-muted)' }}>
-                    {' '}(+{((computeAPY(effectiveYield, 24) - computeAPY(effectiveYield, 12)) * 100).toFixed(1)} bps vs monthly)
+                    {' '}(+{((computeAPY(yieldForProjection, 24) - computeAPY(yieldForProjection, 12)) * 100).toFixed(1)} bps vs monthly)
                   </span>
                 </p>
               )}
               {ticker === 'SATA' && Number(form.reinvestmentPct) > 0 && (
                 <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
-                  Daily compounding: {computeAPY(effectiveYield, 250).toFixed(4)}% APY
+                  Daily compounding: {computeAPY(yieldForProjection, 250).toFixed(4)}% APY
                   <span style={{ color: 'var(--text-muted)' }}>
-                    {' '}(+{((computeAPY(effectiveYield, 250) - computeAPY(effectiveYield, 12)) * 100).toFixed(1)} bps vs monthly)
+                    {' '}(+{((computeAPY(yieldForProjection, 250) - computeAPY(yieldForProjection, 12)) * 100).toFixed(1)} bps vs monthly)
                   </span>
                 </p>
               )}
               {ticker === 'BMNP' && Number(form.reinvestmentPct) > 0 && (
                 <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
-                  Weekly compounding: {computeAPY(effectiveYield, 52).toFixed(4)}% APY
+                  Weekly compounding: {computeAPY(yieldForProjection, 52).toFixed(4)}% APY
                   <span style={{ color: 'var(--text-muted)' }}>
-                    {' '}(+{((computeAPY(effectiveYield, 52) - computeAPY(effectiveYield, 12)) * 100).toFixed(1)} bps vs monthly)
+                    {' '}(+{((computeAPY(yieldForProjection, 52) - computeAPY(yieldForProjection, 12)) * 100).toFixed(1)} bps vs monthly)
                   </span>
                 </p>
               )}
@@ -338,8 +374,27 @@ export default function Differentiator({ ticker, liveYield }) {
                 <p className="text-xs" style={{ color: 'var(--accent-gold)' }}>
                   Effective yield on cost: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>
                   {Number(form.pricePerShare) < 100 ? ' ↑' : ' ↓'}
+                  <span style={{ color: 'var(--text-muted)' }}>
+                    {form.yieldBasis === 'effective'
+                      ? ' · driving the comparison'
+                      : ` · comparing on ${Number(form.annualYield).toFixed(2)}% annual`}
+                  </span>
                 </p>
               )}
+            </div>
+          )}
+
+          {form.inputMode !== 'shares' && livePrice && livePrice > 0 && Math.abs(livePrice - 100) > 0.005 && (
+            <div className="mt-3 text-center">
+              <p className="text-xs" style={{ color: 'var(--accent-gold)' }}>
+                Effective yield at live price ${livePrice.toFixed(2)}: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>
+                {livePrice < 100 ? ' ↑' : ' ↓'}
+                <span style={{ color: 'var(--text-muted)' }}>
+                  {form.yieldBasis === 'effective'
+                    ? ' · driving the comparison'
+                    : ` · comparing on ${Number(form.annualYield).toFixed(2)}% annual`}
+                </span>
+              </p>
             </div>
           )}
         </div>

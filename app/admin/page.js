@@ -308,7 +308,7 @@ export default function Admin() {
               </div>
               <div style={{ marginBottom: '12px' }}>
                 <label style={{ display: 'block', color: '#6b7280', fontSize: '12px', marginBottom: '6px' }}>Headline *</label>
-                <input type="text" value={form.headline} onChange={e => setForm(f => ({ ...f, headline: e.target.value }))} placeholder="e.g. BitMine to issue preferred equity stock"
+                <input type="text" value={form.headline} onChange={e => setForm(f => ({ ...f, headline: e.target.value }))} placeholder="e.g. Bitmine to issue preferred equity stock"
                   style={{ width: '100%', background: '#1e2a3a', border: '1px solid #374151', borderRadius: '8px', padding: '10px 12px', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
               </div>
               <div style={{ marginBottom: '12px' }}>

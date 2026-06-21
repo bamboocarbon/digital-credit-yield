@@ -5,21 +5,24 @@ import { usePathname } from 'next/navigation';
 
 export default function SubNav({ ticker }) {
   const pathname = usePathname();
-  const base = `/${ticker.toLowerCase()}`;
+  const lower = ticker.toLowerCase();
+  const q = `?stock=${lower}`;
 
+  // Hub stays per-ticker; the four tools are consolidated single pages that
+  // carry the active stock through the query string.
   const tabs = [
-    { label: 'Hub', href: base },
-    { label: 'Chart', href: `${base}/chart` },
-    { label: 'Growth Projector', href: `${base}/projector`, shortLabel: 'Projector' },
-    { label: 'vs Treasuries', href: `${base}/differentiator` },
-    { label: 'Dividends', href: `${base}/dividends` },
+    { label: 'Hub', href: `/${lower}` },
+    { label: 'Chart', href: `/chart${q}` },
+    { label: 'Growth Projector', href: `/projector${q}`, shortLabel: 'Projector' },
+    { label: 'vs Treasuries', href: `/vs-treasuries${q}` },
+    { label: 'Dividends', href: `/dividends${q}` },
   ];
 
   return (
     <div className="tab-strip flex gap-0.5 mb-6 overflow-x-auto"
       style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0' }}>
       {tabs.map(tab => {
-        const active = pathname === tab.href;
+        const active = pathname === tab.href.split('?')[0];
         return (
           <Link
             key={tab.href}

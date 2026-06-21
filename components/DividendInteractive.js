@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { loadProjectorState } from '@/lib/projectorState';
 import { ASSET_RATES } from '@/lib/constants';
-import { SATA_DAILY_START, getBusinessDaysInMonth, getSataDailyDividend, getSataExpectedPeriodAmount, getSataMonthProgress, isSataDailyDividend } from '@/lib/sataBusinessDays';
+import { SATA_DAILY_START, getBusinessDaysInMonth, getSataDailyDividend, getSataExpectedPeriodAmount, getSataMonthProgress, getSataDailyPaymentsToDate, isSataDailyDividend } from '@/lib/sataBusinessDays';
 import { getBmnpExpectedMonthlyTotal } from '@/lib/bmnpSchedule';
 
 const MONO = { fontFamily: "'Roboto Mono', 'Courier New', monospace" };
@@ -58,7 +58,7 @@ function predictNextDividend(dividends, confirmedDate = null) {
   return { date: nextDate, amount: nextAmount, dateConfirmed: !!confirmedDate };
 }
 
-function SataMonthlyProgress({ monthlyByMonth, dailyByMonth, todayYM, annualRate }) {
+function SataMonthlyProgress({ monthlyByMonth, todayYM, today, annualRate }) {
   const displayMonths = [];
   let [y, m] = [2026, 6];
   const [endY, endM] = todayYM.split('-').map(Number);
@@ -76,11 +76,11 @@ function SataMonthlyProgress({ monthlyByMonth, dailyByMonth, todayYM, annualRate
       <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 sm:gap-3">
         {displayMonths.map(ym => {
           const monthlyPaid = (monthlyByMonth[ym] ?? []).reduce((s, d) => s + d.amount, 0);
-          const dailyArr     = dailyByMonth[ym] ?? [];
-          const dailyPaid    = dailyArr.reduce((s, d) => s + d.amount, 0);
-          const { paid, expected, fillPct } = getSataMonthProgress({ monthlyPaid, dailyPaid, annualRate, yearMonth: ym });
-          const dailyCount = dailyArr.length;
+          // Count business days elapsed (= payments made), not lagging Yahoo events.
+          const dailyCount = getSataDailyPaymentsToDate(ym, today);
           const dailyTotal = getBusinessDaysInMonth(ym) ?? 21;
+          const dailyPaid  = dailyCount * (getSataDailyDividend(annualRate, ym) ?? 0);
+          const { paid, expected, fillPct } = getSataMonthProgress({ monthlyPaid, dailyPaid, annualRate, yearMonth: ym });
           const isCurrentMonth = ym === todayYM;
           const isComplete = fillPct >= 1;
           return (
@@ -166,15 +166,19 @@ export default function DividendInteractive({ ticker }) {
   const sataDailyStats = useMemo(() => {
     if (ticker !== 'SATA') return null;
     const annualRate = ASSET_RATES.SATA;
-    const projectedToday = getSataDailyDividend(annualRate, todayYM);
-    const isProjected = dailyDivs.length === 0;
-    const latest = isProjected
-      ? { date: today, amount: projectedToday ?? 0 }
-      : dailyDivs[dailyDivs.length - 1];
-    const currentMonthPaid = (dailyByMonth[todayYM] ?? []).reduce((s, d) => s + d.amount, 0);
+    const dailyAmt = getSataDailyDividend(annualRate, todayYM) ?? 0;
+    // SATA pays every NYSE business day; Yahoo's feed lags, so base counts and
+    // amounts on business days elapsed (payments made) rather than recorded events.
+    const months = [];
+    let [yy, mm] = [2026, 6];
+    const [eY, eM] = todayYM.split('-').map(Number);
+    while (yy < eY || (yy === eY && mm <= eM)) { months.push(`${yy}-${String(mm).padStart(2, '0')}`); mm++; if (mm > 12) { mm = 1; yy++; } }
+    const paymentsMade     = months.reduce((s, ym) => s + getSataDailyPaymentsToDate(ym, today), 0);
+    const currentMonthDays = getSataDailyPaymentsToDate(todayYM, today);
+    const currentMonthPaid = currentMonthDays * dailyAmt;
     const expectedMonthlyTotal = getSataExpectedPeriodAmount(todayYM, annualRate);
-    return { latest, currentMonthPaid, expectedMonthlyTotal, isProjected };
-  }, [ticker, dailyDivs, dailyByMonth, todayYM, today]);
+    return { paymentsMade, dailyAmt, currentMonthPaid, expectedMonthlyTotal };
+  }, [ticker, todayYM, today]);
 
   const latestMonthly = monthlyDivs.length > 0 ? monthlyDivs[monthlyDivs.length - 1] : null;
   const avgMonthly    = monthlyDivs.length > 0 ? monthlyDivs.reduce((s, d) => s + d.amount, 0) / monthlyDivs.length : 0;
@@ -211,7 +215,12 @@ export default function DividendInteractive({ ticker }) {
         const rangeLimit = chartRange === '12M' ? 12 : chartRange === '24M' ? 24 : Infinity;
         const allMonths  = Object.keys(allByMonth).sort();
         const months     = rangeLimit === Infinity ? allMonths : allMonths.slice(-rangeLimit);
-        const totals     = months.map(ym => allByMonth[ym]);
+        const totals     = months.map(ym => {
+          if (ym < '2026-06') return allByMonth[ym];
+          const monthlyPaid = (monthlyByMonth[ym] ?? []).reduce((s, d) => s + d.amount, 0);
+          const daysPaid = getSataDailyPaymentsToDate(ym, today);
+          return monthlyPaid + daysPaid * (getSataDailyDividend(ASSET_RATES.SATA, ym) ?? 0);
+        });
 
         // A month in progress (paid < expected) shows its real paid total as a solid bar
         // plus a translucent "remaining" segment stacked on top — so it reads as partial
@@ -248,7 +257,7 @@ export default function DividendInteractive({ ticker }) {
                 const ym = months[c.dataIndex];
                 const amount = `$${Number(c.raw).toFixed(4)}/share`;
                 if (ym < '2026-06') return amount;
-                const paid = dailyByMonth[ym]?.length ?? 0;
+                const paid = getSataDailyPaymentsToDate(ym, today);
                 const total = getBusinessDaysInMonth(ym) ?? '?';
                 const exp = expected[c.dataIndex];
                 const suffix = `(${paid}/${total} days)`;
@@ -354,7 +363,7 @@ export default function DividendInteractive({ ticker }) {
     }
     draw();
     return () => { destroyed = true; };
-  }, [dividends, ticker, dailyDivs, monthlyDivs, dailyByMonth, monthlyByMonth, chartRange, todayYM]);
+  }, [dividends, ticker, dailyDivs, monthlyDivs, dailyByMonth, monthlyByMonth, chartRange, todayYM, today]);
 
   if (fetchError) return (
     <div className="p-4 rounded-lg mb-6 text-sm" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', color: '#ef4444' }}>
@@ -374,10 +383,10 @@ export default function DividendInteractive({ ticker }) {
       {inDailyEra ? (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
           {[
-            { label: 'Daily Payments on Record', value: String(dailyDivs.length) },
-            { label: sataDailyStats.isProjected ? "Today's Projected Amount" : 'Latest Daily Amount', value: `$${sataDailyStats.latest.amount.toFixed(6)}`, gold: true },
-            { label: 'This Month Received',      value: `$${sataDailyStats.currentMonthPaid.toFixed(4)}`,  gold: true },
-            { label: 'Expected Monthly Total',   value: `$${sataDailyStats.expectedMonthlyTotal.toFixed(4)}`, gold: true },
+            { label: 'Daily Payments Made',    value: String(sataDailyStats.paymentsMade) },
+            { label: 'Daily Amount',           value: `$${sataDailyStats.dailyAmt.toFixed(6)}`, gold: true },
+            { label: 'This Month So Far',      value: `$${sataDailyStats.currentMonthPaid.toFixed(4)}`,  gold: true },
+            { label: 'Expected Monthly Total', value: `$${sataDailyStats.expectedMonthlyTotal.toFixed(4)}`, gold: true },
           ].map(stat => (
             <div key={stat.label} className="p-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
               <p className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>{stat.label}</p>
@@ -518,8 +527,8 @@ export default function DividendInteractive({ ticker }) {
       {inDailyEra && (
         <SataMonthlyProgress
           monthlyByMonth={monthlyByMonth}
-          dailyByMonth={dailyByMonth}
           todayYM={todayYM}
+          today={today}
           annualRate={ASSET_RATES.SATA}
         />
       )}
@@ -579,9 +588,9 @@ export default function DividendInteractive({ ticker }) {
 
           <div className="sm:hidden space-y-2 mb-6">
             {Object.keys(dailyByMonth).sort().reverse().map(ym => {
-              const paid = dailyByMonth[ym].length;
+              const paid = getSataDailyPaymentsToDate(ym, today);
               const total = getBusinessDaysInMonth(ym) ?? '?';
-              const monthTotal = dailyByMonth[ym].reduce((s, d) => s + d.amount, 0);
+              const monthTotal = paid * (getSataDailyDividend(ASSET_RATES.SATA, ym) ?? 0);
               return (
                 <div key={ym} className="p-3 rounded-lg" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
                   <div className="flex justify-between items-center">
@@ -612,9 +621,9 @@ export default function DividendInteractive({ ticker }) {
               </thead>
               <tbody>
                 {Object.keys(dailyByMonth).sort().reverse().map(ym => {
-                  const paid = dailyByMonth[ym].length;
+                  const paid = getSataDailyPaymentsToDate(ym, today);
                   const total = getBusinessDaysInMonth(ym) ?? '?';
-                  const monthTotal = dailyByMonth[ym].reduce((s, d) => s + d.amount, 0);
+                  const monthTotal = paid * (getSataDailyDividend(ASSET_RATES.SATA, ym) ?? 0);
                   return (
                     <tr key={ym} style={{ borderBottom: '1px solid var(--border)' }}>
                       <td className="py-2 px-3">{ymToLabel(ym)}</td>
