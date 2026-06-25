@@ -7,7 +7,7 @@ import sharp from 'sharp';
 import { Resend } from 'resend';
 import { put } from '@vercel/blob';
 import { blobUrl } from '../lib/blobUrl.js';
-import { generateDailyInsight } from './insightEngine.js';
+import { generateDailyInsight, getDailyTicker } from './insightEngine.js';
 import { generateMp4 } from './generateMp4.js';
 import { NOTO_400 } from './fontData.js';
 import { isNyseMarketDay } from '../lib/marketDays.js';
@@ -295,7 +295,7 @@ async function run() {
   }
 
   console.log('Fetching market data...');
-  const { insight, quotes } = await generateDailyInsight();
+  const { insight, quotes } = await generateDailyInsight(getDailyTicker(0));
 
   console.log(`Building chart (type: ${insight.chartData?.type ?? 'none'})...`);
   const chartImg = await buildChart(insight.chartData);

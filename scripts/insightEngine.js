@@ -86,7 +86,7 @@ function buildInsightPool(quotes, nextDates) {
   const priority = [];
   const byTicker = {};
   for (const t of TICKERS) byTicker[t] = [];
-  const add = (text, path, chartData, ticker) => byTicker[ticker].push({ text, path, chartData });
+  const add = (text, path, chartData, ticker) => byTicker[ticker].push({ text, path, chartData, ticker });
 
   const eYields = {};
   for (const t of TICKERS) {
@@ -111,6 +111,7 @@ function buildInsightPool(quotes, nextDates) {
           text: `💰 ${t} pays its next dividend in ${dayStr} — ~$${perShare.toFixed(3)}/share at ${ey.toFixed(2)}% effective yield.`,
           path: `/${slug}/dividends`,
           chartData: { type: 'price', ticker: t },
+          ticker: t,
         });
       }
     }
@@ -304,7 +305,12 @@ async function saveThoughtHistory(history) {
   } catch { /* non-fatal — history is best-effort */ }
 }
 
-export async function generateDailyInsight() {
+export function getDailyTicker(offset = 0) {
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+  return ['STRC', 'SATA', 'BMNP'][(dayOfYear + offset) % 3];
+}
+
+export async function generateDailyInsight(focusTicker) {
   const [strc, sata, bmnp, strc_nd, sata_nd, bmnp_nd] = await Promise.all([
     getStockQuote('STRC'),
     getStockQuote('SATA'),
@@ -320,9 +326,15 @@ export async function generateDailyInsight() {
   const { priority, normal } = buildInsightPool(quotes, nextDates);
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
 
+  let pool = [...priority, ...normal];
+  if (focusTicker) {
+    const tickerPool = pool.filter(item => item.ticker === focusTicker);
+    if (tickerPool.length > 0) pool = tickerPool;
+  }
+
   // Weight comparison insights towards longer horizons so the video chart shows
   // pronounced compound curves. 1yr → 1 slot, 3yr → 2, 5yr → 3, 10yr/20yr → 4.
-  const weighted = [...priority, ...normal].flatMap(item => {
+  const weighted = pool.flatMap(item => {
     const months = item.chartData?.type === 'comparison' ? (item.chartData.months ?? 12) : 0;
     const reps   = months >= 120 ? 4 : months >= 60 ? 3 : months >= 36 ? 2 : 1;
     return Array(reps).fill(item);
