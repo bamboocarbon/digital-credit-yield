@@ -113,6 +113,13 @@ export default function RootLayout({ children }) {
             strategy="afterInteractive"
           />
         )}
+        {/* Ahrefs Web Analytics (cookieless) */}
+        <Script
+          async
+          src="https://analytics.ahrefs.com/analytics.js"
+          data-key="l8CSokM5avw7elCQq1DfMA"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
