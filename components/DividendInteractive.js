@@ -212,8 +212,19 @@ export default function DividendInteractive({ ticker }) {
           const ym = d.date.slice(0, 7);
           allByMonth[ym] = (allByMonth[ym] ?? 0) + d.amount;
         });
+        // Always include every month of the daily era through today, even if the
+        // fetched/merged dividends feed is missing entries for it — matches the
+        // BMNP branch below, so a gap in the underlying data can't drop a whole
+        // month (or a day within it) off the chart.
+        const monthsSet = new Set(Object.keys(allByMonth));
+        let [y, m] = [2026, 6];
+        const [endY, endM] = todayYM.split('-').map(Number);
+        while (y < endY || (y === endY && m <= endM)) {
+          monthsSet.add(`${y}-${String(m).padStart(2, '0')}`);
+          m++; if (m > 12) { m = 1; y++; }
+        }
         const rangeLimit = chartRange === '12M' ? 12 : chartRange === '24M' ? 24 : Infinity;
-        const allMonths  = Object.keys(allByMonth).sort();
+        const allMonths  = Array.from(monthsSet).sort();
         const months     = rangeLimit === Infinity ? allMonths : allMonths.slice(-rangeLimit);
         const totals     = months.map(ym => {
           if (ym < '2026-06') return allByMonth[ym];

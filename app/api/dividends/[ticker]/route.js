@@ -22,7 +22,7 @@ export async function GET(request, { params }) {
       fetchDividendEvents(upper),
       fetchNextPaymentDate(upper),
     ]);
-    const merged = mergeDividends(stored, live);
+    const merged = mergeDividends(stored, live, upper);
 
     // Best-effort persistence only — production's filesystem is read-only at
     // request time, so this throws (EROFS) on every call there. The merged
