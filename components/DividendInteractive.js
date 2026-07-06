@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { loadProjectorState } from '@/lib/projectorState';
-import { ASSET_RATES } from '@/lib/constants';
+import { ASSET_RATES, PAYMENT_FREQUENCY, STRC_SEMI_MONTHLY_START } from '@/lib/constants';
 import { SATA_DAILY_START, getBusinessDaysInMonth, getSataDailyDividend, getSataExpectedPeriodAmount, getSataMonthProgress, getSataDailyPaymentsToDate, isSataDailyDividend } from '@/lib/sataBusinessDays';
 import { getBmnpExpectedMonthlyTotal } from '@/lib/bmnpSchedule';
 
@@ -37,7 +37,28 @@ function groupByMonth(divs) {
   return groups;
 }
 
-function predictNextDividend(dividends, confirmedDate = null) {
+// Yahoo's `quote.dividendDate` field (surfaced here as apiNextPaymentDate) has been
+// observed returning implausible far-future dates for these newly-listed,
+// non-standard-cadence securities — e.g. it reported STRC's next payment as
+// 2 months out and BMNP's as 9 weekly-periods out. Rather than trust it blindly,
+// sanity-check it against the ticker's own declared payment frequency, and for
+// STRC prefer the company-confirmed semi-monthly transition date we already hold
+// (STRC_SEMI_MONTHLY_START) over Yahoo entirely while that transition is pending.
+function getTrustedConfirmedDate(ticker, apiNextPaymentDate, lastDate, today) {
+  if (ticker === 'STRC' && today < STRC_SEMI_MONTHLY_START && lastDate < STRC_SEMI_MONTHLY_START) {
+    return { date: STRC_SEMI_MONTHLY_START, source: 'schedule' };
+  }
+  if (!apiNextPaymentDate || apiNextPaymentDate <= lastDate) return { date: null, source: null };
+  const freq = PAYMENT_FREQUENCY[ticker];
+  if (freq) {
+    const expectedGapDays = 365 / freq.perYear;
+    const actualGapDays = (new Date(apiNextPaymentDate) - new Date(lastDate)) / 86400000;
+    if (actualGapDays > expectedGapDays * 2.5) return { date: null, source: null };
+  }
+  return { date: apiNextPaymentDate, source: 'yahoo' };
+}
+
+function predictNextDividend(dividends, confirmedDate = null, confirmedSource = null) {
   if (dividends.length < 2) return null;
   const lastDate = dividends[dividends.length - 1].date;
   let nextDate = (confirmedDate && confirmedDate > lastDate) ? confirmedDate : null;
@@ -55,7 +76,7 @@ function predictNextDividend(dividends, confirmedDate = null) {
   for (let i = 1; i < window.length; i++) changes.push(window[i].amount - window[i - 1].amount);
   const avgChange = changes.reduce((s, c) => s + c, 0) / changes.length;
   const nextAmount = parseFloat(Math.max(0, dividends[dividends.length - 1].amount + avgChange).toFixed(4));
-  return { date: nextDate, amount: nextAmount, dateConfirmed: !!confirmedDate };
+  return { date: nextDate, amount: nextAmount, dateConfirmed: !!confirmedDate, dateSource: confirmedDate ? confirmedSource : null };
 }
 
 function SataMonthlyProgress({ monthlyByMonth, todayYM, today, annualRate }) {
@@ -184,10 +205,12 @@ export default function DividendInteractive({ ticker }) {
   const avgMonthly    = monthlyDivs.length > 0 ? monthlyDivs.reduce((s, d) => s + d.amount, 0) / monthlyDivs.length : 0;
   const impliedAnnual = avgMonthly * 12;
 
-  const prediction = useMemo(
-    () => inDailyEra ? null : (monthlyDivs.length >= 2 ? predictNextDividend(monthlyDivs, nextPaymentDate) : null),
-    [inDailyEra, monthlyDivs, nextPaymentDate],
-  );
+  const prediction = useMemo(() => {
+    if (inDailyEra || monthlyDivs.length < 2) return null;
+    const lastDate = monthlyDivs[monthlyDivs.length - 1].date;
+    const trusted = getTrustedConfirmedDate(ticker, nextPaymentDate, lastDate, today);
+    return predictNextDividend(monthlyDivs, trusted.date, trusted.source);
+  }, [inDailyEra, monthlyDivs, nextPaymentDate, ticker, today]);
 
   const predictionOverdue = prediction && prediction.date < today;
   const sharesNum         = parseFloat(shares) || 0;
@@ -472,7 +495,8 @@ export default function DividendInteractive({ ticker }) {
             </div>
           )}
           <p className="text-xs sm:ml-auto" style={{ color: 'var(--text-muted)' }}>
-            {prediction.dateConfirmed ? 'Date confirmed by Yahoo Finance · ' : ''}Amount estimated from {monthlyDivs.length} payment{monthlyDivs.length !== 1 ? 's' : ''} on record
+            {prediction.dateSource === 'schedule' ? 'Date confirmed by the announced dividend schedule · '
+              : prediction.dateConfirmed ? 'Date confirmed by Yahoo Finance · ' : ''}Amount estimated from {monthlyDivs.length} payment{monthlyDivs.length !== 1 ? 's' : ''} on record
           </p>
         </div>
       )}
