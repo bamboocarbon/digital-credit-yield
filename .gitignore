@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Generated preview renders — not source, don't commit
+scripts/daily-email-v2-rocket-race/output/
+scripts/rocket-intro-preview/output/
