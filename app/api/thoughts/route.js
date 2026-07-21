@@ -4,10 +4,9 @@ import { blobUrl } from '@/lib/blobUrl';
 
 export const revalidate = 0;
 
-// Three collections share this route: daily thoughts, weekend thoughts, and
-// quiz posts. Each lives in its own Blob; quiz items additionally carry an
-// `answer`.
-const BLOBS = { thoughts: 'dcy-thoughts.json', weekend: 'dcy-weekend-thoughts.json', quiz: 'dcy-quiz.json' };
+// Two collections share this route: daily thoughts and quiz posts. Each lives
+// in its own Blob; quiz items additionally carry an `answer`.
+const BLOBS = { thoughts: 'dcy-thoughts.json', quiz: 'dcy-quiz.json' };
 function blobName(kind) { return BLOBS[kind] || BLOBS.thoughts; }
 
 async function loadItems(kind) {
