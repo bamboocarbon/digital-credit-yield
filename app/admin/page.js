@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react';
 
-const NEWS = 'news', THOUGHTS = 'thoughts', QUIZ = 'quiz';
+const NEWS = 'news', THOUGHTS = 'thoughts', WEEKEND = 'weekend', QUIZ = 'quiz';
 
 const SECTIONS = [
   { key: NEWS,     label: 'News' },
   { key: THOUGHTS, label: 'Thought of the Day' },
+  { key: WEEKEND,  label: 'Weekend Thought' },
   { key: QUIZ,     label: 'Quiz' },
 ];
 
@@ -56,9 +57,10 @@ export default function Admin() {
   const [bulkBusy, setBulkBusy]   = useState(false);
   const [bulkResult, setBulkResult] = useState('');
 
-  const isNews  = section === NEWS;
-  const isQuiz  = section === QUIZ;
-  const noun    = isNews ? 'News Item' : isQuiz ? 'Quiz Post' : 'Thought';
+  const isNews    = section === NEWS;
+  const isQuiz    = section === QUIZ;
+  const isWeekend = section === WEEKEND;
+  const noun      = isNews ? 'News Item' : isQuiz ? 'Quiz Post' : isWeekend ? 'Weekend Thought' : 'Thought';
 
   useEffect(() => {
     const stored = sessionStorage.getItem('news_admin_pw');
@@ -404,7 +406,7 @@ export default function Admin() {
 
         {/* Existing items */}
         <h2 style={{ color: '#9ca3af', fontSize: '14px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '16px' }}>
-          Live {isNews ? 'News' : isQuiz ? 'Quiz Posts' : 'Thoughts'} ({items.length})
+          Live {isNews ? 'News' : isQuiz ? 'Quiz Posts' : isWeekend ? 'Weekend Thoughts' : 'Thoughts'} ({items.length})
         </h2>
 
         {items.length === 0 && <p style={{ color: '#6b7280', fontSize: '14px' }}>Nothing here yet.</p>}
