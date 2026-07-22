@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ASSET_RATES, PAYMENT_FREQUENCY, PRE_LISTING_TICKERS } from '@/lib/constants';
+import { ASSET_RATES, PAYMENT_FREQUENCY, PRE_LISTING_TICKERS, DIVIDEND_RESERVE } from '@/lib/constants';
 
 export default function AssetHubLive({ ticker }) {
   const [data, setData]   = useState(null);
@@ -22,6 +22,7 @@ export default function AssetHubLive({ ticker }) {
     : ASSET_RATES[ticker];
   const freq = PAYMENT_FREQUENCY[ticker] ?? { label: 'Monthly', perYear: 12, perPeriod: 'month' };
   const isPreListing = PRE_LISTING_TICKERS.includes(ticker);
+  const reserve = DIVIDEND_RESERVE[ticker];
 
   return (
     <>
@@ -54,7 +55,7 @@ export default function AssetHubLive({ ticker }) {
       </div>
 
       {/* Data cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div className={`grid grid-cols-1 sm:grid-cols-2 ${reserve ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-4 mb-8`}>
         <div className="card p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>Annual Dividend Rate</p>
           <p className="font-mono-data text-2xl font-bold" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: 'var(--accent-gold)' }}>
@@ -64,6 +65,16 @@ export default function AssetHubLive({ ticker }) {
             {yieldIsLive ? 'Trailing 12-month (Yahoo Finance)' : 'Announced rate (issuer disclosed)'}
           </p>
         </div>
+
+        {reserve && (
+          <div className="card p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+            <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>{reserve.label}</p>
+            <p className="font-mono-data text-2xl font-bold" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: 'var(--accent-gold)' }}>
+              {reserve.display}
+            </p>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{reserve.note}</p>
+          </div>
+        )}
 
         <div className="card p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>Effective Yield at Current Price</p>
