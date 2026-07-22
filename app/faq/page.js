@@ -37,7 +37,7 @@ const faqs = [
   },
   {
     q: 'What is the difference between the annual rate and the effective yield?',
-    a: 'The annual rate (for example 11.50% for STRC) is set against the $100 par value. The effective yield is what you actually earn based on the price you pay. Buy at $99 and your effective yield is slightly higher than the stated rate; buy at $101 and it is slightly lower. The live charts on this site track both in real time.',
+    a: 'The annual rate (for example 12.00% for STRC) is set against the $100 par value. The effective yield is what you actually earn based on the price you pay. Buy at $99 and your effective yield is slightly higher than the stated rate; buy at $101 and it is slightly lower. The live charts on this site track both in real time.',
     link: { href: '/blog/what-is-effective-yield', label: 'Effective yield explained' },
   },
   {

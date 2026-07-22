@@ -80,7 +80,7 @@ export default function AboutPage() {
       <h2 className="text-xl font-semibold mb-4">What I Track</h2>
       <div className="space-y-4 mb-8">
         {[
-          { ticker: 'STRC', name: "Strategy's Perpetual Preferred Stock", desc: "Pays 11.50% annual dividends in semi-monthly cash payments. Dividend rate adjusts monthly to maintain trading near its $100 par value." },
+          { ticker: 'STRC', name: "Strategy's Perpetual Preferred Stock", desc: "Pays 12.00% annual dividends in semi-monthly cash payments. Dividend rate adjusts to maintain trading near its $100 par value." },
           { ticker: 'SATA', name: "Strive's Preferred Equity Instrument", desc: "Pays 13.00% annualised in daily cash dividends. Targets a $99–$101 trading range, backed by 18+ months of cash reserves and over 19,000 Bitcoin." },
           { ticker: 'BMNP', name: "Bitmine's Preferred Equity Instrument", desc: "Pays 9.50% annualised in weekly cash dividends. Bitmine's Ethereum treasury preferred equity instrument, funded by ETH staking rewards via the MAVAN validator network. Began trading on the NYSE June 16, 2026." },
         ].map(asset => (

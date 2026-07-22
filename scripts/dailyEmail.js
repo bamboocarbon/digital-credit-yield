@@ -322,7 +322,7 @@ async function run() {
       changeLine = `<div style="font-size:11px;margin-top:2px;color:${up ? '#4ade80' : '#ef4444'};">${up ? '▲' : '▼'} ${Math.abs(q.changePercent ?? 0).toFixed(2)}%</div>`;
       yieldLine  = effYield != null ? `<div style="font-size:11px;margin-top:2px;color:#8a9ab5;">${effYield.toFixed(2)}% yield</div>` : '';
     } else {
-      const rates = { STRC: '11.5%', SATA: '13.0%', BMNP: '9.5%' };
+      const rates = { STRC: '12.0%', SATA: '13.0%', BMNP: '9.5%' };
       priceLine  = `<div style="font-size:11px;font-weight:600;color:#8a9ab5;margin-top:3px;">Listing soon</div>`;
       changeLine = `<div style="font-size:11px;margin-top:2px;color:#8a9ab5;">${rates[t] || ''} fixed</div>`;
       yieldLine  = '';

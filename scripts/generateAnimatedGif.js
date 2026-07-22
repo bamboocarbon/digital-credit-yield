@@ -248,7 +248,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
         ctx.font = '11px Arial, sans-serif';
         ctx.fillText(`${up ? '▲' : '▼'} ${Math.abs(q.changePercent ?? 0).toFixed(2)}%`, innerX, SN_Y0 + 20 + lineGap * 2);
       } else {
-        const RATES = { STRC: '11.5%', SATA: '13.0%', BMNP: '9.5%' };
+        const RATES = { STRC: '12.0%', SATA: '13.0%', BMNP: '9.5%' };
         ctx.fillStyle = '#8a9ab5';
         ctx.font = '11px Arial, sans-serif';
         ctx.fillText('Listing soon', innerX, SN_Y0 + 20 + lineGap);

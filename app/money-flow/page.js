@@ -55,7 +55,7 @@ export default function MoneyFlowPage() {
                 style={{ color: '#4ade80' }}>Strategy Preferred</span>
             </div>
           </div>
-          <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Jul 2025 · 11.50% · $4.2B ATM programme</p>
+          <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Jul 2025 · 12.00% · $4.2B ATM programme</p>
           <STRCMoneyFlowChart />
         </div>
 

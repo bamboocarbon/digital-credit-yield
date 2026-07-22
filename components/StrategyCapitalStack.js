@@ -21,7 +21,7 @@ const tiers = [
   },
   {
     label: 'STRC',
-    sub: '11.50% variable rate · Monthly payments · Second most senior preferred',
+    sub: '12.00% variable rate · Semi-monthly payments · Second most senior preferred',
     tag: 'PREFERRED',
     tagColor: '#c8893a',
     bg: 'rgba(200,137,58,0.08)',

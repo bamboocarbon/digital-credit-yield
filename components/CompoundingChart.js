@@ -41,8 +41,8 @@ export default function CompoundingChart() {
               pointHoverRadius: 5,
             },
             {
-              label: 'STRC Reinvested (11.50%)',
-              data: buildData(0.115, years, true),
+              label: 'STRC Reinvested (12.00%)',
+              data: buildData(0.12, years, true),
               borderColor: '#15803d',
               fill: false,
               tension: 0.4,
@@ -63,7 +63,7 @@ export default function CompoundingChart() {
             },
             {
               label: 'STRC Cash Out',
-              data: buildData(0.115, years, false),
+              data: buildData(0.12, years, false),
               borderColor: '#15803d',
               borderDash: [6, 4],
               fill: false,

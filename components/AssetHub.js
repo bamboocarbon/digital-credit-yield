@@ -1,9 +1,23 @@
 import Link from 'next/link';
 import { STRIVE_BTC_HOLDINGS } from '@/lib/constants';
+import { PENDING_RATE_CHANGES } from '@/lib/pendingRateChanges';
 import SubNav from '@/components/SubNav';
 import GoogleAd from '@/components/GoogleAd';
 import AadsAd from '@/components/AadsAd';
 import AssetHubLive from '@/components/AssetHubLive';
+
+function PendingRateNote({ ticker }) {
+  const pending = PENDING_RATE_CHANGES[ticker];
+  if (!pending) return null;
+  const effectiveDate = new Date(pending.effectiveFrom + 'T00:00:00Z')
+    .toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  return (
+    <div className="text-sm mb-4 px-4 py-2.5 rounded-lg" style={{ background: 'var(--accent-gold-dim, rgba(212,175,55,0.1))', border: '1px solid var(--accent-gold)', color: 'var(--text)' }}>
+      Rate rising to <strong>{pending.newRate.toFixed(2)}%</strong> from {effectiveDate} (announced {new Date(pending.announcedDate + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}).{' '}
+      {pending.source && <a href={pending.source} target="_blank" rel="noopener noreferrer" className="underline">Source</a>}
+    </div>
+  );
+}
 
 const TOOLS = {
   STRC: [
@@ -77,7 +91,7 @@ const TOOLS = {
 const DESCRIPTIONS = {
   STRC: (
     <div className="space-y-3">
-      <p>STRC is Strategy&apos;s perpetual preferred stock, listed on the Nasdaq. It pays an 11.50% annual dividend distributed semi-monthly in cash (~$0.479 per share twice a month), with the rate adjusted monthly to encourage trading close to its $100 par value, which has historically kept its day-to-day price movement small. Semi-monthly payments approved by shareholders on 8 June 2026; first semi-monthly payment on 15 July 2026. STRC is available on most major brokerage platforms.</p>
+      <p>STRC is Strategy&apos;s perpetual preferred stock, listed on the Nasdaq. It pays a 12.00% annual dividend distributed semi-monthly in cash (~$0.50 per share twice a month), with the rate adjusted to encourage trading close to its $100 par value, which has historically kept its day-to-day price movement small. Semi-monthly payments approved by shareholders on 8 June 2026; first semi-monthly payment on 15 July 2026. STRC is available on most major brokerage platforms.</p>
       <p>As preferred stock, STRC sits below debt but above common equity in Strategy&apos;s capital structure. In the event of liquidation, preferred stockholders are paid before common shareholders, giving STRC a degree of protection that pure equity does not offer. Strategy&apos;s holdings of over 880,000 Bitcoin provide a substantial asset base underpinning the instrument.</p>
       <p>Strategy (formerly MicroStrategy) is a Nasdaq-listed business intelligence and Bitcoin treasury company, founded in 1989. Under executive chairman Michael Saylor — one of the world&apos;s most prominent Bitcoin advocates — Strategy has made Bitcoin accumulation central to its corporate model, positioning itself as the world&apos;s largest corporate holder of Bitcoin.</p>
       <p>The one number I watch on STRC is how close it&apos;s trading to $100 — buy near or below par and the effective yield works in your favour; pay a premium and your real yield comes in under the headline rate.</p>
@@ -121,6 +135,8 @@ export default function AssetHub({ ticker, name }) {
       <h1 className="text-2xl sm:text-3xl font-bold mb-2">
         {ticker} — {name}
       </h1>
+
+      <PendingRateNote ticker={ticker} />
 
       {/* Live price + data cards (client-rendered) */}
       <AssetHubLive ticker={ticker} />
