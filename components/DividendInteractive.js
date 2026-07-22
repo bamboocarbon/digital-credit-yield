@@ -470,14 +470,14 @@ export default function DividendInteractive({ ticker }) {
             { label: 'Daily Payments Made',    value: String(sataDailyStats.paymentsMade) },
             { label: 'Daily Amount',           value: `$${sataDailyStats.dailyAmt.toFixed(6)}`, gold: true },
             { label: 'This Month So Far',      value: `$${sataDailyStats.currentMonthPaid.toFixed(4)}`,  gold: true },
-            { label: 'Current Annual Rate',    value: `${ASSET_RATES.SATA.toFixed(2)}%`,        gold: true },
             { label: 'Expected Monthly Total', value: `$${sataDailyStats.expectedMonthlyTotal.toFixed(4)}`, gold: true },
+            { label: 'Current Annual Rate',    value: `${ASSET_RATES.SATA.toFixed(2)}%`,        gold: true },
           ] : [
             { label: 'Payments on Record',     value: String(monthlyDivs.length) },
             { label: 'Latest Per Share',       value: `$${latestMonthly.amount.toFixed(4)}`,    gold: true },
             { label: 'This Month So Far',      value: `$${monthToDateTotal.toFixed(4)}`,        gold: true },
-            { label: 'Current Annual Rate',    value: `${impliedAnnual.toFixed(2)}%`,           gold: true },
             { label: 'Expected Monthly Total', value: `$${expectedMonthlyTotal.toFixed(4)}`,    gold: true },
+            { label: 'Current Annual Rate',    value: `${impliedAnnual.toFixed(2)}%`,           gold: true },
           ]).map(stat => (
             <div key={stat.label} className="p-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
               <p className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>{stat.label}</p>
@@ -503,12 +503,6 @@ export default function DividendInteractive({ ticker }) {
             <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>Daily amount (this month)</p>
             <p className="text-lg font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>
               ${getSataDailyDividend(ASSET_RATES.SATA, todayYM)?.toFixed(6) ?? '—'}
-            </p>
-          </div>
-          <div>
-            <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>Expected this month</p>
-            <p className="text-lg font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>
-              ${getSataExpectedPeriodAmount(todayYM, ASSET_RATES.SATA).toFixed(4)}
             </p>
           </div>
           <p className="text-xs sm:ml-auto" style={{ color: 'var(--text-muted)' }}>
