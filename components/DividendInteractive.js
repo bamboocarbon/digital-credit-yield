@@ -312,7 +312,7 @@ export default function DividendInteractive({ ticker }) {
               }}},
             },
             scales: {
-              x: { stacked: true, ticks: { color: '#6b7280', maxTicksLimit: 12, font: { size: 10 } }, grid: { color: '#1f2937' } },
+              x: { stacked: true, ticks: { color: '#6b7280', autoSkip: false, font: { size: 10 } }, grid: { color: '#1f2937' } },
               y: { stacked: true, ticks: { color: '#6b7280', callback: v => `$${Number(v).toFixed(2)}` }, grid: { color: '#1f2937' } },
             },
           },
@@ -364,7 +364,7 @@ export default function DividendInteractive({ ticker }) {
               }}},
             },
             scales: {
-              x: { stacked: true, ticks: { color: '#6b7280', maxTicksLimit: 12, font: { size: 10 } }, grid: { color: '#1f2937' } },
+              x: { stacked: true, ticks: { color: '#6b7280', autoSkip: false, font: { size: 10 } }, grid: { color: '#1f2937' } },
               y: { stacked: true, ticks: { color: '#6b7280', callback: v => `$${Number(v).toFixed(2)}` }, grid: { color: '#1f2937' } },
             },
           },
@@ -401,7 +401,7 @@ export default function DividendInteractive({ ticker }) {
               }}},
             },
             scales: {
-              x: { ticks: { color: '#6b7280', maxTicksLimit: 12, font: { size: 10 } }, grid: { color: '#1f2937' } },
+              x: { ticks: { color: '#6b7280', autoSkip: false, font: { size: 10 } }, grid: { color: '#1f2937' } },
               y: { ticks: { color: '#6b7280', callback: v => `$${Number(v).toFixed(2)}` }, grid: { color: '#1f2937' } },
             },
           },
