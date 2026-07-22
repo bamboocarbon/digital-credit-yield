@@ -465,7 +465,7 @@ export default function DividendInteractive({ ticker }) {
       {/* Stats — same five slots on every ticker's page: payments made, latest/daily amount,
           month-to-date, current annual rate, expected monthly total. */}
       {(inDailyEra || monthlyDivs.length > 0) && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4 mb-6">
           {(inDailyEra ? [
             { label: 'Daily Payments Made',    value: String(sataDailyStats.paymentsMade) },
             { label: 'Daily Amount',           value: `$${sataDailyStats.dailyAmt.toFixed(6)}`, gold: true },
