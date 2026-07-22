@@ -58,7 +58,7 @@ function getTrustedConfirmedDate(ticker, apiNextPaymentDate, lastDate, today) {
   return { date: apiNextPaymentDate, source: 'yahoo' };
 }
 
-function predictNextDividend(dividends, confirmedDate = null, confirmedSource = null) {
+function predictNextDividend(dividends, confirmedDate = null, confirmedSource = null, fixedAmount = null) {
   if (dividends.length < 2) return null;
   const lastDate = dividends[dividends.length - 1].date;
   let nextDate = (confirmedDate && confirmedDate > lastDate) ? confirmedDate : null;
@@ -71,11 +71,19 @@ function predictNextDividend(dividends, confirmedDate = null, confirmedSource = 
     const last = new Date(dividends[dividends.length - 1].date + 'T00:00:00Z');
     nextDate = new Date(last.getTime() + avgGap * 86400000).toISOString().split('T')[0];
   }
-  const window = dividends.slice(-4);
-  const changes = [];
-  for (let i = 1; i < window.length; i++) changes.push(window[i].amount - window[i - 1].amount);
-  const avgChange = changes.reduce((s, c) => s + c, 0) / changes.length;
-  const nextAmount = parseFloat(Math.max(0, dividends[dividends.length - 1].amount + avgChange).toFixed(4));
+  // Prefer the known per-payment amount (par x published rate / payments per year) over a
+  // trend guess — the trend method reads a payment-frequency change (e.g. STRC's move to
+  // semi-monthly) as a steep decline, when the rate and per-share economics haven't moved at all.
+  let nextAmount;
+  if (fixedAmount != null) {
+    nextAmount = fixedAmount;
+  } else {
+    const window = dividends.slice(-4);
+    const changes = [];
+    for (let i = 1; i < window.length; i++) changes.push(window[i].amount - window[i - 1].amount);
+    const avgChange = changes.reduce((s, c) => s + c, 0) / changes.length;
+    nextAmount = parseFloat(Math.max(0, dividends[dividends.length - 1].amount + avgChange).toFixed(4));
+  }
   return { date: nextDate, amount: nextAmount, dateConfirmed: !!confirmedDate, dateSource: confirmedDate ? confirmedSource : null };
 }
 
@@ -203,13 +211,18 @@ export default function DividendInteractive({ ticker }) {
 
   const latestMonthly = monthlyDivs.length > 0 ? monthlyDivs[monthlyDivs.length - 1] : null;
   const avgMonthly    = monthlyDivs.length > 0 ? monthlyDivs.reduce((s, d) => s + d.amount, 0) / monthlyDivs.length : 0;
-  const impliedAnnual = avgMonthly * 12;
+  // The published rate (ASSET_RATES), not a trailing average of $ amounts — averaging raw
+  // per-share history breaks the moment payment frequency changes (e.g. STRC's move to
+  // semi-monthly halved the per-payment amount without changing the annual rate at all).
+  const impliedAnnual = ASSET_RATES[ticker] ?? avgMonthly * 12;
 
   const prediction = useMemo(() => {
     if (inDailyEra || monthlyDivs.length < 2) return null;
     const lastDate = monthlyDivs[monthlyDivs.length - 1].date;
     const trusted = getTrustedConfirmedDate(ticker, nextPaymentDate, lastDate, today);
-    return predictNextDividend(monthlyDivs, trusted.date, trusted.source);
+    const freq = PAYMENT_FREQUENCY[ticker];
+    const fixedAmount = freq ? parseFloat((ASSET_RATES[ticker] / freq.perYear).toFixed(4)) : null;
+    return predictNextDividend(monthlyDivs, trusted.date, trusted.source, fixedAmount);
   }, [inDailyEra, monthlyDivs, nextPaymentDate, ticker, today]);
 
   const predictionOverdue = prediction && prediction.date < today;
@@ -434,7 +447,7 @@ export default function DividendInteractive({ ticker }) {
             { label: 'Payments on Record', value: String(monthlyDivs.length) },
             { label: 'Latest Per Share',   value: `$${latestMonthly.amount.toFixed(4)}`, gold: true },
             { label: 'Avg Per Payment',    value: `$${avgMonthly.toFixed(4)}`,            gold: true },
-            { label: 'Est. Annual Rate',   value: `${impliedAnnual.toFixed(2)}%`,         gold: true },
+            { label: 'Current Annual Rate', value: `${impliedAnnual.toFixed(2)}%`,        gold: true },
           ].map(stat => (
             <div key={stat.label} className="p-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
               <p className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>{stat.label}</p>
@@ -542,7 +555,7 @@ export default function DividendInteractive({ ticker }) {
                     <p className="text-lg font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>{fmtMoney(incomePerPayment)}</p>
                   </div>
                   <div>
-                    <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>Est. annual</p>
+                    <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>Annual income</p>
                     <p className="text-lg font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>{fmtMoney(incomeAnnual)}</p>
                   </div>
                   {prediction && (
