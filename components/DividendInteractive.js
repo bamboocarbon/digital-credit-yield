@@ -684,10 +684,6 @@ export default function DividendInteractive({ ticker }) {
               </tbody>
             </table>
           </div>
-
-          {monthlyDivs.length > 0 && (
-            <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--text-muted)' }}>Monthly History (pre June 16, 2026)</h3>
-          )}
         </div>
       )}
     </>
