@@ -238,6 +238,16 @@ export default function DividendInteractive({ ticker }) {
   // per-share history breaks the moment payment frequency changes (e.g. STRC's move to
   // semi-monthly halved the per-payment amount without changing the annual rate at all).
   const impliedAnnual = ASSET_RATES[ticker] ?? avgMonthly * 12;
+  // Mirrors SATA's "This Month So Far" / "Expected Monthly Total" so all three dividend
+  // pages show the same set of stats. STRC pays the same total each month regardless of
+  // the semi-monthly split (rate ÷ 12); BMNP's weekly cadence varies by how many paydays
+  // land in the month, so it uses the same schedule-aware helper as the ghosted chart.
+  const monthToDateTotal = monthlyDivs
+    .filter(d => d.date.slice(0, 7) === todayYM)
+    .reduce((s, d) => s + d.amount, 0);
+  const expectedMonthlyTotal = ticker === 'BMNP'
+    ? getBmnpExpectedMonthlyTotal(todayYM, ASSET_RATES.BMNP)
+    : impliedAnnual / 12;
 
   const prediction = useMemo(() => {
     if (inDailyEra || monthlyDivs.length < 2) return null;
@@ -452,29 +462,23 @@ export default function DividendInteractive({ ticker }) {
 
   return (
     <>
-      {/* Stats */}
-      {inDailyEra ? (
+      {/* Stats — same five slots on every ticker's page: payments made, latest/daily amount,
+          month-to-date, current annual rate, expected monthly total. */}
+      {(inDailyEra || monthlyDivs.length > 0) && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-          {[
+          {(inDailyEra ? [
             { label: 'Daily Payments Made',    value: String(sataDailyStats.paymentsMade) },
             { label: 'Daily Amount',           value: `$${sataDailyStats.dailyAmt.toFixed(6)}`, gold: true },
             { label: 'This Month So Far',      value: `$${sataDailyStats.currentMonthPaid.toFixed(4)}`,  gold: true },
+            { label: 'Current Annual Rate',    value: `${ASSET_RATES.SATA.toFixed(2)}%`,        gold: true },
             { label: 'Expected Monthly Total', value: `$${sataDailyStats.expectedMonthlyTotal.toFixed(4)}`, gold: true },
-          ].map(stat => (
-            <div key={stat.label} className="p-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-              <p className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>{stat.label}</p>
-              <p className="text-xl font-medium" style={{ ...MONO, color: stat.gold ? 'var(--accent-gold)' : 'var(--text-primary)' }}>{stat.value}</p>
-            </div>
-          ))}
-        </div>
-      ) : monthlyDivs.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-          {[
-            { label: 'Payments on Record', value: String(monthlyDivs.length) },
-            { label: 'Latest Per Share',   value: `$${latestMonthly.amount.toFixed(4)}`, gold: true },
-            { label: 'Avg Per Payment',    value: `$${avgMonthly.toFixed(4)}`,            gold: true },
-            { label: 'Current Annual Rate', value: `${impliedAnnual.toFixed(2)}%`,        gold: true },
-          ].map(stat => (
+          ] : [
+            { label: 'Payments on Record',     value: String(monthlyDivs.length) },
+            { label: 'Latest Per Share',       value: `$${latestMonthly.amount.toFixed(4)}`,    gold: true },
+            { label: 'This Month So Far',      value: `$${monthToDateTotal.toFixed(4)}`,        gold: true },
+            { label: 'Current Annual Rate',    value: `${impliedAnnual.toFixed(2)}%`,           gold: true },
+            { label: 'Expected Monthly Total', value: `$${expectedMonthlyTotal.toFixed(4)}`,    gold: true },
+          ]).map(stat => (
             <div key={stat.label} className="p-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
               <p className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>{stat.label}</p>
               <p className="text-xl font-medium" style={{ ...MONO, color: stat.gold ? 'var(--accent-gold)' : 'var(--text-primary)' }}>
@@ -485,7 +489,7 @@ export default function DividendInteractive({ ticker }) {
             </div>
           ))}
         </div>
-      ) : null}
+      )}
 
       {/* SATA daily era banner */}
       {inDailyEra && (
