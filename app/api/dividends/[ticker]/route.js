@@ -17,6 +17,17 @@ export async function GET(request, { params }) {
     // continue with empty stored data
   }
 
+  // BMNP: Yahoo's dividend feed for this newly-listed, non-standard-cadence security has been
+  // found unreliable — it reports dates that match neither Bitmine's record nor payment dates,
+  // and amounts that don't correspond to any dividend Bitmine has actually declared (verified
+  // against its own 8-K filings). Serve the manually-verified stored record directly rather than
+  // merging in bad data on every request.
+  if (upper === 'BMNP') {
+    return NextResponse.json({ history: stored, nextPaymentDate: null }, {
+      headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=300' },
+    });
+  }
+
   try {
     const [live, nextPaymentDate] = await Promise.all([
       fetchDividendEvents(upper),
