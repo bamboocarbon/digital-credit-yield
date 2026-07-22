@@ -1,28 +1,20 @@
-'use client';
+import Link from 'next/link';
+import { SELECTABLE_TICKERS, TICKER_COLOUR, COMPANY } from '@/components/StockSelector';
 
-import { BMNP_ENABLED } from '@/lib/constants';
-
-// Brand colours — must stay in sync with Differentiator.js, insightEngine.js and generateMp4.js
-export const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047' };
-export const COMPANY = { STRC: 'Strategy', SATA: 'Strive', BMNP: 'Bitmine' };
-
-const ALL = ['STRC', 'SATA', 'BMNP'];
-
-// Visible tickers respect the BMNP feature flag.
-export const SELECTABLE_TICKERS = ALL.filter(t => t !== 'BMNP' || BMNP_ENABLED);
-
-export default function StockSelector({ selected, onSelect }) {
+// Same look as StockSelector, but for the per-ticker hub pages (/strc, /sata, /bmnp),
+// which are separate routes with their own SEO metadata rather than a single page
+// driven by client state — so this navigates via <Link> instead of an onSelect callback.
+export default function HubStockSelector({ selected }) {
   return (
     <div className="flex flex-wrap gap-2 mb-6" role="group" aria-label="Choose a stock">
       {SELECTABLE_TICKERS.map(ticker => {
         const active = ticker === selected;
         const colour = TICKER_COLOUR[ticker];
         return (
-          <button
+          <Link
             key={ticker}
-            type="button"
-            onClick={() => onSelect(ticker)}
-            aria-pressed={active}
+            href={`/${ticker.toLowerCase()}`}
+            aria-current={active ? 'page' : undefined}
             className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors min-h-[44px] flex items-center gap-2"
             style={{
               background: active ? 'var(--bg-card-hover)' : 'var(--bg-card)',
@@ -35,7 +27,7 @@ export default function StockSelector({ selected, onSelect }) {
             <span className="hidden sm:inline font-normal" style={{ color: 'var(--text-muted)' }}>
               {COMPANY[ticker]}
             </span>
-          </button>
+          </Link>
         );
       })}
     </div>

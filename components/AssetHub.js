@@ -5,6 +5,7 @@ import SubNav from '@/components/SubNav';
 import GoogleAd from '@/components/GoogleAd';
 import AadsAd from '@/components/AadsAd';
 import AssetHubLive from '@/components/AssetHubLive';
+import HubStockSelector from '@/components/HubStockSelector';
 
 function PendingRateNote({ ticker }) {
   const pending = PENDING_RATE_CHANGES[ticker];
@@ -135,6 +136,8 @@ export default function AssetHub({ ticker, name }) {
       <h1 className="text-2xl sm:text-3xl font-bold mb-2">
         {ticker} — {name}
       </h1>
+
+      <HubStockSelector selected={ticker} />
 
       <PendingRateNote ticker={ticker} />
 
