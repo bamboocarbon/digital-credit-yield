@@ -58,6 +58,29 @@ function getTrustedConfirmedDate(ticker, apiNextPaymentDate, lastDate, today) {
   return { date: apiNextPaymentDate, source: 'yahoo' };
 }
 
+// Our dividend history is keyed by record date (confirmed against Strategy's own
+// published table), but Yahoo's `dividendDate` field reports a payout date instead —
+// and has been seen landing a full extra period out (e.g. 31 days from STRC's last
+// record when the true next record is 15-16 days out), which the sanity check above
+// doesn't catch since it's still within its multiplier. Where the record-date cadence
+// is exactly known, compute it directly instead of trusting either Yahoo or a trailing
+// average (which gets skewed for a few periods right after a cadence change).
+function nextKnownRecordDate(ticker, lastDateStr) {
+  const last = new Date(lastDateStr + 'T00:00:00Z');
+  if (ticker === 'STRC' && lastDateStr >= STRC_SEMI_MONTHLY_START) {
+    // Semi-monthly record dates alternate between the 15th and the last calendar day of the month.
+    if (last.getUTCDate() === 15) {
+      const lastDayOfMonth = new Date(Date.UTC(last.getUTCFullYear(), last.getUTCMonth() + 1, 0)).getUTCDate();
+      return new Date(Date.UTC(last.getUTCFullYear(), last.getUTCMonth(), lastDayOfMonth)).toISOString().split('T')[0];
+    }
+    return new Date(Date.UTC(last.getUTCFullYear(), last.getUTCMonth() + 1, 15)).toISOString().split('T')[0];
+  }
+  if (ticker === 'BMNP') {
+    return new Date(last.getTime() + 7 * 86400000).toISOString().split('T')[0];
+  }
+  return null;
+}
+
 function predictNextDividend(dividends, confirmedDate = null, confirmedSource = null, fixedAmount = null) {
   if (dividends.length < 2) return null;
   const lastDate = dividends[dividends.length - 1].date;
@@ -219,7 +242,10 @@ export default function DividendInteractive({ ticker }) {
   const prediction = useMemo(() => {
     if (inDailyEra || monthlyDivs.length < 2) return null;
     const lastDate = monthlyDivs[monthlyDivs.length - 1].date;
-    const trusted = getTrustedConfirmedDate(ticker, nextPaymentDate, lastDate, today);
+    const knownDate = nextKnownRecordDate(ticker, lastDate);
+    const trusted = knownDate
+      ? { date: knownDate, source: 'schedule' }
+      : getTrustedConfirmedDate(ticker, nextPaymentDate, lastDate, today);
     const freq = PAYMENT_FREQUENCY[ticker];
     const fixedAmount = freq ? parseFloat((ASSET_RATES[ticker] / freq.perYear).toFixed(4)) : null;
     return predictNextDividend(monthlyDivs, trusted.date, trusted.source, fixedAmount);
