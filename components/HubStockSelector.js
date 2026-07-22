@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { SELECTABLE_TICKERS, TICKER_COLOUR, COMPANY } from '@/components/StockSelector';
+import { SELECTABLE_TICKERS, TICKER_COLOUR, COMPANY } from '@/lib/tickerDisplay';
 
 // Same look as StockSelector, but for the per-ticker hub pages (/strc, /sata, /bmnp),
 // which are separate routes with their own SEO metadata rather than a single page
