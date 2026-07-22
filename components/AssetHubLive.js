@@ -66,16 +66,6 @@ export default function AssetHubLive({ ticker }) {
           </p>
         </div>
 
-        {reserve && (
-          <div className="card p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-            <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>{reserve.label}</p>
-            <p className="font-mono-data text-2xl font-bold" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: 'var(--accent-gold)' }}>
-              {reserve.display}
-            </p>
-            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{reserve.note}</p>
-          </div>
-        )}
-
         <div className="card p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>Effective Yield at Current Price</p>
           <p className="font-mono-data text-2xl font-bold" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: 'var(--accent-gold)' }}>
@@ -97,6 +87,16 @@ export default function AssetHubLive({ ticker }) {
             ~{(annualDividendDollars / freq.perYear).toLocaleString('en-US', { style: 'currency', currency: 'USD' })} per share/{freq.perPeriod}
           </p>
         </div>
+
+        {reserve && (
+          <div className="card p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+            <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>{reserve.label}</p>
+            <p className="font-mono-data text-2xl font-bold" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: 'var(--accent-gold)' }}>
+              {reserve.display}
+            </p>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{reserve.note}</p>
+          </div>
+        )}
       </div>
     </>
   );
