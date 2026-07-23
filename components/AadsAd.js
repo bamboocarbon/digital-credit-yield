@@ -1,8 +1,6 @@
 'use client';
 
-// Temporarily disabled during the Google AdSense review so content pages
-// stay ad-clean. Set ADS_ENABLED back to true to restore AADS everywhere.
-const ADS_ENABLED = false;
+const ADS_ENABLED = true;
 
 export default function AadsAd() {
   if (!ADS_ENABLED) return null;
