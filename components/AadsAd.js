@@ -26,7 +26,7 @@ export default function AadsAd() {
     <div style={{ width: '100%', margin: 'auto', position: 'relative', zIndex: 99998 }}>
       <iframe
         data-aa="2440783"
-        src="//acceptable.a-ads.com/2440783/?size=Adaptive"
+        src="//acceptable.a-ads.com/2440783/?size=Adaptive&background_color=transparent"
         style={{
           border: 0,
           padding: 0,
