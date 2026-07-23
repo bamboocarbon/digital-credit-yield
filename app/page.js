@@ -113,8 +113,7 @@ export default function HomePage() {
 
         <h3 className="text-lg font-semibold mb-3">Transparency and independence</h3>
         <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
-          {/* TODO (post-AdSense approval): change to "Digital Credit Yield is supported by advertising. This never influences which assets I cover or what I say about them." */}
-          Digital Credit Yield is not yet funded by advertising. This never influences which assets I cover or what I say about them.
+          Digital Credit Yield is supported by advertising. This never influences which assets I cover or what I say about them.
         </p>
         <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
           Position disclosure — I currently hold positions in MSTR and ASST, the common equity stocks of Strategy and Strive.
