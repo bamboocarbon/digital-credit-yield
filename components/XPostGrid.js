@@ -89,12 +89,10 @@ function ThoughtCard({ item }) {
           <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{formatDate(item.date)}</span>
         </div>
         {item.text && (
-          <p
-            className="text-base"
-            style={{ color: 'var(--text-primary)', lineHeight: '1.7', whiteSpace: 'pre-wrap' }}
-          >
-            {item.text}
-          </p>
+          // Visually hidden, not removed — the image already shows this text,
+          // but it stays in the DOM (screen readers + crawlers) since that's
+          // the whole reason `text` gets backfilled in the first place.
+          <p className="sr-only">{item.text}</p>
         )}
         {item.url && (
           <div className="flex items-center gap-4 mt-4 text-xs" style={{ color: 'var(--text-muted)' }}>
