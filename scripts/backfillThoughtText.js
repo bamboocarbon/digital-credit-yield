@@ -50,18 +50,24 @@ async function fetchOgImage(tweetId) {
 // pill, a "Thought for/of the Day" label, then the thought itself (the only
 // part we want), then a disclaimer paragraph and the site domain. We pull
 // out just the lines between the label and whichever trailing marker OCRs
-// first.
+// first. The cream "Weekend Thought" variant (Sat/Sun) uses a different
+// label and adds a photo + decorative star row above and below the thought.
 function extractThought(rawText) {
   const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
-  const startIdx = lines.findIndex(l => /thoughts?\s+(for|of)\s+the\s+day/i.test(l));
+  const startIdx = lines.findIndex(l => /(thoughts?\s+(for|of)\s+the\s+day)|(weekend\s+thought)/i.test(l));
   if (startIdx === -1) return null;
 
   let endIdx = lines.findIndex((l, i) => i > startIdx && /digitalcredityield\.com/i.test(l));
   if (endIdx === -1) endIdx = lines.findIndex((l, i) => i > startIdx && /not financial advice/i.test(l));
   const body = lines.slice(startIdx + 1, endIdx === -1 ? undefined : endIdx);
 
-  // Drop the editor's own placeholder hint if it ever gets baked into an export.
-  const cleaned = body.filter(l => !/double-tap to edit/i.test(l));
+  const cleaned = body.filter(l => {
+    // Drop the editor's own placeholder hint if it ever gets baked into an export.
+    if (/double-tap to edit/i.test(l)) return false;
+    // Drop the weekend card's decorative star row (OCRs as noise like "* kk").
+    const letters = l.replace(/[^a-zA-Z]/g, '');
+    return letters.length >= 3;
+  });
   const text = cleaned.join(' ').replace(/\s+/g, ' ').trim();
   return text || null;
 }
