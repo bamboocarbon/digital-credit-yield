@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import TweetEmbed, { tweetIdFromUrl } from './TweetEmbed';
+import { computeAnchors } from '@/lib/thoughtAnchors';
 
 function formatDate(dateStr) {
   const d = new Date(dateStr + 'T12:00:00');
@@ -107,6 +108,10 @@ export default function XPostGrid({ kind = 'thoughts', initialItems = null, trai
     );
   }
 
+  // Stable per-entry anchors (#2026-07-21) for direct links from X, email or
+  // search — only meaningful for the dated thoughts archive, not quiz posts.
+  const anchors = isQuiz ? null : computeAnchors(items);
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
       {items.map(item => {
@@ -115,7 +120,7 @@ export default function XPostGrid({ kind = 'thoughts', initialItems = null, trai
           ? <TweetEmbed tweetId={tweetId} fallback={<TextCard item={item} />} />
           : <TextCard item={item} />;
         return (
-          <div key={item.id}>
+          <div key={item.id} id={anchors?.get(item.id)} className={anchors ? 'scroll-mt-28' : undefined}>
             {post}
             {isQuiz && item.answer && <AnswerReveal answer={item.answer} />}
           </div>

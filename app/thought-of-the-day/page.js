@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import XPostGrid from '@/components/XPostGrid';
 import { blobUrl } from '@/lib/blobUrl';
+import { computeAnchors } from '@/lib/thoughtAnchors';
+
+const SITE_URL = 'https://www.digitalcredityield.com';
 
 // Fetch the thoughts on the server so the thought text is in the initial HTML
 // (visible to crawlers / AdSense review); the X embeds then load client-side.
@@ -36,10 +39,47 @@ export const metadata = {
   },
 };
 
+// One CreativeWork record per entry that actually has text — an empty thought
+// has nothing worth indexing. Mirrors the author/publisher entity already
+// used on blog articles (app/blog/[slug]/page.js) so this ties into the same
+// Person/Organization graph rather than inventing a new one.
+function buildThoughtsJsonLd(thoughts) {
+  const anchors = computeAnchors(thoughts);
+  return thoughts
+    .filter(t => (t.text || '').trim())
+    .map(t => ({
+      '@context': 'https://schema.org',
+      '@type': 'CreativeWork',
+      headline: t.text,
+      text: t.text,
+      datePublished: t.date,
+      url: `${SITE_URL}/thought-of-the-day#${anchors.get(t.id)}`,
+      image: `${SITE_URL}/api/thought-card?id=${t.id}`,
+      author: {
+        '@type': 'Person',
+        name: 'Robin Gillingham',
+        url: `${SITE_URL}/about`,
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Digital Credit Yield',
+        url: SITE_URL,
+      },
+    }));
+}
+
 export default async function ThoughtOfTheDayPage() {
   const thoughts = await getThoughts();
+  const thoughtsJsonLd = buildThoughtsJsonLd(thoughts);
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+      {thoughtsJsonLd.map((entry, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(entry) }}
+        />
+      ))}
       <h1 className="text-3xl sm:text-4xl font-bold mb-3">Thought of the Day</h1>
       <p className="text-base mb-10 max-w-3xl" style={{ color: 'var(--text-muted)' }}>
         Every day I share a fun / encouraging Thought of the Day on{' '}

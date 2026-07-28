@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { computeAnchors } from '@/lib/thoughtAnchors';
 
 const NEWS = 'news', THOUGHTS = 'thoughts', QUIZ = 'quiz';
 
@@ -189,6 +190,26 @@ export default function Admin() {
       body: JSON.stringify(body),
     });
     setItems(prev => prev.filter(i => i.id !== id));
+  }
+
+  // Thoughts-only: copy the entry's #2026-07-21-style permalink, ready to
+  // paste into the X post or email.
+  function handleCopyLink(item) {
+    const anchor = computeAnchors(items).get(item.id);
+    const link = `${window.location.origin}/thought-of-the-day#${anchor}`;
+    navigator.clipboard.writeText(link);
+    setFeedback('Link copied');
+    setTimeout(() => setFeedback(''), 1500);
+  }
+
+  // Thoughts-only: copy the standalone branded quote-card image URL for this
+  // entry (/api/thought-card) — a manual tool for LinkedIn/Threads/etc.,
+  // not wired into the archive page or the X-posting step.
+  function handleCopyImageLink(item) {
+    const link = `${window.location.origin}/api/thought-card?id=${item.id}`;
+    navigator.clipboard.writeText(link);
+    setFeedback('Image link copied');
+    setTimeout(() => setFeedback(''), 1500);
   }
 
   // Bulk import (Thought of the Day / Quiz only).
@@ -436,6 +457,18 @@ export default function Admin() {
               )}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flexShrink: 0 }}>
+              {section === THOUGHTS && (
+                <>
+                  <button onClick={() => handleCopyLink(item)}
+                    style={{ background: 'transparent', border: '1px solid #374151', color: '#c8893a', borderRadius: '8px', padding: '6px 12px', fontSize: '12px', cursor: 'pointer' }}>
+                    Copy link
+                  </button>
+                  <button onClick={() => handleCopyImageLink(item)}
+                    style={{ background: 'transparent', border: '1px solid #374151', color: '#c8893a', borderRadius: '8px', padding: '6px 12px', fontSize: '12px', cursor: 'pointer' }}>
+                    Copy image link
+                  </button>
+                </>
+              )}
               <button onClick={() => handleEdit(item)}
                 style={{ background: 'transparent', border: '1px solid #374151', color: '#c8893a', borderRadius: '8px', padding: '6px 12px', fontSize: '12px', cursor: 'pointer' }}>
                 Edit
