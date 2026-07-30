@@ -43,7 +43,27 @@ export default function Footer() {
           Follow @DCYieldHub for daily insight
         </a>
         <p className="text-xs text-center" style={{ color: 'var(--text-muted)', opacity: 0.65 }}>
-          Also by me: <a href="https://polkadotbike.com" target="_blank" rel="noopener" className="hover:text-white transition-colors">Polka Dot Bike</a> — road-bike gear ratio calculators &amp; race stats.
+          Also by me: <a
+            href="https://polkadotbike.com"
+            target="_blank"
+            rel="noopener"
+            className="hover:text-white transition-colors"
+            style={{ fontWeight: 800, whiteSpace: 'nowrap' }}
+          >
+            Polka<span
+              style={{
+                display: 'inline-block',
+                width: '1.35em',
+                height: '1.35em',
+                verticalAlign: '-0.3em',
+                margin: '0 0.12em',
+                overflow: 'hidden',
+                textIndent: '-9999px',
+                whiteSpace: 'nowrap',
+                background: 'url("data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2216%22 fill=%22%23ef4444%22/%3E%3Ctext x=%2216.75%22 y=%2220%22 text-anchor=%22middle%22 font-family=%22Inter,system-ui,sans-serif%22 font-size=%2210.5%22 font-weight=%22900%22 letter-spacing=%221.5%22 fill=%22%23000%22%3EDOT%3C/text%3E%3C/svg%3E") no-repeat center/contain',
+              }}
+            >DOT</span>Bike
+          </a> — road-bike gear ratio calculators &amp; race stats.
         </p>
         <p className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>
           &copy; {new Date().getFullYear()} Digital Credit Yield. For information purposes only. Not financial advice.
