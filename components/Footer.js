@@ -42,6 +42,9 @@ export default function Footer() {
           </svg>
           Follow @DCYieldHub for daily insight
         </a>
+        <p className="text-xs text-center" style={{ color: 'var(--text-muted)', opacity: 0.65 }}>
+          Also by me: <a href="https://polkadotbike.com" target="_blank" rel="noopener" className="hover:text-white transition-colors">Polka Dot Bike</a> — road-bike gear ratio calculators &amp; race stats.
+        </p>
         <p className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>
           &copy; {new Date().getFullYear()} Digital Credit Yield. For information purposes only. Not financial advice.
         </p>
