@@ -5,7 +5,7 @@ import MoneyFlowStats from '@/components/MoneyFlowStats';
 import { BMNP_ENABLED } from '@/lib/constants';
 
 // Date the narrative zones below were last revised — shown next to the story heading
-const STORY_UPDATED = '17 June 2026';
+const STORY_UPDATED = '6 August 2026';
 
 export function generateMetadata() {
   const instruments = BMNP_ENABLED ? 'STRC, SATA & BMNP' : 'STRC & SATA';
@@ -165,6 +165,16 @@ export default function MoneyFlowPage() {
               </div>
             </div>
           )}
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: '#15803d' }} />
+            <div>
+              <p className="font-semibold text-sm mb-1">Zone 7 — The Reverse Play <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Jun – Aug 2026</span></p>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                The bars above don&apos;t capture what happened next. Bitcoin&apos;s slide below $60,000 dragged STRC down to an intraday low of $71.25 on June 26 — nearly 29% below par — which automatically paused the ATM programme that funds every green bar on this page. Strategy&apos;s response ran the machine backwards: between the end of June and early August it sold 5,226 BTC across three transactions for roughly $321M, taking total holdings down to 842,138 BTC, and used that cash alongside fresh MSTR stock to repurchase 912,143 STRC shares for $81.2M at an average of ~$89 — below the $100 stated amount. The dividend rate rose to 12% on July 1 to help pull demand back. It&apos;s worked so far: STRC trades around $94 today, with $893.8M of buyback capacity still unused. Once STRC holds sustainably near par, the ATM programme is expected to reopen and the bars above should start climbing again.
+              </p>
+            </div>
+          </div>
 
         </div>
       </div>
