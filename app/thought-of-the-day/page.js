@@ -112,6 +112,9 @@ export default async function ThoughtOfTheDayPage() {
             browse the <Link href="/glossary" style={{ color: 'var(--accent-gold)' }}>glossary</Link> of key terms,
             or read the <Link href="/faq" style={{ color: 'var(--accent-gold)' }}>FAQ</Link>.
           </p>
+          <p>
+            These thoughts, in wording and presentation, remain the copyright of Digital Credit Yield.
+          </p>
         </div>
       </section>
     </div>
