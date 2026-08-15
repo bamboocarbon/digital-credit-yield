@@ -82,9 +82,9 @@ export default async function ThoughtOfTheDayPage() {
       ))}
       <h1 className="text-3xl sm:text-4xl font-bold mb-3">Thought of the Day</h1>
       <p className="text-base mb-10 max-w-3xl" style={{ color: 'var(--text-muted)' }}>
-        Every day I share a fun / encouraging Thought of the Day on{' '}
+        Every day I share an encouraging / fun Thought of the Day on{' '}
         <a href="https://x.com/DCYieldHub" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-gold)' }}>X</a>
-        {' '}— a reflection on income investing, preferred stock and the discipline of staying the course. They are collected here, newest first.
+        {' '}— a reflection on income investing, preferred stock and the discipline of staying the course. They are displayed here, latest first.
       </p>
 
       <XPostGrid kind="thoughts" initialItems={thoughts} />
