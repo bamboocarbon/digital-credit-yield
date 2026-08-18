@@ -160,6 +160,7 @@ export default function Admin() {
           body: JSON.stringify({ ...payload, id: editingId }),
         });
         const updated = await res.json();
+        if (!res.ok) throw new Error(updated.error || 'Error saving.');
         setItems(prev => prev.map(i => i.id === editingId ? updated : i));
         setEditingId(null);
         setForm(emptyForm());
@@ -171,13 +172,14 @@ export default function Admin() {
           body: JSON.stringify(payload),
         });
         const item = await res.json();
+        if (!res.ok) throw new Error(item.error || 'Error saving.');
         setItems(prev => sortItems([item, ...prev]));
         setForm(emptyForm());
         setFeedback('Saved ✓');
       }
       setTimeout(() => setFeedback(''), 2500);
-    } catch {
-      setFeedback('Error saving.');
+    } catch (err) {
+      setFeedback(err.message || 'Error saving.');
     }
     setSaving(false);
   }
