@@ -50,12 +50,20 @@ function tweetIdFromUrl(url) {
   return m ? m[1] : null;
 }
 
-async function fetchOgImage(tweetId) {
-  const html = await fetch(`https://x.com/DCYieldHub/status/${tweetId}`, {
-    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Twitterbot/1.0)' },
-  }).then(r => r.text());
-  const m = html.match(/<meta content="([^"]+)" property="og:image" ?\/?>/);
-  return m ? m[1] : null;
+// x.com serves two different responses to the same Twitterbot-UA request for
+// the same tweet: most of the time a ~64KB JS-app shell with no og:image tag,
+// but roughly 1 in 8 tries the old lightweight SSR snapshot that has it.
+// Retry a handful of times rather than giving up on the first miss.
+async function fetchOgImage(tweetId, attempts = 8) {
+  for (let i = 0; i < attempts; i++) {
+    const html = await fetch(`https://x.com/DCYieldHub/status/${tweetId}`, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Twitterbot/1.0)' },
+    }).then(r => r.text());
+    const m = html.match(/<meta content="([^"]+)" property="og:image" ?\/?>/);
+    if (m) return m[1];
+    if (i < attempts - 1) await new Promise(r => setTimeout(r, 400));
+  }
+  return null;
 }
 
 // The quote-card template is fixed: brand/date header, "Tracking STRC..."
@@ -73,13 +81,18 @@ function extractThought(rawText) {
   if (endIdx === -1) endIdx = lines.findIndex((l, i) => i > startIdx && /not financial advice/i.test(l));
   const body = lines.slice(startIdx + 1, endIdx === -1 ? undefined : endIdx);
 
-  const cleaned = body.filter(l => {
-    // Drop the editor's own placeholder hint if it ever gets baked into an export.
-    if (/double-tap to edit/i.test(l)) return false;
-    // Drop the weekend card's decorative star row (OCRs as noise like "* kk").
-    const letters = l.replace(/[^a-zA-Z]/g, '');
-    return letters.length >= 3;
-  });
+  const cleaned = body
+    .filter(l => {
+      // Drop the editor's own placeholder hint if it ever gets baked into an export.
+      if (/double-tap to edit/i.test(l)) return false;
+      // Drop the weekend card's decorative star row (OCRs as noise like "* kk").
+      const letters = l.replace(/[^a-zA-Z]/g, '');
+      return letters.length >= 3;
+    })
+    // Flanking emoji (e.g. the rocket either side of "Blast Off !") OCR as
+    // short garbage tokens like "s#" / ";#" rather than their own line —
+    // "#" never appears in real card text, so it's a safe tell.
+    .map(l => l.split(' ').filter(w => !w.includes('#')).join(' '));
   const text = cleaned.join(' ').replace(/\s+/g, ' ').trim();
   return text || null;
 }
