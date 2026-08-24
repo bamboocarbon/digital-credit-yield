@@ -186,12 +186,20 @@ export default function Admin() {
 
   async function handleDelete(id) {
     const body = isNews ? { id } : { kind: section, id };
-    await fetch(endpoint(section), {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${password}` },
-      body: JSON.stringify(body),
-    });
-    setItems(prev => prev.filter(i => i.id !== id));
+    try {
+      const res = await fetch(endpoint(section), {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${password}` },
+        body: JSON.stringify(body),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Error deleting.');
+      setItems(prev => prev.filter(i => i.id !== id));
+      setFeedback('Deleted ✓');
+      setTimeout(() => setFeedback(''), 2500);
+    } catch (err) {
+      setFeedback(err.message || 'Error deleting.');
+    }
   }
 
   // Thoughts-only: copy the entry's #2026-07-21-style permalink, ready to
