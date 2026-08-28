@@ -33,6 +33,7 @@ for (const line of readFileSync(envPath, 'utf8').split('\n')) {
 import { put } from '@vercel/blob';
 import { createWorker } from 'tesseract.js';
 import { blobUrl } from '../lib/blobUrl.js';
+import { tweetIdFromUrl, fetchTweetImageUrl, extractThought } from '../lib/thoughtBackfill.js';
 
 const BLOB_NAME = 'dcy-thoughts.json';
 const APPLY = process.argv.includes('--apply');
@@ -43,59 +44,6 @@ const SKIP_ARG = process.argv.find(a => a.startsWith('--skip='));
 const SKIP_IDS = new Set(SKIP_ARG ? SKIP_ARG.slice('--skip='.length).split(',').filter(Boolean) : []);
 
 const EXT_BY_CONTENT_TYPE = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp' };
-
-function tweetIdFromUrl(url) {
-  if (!url) return null;
-  const m = String(url).match(/status(?:es)?\/(\d+)/);
-  return m ? m[1] : null;
-}
-
-// x.com serves two different responses to the same Twitterbot-UA request for
-// the same tweet: most of the time a ~64KB JS-app shell with no og:image tag,
-// but roughly 1 in 8 tries the old lightweight SSR snapshot that has it.
-// Retry a handful of times rather than giving up on the first miss.
-async function fetchOgImage(tweetId, attempts = 8) {
-  for (let i = 0; i < attempts; i++) {
-    const html = await fetch(`https://x.com/DCYieldHub/status/${tweetId}`, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Twitterbot/1.0)' },
-    }).then(r => r.text());
-    const m = html.match(/<meta content="([^"]+)" property="og:image" ?\/?>/);
-    if (m) return m[1];
-    if (i < attempts - 1) await new Promise(r => setTimeout(r, 400));
-  }
-  return null;
-}
-
-// The quote-card template is fixed: brand/date header, "Tracking STRC..."
-// pill, a "Thought for/of the Day" label, then the thought itself (the only
-// part we want), then a disclaimer paragraph and the site domain. We pull
-// out just the lines between the label and whichever trailing marker OCRs
-// first. The cream "Weekend Thought" variant (Sat/Sun) uses a different
-// label and adds a photo + decorative star row above and below the thought.
-function extractThought(rawText) {
-  const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
-  const startIdx = lines.findIndex(l => /(thoughts?\s+(for|of)\s+the\s+day)|(weekend\s+thought)/i.test(l));
-  if (startIdx === -1) return null;
-
-  let endIdx = lines.findIndex((l, i) => i > startIdx && /digitalcredityield\.com/i.test(l));
-  if (endIdx === -1) endIdx = lines.findIndex((l, i) => i > startIdx && /not financial advice/i.test(l));
-  const body = lines.slice(startIdx + 1, endIdx === -1 ? undefined : endIdx);
-
-  const cleaned = body
-    .filter(l => {
-      // Drop the editor's own placeholder hint if it ever gets baked into an export.
-      if (/double-tap to edit/i.test(l)) return false;
-      // Drop the weekend card's decorative star row (OCRs as noise like "* kk").
-      const letters = l.replace(/[^a-zA-Z]/g, '');
-      return letters.length >= 3;
-    })
-    // Flanking emoji (e.g. the rocket either side of "Blast Off !") OCR as
-    // short garbage tokens like "s#" / ";#" rather than their own line —
-    // "#" never appears in real card text, so it's a safe tell.
-    .map(l => l.split(' ').filter(w => !w.includes('#')).join(' '));
-  const text = cleaned.join(' ').replace(/\s+/g, ' ').trim();
-  return text || null;
-}
 
 async function main() {
   const res = await fetch(blobUrl(BLOB_NAME), {
@@ -125,7 +73,7 @@ async function main() {
       if (!tweetId) { console.log(`${item.date}  SKIP (no tweet id in url: ${item.url})`); continue; }
 
       try {
-        const imageUrl = await fetchOgImage(tweetId);
+        const imageUrl = await fetchTweetImageUrl(tweetId);
         if (!imageUrl) { console.log(`${item.date}  SKIP (no og:image found for tweet ${tweetId})`); continue; }
         const imgRes = await fetch(imageUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
         if (!imgRes.ok) throw new Error(`image fetch failed: ${imgRes.status}`);

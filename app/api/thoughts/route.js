@@ -1,8 +1,52 @@
 import { NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
+import { createWorker } from 'tesseract.js';
 import { blobUrl } from '@/lib/blobUrl';
+import { fetchTweetImage, ocrThought } from '@/lib/thoughtBackfill';
 
 export const revalidate = 0;
+export const maxDuration = 60;
+
+// Fills in `text` (OCR'd off the quote-card) and `image` (our own Blob copy
+// of it — see scripts/backfillThoughtText.js for why) straight from the
+// source tweet at save time, so the admin doesn't need to separately run the
+// backfill script after adding/editing an entry. Best-effort: any failure
+// here (tweet gone, OCR mismatch, X/vxtwitter hiccup) just leaves the fields
+// blank exactly as before this existed — the manual script is still there as
+// a fallback sweep.
+async function backfillFromTweet(item) {
+  const needsText = !item.text.trim();
+  const needsImage = !(item.image || '').trim();
+  if (!item.url || (!needsText && !needsImage)) return item;
+
+  try {
+    const media = await fetchTweetImage(item.url);
+    if (!media) return item;
+
+    let text = item.text;
+    if (needsText) {
+      const worker = await createWorker('eng', undefined, { cachePath: '/tmp' });
+      try {
+        text = (await ocrThought(worker, media.buffer)) || item.text;
+      } finally {
+        await worker.terminate();
+      }
+    }
+
+    let image = item.image || '';
+    if (needsImage) {
+      const pathname = `thought-images/${item.id}${media.ext}`;
+      await put(pathname, media.buffer, {
+        access: 'private', contentType: media.contentType, addRandomSuffix: false, allowOverwrite: true,
+      });
+      image = pathname;
+    }
+
+    return { ...item, text, image };
+  } catch {
+    return item;
+  }
+}
 
 // Two collections share this route: daily thoughts and quiz posts. Each lives
 // in its own Blob; quiz items additionally carry an `answer`.
@@ -50,13 +94,15 @@ export async function POST(request) {
   }
 
   const items = await loadItems(kind);
-  const item = {
+  let item = {
     id: Date.now().toString() + Math.random().toString(36).slice(2, 6),
     date: date || new Date().toISOString().split('T')[0],
     text: (text || '').trim(),
     url: (url || '').trim(),
     answer: (answer || '').trim(),
   };
+  if (kind === 'thoughts') item = await backfillFromTweet(item);
+
   // Newest first; keep a generous archive.
   const updated = [item, ...items].slice(0, 800);
   await saveItems(kind, updated);
@@ -73,11 +119,16 @@ export async function PATCH(request) {
   }
 
   const items = await loadItems(kind);
-  const updated = items.map(i => i.id === id
-    ? { id, date, text: (text || '').trim(), url: (url || '').trim(), answer: (answer || '').trim() }
-    : i);
+  const existing = items.find(i => i.id === id);
+  let item = {
+    ...existing,
+    id, date, text: (text || '').trim(), url: (url || '').trim(), answer: (answer || '').trim(),
+  };
+  if (kind === 'thoughts') item = await backfillFromTweet(item);
+
+  const updated = items.map(i => i.id === id ? item : i);
   await saveItems(kind, updated);
-  return NextResponse.json(updated.find(i => i.id === id));
+  return NextResponse.json(item);
 }
 
 export async function DELETE(request) {
