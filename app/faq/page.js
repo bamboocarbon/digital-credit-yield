@@ -87,7 +87,7 @@ export default function FAQPage() {
             <p className="text-base leading-7" style={{ color: 'var(--text-muted)' }}>{f.a}</p>
             {f.link && (
               <p className="text-sm mt-3">
-                <Link href={f.link.href} style={{ color: 'var(--accent-gold)' }}>{f.link.label} →</Link>
+                <Link prefetch={false} href={f.link.href} style={{ color: 'var(--accent-gold)' }}>{f.link.label} →</Link>
               </p>
             )}
           </div>

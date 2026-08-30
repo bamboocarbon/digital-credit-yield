@@ -27,6 +27,7 @@ export default function SubNav({ ticker }) {
           <Link
             key={tab.href}
             href={tab.href}
+            prefetch={false}
             className="tab-item px-1.5 sm:px-4 py-3 text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center rounded-t-lg whitespace-nowrap flex-shrink-0"
             style={{
               color: active ? 'var(--accent-gold)' : 'var(--text-muted)',

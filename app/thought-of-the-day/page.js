@@ -94,9 +94,9 @@ export default async function ThoughtOfTheDayPage() {
         <div className="space-y-4 text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
           <p>
             Income investing is as much about temperament as it is about numbers. Preferred stocks like{' '}
-            <Link href="/strc" style={{ color: 'var(--accent-gold)' }}>STRC</Link>,{' '}
-            <Link href="/sata" style={{ color: 'var(--accent-gold)' }}>SATA</Link> and{' '}
-            <Link href="/bmnp" style={{ color: 'var(--accent-gold)' }}>BMNP</Link> are built to pay a steady
+            <Link prefetch={false} href="/strc" style={{ color: 'var(--accent-gold)' }}>STRC</Link>,{' '}
+            <Link prefetch={false} href="/sata" style={{ color: 'var(--accent-gold)' }}>SATA</Link> and{' '}
+            <Link prefetch={false} href="/bmnp" style={{ color: 'var(--accent-gold)' }}>BMNP</Link> are built to pay a steady
             dividend and trade close to their $100 par value. That means the hardest part for most investors
             is rarely the maths — it is the patience to hold through the noise and let the dividends compound.
           </p>
@@ -108,9 +108,9 @@ export default async function ThoughtOfTheDayPage() {
           </p>
           <p>
             New to the instruments behind these posts? Start with{' '}
-            <Link href="/blog/what-is-preferred-stock" style={{ color: 'var(--accent-gold)' }}>what preferred stock is</Link>,
-            browse the <Link href="/glossary" style={{ color: 'var(--accent-gold)' }}>glossary</Link> of key terms,
-            or read the <Link href="/faq" style={{ color: 'var(--accent-gold)' }}>FAQ</Link>.
+            <Link prefetch={false} href="/blog/what-is-preferred-stock" style={{ color: 'var(--accent-gold)' }}>what preferred stock is</Link>,
+            browse the <Link prefetch={false} href="/glossary" style={{ color: 'var(--accent-gold)' }}>glossary</Link> of key terms,
+            or read the <Link prefetch={false} href="/faq" style={{ color: 'var(--accent-gold)' }}>FAQ</Link>.
           </p>
           <p>
             These thoughts, in wording and presentation, remain the copyright of Digital Credit Yield.

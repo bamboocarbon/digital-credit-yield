@@ -14,6 +14,7 @@ export default function HubStockSelector({ selected }) {
           <Link
             key={ticker}
             href={`/${ticker.toLowerCase()}`}
+            prefetch={false}
             aria-current={active ? 'page' : undefined}
             className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors min-h-[44px] flex items-center gap-2"
             style={{

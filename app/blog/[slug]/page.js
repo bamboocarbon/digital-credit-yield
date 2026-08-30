@@ -122,7 +122,7 @@ export default async function ArticlePage({ params }) {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       )}
 
-      <Link
+      <Link prefetch={false}
         href="/blog"
         className="inline-flex items-center gap-1 text-sm mb-8 transition-opacity hover:opacity-75"
         style={{ color: 'var(--text-muted)' }}
@@ -139,7 +139,7 @@ export default async function ArticlePage({ params }) {
         <span style={{ color: 'var(--border)' }}>·</span>
         <span>{article.readTime}</span>
         <span style={{ color: 'var(--border)' }}>·</span>
-        <span>By <Link href="/about" className="transition-opacity hover:opacity-75" style={{ color: 'var(--accent-gold)' }}>Robin Gillingham</Link></span>
+        <span>By <Link prefetch={false} href="/about" className="transition-opacity hover:opacity-75" style={{ color: 'var(--accent-gold)' }}>Robin Gillingham</Link></span>
       </div>
 
       {!BMNP_ENABLED && [].concat(article.category).includes('BMNP') && (
@@ -181,7 +181,7 @@ export default async function ArticlePage({ params }) {
             <strong>Robin Gillingham</strong> is the founder of Digital Credit Yield. After a career in
             aircraft engineering, he moved into full-time trading in 2019 and now builds tools to track and
             visualise preferred stocks such as STRC, SATA and BMNP.{' '}
-            <Link href="/about" className="transition-opacity hover:opacity-75" style={{ color: 'var(--accent-gold)' }}>Read more →</Link>
+            <Link prefetch={false} href="/about" className="transition-opacity hover:opacity-75" style={{ color: 'var(--accent-gold)' }}>Read more →</Link>
           </p>
         </div>
       </div>

@@ -22,6 +22,7 @@ export default function Footer() {
             <Link
               key={link.href}
               href={link.href}
+              prefetch={false}
               className="text-sm transition-colors hover:text-white"
               style={{ color: 'var(--text-muted)' }}
             >

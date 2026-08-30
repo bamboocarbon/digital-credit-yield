@@ -102,7 +102,7 @@ export default function GlossaryPage() {
               {t.def}
               {t.link && (
                 <>
-                  {' '}<Link href={t.link.href} style={{ color: 'var(--accent-gold)' }}>{t.link.label} →</Link>
+                  {' '}<Link prefetch={false} href={t.link.href} style={{ color: 'var(--accent-gold)' }}>{t.link.label} →</Link>
                 </>
               )}
             </p>

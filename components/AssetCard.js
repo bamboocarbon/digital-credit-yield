@@ -81,6 +81,7 @@ export default function AssetCard({ ticker }) {
 
       <Link
         href={href}
+        prefetch={false}
         className="mt-auto inline-flex items-center justify-center px-4 py-3 rounded-lg text-sm font-medium min-h-[44px] transition-opacity hover:opacity-80"
         style={{ background: 'var(--accent-gold)', color: '#000' }}
       >

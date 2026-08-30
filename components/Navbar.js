@@ -42,6 +42,7 @@ export default function Navbar() {
     <Link
       key={link.href}
       href={link.href}
+      prefetch={false}
       className="text-sm font-medium transition-colors"
       style={{ color: isActive(link.href) ? 'var(--accent-gold)' : 'var(--text-muted)' }}
     >
@@ -55,7 +56,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-24">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 font-bold text-lg tracking-tight">
+          <Link href="/" prefetch={false} className="flex items-center gap-2 font-bold text-lg tracking-tight">
             <span style={{ display: 'inline-block', width: 12, height: 12, background: 'var(--accent-gold)', borderRadius: 2, flexShrink: 0 }} />
             <span style={{ color: 'var(--text-primary)' }}>Digital Credit Yield</span>
           </Link>
@@ -105,6 +106,7 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
+                prefetch={false}
                 onClick={() => setOpen(false)}
                 className="py-3 px-2 text-sm font-medium rounded-lg min-h-[44px] flex items-center"
                 style={{

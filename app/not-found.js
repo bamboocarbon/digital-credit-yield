@@ -20,7 +20,7 @@ export default function NotFound() {
           { href: '/bmnp', label: 'BMNP' },
           { href: '/blog', label: 'Blog' },
         ].map(({ href, label }) => (
-          <Link
+          <Link prefetch={false}
             key={href}
             href={href}
             className="px-5 py-2 rounded-lg font-medium text-sm transition-opacity hover:opacity-80"

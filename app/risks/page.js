@@ -79,9 +79,9 @@ export default function RisksPage() {
 
       <p className="text-base mt-10 leading-7" style={{ color: 'var(--text-muted)' }}>
         For the structural detail behind these points, see{' '}
-        <Link href="/blog/strategy-capital-structure" style={{ color: 'var(--accent-gold)' }}>Strategy&rsquo;s capital structure</Link>,{' '}
-        <Link href="/blog/strive-capital-structure" style={{ color: 'var(--accent-gold)' }}>Strive&rsquo;s capital structure</Link>, and{' '}
-        <Link href="/faq" style={{ color: 'var(--accent-gold)' }}>the FAQ</Link>.
+        <Link prefetch={false} href="/blog/strategy-capital-structure" style={{ color: 'var(--accent-gold)' }}>Strategy&rsquo;s capital structure</Link>,{' '}
+        <Link prefetch={false} href="/blog/strive-capital-structure" style={{ color: 'var(--accent-gold)' }}>Strive&rsquo;s capital structure</Link>, and{' '}
+        <Link prefetch={false} href="/faq" style={{ color: 'var(--accent-gold)' }}>the FAQ</Link>.
       </p>
 
       <div className="mt-10 p-5 rounded-xl" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>

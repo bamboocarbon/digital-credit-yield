@@ -80,6 +80,7 @@ export default function BlogIndex({ articles }) {
           <Link
             key={article.slug}
             href={`/blog/${article.slug}`}
+            prefetch={false}
             className="flex flex-col rounded-xl p-5 transition-colors"
             style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
           >

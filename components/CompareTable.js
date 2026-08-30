@@ -81,11 +81,11 @@ export default function CompareTable() {
       </div>
       <p className="text-sm text-center mt-4" style={{ color: 'var(--text-muted)' }}>
         Want the full picture?{' '}
-        <Link href="/blog/strc-vs-sata" style={{ color: 'var(--accent-gold)' }}>Read the in-depth STRC vs SATA comparison</Link>
+        <Link href="/blog/strc-vs-sata" prefetch={false} style={{ color: 'var(--accent-gold)' }}>Read the in-depth STRC vs SATA comparison</Link>
         {BMNP_ENABLED && (
           <>
             {' '}or{' '}
-            <Link href="/blog/bmnp-vs-strc-sata" style={{ color: 'var(--accent-gold)' }}>how BMNP compares to both</Link>
+            <Link href="/blog/bmnp-vs-strc-sata" prefetch={false} style={{ color: 'var(--accent-gold)' }}>how BMNP compares to both</Link>
           </>
         )}.
       </p>

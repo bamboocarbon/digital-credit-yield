@@ -49,7 +49,7 @@ export default function CookieBanner() {
         <p className="text-sm flex-1" style={{ color: 'var(--text-muted)' }}>
           We use cookies to improve your experience and serve relevant advertisements.
           By clicking Accept, you consent to our use of cookies in accordance with our{' '}
-          <Link href="/privacy-policy" className="underline hover:text-white">Privacy Policy</Link>.
+          <Link href="/privacy-policy" prefetch={false} className="underline hover:text-white">Privacy Policy</Link>.
         </p>
         <div className="flex gap-3 flex-shrink-0">
           <button

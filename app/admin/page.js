@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { computeAnchors } from '@/lib/thoughtAnchors';
 
 const NEWS = 'news', THOUGHTS = 'thoughts', QUIZ = 'quiz';
@@ -304,9 +305,14 @@ export default function Admin() {
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', gap: '12px' }}>
           <h1 style={{ color: '#ffffff', fontSize: '22px', fontWeight: '700', margin: 0 }}>Site Admin</h1>
-          <div style={{ background: '#111827', border: '1px solid #1e2a3a', borderRadius: '10px', padding: '8px 16px', textAlign: 'right', flexShrink: 0 }}>
-            <p style={{ color: '#6b7280', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>Newsletter Subscribers</p>
-            <p style={{ color: '#c8893a', fontSize: '18px', fontWeight: '700', margin: 0 }}>{subscriberCount === null ? '…' : subscriberCount}</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <Link href="/admin/pageviews" style={{ color: '#6b7280', fontSize: '13px', whiteSpace: 'nowrap' }} prefetch={false}>
+              Page Views →
+            </Link>
+            <div style={{ background: '#111827', border: '1px solid #1e2a3a', borderRadius: '10px', padding: '8px 16px', textAlign: 'right', flexShrink: 0 }}>
+              <p style={{ color: '#6b7280', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>Newsletter Subscribers</p>
+              <p style={{ color: '#c8893a', fontSize: '18px', fontWeight: '700', margin: 0 }}>{subscriberCount === null ? '…' : subscriberCount}</p>
+            </div>
           </div>
         </div>
 

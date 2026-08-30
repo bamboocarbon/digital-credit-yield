@@ -158,6 +158,7 @@ export default function AssetHub({ ticker, name }) {
             <Link
               key={tool.href}
               href={tool.href}
+              prefetch={false}
               className="block p-5 rounded-xl transition-opacity hover:opacity-80"
               style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
             >
@@ -171,7 +172,7 @@ export default function AssetHub({ ticker, name }) {
       <div className="mb-6 p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <p className="text-sm leading-6" style={{ color: 'var(--text-muted)' }}>
           A yield like this always comes with risk — board discretion over dividends, rate changes, and crypto-collateral volatility among them.{' '}
-          <Link href="/risks" style={{ color: 'var(--accent-gold)' }}>Read the full risk guide →</Link>
+          <Link href="/risks" prefetch={false} style={{ color: 'var(--accent-gold)' }}>Read the full risk guide →</Link>
         </p>
       </div>
 
