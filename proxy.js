@@ -19,7 +19,23 @@ import { put } from '@vercel/blob';
 // hit, but a real gap — the UA-logging above is exactly what made this
 // findable instead of guessed at) — a plain, undisguised scraper name that
 // didn't match anything in the list above.
-const BOT_UA = /bot|spider|crawl|slurp|facebookexternalhit|meta-externalagent|headless|lighthouse|pingdom|uptimerobot|monitor|preview|whatsapp|telegrambot|discordbot|google-inspectiontool|barkrowler|curl\/|wget\/|python-requests|python-urllib|go-http-client|okhttp|axios\/|node-fetch|postmanruntime|libwww-perl|apache-httpclient|guzzlehttp|insomnia|http\.rb|get_titles/i;
+//
+// 2026-08-31, third widening — Robin asked "are they genuine" about a
+// 216-count day, checked the raw UA data directly rather than guessing.
+// Found three more gaps, all confirmed in the actual recorded blobs:
+// - `ForestEngine/1.0` — self-identifies as a bot in its own UA, just
+//   didn't contain bot/spider/crawl.
+// - `NetworkingExtension` — iOS's own system-level networking framework
+//   (background prefetch/Siri-suggestions), not a real user page load.
+// - The `Chrome/... Safari/604.1` combination — a broken/copy-pasted
+//   scraper UA template (24 hits, same one, repeating every ~2h all day):
+//   604.1 is the Mobile-Safari-only WebKit build suffix, and a genuine
+//   Chrome UA (desktop or Linux) always ends `Safari/537.36` instead —
+//   Chrome+604.1 together can only mean a fabricated UA, never a real
+//   browser, so this is safe to match precisely without risking any real
+//   visitor's UA (a real Mobile Safari UA never contains "Chrome/" at
+//   all).
+const BOT_UA = /bot|spider|crawl|slurp|facebookexternalhit|meta-externalagent|headless|lighthouse|pingdom|uptimerobot|monitor|preview|whatsapp|telegrambot|discordbot|google-inspectiontool|barkrowler|curl\/|wget\/|python-requests|python-urllib|go-http-client|okhttp|axios\/|node-fetch|postmanruntime|libwww-perl|apache-httpclient|guzzlehttp|insomnia|http\.rb|get_titles|forestengine|networkingextension|chrome\/[\d.]+ safari\/604\.1/i;
 
 // A different bot class UA filtering can never catch: these self-identify
 // by hitting a PATH that isn't a real route on this site at all, often with
@@ -29,7 +45,11 @@ const BOT_UA = /bot|spider|crawl|slurp|facebookexternalhit|meta-externalagent|he
 // with a UA missing its browser/version entirely — no real browser sends
 // that. Best-effort, extend as new scan targets show up in the recorded UA
 // data.
-const SCAN_PATH = /^\/(wp-|wordpress|xmlrpc\.php|\.env|\.git|phpmyadmin|pma\/|file-manager|elfinder|cgi-bin|actuator|vendor\/phpunit|config\.php|\.aws|\.ssh|shell\.php|eval-stdin\.php)/i;
+//
+// 2026-08-31: added `_profiler` (Symfony's debug-toolbar route,
+// /_profiler/open and /_profiler/phpinfo both hit — this site isn't even
+// PHP, so it's a blind scanner probe, not a mistaken real request).
+const SCAN_PATH = /^\/(wp-|wordpress|xmlrpc\.php|\.env|\.git|phpmyadmin|pma\/|file-manager|elfinder|cgi-bin|actuator|vendor\/phpunit|config\.php|\.aws|\.ssh|shell\.php|eval-stdin\.php|_profiler)/i;
 
 function encodePath(pathname) {
   const trimmed = pathname.replace(/^\/+/, '').replace(/\/+$/, '');
