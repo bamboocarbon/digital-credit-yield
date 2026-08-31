@@ -21,6 +21,7 @@ const robotoMono = Roboto_Mono({
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CookieBanner from '@/components/CookieBanner';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
 
 export const metadata = {
   metadataBase: new URL('https://www.digitalcredityield.com'),
@@ -120,6 +121,7 @@ export default function RootLayout({ children }) {
           data-key="l8CSokM5avw7elCQq1DfMA"
           strategy="afterInteractive"
         />
+        <VercelAnalytics />
       </body>
     </html>
   );
