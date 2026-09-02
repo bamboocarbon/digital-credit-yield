@@ -15,7 +15,7 @@ on:
         description: 'Which job to trigger'
         required: true
         type: choice
-        options: [daily-email, motivation-email, evening-email, money-flow]
+        options: [daily-email, motivation-email, evening-email, money-flow, analytics-report]
 
 jobs:
   trigger:
@@ -29,6 +29,7 @@ jobs:
             "0 16 * 4-10 *"|"0 17 * 1-3,11,12 *"|motivation-email)   echo "path=motivation-email" >> "$GITHUB_OUTPUT" ;;
             "0 20 * 4-10 *"|"0 21 * 1-3,11,12 *"|evening-email)      echo "path=evening-email" >> "$GITHUB_OUTPUT" ;;
             "30 13 * * 1"|"0 22 * * 1"|money-flow)                   echo "path=money-flow" >> "$GITHUB_OUTPUT" ;;
+            analytics-report)                                        echo "path=analytics-report" >> "$GITHUB_OUTPUT" ;;
             *) echo "Unknown schedule: ${{ github.event.schedule }}" >&2; exit 1 ;;
           esac
 
