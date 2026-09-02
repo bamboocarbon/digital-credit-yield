@@ -37,12 +37,30 @@ const nextConfig = {
   // threw "Cannot find module '..'" at runtime (2026-09-02, confirmed via
   // Vercel's own runtime-error logs — the OCR backfill on /api/thoughts
   // would then hang instead of failing cleanly, eventually killed by the
-  // platform's 60s function timeout). Force-including the whole package
-  // sidesteps the tracer's static-analysis limit the same way the font
-  // glob above does.
+  // platform's 60s function timeout). Force-including tesseract.js's own
+  // files sidesteps the tracer's static-analysis limit the same way the
+  // font glob above does.
+  //
+  // That alone wasn't enough — the worker-script also dynamically requires
+  // its own npm dependencies (e.g. bmp-js, for BMP image decoding), which
+  // live in sibling node_modules/ dirs the tracer *also* can't follow from
+  // inside tesseract.js's traced files. Confirmed via a second real runtime
+  // error ("Cannot find module 'bmp-js'") after the first fix deployed —
+  // rather than fix these one at a time across repeated deploys, include
+  // every declared dependency from tesseract.js's own package.json.
   outputFileTracingIncludes: {
     '/api/cron/daily-email': ['./public/fonts/**'],
-    '/api/thoughts': ['./node_modules/tesseract.js/**'],
+    '/api/thoughts': [
+      './node_modules/tesseract.js/**',
+      './node_modules/tesseract.js-core/**',
+      './node_modules/bmp-js/**',
+      './node_modules/idb-keyval/**',
+      './node_modules/is-url/**',
+      './node_modules/node-fetch/**',
+      './node_modules/regenerator-runtime/**',
+      './node_modules/wasm-feature-detect/**',
+      './node_modules/zlibjs/**',
+    ],
   },
 };
 
