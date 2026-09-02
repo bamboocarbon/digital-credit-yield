@@ -46,3 +46,4 @@ scripts/rocket-intro-preview/output/
 
 # Tesseract OCR language data — downloaded/cached on first run, not source
 *.traineddata
+.env*.local

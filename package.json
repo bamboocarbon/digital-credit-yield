@@ -13,6 +13,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1",
     "@napi-rs/canvas": "^1.0.0",
+    "@upstash/redis": "^1.38.3",
     "@vercel/analytics": "^2.0.1",
     "@vercel/blob": "^2.4.0",
     "chart.js": "^4.5.1",

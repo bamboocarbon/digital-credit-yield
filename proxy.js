@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server';
-import { put } from '@vercel/blob';
+import { redis } from './lib/redisClient.js';
+
+// Namespaced because this Redis instance is shared with polkadotbike (single
+// free-tier Upstash database — Marketplace only grants one free DB per
+// account, see project_pageview_counter_pattern memory 2026-09-02).
+const NS = 'dcy:pv';
 
 // Best-effort — this only needs to keep out the obvious crawlers so the
 // counter reflects real visits, not perfectly filter every bot. A UA that
@@ -75,9 +80,20 @@ function encodePath(pathname) {
 }
 
 /**
- * Records one marker blob per real page load — no cookies, no per-visitor
- * ID, so it isn't gated by cookie consent the way GA4 is. Ported from the
- * polkadotbike site's proven pattern (lib/pageviewLog.js aggregates it).
+ * Increments day/month/path/total counters in Redis on every real page
+ * load — no cookies, no per-visitor ID, so it isn't gated by cookie consent
+ * the way GA4 is. Ported from the polkadotbike site's proven pattern
+ * (lib/pageviewLog.js aggregates it).
+ *
+ * 2026-09-02: rebuilt from the original one-Blob-per-event design. That
+ * design cost one Vercel Blob "Advanced Operation" per write AND per
+ * list()-based admin read, which put the shared team account (Blob billing
+ * is account-wide, not per-project) at 75% of Hobby's 2,000/month cap
+ * within ~3 days at this site's real traffic (~200+ pageviews/day) —
+ * see project_pageview_counter_pattern memory, 2026-09-02 entry, for the
+ * full diagnosis. Counters cost a handful of Redis commands per event
+ * against Upstash's 500K/month free tier instead — not remotely close to
+ * that limit at current traffic.
  *
  * Named `proxy`, not `middleware` — this Next.js version (16) deprecated
  * and renamed the file convention; see node_modules/next/dist/docs/01-app/
@@ -89,31 +105,40 @@ function encodePath(pathname) {
  * own counter overcounted ~13x from exactly this before that fix landed.
  */
 export function proxy(request, event) {
-  // `npm run dev` shares this exact same production Blob store (same
-  // BLOB_READ_WRITE_TOKEN in .env.local) — confirmed 2026-08-30 on
-  // polkadotbike, where a day of local testing added real-looking "views"
-  // to the live counter. Vercel sets `VERCEL` in every deployed environment
-  // (production AND preview) but never in plain local `next dev` — same
-  // signal polkadotbike's lib/calendar/store.ts uses to pick its storage
-  // backend. Skip recording entirely rather than try to filter dev traffic
-  // out after the fact.
+  // `npm run dev` shares this exact same production Redis instance (same
+  // KV_REST_API_URL/TOKEN in .env.local) — the equivalent Blob-store gotcha
+  // bit both sites on 2026-08-30, so the same guard carries over. Vercel
+  // sets `VERCEL` in every deployed environment (production AND preview)
+  // but never in plain local `next dev` — same signal polkadotbike's
+  // lib/calendar/store.ts uses to pick its storage backend. Skip recording
+  // entirely rather than try to filter dev traffic out after the fact.
   if (!process.env.VERCEL) return NextResponse.next();
   const ua = request.headers.get('user-agent') || '';
   // A real browser always sends a User-Agent — a blank one is itself a
   // reliable bot signal, not just "unknown".
   if (ua && !BOT_UA.test(ua) && !SCAN_PATH.test(request.nextUrl.pathname)) {
     const encoded = encodePath(request.nextUrl.pathname);
-    // Content is the UA behind the timestamp, not just a bare ISO string —
-    // added 2026-08-30 so a repeat of an unfiltered crawl can be diagnosed
-    // from the data itself instead of guessing at the filter again. The
-    // aggregator (lib/pageviewLog.js) still only reads blob.uploadedAt for
-    // timing, so this is purely additive.
+    const now = new Date();
+    const day = now.toISOString().slice(0, 10);
+    const month = day.slice(0, 7);
     event.waitUntil(
-      put(`pageviews/${encoded}/${Date.now()}-${crypto.randomUUID()}`, `${new Date().toISOString()}\n${ua}`, {
-        access: 'private',
-        addRandomSuffix: false,
-        contentType: 'text/plain',
-      }).catch(() => {})
+      redis
+        .pipeline()
+        .incr(`${NS}:day:${day}`)
+        .incr(`${NS}:month:${month}`)
+        .sadd(`${NS}:months`, month)
+        .hincrby(`${NS}:paths`, encoded, 1)
+        .incr(`${NS}:total`)
+        // Bounded rolling sample of the last 500 events (timestamp, path,
+        // UA) — replaces the old per-event-forever log that caused the
+        // quota problem, while keeping the ability to diagnose a new bot
+        // pattern from real data (the method that caught GoogleOther,
+        // crusader-worker, ForestEngine, the stale-iOS UA, etc. in past
+        // sessions) without unbounded growth.
+        .lpush(`${NS}:recentUAs`, `${now.toISOString()}\t${encoded}\t${ua}`)
+        .ltrim(`${NS}:recentUAs`, 0, 499)
+        .exec()
+        .catch(() => {})
     );
   }
   return NextResponse.next();
