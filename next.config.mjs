@@ -29,8 +29,20 @@ const nextConfig = {
   },
   // generateMp4.js registers these with @napi-rs/canvas at runtime
   // (Vercel lambdas have no system fonts); the dynamic path isn't traceable.
+  //
+  // tesseract.js's own worker-script (src/worker-script/node/index.js) does
+  // `require('..')` to reach its package root — a bare parent-directory
+  // require Next's output-file-tracer can't follow statically, so even with
+  // serverExternalPackages set, the traced bundle was missing files and
+  // threw "Cannot find module '..'" at runtime (2026-09-02, confirmed via
+  // Vercel's own runtime-error logs — the OCR backfill on /api/thoughts
+  // would then hang instead of failing cleanly, eventually killed by the
+  // platform's 60s function timeout). Force-including the whole package
+  // sidesteps the tracer's static-analysis limit the same way the font
+  // glob above does.
   outputFileTracingIncludes: {
     '/api/cron/daily-email': ['./public/fonts/**'],
+    '/api/thoughts': ['./node_modules/tesseract.js/**'],
   },
 };
 
