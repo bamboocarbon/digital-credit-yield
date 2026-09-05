@@ -1,4 +1,3 @@
-import GoogleAd from '@/components/GoogleAd';
 import AadsAd from '@/components/AadsAd';
 import DividendInteractive from '@/components/DividendInteractive';
 import { SATA_DAILY_START, isSataDailyDividend } from '@/lib/sataBusinessDays';
@@ -145,7 +144,6 @@ export default function DividendHistoryPage({ ticker, dividends }) {
         </>
       )}
 
-      <GoogleAd slot="dividends" />
       <AadsAd />
 
       <div className="mt-8 p-5 rounded-xl" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>

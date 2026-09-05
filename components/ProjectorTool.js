@@ -4,7 +4,6 @@ import { useState } from 'react';
 import SubNav from '@/components/SubNav';
 import StockSelector from '@/components/StockSelector';
 import GrowthProjector from '@/components/GrowthProjector';
-import GoogleAd from '@/components/GoogleAd';
 import AadsAd from '@/components/AadsAd';
 
 export default function ProjectorTool({ initialStock, liveYields, livePrices }) {
@@ -38,7 +37,6 @@ export default function ProjectorTool({ initialStock, liveYields, livePrices }) 
         rate. Past performance is not indicative of future results.
       </p>
       <GrowthProjector ticker={stock} liveYield={liveYields[stock]} livePrice={livePrices?.[stock]} />
-      <GoogleAd slot="projector" />
       <AadsAd />
 
       <div className="mt-8 p-5 rounded-xl" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>

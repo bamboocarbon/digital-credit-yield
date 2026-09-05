@@ -4,7 +4,6 @@ import { useState } from 'react';
 import SubNav from '@/components/SubNav';
 import StockSelector from '@/components/StockSelector';
 import Differentiator from '@/components/Differentiator';
-import GoogleAd from '@/components/GoogleAd';
 import AadsAd from '@/components/AadsAd';
 
 export default function VsTreasuriesTool({ initialStock, liveYields, livePrices }) {
@@ -32,7 +31,6 @@ export default function VsTreasuriesTool({ initialStock, liveYields, livePrices 
         <a href="/blog/what-is-effective-yield" style={{ color: 'var(--accent-gold)' }}>What effective yield means &rarr;</a>
       </p>
       <Differentiator ticker={stock} liveYield={liveYields[stock]} livePrice={livePrices?.[stock]} />
-      <GoogleAd slot="vs-treasuries" />
       <AadsAd />
 
       <div className="mt-8 p-5 rounded-xl" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
