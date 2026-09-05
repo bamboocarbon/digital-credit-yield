@@ -1,5 +1,4 @@
 import AssetCard from '@/components/AssetCard';
-import GoogleAd from '@/components/GoogleAd';
 import AadsAd from '@/components/AadsAd';
 import LatestNews from '@/components/LatestNews';
 import SubscribeBox from '@/components/SubscribeBox';
@@ -74,7 +73,6 @@ export default function HomePage() {
 
       <CompareTable />
 
-      <GoogleAd slot="home-banner" />
       <AadsAd />
 
       <div className="max-w-3xl mx-auto">

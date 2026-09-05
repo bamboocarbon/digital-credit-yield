@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { STRIVE_BTC_HOLDINGS } from '@/lib/constants';
 import { PENDING_RATE_CHANGES } from '@/lib/pendingRateChanges';
 import SubNav from '@/components/SubNav';
-import GoogleAd from '@/components/GoogleAd';
 import AadsAd from '@/components/AadsAd';
 import AssetHubLive from '@/components/AssetHubLive';
 import HubStockSelector from '@/components/HubStockSelector';
@@ -176,7 +175,6 @@ export default function AssetHub({ ticker, name }) {
         </p>
       </div>
 
-      <GoogleAd slot={`${ticker.toLowerCase()}-hub`} />
       <AadsAd />
 
       <div className="mt-8 p-5 rounded-xl" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
