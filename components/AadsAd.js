@@ -17,7 +17,7 @@ export default function AadsAd() {
         margin: '20px 0',
         borderRadius: '8px',
       }}>
-        [AADS Ad Unit 2440783]
+        [AADS Ad Unit 2454479]
       </div>
     );
   }
@@ -25,8 +25,8 @@ export default function AadsAd() {
   return (
     <div style={{ width: '100%', margin: 'auto', position: 'relative', zIndex: 99998 }}>
       <iframe
-        data-aa="2440783"
-        src="//acceptable.a-ads.com/2440783/?size=Adaptive&background_color=transparent"
+        data-aa="2454479"
+        src="//acceptable.a-ads.com/2454479/?size=Adaptive&background_color=transparent"
         style={{
           border: 0,
           padding: 0,
