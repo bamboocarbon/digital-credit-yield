@@ -8,21 +8,41 @@ function fmt(v) {
   return `$${v}M`;
 }
 
+// month from a 'YYYY-MM-DD' string, e.g. '2025-07-28' -> 'Jul 2025' — avoids
+// a Date() parse (its local-timezone rounding can shift a date-only string
+// onto the wrong day/month near midnight UTC).
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function monthYear(dateStr) {
+  const [y, m] = dateStr.split('-');
+  return `${MONTHS[parseInt(m, 10) - 1]} ${y}`;
+}
+
+// Both the headline total and the "Jul 2025 – present" range used to be
+// hardcoded strings, frozen at whatever was true in May 2026 when this
+// component was last hand-edited — found 2026-09-08 (Robin) still showing
+// stale STRC/SATA totals days after the underlying weekly data had moved on.
+// Derives both from the full weekly array instead, so they can't drift again.
+function deriveStats(weekly) {
+  if (!weekly?.length) return null;
+  return {
+    total: weekly.reduce((sum, w) => sum + w.value, 0),
+    latest: weekly[weekly.length - 1],
+    rangeStart: monthYear(weekly[0].date),
+  };
+}
+
 export default function MoneyFlowStats() {
-  const [lastStrc, setLastStrc] = useState(null);
-  const [lastSata, setLastSata] = useState(null);
-  const [lastBmnp, setLastBmnp] = useState(null);
+  const [strcStats, setStrcStats] = useState(null);
+  const [sataStats, setSataStats] = useState(null);
+  const [bmnpStats, setBmnpStats] = useState(null);
 
   useEffect(() => {
     fetch('/api/money-flow-data')
       .then(r => r.json())
       .then(d => {
-        const strc = d?.strcWeekly;
-        const sata = d?.sataWeekly;
-        const bmnp = d?.bmnpWeekly;
-        if (strc?.length) setLastStrc(strc[strc.length - 1]);
-        if (sata?.length) setLastSata(sata[sata.length - 1]);
-        if (bmnp?.length) setLastBmnp(bmnp[bmnp.length - 1]);
+        setStrcStats(deriveStats(d?.strcWeekly));
+        setSataStats(deriveStats(d?.sataWeekly));
+        setBmnpStats(deriveStats(d?.bmnpWeekly));
       })
       .catch(() => {});
   }, []);
@@ -31,33 +51,33 @@ export default function MoneyFlowStats() {
     <div className={`grid grid-cols-1 gap-4 mb-6 ${BMNP_ENABLED ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
       <div className="rounded-2xl p-5 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#4ade80' }}>STRC Total Raised</p>
-        <p className="text-3xl font-bold">~$10.9B</p>
-        <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Jul 2025 – May 2026</p>
-        {lastStrc && (
+        <p className="text-3xl font-bold">{strcStats ? `~${fmt(strcStats.total)}` : '—'}</p>
+        <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{strcStats ? `${strcStats.rangeStart} – present` : ' '}</p>
+        {strcStats && (
           <p className="text-xs mt-2 font-medium" style={{ color: '#4ade80' }}>
-            Latest: {lastStrc.week} &middot; {fmt(lastStrc.value)}
+            Latest: {strcStats.latest.week} &middot; {fmt(strcStats.latest.value)}
           </p>
         )}
       </div>
       <div className="rounded-2xl p-5 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#3b82f6' }}>SATA Total Raised</p>
-        <p className="text-3xl font-bold">~$1.4B</p>
-        <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Nov 2025 – May 2026</p>
-        {lastSata && (
+        <p className="text-3xl font-bold">{sataStats ? `~${fmt(sataStats.total)}` : '—'}</p>
+        <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{sataStats ? `${sataStats.rangeStart} – present` : ' '}</p>
+        {sataStats && (
           <p className="text-xs mt-2 font-medium" style={{ color: '#3b82f6' }}>
-            Latest: {lastSata.week} &middot; {fmt(lastSata.value)}
+            Latest: {sataStats.latest.week} &middot; {fmt(sataStats.latest.value)}
           </p>
         )}
       </div>
       {BMNP_ENABLED && (
         <div className="rounded-2xl p-5 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#fde047' }}>BMNP Total Raised</p>
-          {lastBmnp ? (
+          {bmnpStats ? (
             <>
-              <p className="text-3xl font-bold">{fmt(lastBmnp.value)}</p>
-              <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Jun 2026 – present</p>
+              <p className="text-3xl font-bold">{fmt(bmnpStats.total)}</p>
+              <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{bmnpStats.rangeStart} – present</p>
               <p className="text-xs mt-2 font-medium" style={{ color: '#fde047' }}>
-                Latest: {lastBmnp.week} &middot; {fmt(lastBmnp.value)}
+                Latest: {bmnpStats.latest.week} &middot; {fmt(bmnpStats.latest.value)}
               </p>
             </>
           ) : (
