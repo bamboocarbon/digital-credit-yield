@@ -71,23 +71,26 @@ export default function RootLayout({ children }) {
         <Script id="consent-init" strategy="beforeInteractive">{`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
-          gtag('consent', 'default', {
-            ad_storage: 'denied',
-            analytics_storage: 'denied',
-            ad_user_data: 'denied',
-            ad_personalization: 'denied',
-            wait_for_update: 500
-          });
+          var granted = false;
           try {
-            if (localStorage.getItem('cookieConsent') === 'accepted') {
-              gtag('consent', 'update', {
-                ad_storage: 'granted',
-                analytics_storage: 'granted',
-                ad_user_data: 'granted',
-                ad_personalization: 'granted'
-              });
+            var stored = localStorage.getItem('cookieConsent');
+            if (stored === 'accepted') {
+              granted = true;
+            } else if (stored !== 'declined') {
+              // No explicit choice yet — outside the EEA/UK (see proxy.js:
+              // regionFor / REGULATED_COUNTRIES) cookies default on with no
+              // prompt; inside it, default off until the banner is accepted.
+              var m = document.cookie.match(/(?:^|; )consent_region=([^;]*)/);
+              granted = m ? decodeURIComponent(m[1]) === 'open' : false;
             }
           } catch(e) {}
+          gtag('consent', 'default', {
+            ad_storage: granted ? 'granted' : 'denied',
+            analytics_storage: granted ? 'granted' : 'denied',
+            ad_user_data: granted ? 'granted' : 'denied',
+            ad_personalization: granted ? 'granted' : 'denied',
+            wait_for_update: granted ? 0 : 500
+          });
         `}</Script>
         {process.env.NEXT_PUBLIC_GA_ID && (
           <>

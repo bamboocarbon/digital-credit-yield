@@ -11,7 +11,13 @@ export default function CookieBanner() {
 
   useEffect(() => {
     const consent = localStorage.getItem('cookieConsent');
-    if (!consent) setVisible(true);
+    if (consent) return;
+    // No stored choice yet — only prompt inside the EEA/UK (see proxy.js:
+    // regionFor). Elsewhere the consent-init script in app/layout.js has
+    // already defaulted cookies/ads to granted, so no banner is needed.
+    const m = document.cookie.match(/(?:^|; )consent_region=([^;]*)/);
+    const region = m ? decodeURIComponent(m[1]) : 'regulated';
+    if (region === 'regulated') setVisible(true);
   }, []);
 
   function handleAccept() {
@@ -24,6 +30,10 @@ export default function CookieBanner() {
         ad_personalization: 'granted',
       });
     }
+    // AadsAd.js reads consent once on mount (no shared React context here,
+    // unlike polkadotbike's ConsentProvider) — this lets it pick up an
+    // in-page Accept/Decline without needing a full page reload.
+    window.dispatchEvent(new Event('cookieConsentChange'));
     setVisible(false);
   }
 
@@ -37,6 +47,7 @@ export default function CookieBanner() {
         ad_personalization: 'denied',
       });
     }
+    window.dispatchEvent(new Event('cookieConsentChange'));
     setVisible(false);
   }
 

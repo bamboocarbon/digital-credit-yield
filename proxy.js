@@ -79,6 +79,32 @@ function encodePath(pathname) {
   return trimmed.replace(/\//g, '--');
 }
 
+// GDPR/UK-GDPR territory: the 27 EU states, the three non-EU EEA members
+// (Iceland, Liechtenstein, Norway — bound by GDPR via the EEA agreement),
+// and the UK. Everywhere else defaults cookies/analytics on with no banner.
+const REGULATED_COUNTRIES = new Set([
+  'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR',
+  'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK',
+  'SI', 'ES', 'SE', 'IS', 'LI', 'NO', 'GB',
+]);
+
+/**
+ * Reads the raw `x-vercel-ip-country` header Vercel's edge network stamps
+ * on every request — not the `@vercel/functions` geolocation() helper,
+ * which isn't a dependency here and would add one just for this. The
+ * header is set at the network level regardless of Next.js version, so
+ * it works the same in proxy.js here as in polkadotbike's middleware.ts.
+ * Missing locally (no such header in `next dev`) and, in theory, on any
+ * edge case Vercel doesn't resolve — both fail safe to 'regulated' so a
+ * detection gap shows an unnecessary banner rather than skipping a
+ * required one.
+ */
+function regionFor(request) {
+  const country = request.headers.get('x-vercel-ip-country');
+  if (!country) return 'regulated';
+  return REGULATED_COUNTRIES.has(country.toUpperCase()) ? 'regulated' : 'open';
+}
+
 /**
  * Increments day/month/path/total counters in Redis on every real page
  * load — no cookies, no per-visitor ID, so it isn't gated by cookie consent
@@ -105,6 +131,16 @@ function encodePath(pathname) {
  * own counter overcounted ~13x from exactly this before that fix landed.
  */
 export function proxy(request, event) {
+  const response = NextResponse.next();
+  // Read by the consent-init script and CookieBanner (see app/layout.js /
+  // components/CookieBanner.js) to decide whether to default cookies/ads
+  // to on with no prompt, or off-until-accepted with the banner shown.
+  response.cookies.set('consent_region', regionFor(request), {
+    path: '/',
+    maxAge: 60 * 60 * 24 * 30,
+    sameSite: 'lax',
+  });
+
   // `npm run dev` shares this exact same production Redis instance (same
   // KV_REST_API_URL/TOKEN in .env.local) — the equivalent Blob-store gotcha
   // bit both sites on 2026-08-30, so the same guard carries over. Vercel
@@ -112,7 +148,7 @@ export function proxy(request, event) {
   // but never in plain local `next dev` — same signal polkadotbike's
   // lib/calendar/store.ts uses to pick its storage backend. Skip recording
   // entirely rather than try to filter dev traffic out after the fact.
-  if (!process.env.VERCEL) return NextResponse.next();
+  if (!process.env.VERCEL) return response;
   const ua = request.headers.get('user-agent') || '';
   // A real browser always sends a User-Agent — a blank one is itself a
   // reliable bot signal, not just "unknown".
@@ -141,7 +177,7 @@ export function proxy(request, event) {
         .catch(() => {})
     );
   }
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

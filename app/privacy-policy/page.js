@@ -29,7 +29,7 @@ export default function PrivacyPolicyPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
       <h1 className="text-3xl font-bold mb-2">Privacy Policy</h1>
-      <p className="text-sm mb-10" style={{ color: 'var(--text-muted)' }}>Last updated: May 2026</p>
+      <p className="text-sm mb-10" style={{ color: 'var(--text-muted)' }}>Last updated: September 2026</p>
 
       <Section title="1. What Data We Collect">
         <p>We may collect the following data when you use Digital Credit Yield:</p>
@@ -49,7 +49,7 @@ export default function PrivacyPolicyPage() {
           <li>Understand how visitors use the site (analytics) in order to improve it</li>
           <li>Respond to enquiries submitted via the contact form</li>
           <li>Send the daily snapshot email to newsletter subscribers — you can unsubscribe at any time via the link in every email or at <a href="/unsubscribe" className="underline" style={{ color: 'var(--accent-gold)' }}>digitalcredityield.com/unsubscribe</a>, and your address is removed immediately</li>
-          <li>Serve relevant advertisements via Google AdSense (only with your consent)</li>
+          <li>Serve relevant advertisements via A-Ads — set automatically unless you're visiting from the UK or EEA, where they're only set once you accept our cookie banner</li>
           <li>Preserve your calculator settings (Growth Projector, vs Treasuries, and Dividend History income calculator inputs) between visits for your convenience</li>
           <li>Build and maintain a long-term dividend payment history for STRC, SATA and BMNP — when you visit a Dividend History page, our server may fetch the latest public dividend data from Yahoo Finance and store it on our server to grow this record over time. This process involves no personal data whatsoever; only publicly available market information is stored.</li>
           <li>Display weekly capital flow data for STRC, SATA and BMNP on the Money Flow page — this data is compiled from publicly available SEC 8-K filings and stored on our server. No personal data is involved; only publicly available regulatory filings are used.</li>
@@ -61,7 +61,7 @@ export default function PrivacyPolicyPage() {
         <p>This site uses the following third-party services, each with their own privacy policies:</p>
         <ul className="list-disc pl-5 space-y-1">
           <li><strong>Google Analytics</strong> — website analytics. <a href="https://policies.google.com/privacy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Google Privacy Policy</a></li>
-          <li><strong>Google AdSense</strong> — advertising. Only loaded with your cookie consent.</li>
+          <li><strong>A-Ads</strong> — advertising, including ads personalised from your past visits to this and other sites. <a href="https://aads.com/privacy_policy/" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">A-Ads Privacy Policy</a></li>
           <li><strong>Web fonts</strong> — DM Sans and Roboto Mono are self-hosted at build time via Next.js. No requests are made to Google Fonts or any third-party CDN for font files.</li>
           <li><strong>TradingView (lightweight-charts)</strong> — open-source charting library used to render price and yield charts. Runs entirely client-side with no external requests to TradingView servers and no user data is collected or transmitted.</li>
           <li><strong>Yahoo Finance</strong> — live price and dividend data, fetched server-side (no user data shared).</li>
@@ -71,36 +71,23 @@ export default function PrivacyPolicyPage() {
       </Section>
 
       <Section title="4. Cookie Policy">
-        <p>We use cookies for the following purposes:</p>
+        <p>
+          If you're visiting from outside the UK or European Economic Area (EEA), the cookies below are set automatically and no banner is shown. If you're visiting from the UK or EEA, non-essential cookies (analytics and advertising) are only set once you accept our cookie banner — you can decline instead, or withdraw consent at any time by clearing your browser's local storage for this site. We use cookies for the following purposes:
+        </p>
         <ul className="list-disc pl-5 space-y-1">
-          <li><strong>Essential cookies</strong>: your cookie consent preference is stored in your browser's local storage</li>
+          <li><strong>Essential cookies</strong>: your cookie consent preference is stored in your browser's local storage; a short-lived cookie records which of these regions you're browsing from so the site knows whether to show the banner</li>
           <li><strong>Calculator preferences</strong>: Growth Projector and vs Treasuries inputs are stored in your browser's local storage for your convenience — these are not consent-dependent as no personal data is involved and nothing is transmitted externally</li>
-          <li><strong>Analytics cookies</strong> (Google Analytics): only set if you accept cookies</li>
-          <li><strong>Advertising cookies</strong> (Google AdSense): only set if you accept cookies</li>
+          <li><strong>Analytics cookies</strong> (Google Analytics)</li>
+          <li><strong>Advertising cookies</strong> (A-Ads)</li>
         </ul>
-        <p>You can withdraw consent at any time by clearing your browser's local storage for this site.</p>
       </Section>
 
       <Section title="5. Advertising">
         <p>
-          We use Google AdSense to display advertisements on this site. Google and its partners use cookies to serve ads based on your prior visits to this site and other sites across the internet. This is known as interest-based or personalised advertising.
+          We use A-Ads to display advertisements on this site. A-Ads and its partners use cookies and similar technologies to serve ads, including ads based on your prior visits to this site and other sites across the internet — known as interest-based or personalised advertising.
         </p>
         <p>
-          Google's use of advertising cookies enables it and its partners to serve ads based on your browsing history. You can opt out of personalised advertising at any time using either of the following:
-        </p>
-        <ul className="list-disc pl-5 space-y-1">
-          <li>
-            <a href="https://adssettings.google.com" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Google Ads Settings</a> — manage how Google uses your data for advertising
-          </li>
-          <li>
-            <a href="https://optout.aboutads.info" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">aboutads.info</a> — opt out of interest-based advertising from participating companies
-          </li>
-          <li>
-            <a href="https://optout.networkadvertising.org" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Network Advertising Initiative opt-out</a>
-          </li>
-        </ul>
-        <p>
-          Google AdSense operates under Google Consent Mode on this site. If you decline cookies via our cookie banner, consent signals remain denied — no advertising cookies are set for personalised advertising and no consented data is shared with Google for ad personalisation. For more information on how Google uses data from sites that use its services, see <a href="https://policies.google.com/technologies/partner-sites" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">How Google uses information from sites or apps that use our services</a>.
+          You can decline advertising cookies via our cookie banner if you're in the UK or EEA (see Cookie Policy above), or block or delete cookies at any time in your browser settings — though some adverts may then be less relevant. For details of what A-Ads collects and how, see the <a href="https://aads.com/privacy_policy/" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">A-Ads Privacy Policy</a>.
         </p>
       </Section>
 
