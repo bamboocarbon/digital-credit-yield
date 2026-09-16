@@ -154,6 +154,66 @@ function SataMonthlyProgress({ monthlyByMonth, todayYM, today, annualRate }) {
   );
 }
 
+// Same box-grid as SataMonthlyProgress, generalised for STRC (semi-monthly)
+// and BMNP (weekly) — Robin, 2026-09-16: "sata has this box, can we add
+// similar ones to strc and bmnp." Rather than a business-day-style formula
+// per ticker, each month's "expected" total and payment count are derived
+// straight from the real data already on hand: paid entries plus any
+// announced-but-unpaid ones dated within that month (the same
+// paidDividends/announcedDividends split the chart above uses) — accurate
+// for both cadences without needing a separate schedule model per ticker.
+function MonthlyPaymentProgress({ paidDividends, announcedDividends, todayYM }) {
+  const firstYM = paidDividends.length ? paidDividends[0].date.slice(0, 7) : todayYM;
+  const displayMonths = [];
+  let [y, m] = firstYM.split('-').map(Number);
+  const [endY, endM] = todayYM.split('-').map(Number);
+  while (y < endY || (y === endY && m <= endM)) {
+    displayMonths.push(`${y}-${String(m).padStart(2, '0')}`);
+    m++;
+    if (m > 12) { m = 1; y++; }
+  }
+  return (
+    <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+      <h2 className="text-lg font-semibold mb-1">Monthly Payment Progress</h2>
+      <p className="text-xs mb-5" style={{ color: 'var(--text-muted)' }}>
+        Each box represents one calendar month. Gold fill indicates the proportion of expected income received so far.
+      </p>
+      <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 sm:gap-3">
+        {displayMonths.map(ym => {
+          const paidThisMonth = paidDividends.filter(d => d.date.slice(0, 7) === ym);
+          const announcedThisMonth = announcedDividends.filter(d => d.date.slice(0, 7) === ym);
+          const paid = paidThisMonth.reduce((s, d) => s + d.amount, 0);
+          const expected = paid + announcedThisMonth.reduce((s, d) => s + d.amount, 0);
+          const countPaid = paidThisMonth.length;
+          const countTotal = countPaid + announcedThisMonth.length;
+          const fillPct = expected > 0 ? Math.min(1, paid / expected) : 0;
+          const isCurrentMonth = ym === todayYM;
+          const isComplete = fillPct >= 1;
+          return (
+            <div key={ym} className="flex flex-col items-center gap-1">
+              <div title={`$${paid.toFixed(4)} of $${expected.toFixed(4)} expected`}
+                style={{ position: 'relative', width: '100%', height: 52,
+                  border: `2px solid ${isCurrentMonth ? '#f5a623' : 'rgba(200,137,58,0.5)'}`,
+                  borderRadius: 6, overflow: 'hidden', background: '#111827' }}>
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0,
+                  height: `${fillPct * 100}%`,
+                  background: isComplete ? '#f5a623' : 'rgba(245,166,35,0.6)',
+                  transition: 'height 0.4s ease' }} />
+              </div>
+              <span style={{ fontSize: 10, color: isCurrentMonth ? 'var(--text-primary)' : 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                {ymToLabel(ym)}
+              </span>
+              <span style={{ fontSize: 10, ...MONO, color: paid > 0 ? 'var(--accent-gold)' : 'var(--text-muted)' }}>
+                {countPaid}/{countTotal || countPaid}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function DividendInteractive({ ticker }) {
   const chartRef      = useRef(null);
   const chartInstance = useRef(null);
@@ -643,13 +703,20 @@ export default function DividendInteractive({ ticker }) {
         </div>
       </div>
 
-      {/* Fill boxes — SATA daily era only */}
+      {/* Fill boxes */}
       {inDailyEra && (
         <SataMonthlyProgress
           monthlyByMonth={monthlyByMonth}
           todayYM={todayYM}
           today={today}
           annualRate={ASSET_RATES.SATA}
+        />
+      )}
+      {ticker !== 'SATA' && paidDividends && paidDividends.length > 0 && (
+        <MonthlyPaymentProgress
+          paidDividends={paidDividends}
+          announcedDividends={announcedDividends}
+          todayYM={todayYM}
         />
       )}
 
