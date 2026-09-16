@@ -24,7 +24,14 @@ export default function DividendHistoryPage({ ticker, dividends }) {
     : dividends;
   const inDailyEra = ticker === 'SATA' && dividends.some(d => isSataDailyDividend(d));
 
-  const tableData = ticker === 'SATA' ? monthlyDivs : dividends;
+  const allTableData = ticker === 'SATA' ? monthlyDivs : dividends;
+  // The stored record can include dates that haven't happened yet — STRC's
+  // live-merged feed sometimes reports the next declared distribution before
+  // it pays, and BMNP's schedule is stored months ahead since Bitmine
+  // announces it in advance. Robin, 2026-09-16: these must never render in
+  // "All Payments" as if already paid.
+  const tableData = allTableData.filter(d => d.date <= today);
+  const upcomingTableData = allTableData.filter(d => d.date > today);
 
   return (
     <div>
@@ -132,6 +139,25 @@ export default function DividendHistoryPage({ ticker, dividends }) {
                     })}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {/* Announced but not yet paid — kept clearly separate from "All Payments"
+              above rather than mixed into it (Robin, 2026-09-16). */}
+          {upcomingTableData.length > 0 && (
+            <div className="card p-6 rounded-xl mb-6" style={{ background: 'rgba(245,166,35,0.06)', border: '1px solid rgba(245,166,35,0.3)' }}>
+              <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--accent-gold)' }}>Announced, Not Yet Paid</h2>
+              <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>
+                {ticker} has announced these upcoming payment dates and amounts, but they have not been paid yet.
+              </p>
+              <div className="space-y-2">
+                {upcomingTableData.map(d => (
+                  <div key={d.date} className="flex justify-between items-center p-3 rounded-lg" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
+                    <p className="text-sm font-medium">{formatDate(d.date)}</p>
+                    <p className="text-sm font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>${d.amount.toFixed(4)}/share</p>
+                  </div>
+                ))}
               </div>
             </div>
           )}

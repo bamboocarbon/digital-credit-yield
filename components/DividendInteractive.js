@@ -196,14 +196,29 @@ export default function DividendInteractive({ ticker }) {
   const today   = new Date().toISOString().split('T')[0];
   const todayYM = today.slice(0, 7);
 
+  // STRC's live-merged Yahoo feed can report the next declared distribution
+  // before it actually pays, and BMNP's stored record spans months ahead
+  // (Bitmine announces its weekly schedule in advance) — neither should ever
+  // be counted as "paid" in stats, tables or the solid part of the chart.
+  // Robin, 2026-09-16: "STRC is showing dividends already paid for sep 30
+  // and bmnp is showing dividends paid up to end of dec... these look like
+  // announced dates from the daily scan and should not be read as already
+  // paid." announcedDividends feeds the "not yet paid" ghost/prediction
+  // treatment instead of being dropped outright.
+  const paidDividends = dividends ? dividends.filter(d => d.date <= today) : null;
+  const announcedDividends = useMemo(
+    () => (dividends ? dividends.filter(d => d.date > today).sort((a, b) => a.date.localeCompare(b.date)) : []),
+    [dividends, today]
+  );
+
   const { monthlyDivs, dailyDivs } = useMemo(() => {
-    if (!dividends) return { monthlyDivs: [], dailyDivs: [] };
-    if (ticker !== 'SATA') return { monthlyDivs: dividends, dailyDivs: [] };
+    if (!paidDividends) return { monthlyDivs: [], dailyDivs: [] };
+    if (ticker !== 'SATA') return { monthlyDivs: paidDividends, dailyDivs: [] };
     return {
-      monthlyDivs: dividends.filter(d => !isSataDailyDividend(d)),
-      dailyDivs:   dividends.filter(d => isSataDailyDividend(d)),
+      monthlyDivs: paidDividends.filter(d => !isSataDailyDividend(d)),
+      dailyDivs:   paidDividends.filter(d => isSataDailyDividend(d)),
     };
-  }, [dividends, ticker]);
+  }, [paidDividends, ticker]);
 
   const dailyByMonth   = useMemo(() => groupByMonth(dailyDivs), [dailyDivs]);
   const monthlyByMonth = useMemo(() => groupByMonth(monthlyDivs), [monthlyDivs]);
@@ -267,8 +282,8 @@ export default function DividendInteractive({ ticker }) {
   const incomeAnnual      = sharesNum * impliedAnnual;
 
   useEffect(() => {
-    if (dividends === null) return;
-    if (!dividends.length && ticker !== 'BMNP') return;
+    if (paidDividends === null) return;
+    if (!paidDividends.length && ticker !== 'BMNP') return;
     let destroyed = false;
     async function draw() {
       const { Chart, registerables } = await import('chart.js');
@@ -280,7 +295,7 @@ export default function DividendInteractive({ ticker }) {
 
       if (ticker === 'SATA' && dailyDivs.length > 0) {
         const allByMonth = {};
-        dividends.forEach(d => {
+        paidDividends.forEach(d => {
           const ym = d.date.slice(0, 7);
           allByMonth[ym] = (allByMonth[ym] ?? 0) + d.amount;
         });
@@ -354,15 +369,26 @@ export default function DividendInteractive({ ticker }) {
           },
         });
       } else if (ticker === 'BMNP') {
-        const allByMonth = {};
-        dividends.forEach(d => {
+        const paidByMonth = {};
+        paidDividends.forEach(d => {
           const ym = d.date.slice(0, 7);
-          allByMonth[ym] = (allByMonth[ym] ?? 0) + d.amount;
+          paidByMonth[ym] = (paidByMonth[ym] ?? 0) + d.amount;
         });
-        // Bitmine has announced the schedule but no payment has actually landed yet —
-        // always include every month from listing through today so the chart shows
-        // the planned dividends ghosted out, even with zero real data on record.
-        const monthsSet = new Set(Object.keys(allByMonth));
+        // Bitmine announces its weekly schedule (and this store's record) months
+        // ahead of actual payment — real future-dated entries must never land in
+        // the "Paid" total above, but the real announced amount for a future
+        // month (when we have it) is more accurate than the generic weekly-rate
+        // projection below, so it's used as that month's ghosted "expected"
+        // total instead of being discarded.
+        const announcedByMonth = {};
+        announcedDividends.forEach(d => {
+          const ym = d.date.slice(0, 7);
+          announcedByMonth[ym] = (announcedByMonth[ym] ?? 0) + d.amount;
+        });
+        // Always include every month from listing through today, plus any month
+        // with a real announced amount, so the chart shows the planned dividends
+        // ghosted out even with zero real data on record for that month yet.
+        const monthsSet = new Set([...Object.keys(paidByMonth), ...Object.keys(announcedByMonth)]);
         let [y, m] = [2026, 6];
         const [endY, endM] = todayYM.split('-').map(Number);
         while (y < endY || (y === endY && m <= endM)) {
@@ -372,8 +398,12 @@ export default function DividendInteractive({ ticker }) {
         const rangeLimit = chartRange === '12M' ? 12 : chartRange === '24M' ? 24 : Infinity;
         const allMonths  = Array.from(monthsSet).sort();
         const months     = rangeLimit === Infinity ? allMonths : allMonths.slice(-rangeLimit);
-        const totals     = months.map(ym => allByMonth[ym] ?? 0);
-        const expected   = months.map((ym, i) => Math.max(totals[i], getBmnpExpectedMonthlyTotal(ym, ASSET_RATES.BMNP)));
+        const totals     = months.map(ym => paidByMonth[ym] ?? 0);
+        const expected   = months.map((ym, i) => {
+          const announcedReal = announcedByMonth[ym] ?? 0;
+          const projected = announcedReal > 0 ? totals[i] + announcedReal : getBmnpExpectedMonthlyTotal(ym, ASSET_RATES.BMNP);
+          return Math.max(totals[i], projected);
+        });
         const remaining  = months.map((ym, i) => Math.max(0, expected[i] - totals[i]));
 
         chartInstance.current = new Chart(ctx, {
@@ -406,11 +436,17 @@ export default function DividendInteractive({ ticker }) {
           },
         });
       } else {
-        const sourceDivs = ticker === 'SATA' ? monthlyDivs : dividends;
+        const sourceDivs = monthlyDivs;
         if (!sourceDivs.length) return;
         const rangeLimit  = chartRange === '12M' ? 12 : chartRange === '24M' ? 24 : Infinity;
         const targetDivs  = rangeLimit === Infinity ? sourceDivs : sourceDivs.slice(-rangeLimit);
-        const pred        = sourceDivs.length >= 2 ? predictNextDividend(sourceDivs) : null;
+        // A real announced-but-unpaid entry (e.g. STRC's next declared distribution,
+        // already in Yahoo's feed) is more accurate than the trend-based guess below —
+        // prefer it when we have one, and label it distinctly in the tooltip.
+        const nextAnnounced = announcedDividends[0] ?? null;
+        const pred = nextAnnounced
+          ? { date: nextAnnounced.date, amount: nextAnnounced.amount, source: 'announced' }
+          : (sourceDivs.length >= 2 ? predictNextDividend(sourceDivs) : null);
         const allLabels   = targetDivs.map(d => formatChartDate(d.date));
         const allAmounts  = targetDivs.map(d => d.amount);
         const allBg       = targetDivs.map(() => 'rgba(200,137,58,0.75)');
@@ -432,8 +468,11 @@ export default function DividendInteractive({ ticker }) {
             plugins: {
               legend: { display: false },
               tooltip: { callbacks: { label: c => {
-                const isEst = pred && c.dataIndex === allLabels.length - 1 && allLabels.at(-1)?.endsWith(' *');
-                return isEst ? `Estimated: $${Number(c.raw).toFixed(4)}/share` : `Per share: $${Number(c.raw).toFixed(4)}`;
+                const isPredicted = pred && c.dataIndex === allLabels.length - 1 && allLabels.at(-1)?.endsWith(' *');
+                if (!isPredicted) return `Per share: $${Number(c.raw).toFixed(4)}`;
+                return pred.source === 'announced'
+                  ? `Announced (not yet paid): $${Number(c.raw).toFixed(4)}/share`
+                  : `Estimated: $${Number(c.raw).toFixed(4)}/share`;
               }}},
             },
             scales: {
@@ -446,7 +485,7 @@ export default function DividendInteractive({ ticker }) {
     }
     draw();
     return () => { destroyed = true; };
-  }, [dividends, ticker, dailyDivs, monthlyDivs, dailyByMonth, monthlyByMonth, chartRange, todayYM, today]);
+  }, [paidDividends, announcedDividends, ticker, dailyDivs, monthlyDivs, dailyByMonth, monthlyByMonth, chartRange, todayYM, today]);
 
   if (fetchError) return (
     <div className="p-4 rounded-lg mb-6 text-sm" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', color: '#ef4444' }}>
