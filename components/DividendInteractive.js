@@ -15,6 +15,29 @@ function formatDate(dateStr) {
   return `${months[parseInt(m, 10) - 1]} ${parseInt(d, 10)}, ${y}`;
 }
 
+// Collapses a run of consecutive same-amount entries into one summary row
+// instead of listing each individually — SATA's daily era pre-populates a
+// whole month of identical formula-based amounts (gaps of 1-3 days,
+// weekends skipped), and BMNP's weekly schedule repeats the same amount
+// most weeks (7-day gaps) — both read as 10+ near-duplicate rows otherwise.
+// 9 days comfortably covers both cadences while staying well under STRC's
+// ~15-16 day semi-monthly gap, so a rare pair of STRC entries still lists
+// individually rather than being (wrongly) treated as a run.
+const UPCOMING_GROUP_GAP_MS = 9 * 86400000;
+function groupUpcoming(entries) {
+  const groups = [];
+  for (const d of entries) {
+    const last = groups[groups.length - 1];
+    if (last && last.amount === d.amount && last.dates.length &&
+        new Date(d.date) - new Date(last.dates[last.dates.length - 1]) <= UPCOMING_GROUP_GAP_MS) {
+      last.dates.push(d.date);
+    } else {
+      groups.push({ amount: d.amount, dates: [d.date] });
+    }
+  }
+  return groups;
+}
+
 function ymToLabel(ym) {
   const [y, m] = ym.split('-');
   const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -735,6 +758,30 @@ export default function DividendInteractive({ ticker }) {
           </div>
         </div>
       </div>
+
+      {/* Announced but not yet paid — positioned right under the chart
+          (Robin, 2026-09-16), kept clearly separate from "All Payments"
+          (in DividendHistoryPage.js) rather than mixed into it. */}
+      {announcedDividends.length > 0 && (
+        <div className="card p-6 rounded-xl mb-6" style={{ background: 'rgba(245,166,35,0.06)', border: '1px solid rgba(245,166,35,0.3)' }}>
+          <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--accent-gold)' }}>Announced, Not Yet Paid</h2>
+          <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>
+            {ticker} has announced these upcoming payment dates and amounts, but they have not been paid yet.
+          </p>
+          <div className="space-y-2">
+            {groupUpcoming(announcedDividends).map(g => (
+              <div key={g.dates[0]} className="flex justify-between items-center p-3 rounded-lg" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
+                <p className="text-sm font-medium">
+                  {g.dates.length === 1 ? formatDate(g.dates[0]) : `${formatDate(g.dates[0])} – ${formatDate(g.dates[g.dates.length - 1])} (${g.dates.length} payments)`}
+                </p>
+                <p className="text-sm font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>
+                  ${g.amount.toFixed(4)}/share{g.dates.length > 1 ? ' each' : ''}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* SATA daily era: monthly summary payments table */}
       {inDailyEra && (

@@ -11,28 +11,10 @@ function formatDate(dateStr) {
   return `${months[parseInt(m, 10) - 1]} ${parseInt(d, 10)}, ${y}`;
 }
 
-// Collapses a run of consecutive same-amount entries into one summary row
-// instead of listing each individually — SATA's daily era pre-populates a
-// whole month of identical formula-based amounts (gaps of 1-3 days,
-// weekends skipped), and BMNP's weekly schedule repeats the same amount
-// most weeks (7-day gaps) — both read as 10+ near-duplicate rows otherwise.
-// 9 days comfortably covers both cadences while staying well under STRC's
-// ~15-16 day semi-monthly gap, so a rare pair of STRC entries still lists
-// individually rather than being (wrongly) treated as a run.
-const UPCOMING_GROUP_GAP_MS = 9 * 86400000;
-function groupUpcoming(entries) {
-  const groups = [];
-  for (const d of entries) {
-    const last = groups[groups.length - 1];
-    if (last && last.amount === d.amount && last.dates.length &&
-        new Date(d.date) - new Date(last.dates[last.dates.length - 1]) <= UPCOMING_GROUP_GAP_MS) {
-      last.dates.push(d.date);
-    } else {
-      groups.push({ amount: d.amount, dates: [d.date] });
-    }
-  }
-  return groups;
-}
+// "Announced, Not Yet Paid" (and its groupUpcoming helper) moved into
+// DividendInteractive.js, 2026-09-16 — Robin wanted it repositioned to sit
+// directly under the Monthly Income Per Share chart, which only that
+// client component renders.
 
 export default function DividendHistoryPage({ ticker, dividends }) {
   const today = new Date().toISOString().slice(0, 10);
@@ -54,15 +36,6 @@ export default function DividendHistoryPage({ ticker, dividends }) {
   // announces it in advance. Robin, 2026-09-16: these must never render in
   // "All Payments" as if already paid.
   const tableData = allTableData.filter(d => d.date <= today);
-  // Checked against the full raw record, not the SATA-specific monthly-only
-  // subset "All Payments" uses above — SATA's daily era pre-populates a
-  // whole calendar month of formula-known future business days (the daily
-  // amount is published in advance), so it has future-dated entries same as
-  // STRC/BMNP even though its own "All Payments" table above never shows
-  // daily-era rows at all (those get DividendInteractive's own table).
-  // Robin, 2026-09-16: "sata dividends does not have an announced not yet
-  // paid box."
-  const upcomingTableData = dividends.filter(d => d.date > today);
 
   return (
     <div>
@@ -170,29 +143,6 @@ export default function DividendHistoryPage({ ticker, dividends }) {
                     })}
                   </tbody>
                 </table>
-              </div>
-            </div>
-          )}
-
-          {/* Announced but not yet paid — kept clearly separate from "All Payments"
-              above rather than mixed into it (Robin, 2026-09-16). */}
-          {upcomingTableData.length > 0 && (
-            <div className="card p-6 rounded-xl mb-6" style={{ background: 'rgba(245,166,35,0.06)', border: '1px solid rgba(245,166,35,0.3)' }}>
-              <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--accent-gold)' }}>Announced, Not Yet Paid</h2>
-              <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>
-                {ticker} has announced these upcoming payment dates and amounts, but they have not been paid yet.
-              </p>
-              <div className="space-y-2">
-                {groupUpcoming(upcomingTableData).map(g => (
-                  <div key={g.dates[0]} className="flex justify-between items-center p-3 rounded-lg" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
-                    <p className="text-sm font-medium">
-                      {g.dates.length === 1 ? formatDate(g.dates[0]) : `${formatDate(g.dates[0])} – ${formatDate(g.dates[g.dates.length - 1])} (${g.dates.length} payments)`}
-                    </p>
-                    <p className="text-sm font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>
-                      ${g.amount.toFixed(4)}/share{g.dates.length > 1 ? ' each' : ''}
-                    </p>
-                  </div>
-                ))}
               </div>
             </div>
           )}
