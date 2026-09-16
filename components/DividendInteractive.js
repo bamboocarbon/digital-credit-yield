@@ -15,12 +15,6 @@ function formatDate(dateStr) {
   return `${months[parseInt(m, 10) - 1]} ${parseInt(d, 10)}, ${y}`;
 }
 
-function formatChartDate(dateStr) {
-  const [y, m] = dateStr.split('-');
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return `${months[parseInt(m, 10) - 1]} '${y.slice(2)}`;
-}
-
 function ymToLabel(ym) {
   const [y, m] = ym.split('-');
   const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -228,7 +222,6 @@ export default function DividendInteractive({ ticker }) {
   // formula for "today's" amount until the first recorded event catches up.
   const inDailyEra = ticker === 'SATA' && today >= SATA_DAILY_START;
   const isBmnp = ticker === 'BMNP';
-  const showGhostedChart = inDailyEra || isBmnp;
 
   const sataDailyStats = useMemo(() => {
     if (ticker !== 'SATA') return null;
@@ -436,48 +429,64 @@ export default function DividendInteractive({ ticker }) {
           },
         });
       } else {
-        const sourceDivs = monthlyDivs;
-        if (!sourceDivs.length) return;
-        const rangeLimit  = chartRange === '12M' ? 12 : chartRange === '24M' ? 24 : Infinity;
-        const targetDivs  = rangeLimit === Infinity ? sourceDivs : sourceDivs.slice(-rangeLimit);
-        // A real announced-but-unpaid entry (e.g. STRC's next declared distribution,
-        // already in Yahoo's feed) is more accurate than the trend-based guess below —
-        // prefer it when we have one, and label it distinctly in the tooltip.
-        const nextAnnounced = announcedDividends[0] ?? null;
-        const pred = nextAnnounced
-          ? { date: nextAnnounced.date, amount: nextAnnounced.amount, source: 'announced' }
-          : (sourceDivs.length >= 2 ? predictNextDividend(sourceDivs) : null);
-        const allLabels   = targetDivs.map(d => formatChartDate(d.date));
-        const allAmounts  = targetDivs.map(d => d.amount);
-        const allBg       = targetDivs.map(() => 'rgba(200,137,58,0.75)');
-        const allBorder   = targetDivs.map(() => '#c8893a');
-        const allBW       = targetDivs.map(() => 1);
-        if (pred) {
-          allLabels.push(formatChartDate(pred.date) + ' *');
-          allAmounts.push(pred.amount);
-          allBg.push('rgba(200,137,58,0.15)');
-          allBorder.push('#c8893a');
-          allBW.push(2);
-        }
+        if (!monthlyDivs.length) return;
+        // One bar per MONTH, not per payment — STRC's move to semi-monthly (two
+        // payments/month) was otherwise rendering two adjacent bars per month.
+        // Robin, 2026-09-16: "have 1 box that gets filled during the month like
+        // sata." Same stacked Paid/Remaining treatment as the SATA/BMNP branches
+        // above: past, complete months get a zero-height remaining segment (paid
+        // already equals expected, so they render as one solid bar); the current
+        // month fills in as payments land, using the real announced amount for
+        // its "expected" when we have one (e.g. the second semi-monthly payment,
+        // already declared) rather than a guess.
+        const paidByMonth = {};
+        monthlyDivs.forEach(d => {
+          const ym = d.date.slice(0, 7);
+          paidByMonth[ym] = (paidByMonth[ym] ?? 0) + d.amount;
+        });
+        const announcedByMonth = {};
+        announcedDividends.forEach(d => {
+          const ym = d.date.slice(0, 7);
+          announcedByMonth[ym] = (announcedByMonth[ym] ?? 0) + d.amount;
+        });
+        const monthsSet = new Set([...Object.keys(paidByMonth), ...Object.keys(announcedByMonth), todayYM]);
+        const rangeLimit = chartRange === '12M' ? 12 : chartRange === '24M' ? 24 : Infinity;
+        const allMonths  = Array.from(monthsSet).sort();
+        const months     = rangeLimit === Infinity ? allMonths : allMonths.slice(-rangeLimit);
+        const totals     = months.map(ym => paidByMonth[ym] ?? 0);
+        const expected   = months.map((ym, i) => {
+          const announcedReal = announcedByMonth[ym] ?? 0;
+          if (announcedReal > 0) return totals[i] + announcedReal;
+          return ym === todayYM ? expectedMonthlyTotal : totals[i];
+        });
+        const remaining  = months.map((ym, i) => Math.max(0, expected[i] - totals[i]));
+
         chartInstance.current = new Chart(ctx, {
           type: 'bar',
-          data: { labels: allLabels, datasets: [{ label: 'Per Share ($)', data: allAmounts,
-            backgroundColor: allBg, borderColor: allBorder, borderWidth: allBW, borderRadius: 3 }] },
+          data: { labels: months.map(ymToLabel), datasets: [
+            {
+              label: 'Paid', data: totals, stack: 'income',
+              backgroundColor: 'rgba(200,137,58,0.85)', borderColor: '#c8893a', borderWidth: 1, borderRadius: 3,
+            },
+            {
+              label: 'Remaining (expected)', data: remaining, stack: 'income',
+              backgroundColor: 'rgba(245,166,35,0.3)', borderColor: 'rgba(245,166,35,0.7)',
+              borderWidth: 1, borderDash: [3, 3], borderRadius: 3,
+            },
+          ] },
           options: {
             responsive: true, maintainAspectRatio: false,
             plugins: {
               legend: { display: false },
-              tooltip: { callbacks: { label: c => {
-                const isPredicted = pred && c.dataIndex === allLabels.length - 1 && allLabels.at(-1)?.endsWith(' *');
-                if (!isPredicted) return `Per share: $${Number(c.raw).toFixed(4)}`;
-                return pred.source === 'announced'
-                  ? `Announced (not yet paid): $${Number(c.raw).toFixed(4)}/share`
-                  : `Estimated: $${Number(c.raw).toFixed(4)}/share`;
+              tooltip: { filter: c => c.datasetIndex === 0, callbacks: { label: c => {
+                const amount = `$${Number(c.raw).toFixed(4)}/share`;
+                const exp = expected[c.dataIndex];
+                return remaining[c.dataIndex] > 0 ? `${amount} of ~$${exp.toFixed(4)} expected` : amount;
               }}},
             },
             scales: {
-              x: { ticks: { color: '#6b7280', autoSkip: false, font: { size: 10 } }, grid: { color: '#1f2937' } },
-              y: { ticks: { color: '#6b7280', callback: v => `$${Number(v).toFixed(2)}` }, grid: { color: '#1f2937' } },
+              x: { stacked: true, ticks: { color: '#6b7280', autoSkip: false, font: { size: 10 } }, grid: { color: '#1f2937' } },
+              y: { stacked: true, ticks: { color: '#6b7280', callback: v => `$${Number(v).toFixed(2)}` }, grid: { color: '#1f2937' } },
             },
           },
         });
@@ -485,7 +494,7 @@ export default function DividendInteractive({ ticker }) {
     }
     draw();
     return () => { destroyed = true; };
-  }, [paidDividends, announcedDividends, ticker, dailyDivs, monthlyDivs, dailyByMonth, monthlyByMonth, chartRange, todayYM, today]);
+  }, [paidDividends, announcedDividends, ticker, dailyDivs, monthlyDivs, dailyByMonth, monthlyByMonth, chartRange, todayYM, today, expectedMonthlyTotal]);
 
   if (fetchError) return (
     <div className="p-4 rounded-lg mb-6 text-sm" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', color: '#ef4444' }}>
@@ -647,7 +656,7 @@ export default function DividendInteractive({ ticker }) {
       {/* Chart */}
       <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">{showGhostedChart ? 'Monthly Income Per Share' : 'Payment History'}</h2>
+          <h2 className="text-lg font-semibold">Monthly Income Per Share</h2>
           <div className="flex rounded overflow-hidden" style={{ border: '1px solid var(--border)', fontSize: '11px' }}>
             {['12M', '24M', 'All'].map(r => (
               <button key={r} type="button" onClick={() => setChartRange(r)} className="px-3 py-1 font-medium"
@@ -659,30 +668,16 @@ export default function DividendInteractive({ ticker }) {
         <div style={{ position: 'relative', height: '240px' }} className="md:h-72">
           <canvas ref={chartRef} aria-label="Dividend payment history chart" role="img" />
         </div>
-        {!showGhostedChart && prediction && (
-          <div className="flex justify-center gap-6 mt-3">
-            <div className="flex items-center gap-2">
-              <span className="inline-block w-3 h-3 rounded-sm" style={{ background: 'rgba(200,137,58,0.75)' }} />
-              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Paid</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="inline-block w-3 h-3 rounded-sm" style={{ background: 'rgba(200,137,58,0.15)', border: '2px solid #c8893a' }} />
-              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Estimated next (*)</span>
-            </div>
+        <div className="flex justify-center gap-6 mt-3">
+          <div className="flex items-center gap-2">
+            <span className="inline-block w-3 h-3 rounded-sm" style={{ background: 'rgba(200,137,58,0.85)' }} />
+            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Paid so far</span>
           </div>
-        )}
-        {showGhostedChart && (
-          <div className="flex justify-center gap-6 mt-3">
-            <div className="flex items-center gap-2">
-              <span className="inline-block w-3 h-3 rounded-sm" style={{ background: 'rgba(200,137,58,0.85)' }} />
-              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Paid so far</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="inline-block w-3 h-3 rounded-sm" style={{ background: isBmnp ? 'rgba(253,224,71,0.25)' : 'rgba(245,166,35,0.3)', border: isBmnp ? '1px dashed rgba(253,224,71,0.7)' : '1px dashed rgba(245,166,35,0.7)' }} />
-              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Still expected this month</span>
-            </div>
+          <div className="flex items-center gap-2">
+            <span className="inline-block w-3 h-3 rounded-sm" style={{ background: isBmnp ? 'rgba(253,224,71,0.25)' : 'rgba(245,166,35,0.3)', border: isBmnp ? '1px dashed rgba(253,224,71,0.7)' : '1px dashed rgba(245,166,35,0.7)' }} />
+            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Still expected this month</span>
           </div>
-        )}
+        </div>
       </div>
 
       {/* SATA daily era: monthly summary payments table */}
