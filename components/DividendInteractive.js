@@ -105,19 +105,15 @@ function predictNextDividend(dividends, confirmedDate = null, confirmedSource = 
 }
 
 function SataMonthlyProgress({ monthlyByMonth, todayYM, today, annualRate }) {
-  const displayMonths = [];
-  let [y, m] = [2026, 6];
-  const [endY, endM] = todayYM.split('-').map(Number);
-  while (y < endY || (y === endY && m <= endM)) {
-    displayMonths.push(`${y}-${String(m).padStart(2, '0')}`);
-    m++;
-    if (m > 12) { m = 1; y++; }
-  }
+  // Just the current month — the chart below already shows the history.
+  // Robin, 2026-09-16: "can we just have the current month box as monthly
+  // progress." (Same change applied to MonthlyPaymentProgress below.)
+  const displayMonths = [todayYM];
   return (
     <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
       <h2 className="text-lg font-semibold mb-1">Monthly Payment Progress</h2>
       <p className="text-xs mb-5" style={{ color: 'var(--text-muted)' }}>
-        Each box represents one calendar month. Gold fill indicates the proportion of expected income received so far.
+        This month&apos;s box fills as payments land. Gold fill indicates the proportion of expected income received so far.
       </p>
       <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 sm:gap-3">
         {displayMonths.map(ym => {
@@ -163,20 +159,13 @@ function SataMonthlyProgress({ monthlyByMonth, todayYM, today, annualRate }) {
 // paidDividends/announcedDividends split the chart above uses) — accurate
 // for both cadences without needing a separate schedule model per ticker.
 function MonthlyPaymentProgress({ paidDividends, announcedDividends, todayYM }) {
-  const firstYM = paidDividends.length ? paidDividends[0].date.slice(0, 7) : todayYM;
-  const displayMonths = [];
-  let [y, m] = firstYM.split('-').map(Number);
-  const [endY, endM] = todayYM.split('-').map(Number);
-  while (y < endY || (y === endY && m <= endM)) {
-    displayMonths.push(`${y}-${String(m).padStart(2, '0')}`);
-    m++;
-    if (m > 12) { m = 1; y++; }
-  }
+  // Just the current month — the chart below already shows the history.
+  const displayMonths = [todayYM];
   return (
     <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
       <h2 className="text-lg font-semibold mb-1">Monthly Payment Progress</h2>
       <p className="text-xs mb-5" style={{ color: 'var(--text-muted)' }}>
-        Each box represents one calendar month. Gold fill indicates the proportion of expected income received so far.
+        This month&apos;s box fills as payments land. Gold fill indicates the proportion of expected income received so far.
       </p>
       <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 sm:gap-3">
         {displayMonths.map(ym => {
