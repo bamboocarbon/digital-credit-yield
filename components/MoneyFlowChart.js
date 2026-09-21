@@ -160,6 +160,32 @@ function useBarChart({ canvasRef, labels, datasets, logScale }) {
   }, [labels, datasets, logScale]);
 }
 
+function currentWeekMonday() {
+  const now = new Date();
+  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const day = monday.getUTCDay();
+  monday.setUTCDate(monday.getUTCDate() + (day === 0 ? -6 : 1 - day));
+  return monday;
+}
+
+// Weeks with no filed capital raise don't get pushed to the store, so the
+// series otherwise stops at the last week something actually happened —
+// making an idle chart look stale rather than current. Fill the gap up to
+// this week with $0 so the x-axis always reaches "now".
+function padToCurrentWeek(weeks) {
+  if (!weeks.length) return weeks;
+  const result = [...weeks];
+  const target = currentWeekMonday();
+  let last = new Date(result[result.length - 1].date + 'T00:00:00Z');
+  while (last < target) {
+    last = new Date(last);
+    last.setUTCDate(last.getUTCDate() + 7);
+    const mon = last.toLocaleString('en-GB', { month: 'short', timeZone: 'UTC' });
+    result.push({ week: `${mon} ${last.getUTCDate()}`, date: last.toISOString().slice(0, 10), value: 0 });
+  }
+  return result;
+}
+
 function filterByRange(weeks, range) {
   if (range === 'all' || !weeks.length) return weeks;
   const last = new Date(weeks[weeks.length - 1].date + 'T00:00:00Z');
@@ -209,7 +235,7 @@ export function STRCMoneyFlowChart() {
   const weeks = useLiveWeekly(STRC_WEEKS, 'strcWeekly');
   const [range, setRange] = useState('all');
   const canvasRef = useRef(null);
-  const filtered = filterByRange(weeks, range);
+  const filtered = filterByRange(padToCurrentWeek(weeks), range);
   useBarChart({
     canvasRef,
     labels: filtered.map(d => d.week),
@@ -235,7 +261,7 @@ export function SATAMoneyFlowChart() {
   const weeks = useLiveWeekly(SATA_WEEKS, 'sataWeekly');
   const [range, setRange] = useState('all');
   const canvasRef = useRef(null);
-  const filtered = filterByRange(weeks, range);
+  const filtered = filterByRange(padToCurrentWeek(weeks), range);
   useBarChart({
     canvasRef,
     labels: filtered.map(d => d.week),
@@ -261,7 +287,7 @@ export function BMNPMoneyFlowChart() {
   const weeks = useLiveWeekly(BMNP_WEEKS, 'bmnpWeekly');
   const [range, setRange] = useState('all');
   const canvasRef = useRef(null);
-  const filtered = filterByRange(weeks, range);
+  const filtered = filterByRange(padToCurrentWeek(weeks), range);
   useBarChart({
     canvasRef,
     labels: filtered.map(d => d.week),
