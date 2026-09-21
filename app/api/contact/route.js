@@ -1,7 +1,5 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request) {
   const { name, email, message } = await request.json();
 
@@ -9,6 +7,7 @@ export async function POST(request) {
     return Response.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const { error } = await resend.emails.send({
     from: 'Digital Credit Yield <contact@digitalcredityield.com>',
     to: 'contact@digitalcredityield.com',
