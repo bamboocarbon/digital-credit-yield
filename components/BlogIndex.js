@@ -11,7 +11,7 @@ const tickerColour = {
   STRC: '#4ade80',
   SATA: '#3b82f6',
   BMNP: '#fde047',
-  CHAD: '#f472b6',
+  CHAD: '#b91c1c',
   SOL: '#a78bfa',
   Metaplanet: '#7dd3fc',
 };

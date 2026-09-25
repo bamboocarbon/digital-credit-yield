@@ -31,7 +31,7 @@ const XL_Y = CI_Y1 + 16, CW_Y1 = XL_Y + 6, IN_Y0 = CW_Y1 + 14, IN_H = 52;
 const LG_Y = IN_Y0 + IN_H + 16, DM_Y = LG_Y + 13, DC_Y = DM_Y + 13;
 const ML = 30, MR = 14;
 
-export const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#f472b6' };
+export const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#b91c1c' };
 export const FIXED_RATE    = ASSET_RATES; // { STRC: 11.5, SATA: 13.0, BMNP: 9.5 }
 const C_TREASURY = '#d1d5db';
 const C_BANK     = '#9ca3af';

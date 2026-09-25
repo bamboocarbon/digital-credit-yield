@@ -90,7 +90,7 @@ export default function MoneyFlowPage() {
             <div className="flex items-center gap-2">
               <span className="font-bold text-lg">CHAD</span>
               <span className="text-xs font-medium"
-                style={{ color: '#f472b6' }}>DeFi Development Preferred</span>
+                style={{ color: '#b91c1c' }}>DeFi Development Preferred</span>
             </div>
           </div>
           <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Sep 2026 · 13.00% · $10 par</p>
@@ -189,7 +189,7 @@ export default function MoneyFlowPage() {
           </div>
 
           <div className="flex gap-4">
-            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: '#f472b6' }} />
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: '#b91c1c' }} />
             <div>
               <p className="font-semibold text-sm mb-1">Zone 8 — A Fourth Instrument, and a New Chain <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Sep 2026</span></p>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>

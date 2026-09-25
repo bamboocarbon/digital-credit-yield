@@ -95,8 +95,8 @@ const SATA_BLUE = '#2563eb';
 const SATA_BLUE_DIM = 'rgba(37,99,235,0.675)';
 const BMNP_YELLOW = '#fde047';
 const BMNP_YELLOW_DIM = 'rgba(253,224,71,0.675)';
-const CHAD_PINK = '#f472b6';
-const CHAD_PINK_DIM = 'rgba(244,114,182,0.675)';
+const CHAD_RED = '#b91c1c';
+const CHAD_RED_DIM = 'rgba(185,28,28,0.675)';
 
 function fmt(v) {
   if (v >= 1000) return `$${(v / 1000).toFixed(2)}B`;
@@ -329,8 +329,8 @@ export function CHADMoneyFlowChart() {
     labels: filtered.map(d => d.week),
     datasets: [{
       data: filtered.map(d => d.value),
-      backgroundColor: filtered.map(d => d.ipo ? CHAD_PINK : CHAD_PINK_DIM),
-      borderColor: filtered.map(d => d.ipo ? CHAD_PINK : 'transparent'),
+      backgroundColor: filtered.map(d => d.ipo ? CHAD_RED : CHAD_RED_DIM),
+      borderColor: filtered.map(d => d.ipo ? CHAD_RED : 'transparent'),
       borderWidth: 1,
       borderRadius: 3,
     }],
@@ -345,7 +345,7 @@ export function CHADMoneyFlowChart() {
   }
   return (
     <div>
-      <RangeButtons range={range} setRange={setRange} activeColor={CHAD_PINK} />
+      <RangeButtons range={range} setRange={setRange} activeColor={CHAD_RED} />
       <div role="img" aria-label="CHAD weekly capital raised bar chart" style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
       <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering</p>
     </div>
@@ -418,8 +418,8 @@ export function CombinedMoneyFlowChart() {
       {
         label: 'CHAD',
         data: ALL_WEEKS.map(d => lookup(CHAD_WEEKS, d)),
-        backgroundColor: CHAD_PINK_DIM,
-        borderColor: CHAD_PINK,
+        backgroundColor: CHAD_RED_DIM,
+        borderColor: CHAD_RED,
         borderWidth: 1,
         borderRadius: 3,
       },
@@ -444,7 +444,7 @@ export function CombinedMoneyFlowChart() {
             BMNP
           </span>
           <span className="flex items-center gap-1.5">
-            <span style={{ display:'inline-block', width:14, height:14, background:CHAD_PINK, borderRadius:2 }} />
+            <span style={{ display:'inline-block', width:14, height:14, background:CHAD_RED, borderRadius:2 }} />
             CHAD
           </span>
         </div>

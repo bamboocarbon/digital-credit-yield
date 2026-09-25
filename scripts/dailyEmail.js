@@ -104,10 +104,10 @@ async function loadSubscribers() {
 }
 
 // DCY website brand colours — match the ticker tag colours on digitalcredityield.com
-const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#f472b6' };
+const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#b91c1c' };
 
 // Matches the category tag colours used on /blog (components/BlogIndex.js)
-const BLOG_CATEGORY_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#f472b6', SOL: '#a78bfa', Metaplanet: '#7dd3fc' };
+const BLOG_CATEGORY_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#b91c1c', SOL: '#a78bfa', Metaplanet: '#7dd3fc' };
 
 const CARD_BG = '#131a28';
 
