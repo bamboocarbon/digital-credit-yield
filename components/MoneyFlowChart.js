@@ -95,8 +95,8 @@ const SATA_BLUE = '#2563eb';
 const SATA_BLUE_DIM = 'rgba(37,99,235,0.675)';
 const BMNP_YELLOW = '#fde047';
 const BMNP_YELLOW_DIM = 'rgba(253,224,71,0.675)';
-const CHAD_RED = '#b91c1c';
-const CHAD_RED_DIM = 'rgba(185,28,28,0.675)';
+const CHAD_RED = '#7f1d1d';
+const CHAD_RED_DIM = 'rgba(127,29,29,0.675)';
 
 function fmt(v) {
   if (v >= 1000) return `$${(v / 1000).toFixed(2)}B`;

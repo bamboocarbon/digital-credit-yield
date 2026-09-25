@@ -91,12 +91,12 @@ export default function MoneyFlowStats() {
         </div>
       )}
       <div className="rounded-2xl p-5 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#b91c1c' }}>CHAD Total Raised</p>
+        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#7f1d1d' }}>CHAD Total Raised</p>
         {chadStats ? (
           <>
             <p className="text-3xl font-bold">{fmt(chadStats.total)}</p>
             <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{chadStats.rangeStart} – present</p>
-            <p className="text-xs mt-2 font-medium" style={{ color: '#b91c1c' }}>
+            <p className="text-xs mt-2 font-medium" style={{ color: '#7f1d1d' }}>
               Latest: {chadStats.latest.week} &middot; {fmt(chadStats.latest.value)}
             </p>
           </>

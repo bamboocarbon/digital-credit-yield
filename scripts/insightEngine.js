@@ -33,7 +33,7 @@ const COLOR = {
   STRC:       '#4ade80',
   SATA:       '#3b82f6',
   BMNP:       '#fde047',
-  CHAD:       '#b91c1c',
+  CHAD:       '#7f1d1d',
   TREASURIES: '#d1d5db',
   BANK:       '#9ca3af',
 };

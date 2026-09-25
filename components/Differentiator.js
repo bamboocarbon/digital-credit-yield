@@ -9,8 +9,8 @@ import NumericInput from '@/components/NumericInput';
 const pct = (a, b) => (((a - b) / b) * 100).toFixed(1);
 
 // Brand colours — must stay in sync with insightEngine.js and generateMp4.js
-const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#b91c1c' };
-const TICKER_BG     = { STRC: 'rgba(74,222,128,0.08)', SATA: 'rgba(59,130,246,0.08)', BMNP: 'rgba(253,224,71,0.08)', CHAD: 'rgba(185,28,28,0.08)' };
+const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#7f1d1d' };
+const TICKER_BG     = { STRC: 'rgba(74,222,128,0.08)', SATA: 'rgba(59,130,246,0.08)', BMNP: 'rgba(253,224,71,0.08)', CHAD: 'rgba(127,29,29,0.08)' };
 const C_TREASURY    = '#d1d5db';   // light cool grey
 const C_HIGH_YIELD  = '#b8a99a';   // warm taupe grey  — distinct hue from both other greys
 const C_BANK        = '#9ca3af';   // medium cool grey
