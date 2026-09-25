@@ -44,7 +44,10 @@ export default function BlogIndex({ articles }) {
   const [filter, setFilter] = useState('All');
 
   const tail = ['Education', 'Guide'];
-  const allCats = [...new Set(articles.flatMap(a => [].concat(a.category)))];
+  // CHAD is unioned in even though no article is tagged with it yet — the filter
+  // button should exist alongside STRC/SATA/BMNP from launch, the same way it
+  // would once a CHAD article exists, rather than waiting for one to appear.
+  const allCats = [...new Set([...articles.flatMap(a => [].concat(a.category)), 'CHAD'])];
   const categories = [
     'All',
     ...allCats.filter(c => !tail.includes(c)).sort(),
@@ -75,6 +78,12 @@ export default function BlogIndex({ articles }) {
           );
         })}
       </div>
+
+      {shown.length === 0 && (
+        <p className="text-sm text-center py-12" style={{ color: 'var(--text-muted)' }}>
+          No {filter} articles yet — check back soon.
+        </p>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {shown.map(article => (

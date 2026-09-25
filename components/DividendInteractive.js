@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { loadProjectorState } from '@/lib/projectorState';
-import { ASSET_RATES, PAYMENT_FREQUENCY, STRC_SEMI_MONTHLY_START } from '@/lib/constants';
+import { ASSET_RATES, PAYMENT_FREQUENCY, STRC_SEMI_MONTHLY_START, PAR_VALUE } from '@/lib/constants';
 import { SATA_DAILY_START, getBusinessDaysInMonth, getSataDailyDividend, getSataExpectedPeriodAmount, getSataMonthProgress, getSataDailyPaymentsToDate, isSataDailyDividend } from '@/lib/sataBusinessDays';
 import { getBmnpExpectedMonthlyTotal } from '@/lib/bmnpSchedule';
 
@@ -294,6 +294,7 @@ export default function DividendInteractive({ ticker }) {
   // formula for "today's" amount until the first recorded event catches up.
   const inDailyEra = ticker === 'SATA' && today >= SATA_DAILY_START;
   const isBmnp = ticker === 'BMNP';
+  const isChad = ticker === 'CHAD';
 
   const sataDailyStats = useMemo(() => {
     if (ticker !== 'SATA') return null;
@@ -314,10 +315,16 @@ export default function DividendInteractive({ ticker }) {
 
   const latestMonthly = monthlyDivs.length > 0 ? monthlyDivs[monthlyDivs.length - 1] : null;
   const avgMonthly    = monthlyDivs.length > 0 ? monthlyDivs.reduce((s, d) => s + d.amount, 0) / monthlyDivs.length : 0;
+  const par = PAR_VALUE[ticker] ?? 100;
   // The published rate (ASSET_RATES), not a trailing average of $ amounts — averaging raw
   // per-share history breaks the moment payment frequency changes (e.g. STRC's move to
   // semi-monthly halved the per-payment amount without changing the annual rate at all).
-  const impliedAnnual = ASSET_RATES[ticker] ?? avgMonthly * 12;
+  // Two variants: the raw percentage for display, and the same rate converted to a real
+  // $/share/year figure against this ticker's own par value for anything that gets
+  // multiplied by a share count — CHAD's $10 par means its raw rate number (e.g. 13) is
+  // NOT dollars the way it happens to be, numerically, for the $100-par tickers.
+  const impliedAnnual        = ASSET_RATES[ticker] ?? (avgMonthly * 12 * 100) / par;
+  const impliedAnnualDollars = ASSET_RATES[ticker] != null ? (ASSET_RATES[ticker] * par) / 100 : avgMonthly * 12;
   // Mirrors SATA's "This Month So Far" / "Expected Monthly Total" so all three dividend
   // pages show the same set of stats. STRC pays the same total each month regardless of
   // the semi-monthly split (rate ÷ 12); BMNP's weekly cadence varies by how many paydays
@@ -327,7 +334,7 @@ export default function DividendInteractive({ ticker }) {
     .reduce((s, d) => s + d.amount, 0);
   const expectedMonthlyTotal = ticker === 'BMNP'
     ? getBmnpExpectedMonthlyTotal(todayYM, ASSET_RATES.BMNP)
-    : impliedAnnual / 12;
+    : impliedAnnualDollars / 12;
 
   const prediction = useMemo(() => {
     if (inDailyEra || monthlyDivs.length < 2) return null;
@@ -337,14 +344,14 @@ export default function DividendInteractive({ ticker }) {
       ? { date: knownDate, source: 'schedule' }
       : getTrustedConfirmedDate(ticker, nextPaymentDate, lastDate, today);
     const freq = PAYMENT_FREQUENCY[ticker];
-    const fixedAmount = freq ? parseFloat((ASSET_RATES[ticker] / freq.perYear).toFixed(4)) : null;
+    const fixedAmount = freq ? parseFloat(((ASSET_RATES[ticker] * (PAR_VALUE[ticker] ?? 100) / 100) / freq.perYear).toFixed(4)) : null;
     return predictNextDividend(monthlyDivs, trusted.date, trusted.source, fixedAmount);
   }, [inDailyEra, monthlyDivs, nextPaymentDate, ticker, today]);
 
   const predictionOverdue = prediction && prediction.date < today;
   const sharesNum         = parseFloat(shares) || 0;
   const incomePerPayment  = sharesNum * (latestMonthly?.amount ?? 0);
-  const incomeAnnual      = sharesNum * impliedAnnual;
+  const incomeAnnual      = sharesNum * impliedAnnualDollars;
 
   useEffect(() => {
     if (paidDividends === null) return;
@@ -837,6 +844,69 @@ export default function DividendInteractive({ ticker }) {
                     <tr key={ym} style={{ borderBottom: '1px solid var(--border)' }}>
                       <td className="py-2 px-3">{ymToLabel(ym)}</td>
                       <td className="py-2 px-3" style={{ ...MONO, color: paid >= total ? 'var(--accent-green)' : 'var(--text-muted)' }}>{paid} / {total}</td>
+                      <td className="py-2 px-3" style={{ ...MONO, color: 'var(--accent-gold)' }}>${monthTotal.toFixed(4)}</td>
+                      {sharesNum > 0 && <td className="py-2 px-3" style={MONO}>{fmtMoney(sharesNum * monthTotal)}</td>}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* CHAD: monthly summary payments table — CHAD pays daily from day one (no
+          pre-daily era to speak of, unlike SATA), so this owns the "All Payments"
+          heading here instead of DividendHistoryPage.js's flat table (which stays
+          empty for CHAD — see that file's allTableData comment, kept in sync with
+          this one). No published business-days-per-month table exists for CHAD the
+          way Strive publishes one for SATA, so this shows real recorded payment
+          counts only, not an "X/Y expected" comparison. */}
+      {isChad && monthlyDivs.length > 0 && (
+        <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <h2 className="text-lg font-semibold mb-4">All Payments</h2>
+          <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--accent-gold)' }}>Daily Dividend Period (from September 8, 2026)</h3>
+
+          <div className="sm:hidden space-y-2 mb-6">
+            {Object.keys(monthlyByMonth).sort().reverse().map(ym => {
+              const entries = monthlyByMonth[ym];
+              const monthTotal = entries.reduce((s, d) => s + d.amount, 0);
+              return (
+                <div key={ym} className="p-3 rounded-lg" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
+                  <div className="flex justify-between items-center">
+                    <p className="text-sm font-medium">{ymToLabel(ym)}</p>
+                    <p className="text-sm font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>${monthTotal.toFixed(4)}/share</p>
+                  </div>
+                  <div className="flex gap-4 mt-1">
+                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{entries.length} payment{entries.length !== 1 ? 's' : ''}</p>
+                    {sharesNum > 0 && (
+                      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                        Income: <span style={{ color: 'var(--text-primary)' }}>{fmtMoney(sharesNum * monthTotal)}</span>
+                      </p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="hidden sm:block overflow-x-auto -mx-2 px-2 mb-6">
+            <table className="min-w-full text-sm">
+              <thead>
+                <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                  {['Month', 'Payments', 'Monthly Total', ...(sharesNum > 0 ? ['Your Income'] : [])].map(h => (
+                    <th key={h} className="text-left py-2 px-3 font-medium" style={{ color: 'var(--text-muted)' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {Object.keys(monthlyByMonth).sort().reverse().map(ym => {
+                  const entries = monthlyByMonth[ym];
+                  const monthTotal = entries.reduce((s, d) => s + d.amount, 0);
+                  return (
+                    <tr key={ym} style={{ borderBottom: '1px solid var(--border)' }}>
+                      <td className="py-2 px-3">{ymToLabel(ym)}</td>
+                      <td className="py-2 px-3" style={MONO}>{entries.length}</td>
                       <td className="py-2 px-3" style={{ ...MONO, color: 'var(--accent-gold)' }}>${monthTotal.toFixed(4)}</td>
                       {sharesNum > 0 && <td className="py-2 px-3" style={MONO}>{fmtMoney(sharesNum * monthTotal)}</td>}
                     </tr>

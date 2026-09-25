@@ -90,13 +90,13 @@ const SATA_WEEKS = [
 ];
 
 const STRC_GOLD = '#15803d';
-const STRC_GOLD_DIM = 'rgba(21,128,61,0.35)';
+const STRC_GOLD_DIM = 'rgba(21,128,61,0.675)';
 const SATA_BLUE = '#2563eb';
-const SATA_BLUE_DIM = 'rgba(37,99,235,0.35)';
+const SATA_BLUE_DIM = 'rgba(37,99,235,0.675)';
 const BMNP_YELLOW = '#fde047';
-const BMNP_YELLOW_DIM = 'rgba(253,224,71,0.35)';
+const BMNP_YELLOW_DIM = 'rgba(253,224,71,0.675)';
 const CHAD_PINK = '#f472b6';
-const CHAD_PINK_DIM = 'rgba(244,114,182,0.35)';
+const CHAD_PINK_DIM = 'rgba(244,114,182,0.675)';
 
 function fmt(v) {
   if (v >= 1000) return `$${(v / 1000).toFixed(2)}B`;

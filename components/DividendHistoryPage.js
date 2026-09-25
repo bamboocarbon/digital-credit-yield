@@ -21,7 +21,11 @@ export default function DividendHistoryPage({ ticker, dividends }) {
   const isSataComingSoon = ticker === 'SATA' && today < SATA_DAILY_START;
   const isStrcComingSoon = ticker === 'STRC' && today < STRC_SEMI_MONTHLY_START;
   const isBmnpComingSoon = ticker === 'BMNP' && today < BMNP_DIVIDEND_SCHEDULE[BMNP_DIVIDEND_SCHEDULE.length - 1].paymentDate;
-  const isComingSoon = isSataComingSoon || isStrcComingSoon || isBmnpComingSoon;
+  // CHAD has no dedicated schedule constant (unlike BMNP) — its only announced
+  // dates live in the dividends prop itself (data/dividends-CHAD.json), so this
+  // checks the last entry there directly instead.
+  const isChadComingSoon = ticker === 'CHAD' && dividends.length > 0 && today < dividends[dividends.length - 1].date;
+  const isComingSoon = isSataComingSoon || isStrcComingSoon || isBmnpComingSoon || isChadComingSoon;
   const isBmnp = ticker === 'BMNP';
 
   const monthlyDivs = ticker === 'SATA'
@@ -29,7 +33,12 @@ export default function DividendHistoryPage({ ticker, dividends }) {
     : dividends;
   const inDailyEra = ticker === 'SATA' && dividends.some(d => isSataDailyDividend(d));
 
-  const allTableData = ticker === 'SATA' ? monthlyDivs : dividends;
+  // CHAD pays daily from day one — unlike SATA it has no "pre-daily era" of monthly
+  // payments to show here, so this flat table stays empty for CHAD and its real
+  // payments are grouped into the monthly summary table DividendInteractive.js
+  // renders instead (same reasoning as SATA's daily entries: individually listing
+  // every business day's payment would make this table hundreds of rows long).
+  const allTableData = ticker === 'SATA' ? monthlyDivs : ticker === 'CHAD' ? [] : dividends;
   // The stored record can include dates that haven't happened yet — STRC's
   // live-merged feed sometimes reports the next declared distribution before
   // it pays, and BMNP's schedule is stored months ahead since Bitmine
@@ -76,6 +85,17 @@ export default function DividendHistoryPage({ ticker, dividends }) {
             accrued since the June 10 issue date and pays on <strong>June 22, 2026</strong> (record date June 12). A second payment of{' '}
             <strong>$0.105556/share</strong> follows on <strong>June 26, 2026</strong> (record date June 16). Full weekly dividends of
             ~$0.1827/share begin after that.
+          </p>
+        </div>
+      )}
+
+      {isChadComingSoon && (
+        <div className="p-4 rounded-xl mb-6" style={{ background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.4)' }}>
+          <p className="text-xs font-semibold tracking-wide mb-1" style={{ color: 'var(--accent-gold)' }}>UPCOMING: FIRST DIVIDEND PAYMENT</p>
+          <p className="text-sm">
+            CHAD closed its initial offering on <strong>September 8, 2026</strong>. Dividends accrue daily from that date, but the first cash payment
+            — <strong>$0.07944/share</strong>, covering the accrual period from September 8 through October 1 — lands on <strong>October 1, 2026</strong>.
+            After that, regular daily payments of roughly <strong>$0.0052/share</strong> begin on each business day of the month.
           </p>
         </div>
       )}
@@ -150,7 +170,9 @@ export default function DividendHistoryPage({ ticker, dividends }) {
           )}
 
           <p className="text-xs text-center pb-4" style={{ color: 'var(--text-muted)' }}>
-            Dividend data sourced from Yahoo Finance and stored on this server.
+            {ticker === 'BMNP' || ticker === 'CHAD'
+              ? "Dividend data sourced from the issuer's own SEC filings and stored on this server."
+              : 'Dividend data sourced from Yahoo Finance and stored on this server.'}
             {!inDailyEra && ' Predictions are estimates based on historical payment intervals and recent amount trends — not guaranteed.'}
             {inDailyEra && ' Daily payment amounts calculated from the Strive-published formula: $100 × annual rate ÷ 12 ÷ business days in month.'}
           </p>
