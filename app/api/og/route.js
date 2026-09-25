@@ -113,7 +113,7 @@ export async function GET(request) {
           ) : (
             <div style={{ display: 'flex' }}>
               <span style={{ color: GOLD, fontSize: 20, fontWeight: 400 }}>
-                Tracking STRC and SATA for growth
+                Tracking STRC, SATA, BMNP and CHAD for growth
               </span>
             </div>
           )}

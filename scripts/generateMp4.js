@@ -54,8 +54,8 @@ export async function generateMp4(insight, quotes, date) {
   try {
     const ticker = getDailyTicker(0);
     const lanes = buildLanes(ticker);
-    const featured = lanes.find(l => l.key === ticker);
-    const others   = lanes.filter(l => l.key !== ticker);
+    const featured = lanes.find(l => l?.key === ticker);
+    const others   = lanes.filter(l => l && l.key !== ticker);
     const insightText = `${ticker} is on track to turn $10,000 into ${moneyFmt(featured.finalVal)} over 5 years at its ${featured.rateLabel} rate — well ahead of ${others.map(o => `${o.label} (${moneyFmt(o.finalVal)})`).join(' or ')}.`;
     const ctxInfo = { title: `${ticker} vs US Treasuries vs Bank Savings`, date, insightText, quotes };
 

@@ -165,8 +165,8 @@ export default function CumulativeFlowChart() {
               <Tooltip content={<TooltipLinear />} />
               <Line type="monotone" dataKey="strc" name="STRC" stroke="#15803d" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
               <Line type="monotone" dataKey="sata" name="SATA" stroke="#2563eb" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
-              {BMNP_ENABLED && <Line type="monotone" dataKey="bmnp" name="BMNP" stroke="#fde047" strokeWidth={2} dot={{ r: 3, fill: '#fde047', strokeWidth: 0 }} activeDot={{ r: 4 }} connectNulls={false} />}
-              <Line type="monotone" dataKey="chad" name="CHAD" stroke="#f472b6" strokeWidth={2} dot={{ r: 3, fill: '#f472b6', strokeWidth: 0 }} activeDot={{ r: 4 }} connectNulls={false} />
+              {BMNP_ENABLED && <Line type="monotone" dataKey="bmnp" name="BMNP" stroke="#fde047" strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />}
+              <Line type="monotone" dataKey="chad" name="CHAD" stroke="#f472b6" strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />
             </LineChart>
           </ResponsiveContainer>
           </div>
@@ -191,8 +191,8 @@ export default function CumulativeFlowChart() {
               <Tooltip content={<TooltipLog />} />
               <Line type="monotone" dataKey="strc" name="STRC" stroke="#15803d" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
               <Line type="monotone" dataKey="sata" name="SATA" stroke="#2563eb" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
-              {BMNP_ENABLED && <Line type="monotone" dataKey="bmnp" name="BMNP" stroke="#fde047" strokeWidth={2} dot={{ r: 3, fill: '#fde047', strokeWidth: 0 }} activeDot={{ r: 4 }} connectNulls={false} />}
-              <Line type="monotone" dataKey="chad" name="CHAD" stroke="#f472b6" strokeWidth={2} dot={{ r: 3, fill: '#f472b6', strokeWidth: 0 }} activeDot={{ r: 4 }} connectNulls={false} />
+              {BMNP_ENABLED && <Line type="monotone" dataKey="bmnp" name="BMNP" stroke="#fde047" strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />}
+              <Line type="monotone" dataKey="chad" name="CHAD" stroke="#f472b6" strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />
             </LineChart>
           </ResponsiveContainer>
           </div>

@@ -67,18 +67,20 @@ function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
 function fmtVal(v) { return v >= 1000 ? `$${(v/1000).toFixed(1)}k` : `$${Math.round(v)}`; }
 function compound(rate, years) { return 10000 * Math.pow(1 + rate / 100, years); }
 
-// This video's snapshot strip and lane layout are a fixed 3-column design —
-// kept at the original 3 tickers rather than widened to 4, since CHAD's $10
-// par (vs $100 for the others) and its later rotation slot (see
-// insightEngine.js TICKERS/getDailyTicker) don't fit this layout's hardcoded
-// canvas width without a real redesign. When CHAD is the featured ticker
-// (getDailyTicker now cycles all 4), it still renders correctly — just in
-// the same lane position STRC would use — via the index fallback below.
-export const TICKER_ORDER = ['STRC', 'SATA', 'BMNP'];
+// Snapshot strip now shows all four tickers — widened from 3 to 4 columns
+// (see the showSnapshot block below) once CHAD joined the daily rotation.
+export const TICKER_ORDER = ['STRC', 'SATA', 'BMNP', 'CHAD'];
 
-// Lane position now mirrors the featured ticker's own snapshot box above it:
-// STRC featured -> left lane, SATA -> middle, BMNP -> right. Treasury/Bank
-// fill whichever two slots are left, in that order.
+// Lane position for the featured ticker's bar — matches its column in the
+// snapshot strip above (0/1/2/3 = STRC/SATA/BMNP/CHAD's own position), the
+// same way STRC/SATA/BMNP's bars always have. Only 3 bars are ever drawn (1
+// featured + Treasuries + Bank Savings) across these 4 possible positions,
+// so whichever position the featured ticker doesn't occupy and the two
+// benchmarks don't fill in order stays empty for that day — e.g. when CHAD
+// (position 3) is featured, Treasury and Bank take positions 0 and 1, and
+// position 2 (BMNP's) is the blank one that day.
+const LANE_POSITION = { STRC: 0, SATA: 1, BMNP: 2, CHAD: 3 };
+
 export function buildLanes(featuredTicker) {
   const featuredVal  = compound(FIXED_RATE[featuredTicker], YEARS);
   const treasuryVal  = compound(TREASURY_RATE, YEARS);
@@ -89,14 +91,10 @@ export function buildLanes(featuredTicker) {
   const bankLane     = { key: 'bank',     label: 'Bank Savings',  rateLabel: `~${BANK_RATE.toFixed(1)}%`,     color: C_BANK,     finalVal: bankVal,     heightFrac: (bankVal - 10000) / maxGain,     flame: false };
   const featuredLane = { key: featuredTicker, label: featuredTicker, rateLabel: `${FIXED_RATE[featuredTicker].toFixed(1)}% fixed`, color: TICKER_COLOUR[featuredTicker], finalVal: featuredVal, heightFrac: 1, flame: true };
 
-  const slots = [null, null, null];
-  // Fall back to lane 0 for any ticker not in TICKER_ORDER (e.g. CHAD) —
-  // indexOf returns -1, which must never be used as an array index here.
-  const featuredIdx = TICKER_ORDER.indexOf(featuredTicker);
-  slots[featuredIdx >= 0 ? featuredIdx : 0] = featuredLane;
+  const slots = [null, null, null, null];
+  slots[LANE_POSITION[featuredTicker] ?? 0] = featuredLane;
   const remaining = [treasuryLane, bankLane];
-  let ri = 0;
-  for (let i = 0; i < 3; i++) if (!slots[i]) slots[i] = remaining[ri++];
+  for (let i = 0; i < 4 && remaining.length; i++) if (!slots[i]) slots[i] = remaining.shift();
   return slots;
 }
 
@@ -166,10 +164,12 @@ export function renderFrame(ctx, frame, lanes, ctxInfo) {
   }
 
   if (showSnapshot) {
-    // Reverted to the original card behaviour: always STRC/SATA/BMNP daily
-    // prices, independent of which one is "featured" in the chart below.
-    const gap = 10;
-    const cellW = (W - 2*PX - 2*gap) / 3;
+    // Always shows all four tickers' daily prices, independent of which one
+    // is "featured" in the chart below. Widened from 3 to 4 columns (and
+    // font sizes trimmed slightly) when CHAD joined the rotation — same
+    // 460px canvas, so each cell is narrower than it used to be.
+    const gap = 8;
+    const cellW = (W - 2*PX - 3*gap) / 4;
     TICKER_ORDER.forEach((t, i) => {
       const cx = PX + i * (cellW + gap);
       ctx.fillStyle = '#0b1422';
@@ -178,7 +178,7 @@ export function renderFrame(ctx, frame, lanes, ctxInfo) {
       const centerX = cx + cellW / 2, lineGap = 16;
 
       ctx.fillStyle = TICKER_COLOUR[t];
-      ctx.font = 'bold 14px Inter, Arial, sans-serif';
+      ctx.font = 'bold 13px Inter, Arial, sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(t, centerX, SN_Y0 + 20);
 
@@ -186,14 +186,14 @@ export function renderFrame(ctx, frame, lanes, ctxInfo) {
       if (q?.price != null) {
         const up = (q.changePercent ?? 0) >= 0;
         ctx.fillStyle = '#e4eaf5';
-        ctx.font = 'bold 12px Inter, Arial, sans-serif';
+        ctx.font = 'bold 11px Inter, Arial, sans-serif';
         ctx.fillText(`$${q.price.toFixed(2)}`, centerX, SN_Y0 + 20 + lineGap);
         ctx.fillStyle = up ? '#4ade80' : '#e05555';
-        ctx.font = '11px Inter, Arial, sans-serif';
+        ctx.font = '10px Inter, Arial, sans-serif';
         ctx.fillText(`${up ? '▲' : '▼'} ${Math.abs(q.changePercent ?? 0).toFixed(2)}%`, centerX, SN_Y0 + 20 + lineGap * 2);
       } else {
         ctx.fillStyle = '#8a9ab5';
-        ctx.font = '11px Inter, Arial, sans-serif';
+        ctx.font = '10px Inter, Arial, sans-serif';
         ctx.fillText('Listing soon', centerX, SN_Y0 + 20 + lineGap);
         ctx.fillText(`${FIXED_RATE[t].toFixed(1)}% fixed`, centerX, SN_Y0 + 20 + lineGap * 2);
       }
@@ -216,6 +216,7 @@ export function renderFrame(ctx, frame, lanes, ctxInfo) {
 
     const laneW = (W - ML - MR) / lanes.length;
     lanes.forEach((lane, i) => {
+      if (!lane) return; // the one position not taken by the featured ticker or a benchmark stays blank
       const laneX = ML + laneW * (i + 0.5);
       const curH  = lane.heightFrac * progress * BAR_MAX_H;
       const barTopY = CI_Y1 - curH;
@@ -258,7 +259,7 @@ export function renderFrame(ctx, frame, lanes, ctxInfo) {
       ctx.fillText(line, PX + 16, IN_Y0 + 13 + idx * 14));
 
     ctx.font = '10px Inter, Arial, sans-serif';
-    const items = lanes.map(l => ({ label: l.label, color: l.color }));
+    const items = lanes.filter(Boolean).map(l => ({ label: l.label, color: l.color }));
     const widths = items.map(it => 18 + 5 + ctx.measureText(it.label).width);
     const totalW = widths.reduce((a,b) => a+b, 0) + (items.length - 1) * 14;
     let lx = (W - totalW) / 2;

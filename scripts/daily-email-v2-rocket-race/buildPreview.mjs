@@ -56,16 +56,17 @@ async function buildChartSegment(chartMp4) {
   console.log(`Rendering vertical race chart for today's featured ticker: ${ticker}...`);
 
   const lanes = buildLanes(ticker);
-  const featured = lanes.find(l => l.key === ticker);
-  const others   = lanes.filter(l => l.key !== ticker);
+  const featured = lanes.find(l => l?.key === ticker);
+  const others   = lanes.filter(l => l && l.key !== ticker);
   const insightText = `${ticker} is on track to turn $10,000 into ${moneyFmt(featured.finalVal)} over 5 years at its ${featured.rateLabel} rate — well ahead of ${others.map(o => `${o.label} (${moneyFmt(o.finalVal)})`).join(' or ')}.`;
 
-  const [strcQ, sataQ, bmnpQ] = await Promise.all([
+  const [strcQ, sataQ, bmnpQ, chadQ] = await Promise.all([
     getStockQuote('STRC').catch(() => null),
     getStockQuote('SATA').catch(() => null),
     getStockQuote('BMNP').catch(() => null),
+    getStockQuote('CHAD').catch(() => null),
   ]);
-  const quotes = { STRC: strcQ, SATA: sataQ, BMNP: bmnpQ };
+  const quotes = { STRC: strcQ, SATA: sataQ, BMNP: bmnpQ, CHAD: chadQ };
 
   const ctxInfo = {
     title: `${ticker} vs US Treasuries vs Bank Savings`,
