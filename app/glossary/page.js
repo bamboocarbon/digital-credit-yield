@@ -48,7 +48,7 @@ const terms = [
   },
   {
     term: 'VWAP (volume-weighted average price)',
-    def: 'The average trading price of a security over a period, weighted by volume. STRC’s dividend rate framework uses a five-day VWAP window to decide whether the rate should adjust.',
+    def: 'The average trading price of a security over a period, weighted by volume. STRC’s published dividend rate framework uses a five-day VWAP window to decide whether the rate should adjust — though since July 2026 Strategy has been holding the rate flat by discretion rather than following the bands mechanically.',
     link: { href: '/blog/strc-vwap-dividend-mechanism', label: 'The STRC mechanism' },
   },
   {

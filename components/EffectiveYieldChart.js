@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { CHART_PERIODS } from '@/lib/constants';
+import { CHART_PERIODS, PAR_VALUE } from '@/lib/constants';
 
 function lookupRate(history, dateStr) {
   let rate = null;
@@ -19,6 +19,7 @@ export default function EffectiveYieldChart({ ticker, externalPeriod, onPeriodCh
   const roRef = useRef(null);
   const [internalPeriod, setInternalPeriod] = useState('6mo');
   const period = externalPeriod ?? internalPeriod;
+  const par = PAR_VALUE[ticker] ?? 100;
 
   function setPeriod(p) {
     setInternalPeriod(p);
@@ -108,7 +109,7 @@ export default function EffectiveYieldChart({ ticker, externalPeriod, onPeriodCh
           if (!d.close || !d.time) continue;
           const annualRate = lookupRate(yieldHistory, d.time);
           if (!annualRate) continue;
-          effectivePoints.push({ time: d.time, value: parseFloat(((annualRate / d.close) * 100).toFixed(4)) });
+          effectivePoints.push({ time: d.time, value: parseFloat(((annualRate * par) / d.close).toFixed(4)) });
           announcedPoints.push({ time: d.time, value: annualRate });
         }
 
@@ -170,7 +171,7 @@ export default function EffectiveYieldChart({ ticker, externalPeriod, onPeriodCh
       </div>
 
       <p className="text-xs mt-2" style={{ color: 'var(--text-muted)' }}>
-        When the gold line rises above the blue, the stock is trading below its $100 par value. Hover to see exact values.
+        When the gold line rises above the blue, the stock is trading below its ${par} par value. Hover to see exact values.
       </p>
     </div>
   );

@@ -5,10 +5,10 @@ import Link from 'next/link';
 import { PRE_LISTING_TICKERS, STRIVE_BTC_HOLDINGS, ASSET_RATES, PAR_VALUE } from '@/lib/constants';
 
 const DESCRIPTIONS = {
-  STRC: `Strategy's perpetual preferred stock paying ${ASSET_RATES.STRC.toFixed(2)}% annual dividends in semi-monthly cash (~$0.479/share twice a month). Dividend rate adjusts monthly to maintain trading near its $100 par value.`,
+  STRC: `Strategy's perpetual preferred stock paying ${ASSET_RATES.STRC.toFixed(2)}% annual dividends in semi-monthly cash (~$0.479/share twice a month). Rate held flat since July 2026 while management targets a return to $100 par.`,
   SATA: `Strive's publicly traded preferred equity paying ${ASSET_RATES.SATA.toFixed(2)}% annualised in daily cash dividends (~$0.052/share/day). Targets a $99–$101 trading range, backed by 18+ months of cash reserves and over ${STRIVE_BTC_HOLDINGS} Bitcoin.`,
   BMNP: `Bitmine Immersion Technologies' Series A perpetual preferred stock paying ${ASSET_RATES.BMNP.toFixed(2)}% annually in weekly cash dividends. Began trading on the NYSE June 16, 2026, backed by Ethereum staking via the MAVAN platform.`,
-  CHAD: `DeFi Development Corp.'s Solana-backed perpetual preferred stock paying ${ASSET_RATES.CHAD.toFixed(2)}% annually in daily cash dividends (~$0.0052/share/day). Began trading on the Nasdaq September 8, 2026, with a $10 stated value and proceeds earmarked for its Solana treasury.`,
+  CHAD: `DeFi Development Corp.'s Solana-backed perpetual preferred stock paying ${ASSET_RATES.CHAD.toFixed(2)}% annually in daily cash dividends (~$0.0052/share/day). Began trading on the Nasdaq September 8, 2026, with a $10 stated value.`,
 };
 
 const INCOME_BADGE = {
@@ -46,7 +46,11 @@ export default function AssetCard({ ticker }) {
         </span>
       </div>
 
-      <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{DESCRIPTIONS[ticker]}</p>
+      {/* min-h + line-clamp reserve identical vertical space on every card regardless of
+          description length, so the price/change/yield row below always starts at the same
+          y position — a longer blurb on one card (CHAD's, when first written, ran noticeably
+          longer than the others') was pushing that card's numbers down out of line with the rest. */}
+      <p className="text-sm min-h-[60px] line-clamp-3" style={{ color: 'var(--text-muted)' }}>{DESCRIPTIONS[ticker]}</p>
 
       {error ? (
         isPreListing
@@ -58,24 +62,29 @@ export default function AssetCard({ ticker }) {
           <div className="h-4 w-1/2 rounded" style={{ background: 'var(--bg-card-hover)' }} />
         </div>
       ) : (
-        <div className="flex items-start justify-between gap-3">
-          {/* Latest price (left) */}
+        /* Price/change and effective yield are stacked, not side by side — a side-by-side flex
+           row here kept squeezing whichever piece had less natural width (the price on a card
+           with a short number like CHAD's "$9.01", or the change line on a card with a longer
+           one), wrapping it and knocking that card's numbers out of line with its neighbours.
+           Stacking gives each line the card's full width, so nothing has to fight for room. */
+        <div className="flex flex-col gap-2">
+          {/* Latest price */}
           <div>
             <div className="font-mono-data text-3xl font-bold" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace" }}>
               {data.price?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
             </div>
-            <div className="text-sm font-mono-data mt-1" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: data.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
+            <div className="text-sm font-mono-data mt-1 whitespace-nowrap" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: data.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
               <span style={{marginRight:'2px'}}>{data.change >= 0 ? '+' : '-'}</span>{Math.abs(data.change)?.toFixed(2)} (<span style={{marginRight:'2px'}}>{data.changePercent >= 0 ? '+' : '-'}</span>{Math.abs(data.changePercent)?.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>)
             </div>
           </div>
 
-          {/* Effective yield (right) — annual dividend ÷ current price, scaled by the ticker's par value */}
+          {/* Effective yield — annual dividend ÷ current price, scaled by the ticker's par value */}
           {data.price > 0 && ASSET_RATES[ticker] != null && (
-            <div className="text-right">
-              <div className="text-xs uppercase" style={{ color: 'var(--text-muted)', letterSpacing: '0.04em' }}>Effective Yield</div>
-              <div className="font-mono-data text-3xl font-bold mt-1" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: 'var(--accent-gold)' }}>
+            <div className="flex items-baseline justify-between pt-2" style={{ borderTop: '1px solid var(--border)' }}>
+              <span className="text-xs uppercase whitespace-nowrap" style={{ color: 'var(--text-muted)', letterSpacing: '0.04em' }}>Effective Yield</span>
+              <span className="font-mono-data text-xl font-bold whitespace-nowrap" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: 'var(--accent-gold)' }}>
                 {((ASSET_RATES[ticker] * (PAR_VALUE[ticker] ?? 100) / 100 / data.price) * 100).toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8em' }}>%</span>
-              </div>
+              </span>
             </div>
           )}
         </div>

@@ -1,12 +1,12 @@
 import AssetHub from '@/components/AssetHub';
-import { ASSET_RATES } from '@/lib/constants';
+import { ASSET_RATES, STRATEGY_BTC_HOLDINGS } from '@/lib/constants';
 
 const rate = ASSET_RATES.STRC.toFixed(2);
 
 export const metadata = {
   alternates: { canonical: '/strc' },
   title: `STRC — Strategy Preferred Stock`,
-  description: `Track STRC live price and yield. Strategy's preferred stock pays ${rate}% annually in semi-monthly cash. Listed on Nasdaq, backed by 880,000+ Bitcoin.`,
+  description: `Track STRC live price and yield. Strategy's preferred stock pays ${rate}% annually in semi-monthly cash. Listed on Nasdaq, backed by ${STRATEGY_BTC_HOLDINGS}+ Bitcoin.`,
   openGraph: {
     title: `STRC — Strategy Preferred Stock Tracker`,
     description: `Strategy's preferred stock paying ${rate}% annually in semi-monthly cash dividends. Track live price, yield, and dividend history.`,

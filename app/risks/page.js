@@ -26,7 +26,7 @@ const risks = [
   },
   {
     title: 'The dividend rate can change',
-    body: 'STRC’s rate is reviewed monthly under a rules-based framework, and SATA’s and CHAD’s monthly at the issuer’s discretion; all three mechanisms permit downward adjustments in defined circumstances, even though rates have only moved upward so far. BMNP’s 9.50% is fixed at issue, so it has no monthly reset — but its board could still adjust it under the terms of the security. Either way, the yield you see today is not locked in for life: your income from these instruments can fall as well as rise.',
+    body: 'STRC has a published rules-based framework (a four-band VWAP rulebook against $100 par), but management has overridden it every month since July 2026 to hold the rate flat at 12.00% rather than follow the bands mechanically — a reminder that even a "rules-based" mechanism can be discretionary in practice. SATA’s and CHAD’s reviews are monthly at the issuer’s discretion outright; all three permit downward adjustments in defined circumstances, even though rates have only moved upward so far. BMNP’s 9.50% is fixed at issue, so it has no monthly reset — but its board could still adjust it under the terms of the security. Either way, the yield you see today is not locked in for life: your income from these instruments can fall as well as rise, and a framework being "published" is no guarantee it will be followed to the letter.',
   },
   {
     title: 'Crypto-collateral volatility',

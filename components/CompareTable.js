@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ASSET_RATES, PAYMENT_FREQUENCY, BMNP_ENABLED, STRIVE_BTC_HOLDINGS, PAR_VALUE } from '@/lib/constants';
+import { ASSET_RATES, PAYMENT_FREQUENCY, BMNP_ENABLED, STRIVE_BTC_HOLDINGS, STRATEGY_BTC_HOLDINGS, BITMINE_ETH_HOLDINGS, DFDV_SOL_HOLDINGS, PAR_VALUE } from '@/lib/constants';
 
 const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#f472b6' };
 
@@ -41,17 +41,17 @@ const ROWS = [
   },
   {
     label: 'How the rate is set',
-    STRC: 'Rules-based monthly review tied to a 5-day VWAP framework',
+    STRC: 'Published 5-day VWAP framework, currently overridden — held flat since Jul 2026',
     SATA: 'Discretionary monthly review targeting a $99–$101 range',
     BMNP: 'Fixed at issue',
     CHAD: 'Discretionary review, managed toward a long-term price range',
   },
   {
     label: 'What backs it',
-    STRC: '880,000+ Bitcoin treasury',
+    STRC: `${STRATEGY_BTC_HOLDINGS}+ Bitcoin treasury`,
     SATA: `${STRIVE_BTC_HOLDINGS}+ Bitcoin plus an 18-month cash reserve`,
-    BMNP: 'Ethereum staking income via the MAVAN validator network',
-    CHAD: 'Solana treasury, funded by ongoing capital raises',
+    BMNP: `${BITMINE_ETH_HOLDINGS}+ Ethereum treasury, staking income via the MAVAN validator network`,
+    CHAD: `${DFDV_SOL_HOLDINGS}+ Solana treasury, funded by ongoing capital raises`,
   },
   {
     label: 'Position in capital structure',
