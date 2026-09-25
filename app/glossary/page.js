@@ -52,6 +52,11 @@ const terms = [
     link: { href: '/blog/strc-vwap-dividend-mechanism', label: 'The STRC mechanism' },
   },
   {
+    term: 'USD Reserve',
+    def: 'Strategy’s ring-fenced cash reserve, usable only to pay preferred dividends and debt interest — any other use needs a separate board vote. Introduced as part of the June 2026 Digital Credit Capital Framework alongside the move to a 12.00% STRC rate; a board-set floor requires fresh authorisation if coverage ever drops below 12 months of expected payments. The current disclosed figure is shown on the STRC hub page.',
+    link: { href: '/blog/strategy-transforms', label: 'How the framework works' },
+  },
+  {
     term: 'Capital structure / capital stack',
     def: 'The ranking of a company’s obligations: debt is repaid first, then preferred stock, then common stock. Where an instrument sits in the stack determines who gets paid first in stress or liquidation.',
     link: { href: '/blog/strategy-capital-structure', label: 'Strategy’s stack explained' },
