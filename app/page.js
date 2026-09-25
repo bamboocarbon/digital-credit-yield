@@ -6,7 +6,7 @@ import CompareTable from '@/components/CompareTable';
 import { BMNP_ENABLED } from '@/lib/constants';
 
 export function generateMetadata() {
-  const instruments = BMNP_ENABLED ? 'STRC, SATA & BMNP' : 'STRC & SATA';
+  const instruments = BMNP_ENABLED ? 'STRC, SATA, BMNP & CHAD' : 'STRC, SATA & CHAD';
   const desc = `Track ${instruments} preferred stocks — live prices, dividend history, effective-yield charts and income projection tools.`;
   return {
     metadataBase: new URL('https://www.digitalcredityield.com'),
@@ -33,7 +33,7 @@ const jsonLd = {
   '@type': 'WebSite',
   name: 'Digital Credit Yield',
   url: 'https://www.digitalcredityield.com',
-  description: 'Independent tracker for STRC, SATA and BMNP preferred stocks. Live prices, dividend history, and income projectors.',
+  description: 'Independent tracker for STRC, SATA, BMNP and CHAD preferred stocks. Live prices, dividend history, and income projectors.',
 };
 
 export default function HomePage() {
@@ -57,7 +57,7 @@ export default function HomePage() {
           fontFamily: 'Arial, Helvetica, sans-serif',
           marginBottom: '20px',
         }}>
-          Tracking {BMNP_ENABLED ? 'STRC, SATA and BMNP' : 'STRC and SATA'} for growth
+          Tracking {BMNP_ENABLED ? 'STRC, SATA, BMNP and CHAD' : 'STRC, SATA and CHAD'} for growth
         </div>
         <p className="text-lg sm:text-xl max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
           Live prices, dividend tracking and income projections for the preferred stocks issued by Bitcoin and Ethereum treasury companies
@@ -65,10 +65,11 @@ export default function HomePage() {
       </div>
 
       {/* Asset selector cards */}
-      <div className={`grid grid-cols-1 gap-6 mb-12 ${BMNP_ENABLED ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
+      <div className={`grid grid-cols-1 gap-6 mb-12 ${BMNP_ENABLED ? 'md:grid-cols-4' : 'md:grid-cols-3'}`}>
         <AssetCard ticker="STRC" />
         <AssetCard ticker="SATA" />
         {BMNP_ENABLED && <AssetCard ticker="BMNP" />}
+        <AssetCard ticker="CHAD" />
       </div>
 
       <CompareTable />
@@ -89,7 +90,7 @@ export default function HomePage() {
         <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
           I&rsquo;m Robin Gillingham — a full-time independent investor for seven years. I built this site to highlight the
           difference between annual yield and effective yield on the new preferred stocks issued by Bitcoin and Ethereum treasury companies,
-          and it has grown into growth projectors, dividend charts, and weekly money flow data{BMNP_ENABLED ? ' across STRC, SATA and BMNP' : ''}.
+          and it has grown into growth projectors, dividend charts, and weekly money flow data across {BMNP_ENABLED ? 'STRC, SATA, BMNP and CHAD' : 'STRC, SATA and CHAD'}.
         </p>
         <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
           <a href="/about" style={{ color: 'var(--accent-gold)' }}>Read the full story on the About page →</a>
@@ -100,7 +101,7 @@ export default function HomePage() {
           Trust starts with sourcing, so here&rsquo;s exactly how the numbers are produced:
         </p>
         <ul className="text-base leading-7 mb-4 space-y-2" style={{ color: 'var(--text-muted)', paddingLeft: '1.25rem', listStyleType: 'disc' }}>
-          <li>Pricing and dividend data is fetched from public market sources (Yahoo Finance) and, for dividend rates, cross-checked against the issuers&rsquo; own SEC filings (8-Ks and prospectuses from Strategy, Strive and Bitmine).</li>
+          <li>Pricing and dividend data is fetched from public market sources (Yahoo Finance) and, for dividend rates, cross-checked against the issuers&rsquo; own SEC filings (8-Ks and prospectuses from Strategy, Strive, Bitmine and DeFi Development Corp.).</li>
           <li>Dividend history is stored and built up over time on my server from public data only — no personal data is ever involved.</li>
           <li>Articles are researched against primary sources and fact-checked before publishing. Where I state a rate, a date, or a structural detail, it traces back to a filing or the issuer&rsquo;s own disclosure.</li>
           <li>Updates: I revise pages as the instruments and the wider market evolves. Each article carries its publish date so you can judge how current it is.</li>
@@ -115,7 +116,7 @@ export default function HomePage() {
         </p>
         <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
           Position disclosure — I currently hold positions in MSTR and ASST, the common equity stocks of Strategy and Strive.
-          I have no relationship with Strategy Inc., Strive Inc. or Bitmine Immersion Technologies Inc., and am not compensated by them. This is an independent research product.
+          I have no relationship with Strategy Inc., Strive Inc., Bitmine Immersion Technologies Inc. or DeFi Development Corp., and am not compensated by any of them. This is an independent research product.
         </p>
 
         <h3 className="text-lg font-semibold mb-3">Get in touch</h3>

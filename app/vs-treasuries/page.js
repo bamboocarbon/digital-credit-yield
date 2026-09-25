@@ -5,10 +5,10 @@ import { ASSET_RATES, VALID_TICKERS, resolveStock } from '@/lib/constants';
 export const metadata = {
   alternates: { canonical: '/vs-treasuries' },
   title: 'Income vs US Treasuries',
-  description: 'Compare STRC, SATA and BMNP preferred stock dividends against US Treasuries and bank savings. See how much more income each generates over any time horizon.',
+  description: 'Compare STRC, SATA, BMNP and CHAD preferred stock dividends against US Treasuries and bank savings. See how much more income each generates over any time horizon.',
   openGraph: {
     title: 'Preferred Stock Income vs US Treasuries',
-    description: 'Compare STRC, SATA and BMNP dividends against US Treasuries and bank savings over your chosen time horizon.',
+    description: 'Compare STRC, SATA, BMNP and CHAD dividends against US Treasuries and bank savings over your chosen time horizon.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/vs-treasuries',
     images: [{ url: '/og?v=3&title=vs+Treasuries&sub=Compare+income+vs+Treasuries&tag=Comparison' }],
@@ -16,7 +16,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Preferred Stock Income vs US Treasuries',
-    description: 'Compare STRC, SATA and BMNP dividends against US Treasuries and bank savings.',
+    description: 'Compare STRC, SATA, BMNP and CHAD dividends against US Treasuries and bank savings.',
   },
 };
 

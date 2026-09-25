@@ -86,6 +86,28 @@ const TOOLS = {
       description: 'A complete record of every BMNP dividend payment — per-share amount, payment date, and record date. Enter your holding size to calculate exactly how much you received or will receive from each weekly distribution.',
     },
   ],
+  CHAD: [
+    {
+      href: '/chart?stock=chad',
+      label: 'Live Price Chart',
+      description: 'Track the CHAD market price in real time against its $10 stated value. As the price moves, the effective yield changes — use the chart to spot when CHAD is trading at a premium or discount and understand what that means for your entry yield.',
+    },
+    {
+      href: '/projector?stock=chad',
+      label: 'Growth Projector',
+      description: 'Enter an investment amount and time horizon to model your projected income and portfolio growth from holding CHAD. Adjust the reinvestment rate to see the compounding effect of daily dividends, and compare returns against US Treasuries and bank savings.',
+    },
+    {
+      href: '/vs-treasuries?stock=chad',
+      label: 'vs Treasuries',
+      description: "Compare the income from CHAD's dividend against US Treasuries and bank savings over any time period. Enter your investment amount and the tool shows the difference in dollar terms.",
+    },
+    {
+      href: '/dividends?stock=chad',
+      label: 'Dividend History',
+      description: 'A complete record of every CHAD dividend payment — per-share amount, payment date, and record date. Enter your holding size to calculate exactly how much you received or will receive from each daily distribution.',
+    },
+  ],
 };
 
 const DESCRIPTIONS = {
@@ -122,6 +144,18 @@ const DESCRIPTIONS = {
       <a href="https://www.bitminetech.io" target="_blank" rel="noopener noreferrer"
         className="inline-block text-sm underline mt-1" style={{ color: 'var(--accent-gold)' }}>
         Visit Bitminetech.io
+      </a>
+    </div>
+  ),
+  CHAD: (
+    <div className="space-y-3">
+      <p>CHAD is DeFi Development Corp.&apos;s Variable Rate Series C Perpetual Preferred Stock, listed on the Nasdaq. It pays a 13.00% annual dividend distributed daily in cash, cumulative if ever missed, with a <strong>$10 stated value</strong> rather than the $100 the other three instruments here share — a real structural difference, not just a smaller number on the label. Management intends to manage the rate to keep the price within a long-term range, reviewed monthly or more often. CHAD closed its initial offering on 8 September 2026 and is available on most major brokerage platforms.</p>
+      <p>As preferred stock, CHAD ranks senior to DeFi Development Corp.&apos;s common stock, and junior to the company&apos;s existing and future indebtedness. Net proceeds are earmarked for general corporate purposes, chiefly buying more Solana for the company&apos;s treasury, alongside other digital-asset investments and growth initiatives.</p>
+      <p>DeFi Development Corp. (Nasdaq: DFDV) describes itself as the first public Digital Asset Treasury company focused on Solana — the same playbook Strategy popularised for Bitcoin, applied to SOL instead. It raises capital, much of it now through CHAD, and deploys it into Solana, positioning the stock as a proxy for Solana accumulation with a preferred-dividend layer on top.</p>
+      <p>What I&apos;d flag plainly: CHAD is the newest and smallest instrument on this site by some distance, with barely a month of trading history and no published rate-adjustment formula the way STRC has — the $10 stated value and daily cadence make it feel closest to SATA in mechanics, but it hasn&apos;t built the track record the other three have yet. I&apos;m watching how consistently the daily dividend actually lands before I&apos;d call it proven.</p>
+      <a href="https://defidevcorp.com" target="_blank" rel="noopener noreferrer"
+        className="inline-block text-sm underline mt-1" style={{ color: 'var(--accent-gold)' }}>
+        Visit DefiDevCorp.com
       </a>
     </div>
   ),

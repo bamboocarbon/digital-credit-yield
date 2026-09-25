@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ASSET_RATES, PAYMENT_FREQUENCY, PRE_LISTING_TICKERS, DIVIDEND_RESERVE } from '@/lib/constants';
+import { ASSET_RATES, PAYMENT_FREQUENCY, PRE_LISTING_TICKERS, DIVIDEND_RESERVE, PAR_VALUE } from '@/lib/constants';
 
 export default function AssetHubLive({ ticker }) {
   const [data, setData]   = useState(null);
@@ -14,7 +14,8 @@ export default function AssetHubLive({ ticker }) {
       .catch(() => setError(true));
   }, [ticker]);
 
-  const annualDividendDollars = ASSET_RATES[ticker];
+  const par = PAR_VALUE[ticker] ?? 100;
+  const annualDividendDollars = ASSET_RATES[ticker] * (par / 100);
   const displayYield   = data?.dividendYield ?? ASSET_RATES[ticker];
   const yieldIsLive    = data?.dividendYield != null;
   const effectiveYield = data?.price != null
@@ -73,10 +74,10 @@ export default function AssetHubLive({ ticker }) {
           </p>
           <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
             {data?.price != null
-              ? data.price < 100
+              ? data.price < par
                 ? `Buying at $${data.price.toFixed(2)} earns you more than the ${ASSET_RATES[ticker]}% par rate`
                 : `Based on current price of $${data.price.toFixed(2)} vs $${annualDividendDollars.toFixed(2)} annual dividend`
-              : `Based on $${annualDividendDollars.toFixed(2)} annual dividend at $100 par`}
+              : `Based on $${annualDividendDollars.toFixed(2)} annual dividend at $${par} par`}
           </p>
         </div>
 

@@ -2,18 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { PRE_LISTING_TICKERS, STRIVE_BTC_HOLDINGS, ASSET_RATES } from '@/lib/constants';
+import { PRE_LISTING_TICKERS, STRIVE_BTC_HOLDINGS, ASSET_RATES, PAR_VALUE } from '@/lib/constants';
 
 const DESCRIPTIONS = {
   STRC: `Strategy's perpetual preferred stock paying ${ASSET_RATES.STRC.toFixed(2)}% annual dividends in semi-monthly cash (~$0.479/share twice a month). Dividend rate adjusts monthly to maintain trading near its $100 par value.`,
   SATA: `Strive's publicly traded preferred equity paying ${ASSET_RATES.SATA.toFixed(2)}% annualised in daily cash dividends (~$0.052/share/day). Targets a $99–$101 trading range, backed by 18+ months of cash reserves and over ${STRIVE_BTC_HOLDINGS} Bitcoin.`,
   BMNP: `Bitmine Immersion Technologies' Series A perpetual preferred stock paying ${ASSET_RATES.BMNP.toFixed(2)}% annually in weekly cash dividends. Began trading on the NYSE June 16, 2026, backed by Ethereum staking via the MAVAN platform.`,
+  CHAD: `DeFi Development Corp.'s Solana-backed perpetual preferred stock paying ${ASSET_RATES.CHAD.toFixed(2)}% annually in daily cash dividends (~$0.0052/share/day). Began trading on the Nasdaq September 8, 2026, with a $10 stated value and proceeds earmarked for its Solana treasury.`,
 };
 
 const INCOME_BADGE = {
   STRC: 'Semi-Monthly Income',
   SATA: 'Daily Income',
   BMNP: 'Weekly Income',
+  CHAD: 'Daily Income',
 };
 
 
@@ -67,12 +69,12 @@ export default function AssetCard({ ticker }) {
             </div>
           </div>
 
-          {/* Effective yield (right) — annual dividend ÷ current price, par $100 */}
+          {/* Effective yield (right) — annual dividend ÷ current price, scaled by the ticker's par value */}
           {data.price > 0 && ASSET_RATES[ticker] != null && (
             <div className="text-right">
               <div className="text-xs uppercase" style={{ color: 'var(--text-muted)', letterSpacing: '0.04em' }}>Effective Yield</div>
               <div className="font-mono-data text-3xl font-bold mt-1" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: 'var(--accent-gold)' }}>
-                {((ASSET_RATES[ticker] / data.price) * 100).toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8em' }}>%</span>
+                {((ASSET_RATES[ticker] * (PAR_VALUE[ticker] ?? 100) / 100 / data.price) * 100).toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8em' }}>%</span>
               </div>
             </div>
           )}

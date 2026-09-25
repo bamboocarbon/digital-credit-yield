@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { ASSET_RATES, PAYMENT_FREQUENCY, BMNP_ENABLED, STRIVE_BTC_HOLDINGS } from '@/lib/constants';
+import { ASSET_RATES, PAYMENT_FREQUENCY, BMNP_ENABLED, STRIVE_BTC_HOLDINGS, PAR_VALUE } from '@/lib/constants';
 
-const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047' };
+const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#f472b6' };
 
 const ROWS = [
   {
@@ -9,53 +9,67 @@ const ROWS = [
     STRC: 'Strategy (Nasdaq: MSTR)',
     SATA: 'Strive (Nasdaq: ASST)',
     BMNP: 'Bitmine (NYSE: BMNR)',
+    CHAD: 'DeFi Development Corp. (Nasdaq: DFDV)',
+  },
+  {
+    label: 'Stated/par value',
+    STRC: '$100',
+    SATA: '$100',
+    BMNP: '$100',
+    CHAD: '$10',
   },
   {
     label: 'Annual dividend rate',
     STRC: `${ASSET_RATES.STRC.toFixed(2)}%`,
     SATA: `${ASSET_RATES.SATA.toFixed(2)}%`,
     BMNP: `${ASSET_RATES.BMNP.toFixed(2)}% (fixed)`,
+    CHAD: `${ASSET_RATES.CHAD.toFixed(2)}%`,
   },
   {
     label: 'Payment frequency',
     STRC: `${PAYMENT_FREQUENCY.STRC.label} (${PAYMENT_FREQUENCY.STRC.perYear}/year)`,
     SATA: `${PAYMENT_FREQUENCY.SATA.label} (~${PAYMENT_FREQUENCY.SATA.perYear}/year)`,
     BMNP: `${PAYMENT_FREQUENCY.BMNP.label} (${PAYMENT_FREQUENCY.BMNP.perYear}/year)`,
+    CHAD: `${PAYMENT_FREQUENCY.CHAD.label} (~${PAYMENT_FREQUENCY.CHAD.perYear}/year)`,
   },
   {
     label: 'Approx. per payment',
     STRC: '~$0.479/share',
     SATA: '~$0.052/share',
     BMNP: '~$0.183/share',
+    CHAD: '~$0.0052/share',
   },
   {
     label: 'How the rate is set',
     STRC: 'Rules-based monthly review tied to a 5-day VWAP framework',
     SATA: 'Discretionary monthly review targeting a $99–$101 range',
     BMNP: 'Fixed at issue',
+    CHAD: 'Discretionary review, managed toward a long-term price range',
   },
   {
     label: 'What backs it',
     STRC: '880,000+ Bitcoin treasury',
     SATA: `${STRIVE_BTC_HOLDINGS}+ Bitcoin plus an 18-month cash reserve`,
     BMNP: 'Ethereum staking income via the MAVAN validator network',
+    CHAD: 'Solana treasury, funded by ongoing capital raises',
   },
   {
     label: 'Position in capital structure',
     STRC: 'Below debt and STRF; above all other preferreds and common stock',
     SATA: 'Top of the stack — Strive is debt-free with one preferred series',
     BMNP: 'Above common stock; cumulative dividends',
+    CHAD: 'Below company debt; above common stock; cumulative dividends',
   },
 ];
 
 export default function CompareTable() {
-  const tickers = BMNP_ENABLED ? ['STRC', 'SATA', 'BMNP'] : ['STRC', 'SATA'];
+  const tickers = BMNP_ENABLED ? ['STRC', 'SATA', 'BMNP', 'CHAD'] : ['STRC', 'SATA', 'CHAD'];
 
   return (
     <div className="mt-12 max-w-5xl mx-auto">
       <h2 className="text-2xl font-bold mb-2 text-center">{tickers.join(' vs ')} at a Glance</h2>
       <p className="text-sm text-center mb-6" style={{ color: 'var(--text-muted)' }}>
-        Same $100 par value, very different structures — here&rsquo;s how they differ.
+        Different issuers, different structures — down to the par value itself: {tickers.map(t => `$${PAR_VALUE[t]} for ${t}`).join(', ')}.
       </p>
       <div className="overflow-x-auto rounded-2xl" style={{ border: '1px solid var(--border)' }}>
         <table className="w-full text-sm" style={{ background: 'var(--bg-card)' }}>

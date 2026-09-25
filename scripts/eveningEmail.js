@@ -12,9 +12,11 @@ const SITE_URL  = (process.env.SITE_URL || 'https://www.digitalcredityield.com')
 const STRC_RATE = ASSET_RATES.STRC;
 const SATA_RATE = ASSET_RATES.SATA;
 const BMNP_RATE = ASSET_RATES.BMNP;
+const CHAD_RATE = ASSET_RATES.CHAD;
 
 const MONTHLY_ON_50K_STRC = Math.floor((50000 * STRC_RATE) / 1200 / 10) * 10;
 const MONTHLY_ON_50K_BMNP = Math.floor((50000 * BMNP_RATE) / 1200 / 10) * 10;
+const MONTHLY_ON_50K_CHAD = Math.floor((50000 * CHAD_RATE) / 1200 / 10) * 10;
 
 // Questions grouped by ticker — evening email always focuses on the ticker
 // one step ahead of the daily email (getDailyTicker(1)).
@@ -145,6 +147,38 @@ const QUESTIONS_BY_TICKER = {
       path: "/bmnp/differentiator",
     },
   ],
+  CHAD: [
+    {
+      question: "How much passive income could $25,000 in CHAD generate each month?",
+      teaser: `At ${CHAD_RATE}% annual yield, CHAD pays daily. See the exact income breakdown.`,
+      path: "/chad/projector",
+    },
+    {
+      question: "What would $50,000 in CHAD earn you over the next 12 months?",
+      teaser: `At today's ${CHAD_RATE}% yield, that's potentially $${MONTHLY_ON_50K_CHAD} a month or more. Run your own projection.`,
+      path: "/chad/projector",
+    },
+    {
+      question: "How does CHAD's yield compare to a high-yield savings account?",
+      teaser: `Most savings accounts offer 4–5% APY. CHAD targets ${CHAD_RATE}%. See how the income gap adds up over time.`,
+      path: "/chad/differentiator",
+    },
+    {
+      question: "How much would you need to invest in CHAD to earn $500 a month?",
+      teaser: "The math might be simpler than you think. Use the CHAD projector to find your number.",
+      path: "/chad/projector",
+    },
+    {
+      question: "What makes CHAD different from STRC, SATA and BMNP?",
+      teaser: "A $10 stated value instead of $100, daily dividends, and a Solana treasury behind it. See how it compares.",
+      path: "/chad",
+    },
+    {
+      question: "Is CHAD a better income option than US Treasuries?",
+      teaser: `Treasury yields sit around 4–5%. CHAD targets ${CHAD_RATE}%. See the real income difference over time.`,
+      path: "/chad/differentiator",
+    },
+  ],
 };
 
 function getDayOfYear() {
@@ -181,7 +215,7 @@ export async function run() {
     </div>
 
     <div style="text-align:center;margin-bottom:20px;">
-      <span style="display:inline-block;color:#f5a623;border:1px solid #f5a623;border-radius:12px;padding:10px 24px;font-size:18px;font-weight:700;">Tracking STRC, SATA and BMNP for growth</span>
+      <span style="display:inline-block;color:#f5a623;border:1px solid #f5a623;border-radius:12px;padding:10px 24px;font-size:18px;font-weight:700;">Tracking STRC, SATA, BMNP and CHAD for growth</span>
     </div>
 
     <div style="background:#111827;border:1px solid #1e2a3a;border-radius:12px;padding:28px 24px;text-align:center;">

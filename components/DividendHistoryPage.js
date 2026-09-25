@@ -42,6 +42,8 @@ export default function DividendHistoryPage({ ticker, dividends }) {
       <p className="mb-6 text-sm" style={{ color: 'var(--text-muted)' }}>
         {ticker === 'SATA'
           ? 'All recorded dividend payments for SATA. Monthly payments through June 15, 2026; daily business-day payments from June 16, 2026 onward.'
+          : ticker === 'BMNP' || ticker === 'CHAD'
+          ? `All recorded dividend payments for ${ticker}. Verified against the issuer's own SEC filings and stored on this server — building a permanent record that grows over time.`
           : `All recorded dividend payments for ${ticker}. Fetched from Yahoo Finance and stored on this server — building a permanent record that grows over time.`}
       </p>
 

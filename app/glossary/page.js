@@ -26,11 +26,11 @@ const terms = [
   },
   {
     term: 'Par value',
-    def: 'The face value of a preferred share — $100 for STRC, SATA and BMNP. The dividend rate is set against par, and the issuers manage their rates to keep the market price trading close to it.',
+    def: 'The face (stated) value of a preferred share — $100 for STRC, SATA and BMNP, but $10 for CHAD. The dividend rate is set against par, and the issuers manage their rates to keep the market price trading close to it.',
   },
   {
     term: 'Effective yield',
-    def: 'Your actual return based on the price you pay, rather than the stated rate against par. Buy below $100 and your effective yield is higher than the announced rate; buy above and it is lower.',
+    def: 'Your actual return based on the price you pay, rather than the stated rate against par. Buy below par and your effective yield is higher than the announced rate; buy above and it is lower.',
     link: { href: '/blog/what-is-effective-yield', label: 'Why it matters' },
   },
   {
@@ -66,12 +66,12 @@ const terms = [
   },
   {
     term: 'Dividend frequency',
-    def: 'How often payments arrive: STRC pays semi-monthly (24 times a year), SATA pays daily on US market business days (~250 times a year), and BMNP pays weekly. Annual yield is unaffected by frequency, but faster payments mean more frequent compounding if you reinvest.',
+    def: 'How often payments arrive: STRC pays semi-monthly (24 times a year), SATA and CHAD pay daily on US market business days (~250 times a year), and BMNP pays weekly. Annual yield is unaffected by frequency, but faster payments mean more frequent compounding if you reinvest.',
     link: { href: '/blog/monthly-vs-daily-dividends', label: 'Does frequency matter?' },
   },
   {
     term: 'Bitcoin treasury company',
-    def: 'A public company that holds Bitcoin as a core treasury asset and typically raises capital — often via preferred stock — to buy more. Strategy (STRC) and Strive (SATA) are the two Bitcoin-treasury issuers tracked here; Bitmine (BMNP) follows the same playbook with Ethereum instead.',
+    def: 'A public company that holds Bitcoin as a core treasury asset and typically raises capital — often via preferred stock — to buy more. Strategy (STRC) and Strive (SATA) are the two Bitcoin-treasury issuers tracked here; Bitmine (BMNP) follows the same playbook with Ethereum, and DeFi Development Corp. (CHAD) with Solana.',
     link: { href: '/blog/bitcoin-treasury-companies', label: 'Why they issue preferred equity' },
   },
   {

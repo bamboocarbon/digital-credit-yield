@@ -24,7 +24,7 @@ export const metadata = {
   description: 'Test your knowledge of preferred stock, dividends and Bitcoin treasury companies with the @DCYieldHub quiz posts — reveal the answer to each, newest first.',
   openGraph: {
     title: 'Quiz',
-    description: 'Test your knowledge with the @DCYieldHub quiz posts — STRC, SATA, BMNP, preferred stock and dividends.',
+    description: 'Test your knowledge with the @DCYieldHub quiz posts — STRC, SATA, BMNP, CHAD, preferred stock and dividends.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/quiz',
     images: [{ url: '/og?v=3&title=Quiz&sub=Test+your+knowledge+with+DCYieldHub' }],

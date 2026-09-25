@@ -1,7 +1,7 @@
 // The per-ticker tool pages (/strc/chart, /sata/projector, …) were consolidated
 // into single selectable pages. 301 the old indexed URLs to the new routes,
 // preserving which stock was selected via ?stock=.
-const TOOL_REDIRECTS = ['strc', 'sata', 'bmnp'].flatMap(t =>
+const TOOL_REDIRECTS = ['strc', 'sata', 'bmnp', 'chad'].flatMap(t =>
   Object.entries({ chart: 'chart', projector: 'projector', differentiator: 'vs-treasuries', dividends: 'dividends' })
     .map(([oldTool, newRoute]) => ({
       source: `/${t}/${oldTool}`,

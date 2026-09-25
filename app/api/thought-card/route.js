@@ -91,7 +91,7 @@ export async function GET(request) {
           border: `2px solid ${GOLD}`, borderRadius: 22, padding: '20px 36px',
         }}>
           <span style={{ color: GOLD, fontSize: 32, fontWeight: 700, lineHeight: 1.3 }}>
-            Tracking STRC, SATA and BMNP for growth
+            Tracking STRC, SATA, BMNP and CHAD for growth
           </span>
         </div>
 

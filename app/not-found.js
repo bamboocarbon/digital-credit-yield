@@ -18,6 +18,7 @@ export default function NotFound() {
           { href: '/strc', label: 'STRC' },
           { href: '/sata', label: 'SATA' },
           { href: '/bmnp', label: 'BMNP' },
+          { href: '/chad', label: 'CHAD' },
           { href: '/blog', label: 'Blog' },
         ].map(({ href, label }) => (
           <Link prefetch={false}

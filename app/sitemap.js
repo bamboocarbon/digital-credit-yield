@@ -20,6 +20,7 @@ export default function sitemap() {
     ...(BMNP_ENABLED ? [
       { url: `${base}/bmnp`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.9 },
     ] : []),
+    { url: `${base}/chad`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.9 },
     // Consolidated tool pages — one selectable page per tool, covering all instruments
     { url: `${base}/chart`,               lastModified: now,          changeFrequency: 'daily',   priority: 0.8 },
     { url: `${base}/dividends`,           lastModified: now,          changeFrequency: 'weekly',  priority: 0.7 },

@@ -5,9 +5,11 @@ import SubNav from '@/components/SubNav';
 import StockSelector from '@/components/StockSelector';
 import AssetChartContent from '@/components/AssetChartContent';
 import AadsAd from '@/components/AadsAd';
+import { PAR_VALUE } from '@/lib/constants';
 
 export default function ChartTool({ initialStock }) {
   const [stock, setStock] = useState(initialStock);
+  const par = PAR_VALUE[stock] ?? 100;
 
   function selectStock(next) {
     setStock(next);
@@ -20,9 +22,9 @@ export default function ChartTool({ initialStock }) {
       <h1 className="text-2xl sm:text-3xl font-bold mb-4">Effective Yield &amp; Price Chart</h1>
       <StockSelector selected={stock} onSelect={selectStock} />
       <p className="mb-3 mt-2 text-sm leading-6 max-w-3xl" style={{ color: 'var(--text-muted)' }}>
-        This chart tracks {stock}&apos;s live market price against its $100 par value, alongside the
+        This chart tracks {stock}&apos;s live market price against its ${par} par value, alongside the
         effective yield that price implies. Because the dividend rate is set against par, the yield you
-        actually lock in depends on what you pay: buy below $100 and your effective yield runs above the
+        actually lock in depends on what you pay: buy below ${par} and your effective yield runs above the
         headline rate; buy above par and it runs below.
       </p>
       <p className="mb-6 text-sm leading-6 max-w-3xl" style={{ color: 'var(--text-muted)' }}>

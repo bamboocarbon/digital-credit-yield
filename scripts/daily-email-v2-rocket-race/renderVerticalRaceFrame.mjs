@@ -31,7 +31,7 @@ const XL_Y = CI_Y1 + 16, CW_Y1 = XL_Y + 6, IN_Y0 = CW_Y1 + 14, IN_H = 52;
 const LG_Y = IN_Y0 + IN_H + 16, DM_Y = LG_Y + 13, DC_Y = DM_Y + 13;
 const ML = 30, MR = 14;
 
-export const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047' };
+export const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#f472b6' };
 export const FIXED_RATE    = ASSET_RATES; // { STRC: 11.5, SATA: 13.0, BMNP: 9.5 }
 const C_TREASURY = '#d1d5db';
 const C_BANK     = '#9ca3af';
@@ -67,6 +67,13 @@ function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
 function fmtVal(v) { return v >= 1000 ? `$${(v/1000).toFixed(1)}k` : `$${Math.round(v)}`; }
 function compound(rate, years) { return 10000 * Math.pow(1 + rate / 100, years); }
 
+// This video's snapshot strip and lane layout are a fixed 3-column design —
+// kept at the original 3 tickers rather than widened to 4, since CHAD's $10
+// par (vs $100 for the others) and its later rotation slot (see
+// insightEngine.js TICKERS/getDailyTicker) don't fit this layout's hardcoded
+// canvas width without a real redesign. When CHAD is the featured ticker
+// (getDailyTicker now cycles all 4), it still renders correctly — just in
+// the same lane position STRC would use — via the index fallback below.
 export const TICKER_ORDER = ['STRC', 'SATA', 'BMNP'];
 
 // Lane position now mirrors the featured ticker's own snapshot box above it:
@@ -83,7 +90,10 @@ export function buildLanes(featuredTicker) {
   const featuredLane = { key: featuredTicker, label: featuredTicker, rateLabel: `${FIXED_RATE[featuredTicker].toFixed(1)}% fixed`, color: TICKER_COLOUR[featuredTicker], finalVal: featuredVal, heightFrac: 1, flame: true };
 
   const slots = [null, null, null];
-  slots[TICKER_ORDER.indexOf(featuredTicker)] = featuredLane;
+  // Fall back to lane 0 for any ticker not in TICKER_ORDER (e.g. CHAD) —
+  // indexOf returns -1, which must never be used as an array index here.
+  const featuredIdx = TICKER_ORDER.indexOf(featuredTicker);
+  slots[featuredIdx >= 0 ? featuredIdx : 0] = featuredLane;
   const remaining = [treasuryLane, bankLane];
   let ri = 0;
   for (let i = 0; i < 3; i++) if (!slots[i]) slots[i] = remaining[ri++];

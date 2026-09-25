@@ -11,6 +11,7 @@ const primaryLinks = [
   { label: 'STRC', href: '/strc' },
   { label: 'SATA', href: '/sata' },
   { label: 'BMNP', href: '/bmnp', bmnpOnly: true },
+  { label: 'CHAD', href: '/chad' },
   { label: 'Money Flow', href: '/money-flow' },
   { label: 'Contact', href: '/contact' },
 ];

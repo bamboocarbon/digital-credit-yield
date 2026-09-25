@@ -12,7 +12,7 @@ import { generateMp4 } from './generateMp4.js';
 import { NOTO_400 } from './fontData.js';
 import { isNyseMarketDay } from '../lib/marketDays.js';
 import { alreadySentToday, markSentToday } from '../lib/sendGuard.js';
-import { ASSET_RATES } from '../lib/constants.js';
+import { ASSET_RATES, PAR_VALUE } from '../lib/constants.js';
 
 function cleanForApp(text) {
   return text
@@ -104,10 +104,10 @@ async function loadSubscribers() {
 }
 
 // DCY website brand colours — match the ticker tag colours on digitalcredityield.com
-const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047' };
+const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#f472b6' };
 
 // Matches the category tag colours used on /blog (components/BlogIndex.js)
-const BLOG_CATEGORY_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', SOL: '#a78bfa', Metaplanet: '#7dd3fc' };
+const BLOG_CATEGORY_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#f472b6', SOL: '#a78bfa', Metaplanet: '#7dd3fc' };
 
 const CARD_BG = '#131a28';
 
@@ -317,17 +317,17 @@ async function run() {
     let priceLine, changeLine, yieldLine;
     if (q?.price != null) {
       const up = (q.changePercent ?? 0) >= 0;
-      const effYield = ASSET_RATES[t] != null ? (ASSET_RATES[t] / q.price) * 100 : null;
+      const effYield = ASSET_RATES[t] != null ? (ASSET_RATES[t] * (PAR_VALUE[t] ?? 100) / q.price) : null;
       priceLine  = `<div style="font-size:13px;font-weight:700;color:#e4eaf5;margin-top:3px;">$${q.price.toFixed(2)}</div>`;
       changeLine = `<div style="font-size:11px;margin-top:2px;color:${up ? '#4ade80' : '#ef4444'};">${up ? '▲' : '▼'} ${Math.abs(q.changePercent ?? 0).toFixed(2)}%</div>`;
       yieldLine  = effYield != null ? `<div style="font-size:11px;margin-top:2px;color:#8a9ab5;">${effYield.toFixed(2)}% yield</div>` : '';
     } else {
-      const rates = { STRC: '12.0%', SATA: '13.0%', BMNP: '9.5%' };
+      const rates = { STRC: '12.0%', SATA: '13.0%', BMNP: '9.5%', CHAD: '13.0%' };
       priceLine  = `<div style="font-size:11px;font-weight:600;color:#8a9ab5;margin-top:3px;">Listing soon</div>`;
       changeLine = `<div style="font-size:11px;margin-top:2px;color:#8a9ab5;">${rates[t] || ''} fixed</div>`;
       yieldLine  = '';
     }
-    return `<td width="33%" valign="top" bgcolor="#0b1422" style="background-color:#0b1422;border:1px solid #1a2740;border-radius:10px;padding:8px 10px;">` +
+    return `<td width="25%" valign="top" bgcolor="#0b1422" style="background-color:#0b1422;border:1px solid #1a2740;border-radius:10px;padding:8px 10px;">` +
       `<div style="font-size:15px;font-weight:700;color:${colour};letter-spacing:0.05em;">${t}</div>` +
       priceLine + changeLine + yieldLine + `</td>`;
   }
@@ -387,11 +387,11 @@ async function run() {
       </tr></table>`;
 
   const titleHtml = box(
-    `<div style="text-align:center;font-size:20px;font-weight:700;color:#f5a623;letter-spacing:0.04em;">Tracking STRC, SATA &amp; BMNP for Growth</div>`,
+    `<div style="text-align:center;font-size:20px;font-weight:700;color:#f5a623;letter-spacing:0.04em;">Tracking STRC, SATA, BMNP &amp; CHAD for Growth</div>`,
     { bg: '#181307', border: '#f5a623', padding: '10px 18px', marginBottom: '16px' }
   );
 
-  const snapRow = `<table role="presentation" width="100%" cellpadding="0" cellspacing="8" border="0" bgcolor="${CARD_BG}" style="width:100%;background-color:${CARD_BG};margin-bottom:14px;"><tr>${snapCell('STRC')}${snapCell('SATA')}${snapCell('BMNP')}</tr></table>`;
+  const snapRow = `<table role="presentation" width="100%" cellpadding="0" cellspacing="8" border="0" bgcolor="${CARD_BG}" style="width:100%;background-color:${CARD_BG};margin-bottom:14px;"><tr>${snapCell('STRC')}${snapCell('SATA')}${snapCell('BMNP')}${snapCell('CHAD')}</tr></table>`;
 
   const chartHtml = chartB64 ? box(
     `<img src="data:image/png;base64,${chartB64}" alt="chart" style="width:100%;display:block;">`,
@@ -491,7 +491,7 @@ async function run() {
   }
 
   // Save daily card to Blob for DCY app
-  const displayTickers = ['STRC', 'SATA', ...(quotes['BMNP']?.price != null ? ['BMNP'] : [])];
+  const displayTickers = ['STRC', 'SATA', ...(quotes['BMNP']?.price != null ? ['BMNP'] : []), ...(quotes['CHAD']?.price != null ? ['CHAD'] : [])];
   const cardBox2 = displayTickers.map(t => {
     const q = quotes[t];
     const arrow = (q.changePercent ?? 0) >= 0 ? '▲' : '▼';

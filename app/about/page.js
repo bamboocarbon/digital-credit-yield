@@ -1,10 +1,10 @@
 export const metadata = {
   alternates: { canonical: '/about' },
   title: 'About',
-  description: 'The story behind Digital Credit Yield — from aircraft engineering to full-time trading and building tools for retail investors in STRC, SATA and BMNP.',
+  description: 'The story behind Digital Credit Yield — from aircraft engineering to full-time trading and building tools for retail investors in STRC, SATA, BMNP and CHAD.',
   openGraph: {
     title: 'About',
-    description: 'From aircraft engineering to full-time trading — the story behind Digital Credit Yield and its STRC, SATA and BMNP tracking tools.',
+    description: 'From aircraft engineering to full-time trading — the story behind Digital Credit Yield and its STRC, SATA, BMNP and CHAD tracking tools.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/about',
     images: [{ url: '/og?v=3&title=About&sub=Digital+Credit+Yield' }],
@@ -12,7 +12,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'About',
-    description: 'From aircraft engineering to full-time trading — the story behind Digital Credit Yield and its STRC, SATA and BMNP tracking tools.',
+    description: 'From aircraft engineering to full-time trading — the story behind Digital Credit Yield and its STRC, SATA, BMNP and CHAD tracking tools.',
   },
 };
 
@@ -83,6 +83,7 @@ export default function AboutPage() {
           { ticker: 'STRC', name: "Strategy's Perpetual Preferred Stock", desc: "Pays 12.00% annual dividends in semi-monthly cash payments. Dividend rate adjusts to maintain trading near its $100 par value." },
           { ticker: 'SATA', name: "Strive's Preferred Equity Instrument", desc: "Pays 13.00% annualised in daily cash dividends. Targets a $99–$101 trading range, backed by 18+ months of cash reserves and over 19,000 Bitcoin." },
           { ticker: 'BMNP', name: "Bitmine's Preferred Equity Instrument", desc: "Pays 9.50% annualised in weekly cash dividends. Bitmine's Ethereum treasury preferred equity instrument, funded by ETH staking rewards via the MAVAN validator network. Began trading on the NYSE June 16, 2026." },
+          { ticker: 'CHAD', name: "DeFi Development Corp.'s Preferred Stock", desc: "Pays 13.00% annualised in daily cash dividends. DeFi Development Corp.'s Solana treasury preferred stock, with a $10 stated value rather than the usual $100. Began trading on the Nasdaq September 8, 2026." },
         ].map(asset => (
           <div key={asset.ticker} className="p-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
             <p className="font-semibold mb-1">{asset.ticker} — {asset.name}</p>

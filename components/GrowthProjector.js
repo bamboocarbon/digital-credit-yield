@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { saveProjectorState, loadProjectorState, defaultProjectorState } from '@/lib/projectorState';
 import { runProjection, computeAPY, HORIZON_MONTHS as horizonMonths, HORIZON_LABELS as horizonLabels, fmt, fmtNum, stripNum } from '@/lib/projectorEngine';
+import { PAR_VALUE } from '@/lib/constants';
 import NumericInput from '@/components/NumericInput';
 
 const MONO = { fontFamily: "'Roboto Mono', 'Courier New', monospace" };
@@ -13,9 +14,12 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
 
+  const par = PAR_VALUE[ticker] ?? 100;
+
   const [form, setForm] = useState(() => ({
     ...defaultProjectorState,
     annualYield: liveYield ?? defaultProjectorState.annualYield,
+    pricePerShare: par,
   }));
 
   useEffect(() => {
@@ -25,8 +29,11 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
     // (e.g. STRC's original 9% IPO rate) and override today's announced rate.
     const yld = liveYield ?? defaultProjectorState.annualYield;
     if (saved) setForm(prev => ({ ...prev, ...saved, annualYield: yld }));
-    else setForm(prev => ({ ...prev, annualYield: yld }));
-  }, [ticker, liveYield]);
+    // No saved state for this ticker — reset the price-per-share default to its own
+    // par value too, not whichever ticker's par the form last held (e.g. switching
+    // from STRC's $100 par to CHAD's $10 par via the stock selector).
+    else setForm(prev => ({ ...prev, annualYield: yld, pricePerShare: par }));
+  }, [ticker, liveYield, par]);
 
   function update(field, value) {
     const next = { ...form, [field]: value };
@@ -39,22 +46,22 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
   const rawAmount = Number(String(form.investmentAmount || 0).replace(/,/g, ''));
   const rawShares = Number(String(form.numShares || 0).replace(/,/g, ''));
   const startValue = form.inputMode === 'shares'
-    ? rawShares * Number(form.pricePerShare || 100)
+    ? rawShares * Number(form.pricePerShare || par)
     : rawAmount;
 
   // Effective yield needs a buy price. In shares mode that's the user's stated cost;
   // in dollar mode there's no input price, so use the live market price (your dollars
-  // buy at the market, not at $100 par) — this is what lets the Annual/Effective
-  // toggle change the dollar-mode output. Falls back to par if no live price.
-  const dollarModePrice = livePrice && livePrice > 0 ? livePrice : 100;
-  const priceForYield = form.inputMode === 'shares' ? Number(form.pricePerShare || 100) : dollarModePrice;
-  const effectiveYield = priceForYield > 0 ? Number(form.annualYield) * (100 / priceForYield) : Number(form.annualYield);
+  // buy at the market, not at par) — this is what lets the Annual/Effective toggle
+  // change the dollar-mode output. Falls back to par if no live price.
+  const dollarModePrice = livePrice && livePrice > 0 ? livePrice : par;
+  const priceForYield = form.inputMode === 'shares' ? Number(form.pricePerShare || par) : dollarModePrice;
+  const effectiveYield = priceForYield > 0 ? Number(form.annualYield) * (par / priceForYield) : Number(form.annualYield);
 
   // Which yield drives the projection. In dollar mode (price = par) the two are
   // identical, so the toggle only changes the result when shares are priced off par.
   const yieldForProjection = form.yieldBasis === 'effective' ? effectiveYield : Number(form.annualYield);
 
-  const paymentsPerYear = ticker === 'STRC' ? 24 : ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : 12;
+  const paymentsPerYear = ticker === 'STRC' ? 24 : ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : ticker === 'CHAD' ? 250 : 12;
 
   const history = useMemo(
     () => runProjection(startValue, yieldForProjection, Number(form.monthlyContribution), Number(form.reinvestmentPct), months, paymentsPerYear),
@@ -284,6 +291,14 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
                   </span>
                 </p>
               )}
+              {ticker === 'CHAD' && Number(form.reinvestmentPct) > 0 && (
+                <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
+                  Daily compounding: {computeAPY(yieldForProjection, 250).toFixed(4)}% APY
+                  <span style={{ color: 'var(--text-muted)' }}>
+                    {' '}(+{((computeAPY(yieldForProjection, 250) - computeAPY(yieldForProjection, 12)) * 100).toFixed(1)} bps vs monthly)
+                  </span>
+                </p>
+              )}
             </div>
 
           </div>
@@ -291,12 +306,12 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
           {form.inputMode === 'shares' && rawShares > 0 && (
             <div className="mt-3 text-center space-y-1">
               <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                ≈ {fmt(rawShares * Number(form.pricePerShare || 100))} total investment
+                ≈ {fmt(rawShares * Number(form.pricePerShare || par))} total investment
               </p>
-              {Number(form.pricePerShare || 100) !== 100 && (
+              {Number(form.pricePerShare || par) !== par && (
                 <p className="text-xs" style={{ color: 'var(--accent-gold)' }}>
                   Effective yield on cost: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>
-                  {Number(form.pricePerShare) < 100 ? ' ↑' : ' ↓'}
+                  {Number(form.pricePerShare) < par ? ' ↑' : ' ↓'}
                   <span style={{ color: 'var(--text-muted)' }}>
                     {form.yieldBasis === 'effective'
                       ? ' · driving the projection'
@@ -307,11 +322,11 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
             </div>
           )}
 
-          {form.inputMode !== 'shares' && livePrice && livePrice > 0 && Math.abs(livePrice - 100) > 0.005 && (
+          {form.inputMode !== 'shares' && livePrice && livePrice > 0 && Math.abs(livePrice - par) > 0.005 && (
             <div className="mt-3 text-center">
               <p className="text-xs" style={{ color: 'var(--accent-gold)' }}>
                 Effective yield at live price ${livePrice.toFixed(2)}: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>
-                {livePrice < 100 ? ' ↑' : ' ↓'}
+                {livePrice < par ? ' ↑' : ' ↓'}
                 <span style={{ color: 'var(--text-muted)' }}>
                   {form.yieldBasis === 'effective'
                     ? ' · driving the projection'

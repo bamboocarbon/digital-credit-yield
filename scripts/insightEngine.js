@@ -5,7 +5,7 @@ import { put } from '@vercel/blob';
 import { blobUrl } from '../lib/blobUrl.js';
 import { getStockQuote, fetchNextPaymentDate } from '../lib/fetchStockData.js';
 import { runProjection } from '../lib/projectorEngine.js';
-import { ASSET_RATES } from '../lib/constants.js';
+import { ASSET_RATES, PAR_VALUE } from '../lib/constants.js';
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 
@@ -20,7 +20,7 @@ try {
   }
 } catch { /* .env.local is optional on the server */ }
 
-export const TICKERS = ['STRC', 'SATA', 'BMNP'];
+export const TICKERS = ['STRC', 'SATA', 'BMNP', 'CHAD'];
 
 const BENCHMARKS = {
   TREASURY_1Y: 4.2,
@@ -33,6 +33,7 @@ const COLOR = {
   STRC:       '#4ade80',
   SATA:       '#3b82f6',
   BMNP:       '#fde047',
+  CHAD:       '#f472b6',
   TREASURIES: '#d1d5db',
   BANK:       '#9ca3af',
 };
@@ -48,7 +49,8 @@ const HORIZONS = [
 const AMOUNTS = [1_000, 5_000, 10_000, 25_000, 50_000, 100_000];
 
 export function effYield(ticker, price) {
-  return ASSET_RATES[ticker] * (100 / price);
+  const par = PAR_VALUE[ticker] ?? 100;
+  return ASSET_RATES[ticker] * (par / price);
 }
 
 function dirArrow(pct) { return pct >= 0 ? '▲' : '▼'; }
@@ -206,9 +208,10 @@ function buildInsightPool(quotes, nextDates) {
     }
 
     // Price below par → price chart
-    if (price < 100) {
+    const parT = PAR_VALUE[t] ?? 100;
+    if (price < parT) {
       add(
-        `🔍 ${t} is trading at $${price.toFixed(2)} — below its $100 par value. Today's effective yield: ${ey.toFixed(2)}%, above the stated ${ASSET_RATES[t]}%.`,
+        `🔍 ${t} is trading at $${price.toFixed(2)} — below its $${parT} par value. Today's effective yield: ${ey.toFixed(2)}%, above the stated ${ASSET_RATES[t]}%.`,
         `/${slug}/chart`,
         { type: 'price', ticker: t },
         t,
@@ -307,21 +310,23 @@ async function saveThoughtHistory(history) {
 
 export function getDailyTicker(offset = 0) {
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-  return ['STRC', 'SATA', 'BMNP'][(dayOfYear + offset) % 3];
+  return ['STRC', 'SATA', 'BMNP', 'CHAD'][(dayOfYear + offset) % 4];
 }
 
 export async function generateDailyInsight(focusTicker) {
-  const [strc, sata, bmnp, strc_nd, sata_nd, bmnp_nd] = await Promise.all([
+  const [strc, sata, bmnp, chad, strc_nd, sata_nd, bmnp_nd, chad_nd] = await Promise.all([
     getStockQuote('STRC'),
     getStockQuote('SATA'),
     getStockQuote('BMNP').catch(() => null),
+    getStockQuote('CHAD').catch(() => null),
     fetchNextPaymentDate('STRC'),
     fetchNextPaymentDate('SATA'),
     fetchNextPaymentDate('BMNP').catch(() => null),
+    fetchNextPaymentDate('CHAD').catch(() => null),
   ]);
 
-  const quotes    = { STRC: strc, SATA: sata, ...(bmnp?.price != null ? { BMNP: bmnp } : {}) };
-  const nextDates = { STRC: strc_nd, SATA: sata_nd, ...(bmnp_nd ? { BMNP: bmnp_nd } : {}) };
+  const quotes    = { STRC: strc, SATA: sata, ...(bmnp?.price != null ? { BMNP: bmnp } : {}), ...(chad?.price != null ? { CHAD: chad } : {}) };
+  const nextDates = { STRC: strc_nd, SATA: sata_nd, ...(bmnp_nd ? { BMNP: bmnp_nd } : {}), ...(chad_nd ? { CHAD: chad_nd } : {}) };
 
   const { priority, normal } = buildInsightPool(quotes, nextDates);
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
@@ -383,7 +388,7 @@ export async function generateDailyInsight(focusTicker) {
     } catch { /* fall back to defaults */ }
   }
 
-  const tweetText  = [header, insight.text, pageUrl, '#STRC #SATA #PassiveIncome #Dividends', motivation].join('\n');
+  const tweetText  = [header, insight.text, pageUrl, '#STRC #SATA #CHAD #PassiveIncome #Dividends', motivation].join('\n');
 
   return { quotes, nextDates, insight, header, tweetText, motivation, motivationB };
 }

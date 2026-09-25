@@ -1,7 +1,7 @@
 export const metadata = {
   alternates: { canonical: '/privacy-policy' },
   title: 'Privacy Policy',
-  description: 'Digital Credit Yield privacy policy — how we collect, use, and protect your data when you use our STRC, SATA and BMNP dividend tracking tools.',
+  description: 'Digital Credit Yield privacy policy — how we collect, use, and protect your data when you use our STRC, SATA, BMNP and CHAD dividend tracking tools.',
   openGraph: {
     title: 'Privacy Policy — Digital Credit Yield',
     description: 'How we collect, use, and protect your data on Digital Credit Yield.',
@@ -51,8 +51,8 @@ export default function PrivacyPolicyPage() {
           <li>Send the daily snapshot email to newsletter subscribers — you can unsubscribe at any time via the link in every email or at <a href="/unsubscribe" className="underline" style={{ color: 'var(--accent-gold)' }}>digitalcredityield.com/unsubscribe</a>, and your address is removed immediately</li>
           <li>Serve relevant advertisements via A-Ads — set automatically unless you're visiting from the UK or EEA, where they're only set once you accept our cookie banner</li>
           <li>Preserve your calculator settings (Growth Projector, vs Treasuries, and Dividend History income calculator inputs) between visits for your convenience</li>
-          <li>Build and maintain a long-term dividend payment history for STRC, SATA and BMNP — when you visit a Dividend History page, our server may fetch the latest public dividend data from Yahoo Finance and store it on our server to grow this record over time. This process involves no personal data whatsoever; only publicly available market information is stored.</li>
-          <li>Display weekly capital flow data for STRC, SATA and BMNP on the Money Flow page — this data is compiled from publicly available SEC 8-K filings and stored on our server. No personal data is involved; only publicly available regulatory filings are used.</li>
+          <li>Build and maintain a long-term dividend payment history for STRC, SATA, BMNP and CHAD — when you visit a Dividend History page, our server may fetch the latest public dividend data from Yahoo Finance (or, for BMNP and CHAD, the issuer's own SEC filings) and store it on our server to grow this record over time. This process involves no personal data whatsoever; only publicly available market information is stored.</li>
+          <li>Display weekly capital flow data for STRC, SATA, BMNP and CHAD on the Money Flow page — this data is compiled from publicly available SEC 8-K filings and stored on our server. No personal data is involved; only publicly available regulatory filings are used.</li>
         </ul>
         <p>We do not sell, rent, or share your personal data with third parties for marketing purposes.</p>
       </Section>

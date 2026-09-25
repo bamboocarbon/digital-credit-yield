@@ -1,7 +1,7 @@
 export const metadata = {
   alternates: { canonical: '/terms' },
   title: 'Terms & Conditions',
-  description: 'Terms and conditions for using Digital Credit Yield — an independent tracker for STRC, SATA and BMNP preferred stocks. Not financial advice.',
+  description: 'Terms and conditions for using Digital Credit Yield — an independent tracker for STRC, SATA, BMNP and CHAD preferred stocks. Not financial advice.',
   openGraph: {
     title: 'Terms & Conditions — Digital Credit Yield',
     description: 'Terms for using Digital Credit Yield. Independent tracker, not financial advice.',

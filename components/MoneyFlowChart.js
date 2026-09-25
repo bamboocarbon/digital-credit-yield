@@ -95,6 +95,8 @@ const SATA_BLUE = '#2563eb';
 const SATA_BLUE_DIM = 'rgba(37,99,235,0.35)';
 const BMNP_YELLOW = '#fde047';
 const BMNP_YELLOW_DIM = 'rgba(253,224,71,0.35)';
+const CHAD_PINK = '#f472b6';
+const CHAD_PINK_DIM = 'rgba(244,114,182,0.35)';
 
 function fmt(v) {
   if (v >= 1000) return `$${(v / 1000).toFixed(2)}B`;
@@ -219,6 +221,7 @@ function RangeButtons({ range, setRange, activeColor }) {
 }
 
 const BMNP_WEEKS = [];
+const CHAD_WEEKS = [];
 
 function useLiveWeekly(fallback, key) {
   const [rows, setRows] = useState(fallback);
@@ -316,6 +319,39 @@ export function BMNPMoneyFlowChart() {
   );
 }
 
+export function CHADMoneyFlowChart() {
+  const weeks = useLiveWeekly(CHAD_WEEKS, 'chadWeekly');
+  const [range, setRange] = useState('all');
+  const canvasRef = useRef(null);
+  const filtered = filterByRange(padToCurrentWeek(weeks), range);
+  useBarChart({
+    canvasRef,
+    labels: filtered.map(d => d.week),
+    datasets: [{
+      data: filtered.map(d => d.value),
+      backgroundColor: filtered.map(d => d.ipo ? CHAD_PINK : CHAD_PINK_DIM),
+      borderColor: filtered.map(d => d.ipo ? CHAD_PINK : 'transparent'),
+      borderWidth: 1,
+      borderRadius: 3,
+    }],
+    logScale: false,
+  });
+  if (weeks.length === 0) {
+    return (
+      <div style={{ height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: '#6b7280', fontSize: 13, textAlign: 'center' }}>Listed on the Nasdaq September 8, 2026<br />Capital flow data will appear automatically once filed</p>
+      </div>
+    );
+  }
+  return (
+    <div>
+      <RangeButtons range={range} setRange={setRange} activeColor={CHAD_PINK} />
+      <div role="img" aria-label="CHAD weekly capital raised bar chart" style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
+      <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering</p>
+    </div>
+  );
+}
+
 // Combined chart: STRC ATM (post-IPO) vs SATA on shared weekly axis
 const ALL_WEEKS = [
   '2025-07-28','2025-08-04','2025-08-11','2025-08-18','2025-08-25',
@@ -379,6 +415,14 @@ export function CombinedMoneyFlowChart() {
         borderWidth: 1,
         borderRadius: 3,
       },
+      {
+        label: 'CHAD',
+        data: ALL_WEEKS.map(d => lookup(CHAD_WEEKS, d)),
+        backgroundColor: CHAD_PINK_DIM,
+        borderColor: CHAD_PINK,
+        borderWidth: 1,
+        borderRadius: 3,
+      },
     ],
     logScale,
   });
@@ -398,6 +442,10 @@ export function CombinedMoneyFlowChart() {
           <span className="flex items-center gap-1.5">
             <span style={{ display:'inline-block', width:14, height:14, background:BMNP_YELLOW, borderRadius:2 }} />
             BMNP
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span style={{ display:'inline-block', width:14, height:14, background:CHAD_PINK, borderRadius:2 }} />
+            CHAD
           </span>
         </div>
         <div className="flex gap-2">

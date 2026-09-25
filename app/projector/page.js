@@ -5,18 +5,18 @@ import { ASSET_RATES, VALID_TICKERS, resolveStock } from '@/lib/constants';
 export const metadata = {
   alternates: { canonical: '/projector' },
   title: 'Income & Growth Projector',
-  description: 'Model income and portfolio growth from STRC, SATA or BMNP preferred stock. Compare against US Treasuries and bank savings over 1–20 years.',
+  description: 'Model income and portfolio growth from STRC, SATA, BMNP or CHAD preferred stock. Compare against US Treasuries and bank savings over 1–20 years.',
   openGraph: {
-    title: 'Income & Growth Projector — STRC, SATA & BMNP',
-    description: 'Model your dividend income and portfolio growth from Strategy, Strive and Bitmine preferred stock over any time horizon.',
+    title: 'Income & Growth Projector — STRC, SATA, BMNP & CHAD',
+    description: 'Model your dividend income and portfolio growth from Strategy, Strive, Bitmine and DeFi Development Corp. preferred stock over any time horizon.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/projector',
     images: [{ url: '/og?v=3&title=Income+Calculator&sub=Model+your+dividend+income&tag=Income+Tool' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Income & Growth Projector — STRC, SATA & BMNP',
-    description: 'Model your dividend income and portfolio growth from Strategy, Strive and Bitmine preferred stock.',
+    title: 'Income & Growth Projector — STRC, SATA, BMNP & CHAD',
+    description: 'Model your dividend income and portfolio growth from Strategy, Strive, Bitmine and DeFi Development Corp. preferred stock.',
   },
 };
 

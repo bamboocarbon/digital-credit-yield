@@ -35,6 +35,7 @@ export default function MoneyFlowStats() {
   const [strcStats, setStrcStats] = useState(null);
   const [sataStats, setSataStats] = useState(null);
   const [bmnpStats, setBmnpStats] = useState(null);
+  const [chadStats, setChadStats] = useState(null);
 
   useEffect(() => {
     fetch('/api/money-flow-data')
@@ -43,12 +44,13 @@ export default function MoneyFlowStats() {
         setStrcStats(deriveStats(d?.strcWeekly));
         setSataStats(deriveStats(d?.sataWeekly));
         setBmnpStats(deriveStats(d?.bmnpWeekly));
+        setChadStats(deriveStats(d?.chadWeekly));
       })
       .catch(() => {});
   }, []);
 
   return (
-    <div className={`grid grid-cols-1 gap-4 mb-6 ${BMNP_ENABLED ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
+    <div className={`grid grid-cols-1 gap-4 mb-6 ${BMNP_ENABLED ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-3'}`}>
       <div className="rounded-2xl p-5 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#4ade80' }}>STRC Total Raised</p>
         <p className="text-3xl font-bold">{strcStats ? `~${fmt(strcStats.total)}` : '—'}</p>
@@ -88,6 +90,23 @@ export default function MoneyFlowStats() {
           )}
         </div>
       )}
+      <div className="rounded-2xl p-5 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#f472b6' }}>CHAD Total Raised</p>
+        {chadStats ? (
+          <>
+            <p className="text-3xl font-bold">{fmt(chadStats.total)}</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{chadStats.rangeStart} – present</p>
+            <p className="text-xs mt-2 font-medium" style={{ color: '#f472b6' }}>
+              Latest: {chadStats.latest.week} &middot; {fmt(chadStats.latest.value)}
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="text-3xl font-bold">—</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Listed Sep 8, 2026 — capital flow data pending</p>
+          </>
+        )}
+      </div>
     </div>
   );
 }

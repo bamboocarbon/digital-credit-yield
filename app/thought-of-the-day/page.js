@@ -95,9 +95,10 @@ export default async function ThoughtOfTheDayPage() {
           <p>
             Income investing is as much about temperament as it is about numbers. Preferred stocks like{' '}
             <Link prefetch={false} href="/strc" style={{ color: 'var(--accent-gold)' }}>STRC</Link>,{' '}
-            <Link prefetch={false} href="/sata" style={{ color: 'var(--accent-gold)' }}>SATA</Link> and{' '}
-            <Link prefetch={false} href="/bmnp" style={{ color: 'var(--accent-gold)' }}>BMNP</Link> are built to pay a steady
-            dividend and trade close to their $100 par value. That means the hardest part for most investors
+            <Link prefetch={false} href="/sata" style={{ color: 'var(--accent-gold)' }}>SATA</Link>,{' '}
+            <Link prefetch={false} href="/bmnp" style={{ color: 'var(--accent-gold)' }}>BMNP</Link> and{' '}
+            <Link prefetch={false} href="/chad" style={{ color: 'var(--accent-gold)' }}>CHAD</Link> are built to pay a steady
+            dividend and trade close to their par value. That means the hardest part for most investors
             is rarely the maths — it is the patience to hold through the noise and let the dividends compound.
           </p>
           <p>

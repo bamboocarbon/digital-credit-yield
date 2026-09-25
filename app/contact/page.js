@@ -3,10 +3,10 @@ import ContactForm from './ContactForm';
 export const metadata = {
   alternates: { canonical: '/contact' },
   title: 'Contact',
-  description: 'Get in touch with Robin Gillingham at Digital Credit Yield. Questions about STRC, SATA, BMNP, or dividend investing? I\'d love to hear from you.',
+  description: 'Get in touch with Robin Gillingham at Digital Credit Yield. Questions about STRC, SATA, BMNP, CHAD, or dividend investing? I\'d love to hear from you.',
   openGraph: {
     title: 'Contact',
-    description: 'Get in touch with Robin Gillingham at Digital Credit Yield. Questions about STRC, SATA, BMNP, or dividend investing?',
+    description: 'Get in touch with Robin Gillingham at Digital Credit Yield. Questions about STRC, SATA, BMNP, CHAD, or dividend investing?',
     type: 'website',
     url: 'https://www.digitalcredityield.com/contact',
     images: [{ url: '/og?v=3&title=Contact&sub=Digital+Credit+Yield' }],
@@ -14,7 +14,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Contact',
-    description: 'Get in touch with Robin Gillingham at Digital Credit Yield. Questions about STRC, SATA, BMNP, or dividend investing?',
+    description: 'Get in touch with Robin Gillingham at Digital Credit Yield. Questions about STRC, SATA, BMNP, CHAD, or dividend investing?',
   },
 };
 

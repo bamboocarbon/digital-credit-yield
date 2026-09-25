@@ -6,6 +6,7 @@ const TAG_COLORS = {
   STRC:       '#4ade80',
   SATA:       '#3b82f6',
   BMNP:       '#fde047',
+  CHAD:       '#f472b6',
   Metaplanet: '#7dd3fc',
   Market:     '#9ca3af',
 };

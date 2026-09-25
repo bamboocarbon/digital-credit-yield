@@ -4,10 +4,10 @@ import { BMNP_ENABLED } from '@/lib/constants';
 export const metadata = {
   alternates: { canonical: '/faq' },
   title: 'FAQ — Frequently Asked Questions',
-  description: 'Answers to common questions about STRC, SATA and BMNP: how to buy, whether dividends are guaranteed, why the price stays near $100 par, tax basics, and more.',
+  description: 'Answers to common questions about STRC, SATA, BMNP and CHAD: how to buy, whether dividends are guaranteed, why the price stays near par, tax basics, and more.',
   openGraph: {
     title: 'FAQ — Frequently Asked Questions',
-    description: 'Answers to common questions about STRC, SATA and BMNP preferred stocks.',
+    description: 'Answers to common questions about STRC, SATA, BMNP and CHAD preferred stocks.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/faq',
     images: [{ url: '/og?v=3&title=FAQ&sub=Frequently+Asked+Questions' }],
@@ -15,24 +15,24 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'FAQ — Frequently Asked Questions',
-    description: 'Answers to common questions about STRC, SATA and BMNP preferred stocks.',
+    description: 'Answers to common questions about STRC, SATA, BMNP and CHAD preferred stocks.',
   },
 };
 
 const faqs = [
   {
-    q: 'How do I buy STRC, SATA or BMNP?',
-    a: 'STRC and SATA trade on the Nasdaq and BMNP on the NYSE, all like ordinary shares — STRC under the ticker "STRC", SATA under "SATA" and BMNP under "BMNP". Search the ticker in any major brokerage account (Fidelity, Schwab, Interactive Brokers, eToro and most others carry them), choose the number of shares, and place the order during US market hours. There is no minimum investment beyond the price of one share, and no special account type is needed.',
+    q: 'How do I buy STRC, SATA, BMNP or CHAD?',
+    a: 'STRC, SATA and CHAD trade on the Nasdaq and BMNP on the NYSE, all like ordinary shares — under their own tickers "STRC", "SATA", "BMNP" and "CHAD". Search the ticker in any major brokerage account (Fidelity, Schwab, Interactive Brokers, eToro and most others carry them), choose the number of shares, and place the order during US market hours. There is no minimum investment beyond the price of one share, and no special account type is needed.',
     link: { href: '/blog/what-is-preferred-stock', label: 'New to preferred stock? Start with the basics' },
   },
   {
     q: 'Are the dividends guaranteed?',
-    a: 'No. Like all preferred stock dividends, each payment must be declared by the issuer’s board of directors before it is paid. Strategy, Strive and Bitmine all have strong incentives to maintain payments — a missed dividend would severely damage their ability to raise capital — but a dividend is a corporate decision, not a contractual debt obligation like a bond coupon. Always read the issuer’s prospectus for the exact terms.',
+    a: 'No. Like all preferred stock dividends, each payment must be declared by the issuer’s board of directors before it is paid. Strategy, Strive, Bitmine and DeFi Development Corp. all have strong incentives to maintain payments — a missed dividend would severely damage their ability to raise capital — but a dividend is a corporate decision, not a contractual debt obligation like a bond coupon. Always read the issuer’s prospectus for the exact terms.',
     link: { href: '/risks', label: 'Read more on the risks page' },
   },
   {
-    q: 'Why does the price stay close to $100?',
-    a: 'STRC and SATA are designed to trade near their $100 par value: the issuers review the dividend rate each month, nudging it up if the price drifts below par to attract buyers, or down if it trades above. BMNP works differently — its 9.50% rate is fixed, so instead of a moving rate it leans on a redemption premium (the company can buy shares back above par in the early years) to keep the price from drifting too far. Either way, prices tend to move in cents rather than dollars — and the effective yield you lock in depends on the price you pay.',
+    q: 'Why does the price stay close to par?',
+    a: 'STRC and SATA are designed to trade near their $100 par value: the issuers review the dividend rate each month, nudging it up if the price drifts below par to attract buyers, or down if it trades above. CHAD works the same way but against a $10 par value instead, with management reviewing the rate monthly or more often. BMNP works differently — its 9.50% rate is fixed, so instead of a moving rate it leans on a redemption premium (the company can buy shares back above par in the early years) to keep the price from drifting too far. Either way, prices tend to move in cents rather than dollars — and the effective yield you lock in depends on the price you pay relative to that instrument’s own par value.',
     link: { href: '/blog/strc-vwap-dividend-mechanism', label: 'How STRC’s rate mechanism works in detail' },
   },
   {
@@ -42,7 +42,7 @@ const faqs = [
   },
   {
     q: 'What happens if Bitcoin or Ethereum crashes?',
-    a: 'The dividends are paid in cash by the issuing companies, not in crypto — but the issuers’ treasuries are crypto, so a severe, sustained fall would shrink the asset base that supports their capital raising. Strategy and Strive hold Bitcoin, and Strive also keeps a cash reserve covering more than 18 months of SATA dividends as a buffer. Bitmine, the company behind BMNP, holds Ethereum and funds its dividend largely from staking income, so its exposure is to ETH rather than Bitcoin. A crypto drawdown does not automatically affect the dividend, but it increases the risk around future payments and the share price.',
+    a: 'The dividends are paid in cash by the issuing companies, not in crypto — but the issuers’ treasuries are crypto, so a severe, sustained fall would shrink the asset base that supports their capital raising. Strategy and Strive hold Bitcoin, and Strive also keeps a cash reserve covering more than 18 months of SATA dividends as a buffer. Bitmine, the company behind BMNP, holds Ethereum and funds its dividend largely from staking income, so its exposure is to ETH rather than Bitcoin. DeFi Development Corp., behind CHAD, holds Solana instead, and is the newest and smallest of the four treasuries here — a crypto drawdown does not automatically affect the dividend, but it increases the risk around future payments and the share price for all of them.',
     link: { href: '/risks', label: 'Understand the full risk picture' },
   },
   {
@@ -55,8 +55,8 @@ const faqs = [
     link: { href: '/risks', label: 'Read the risks page before investing' },
   },
   {
-    q: 'Is this site affiliated with Strategy, Strive or Bitmine?',
-    a: 'No. Digital Credit Yield is an independent research and tracking site. I hold positions in MSTR and ASST (the common stock of Strategy and Strive) but have no relationship with any of the three companies and am not compensated by them. Nothing here is financial advice.',
+    q: 'Is this site affiliated with Strategy, Strive, Bitmine or DeFi Development Corp.?',
+    a: 'No. Digital Credit Yield is an independent research and tracking site. I hold positions in MSTR and ASST (the common stock of Strategy and Strive) but have no relationship with any of the four companies and am not compensated by them. Nothing here is financial advice.',
     link: { href: '/about', label: 'More about who runs this site' },
   },
 ];
@@ -77,7 +77,7 @@ export default function FAQPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <h1 className="text-3xl sm:text-4xl font-bold mb-3">Frequently Asked Questions</h1>
       <p className="text-base mb-10" style={{ color: 'var(--text-muted)' }}>
-        Straight answers to the questions readers ask most about STRC{BMNP_ENABLED ? ', SATA and BMNP' : ' and SATA'}.
+        Straight answers to the questions readers ask most about STRC, SATA{BMNP_ENABLED ? ', BMNP and CHAD' : ' and CHAD'}.
       </p>
 
       <div className="space-y-8">

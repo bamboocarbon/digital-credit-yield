@@ -1,14 +1,14 @@
 import AadsAd from '@/components/AadsAd';
-import { STRCMoneyFlowChart, SATAMoneyFlowChart, BMNPMoneyFlowChart } from '@/components/MoneyFlowChart';  // BMNPMoneyFlowChart only rendered when BMNP_ENABLED
+import { STRCMoneyFlowChart, SATAMoneyFlowChart, BMNPMoneyFlowChart, CHADMoneyFlowChart } from '@/components/MoneyFlowChart';  // BMNPMoneyFlowChart only rendered when BMNP_ENABLED
 import CumulativeFlowChart from '@/components/CumulativeFlowChart';
 import MoneyFlowStats from '@/components/MoneyFlowStats';
 import { BMNP_ENABLED } from '@/lib/constants';
 
 // Date the narrative zones below were last revised — shown next to the story heading
-const STORY_UPDATED = '6 August 2026';
+const STORY_UPDATED = '25 September 2026';
 
 export function generateMetadata() {
-  const instruments = BMNP_ENABLED ? 'STRC, SATA & BMNP' : 'STRC & SATA';
+  const instruments = BMNP_ENABLED ? 'STRC, SATA, BMNP & CHAD' : 'STRC, SATA & CHAD';
   const desc = `Weekly capital raised by ${instruments} tracked from SEC 8-K filings since each IPO. Bar charts and cumulative totals showing investor demand over time.`;
   return {
     alternates: { canonical: '/money-flow' },
@@ -36,9 +36,9 @@ export default function MoneyFlowPage() {
       <div className="text-center mb-10">
         <h1 className="text-4xl sm:text-5xl font-bold mb-3 tracking-tight">Money Flow</h1>
         <p className="text-lg max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
-          Weekly capital raised by {BMNP_ENABLED ? 'STRC, SATA and BMNP' : 'STRC and SATA'}, compiled
+          Weekly capital raised by {BMNP_ENABLED ? 'STRC, SATA, BMNP and CHAD' : 'STRC, SATA and CHAD'}, compiled
           from SEC 8-K filings since each IPO.
-          {BMNP_ENABLED && ' BMNP listed on the NYSE in June 2026.'}
+          {BMNP_ENABLED && ' BMNP listed on the NYSE in June 2026.'} CHAD listed on the Nasdaq in September 2026.
         </p>
       </div>
 
@@ -46,7 +46,7 @@ export default function MoneyFlowPage() {
       <MoneyFlowStats />
 
       {/* Side-by-side weekly bars */}
-      <div className={`grid grid-cols-1 gap-6 mb-6 ${BMNP_ENABLED ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
+      <div className={`grid grid-cols-1 gap-6 mb-6 ${BMNP_ENABLED ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-3'}`}>
         <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
@@ -84,6 +84,18 @@ export default function MoneyFlowPage() {
             <BMNPMoneyFlowChart />
           </div>
         )}
+
+        <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-lg">CHAD</span>
+              <span className="text-xs font-medium"
+                style={{ color: '#f472b6' }}>DeFi Development Preferred</span>
+            </div>
+          </div>
+          <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Sep 2026 · 13.00% · $10 par</p>
+          <CHADMoneyFlowChart />
+        </div>
       </div>
 
       {/* Cumulative line chart */}
@@ -172,6 +184,16 @@ export default function MoneyFlowPage() {
               <p className="font-semibold text-sm mb-1">Zone 7 — The Reverse Play <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Jun – Aug 2026</span></p>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
                 The bars above don&apos;t capture what happened next. Bitcoin&apos;s slide below $60,000 dragged STRC down to an intraday low of $71.25 on June 26 — nearly 29% below par — which automatically paused the ATM programme that funds every green bar on this page. Strategy&apos;s response ran the machine backwards: between the end of June and early August it sold 5,226 BTC across three transactions for roughly $321M, taking total holdings down to 842,138 BTC, and used that cash alongside fresh MSTR stock to repurchase 912,143 STRC shares for $81.2M at an average of ~$89 — below the $100 stated amount. The dividend rate rose to 12% on July 1 to help pull demand back. It&apos;s worked so far: STRC trades around $94 today, with $893.8M of buyback capacity still unused. Once STRC holds sustainably near par, the ATM programme is expected to reopen and the bars above should start climbing again.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: '#f472b6' }} />
+            <div>
+              <p className="font-semibold text-sm mb-1">Zone 8 — A Fourth Instrument, and a New Chain <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Sep 2026</span></p>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                September 2026 brought the first non-Bitcoin, non-Ethereum entrant: DeFi Development Corp. (Nasdaq: DFDV) priced 1,375,000 shares of its 13.00% Variable Rate Series C Perpetual Preferred (CHAD Stock) at $8.00, closing on September 8 for roughly $11.0M in gross proceeds. Unlike every other instrument here, CHAD carries a $10 stated value rather than $100 — a genuinely different structure, not just a smaller headline number. Proceeds are earmarked for Solana, positioning DeFi Development Corp. as a Solana-treasury counterpart to Strategy, Strive and Bitmine. CHAD&apos;s single pink IPO bar marks the start of what could become a fourth weekly capital line to watch, and the newest, smallest and shortest-tracked of the four.
               </p>
             </div>
           </div>

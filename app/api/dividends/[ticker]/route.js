@@ -21,8 +21,9 @@ export async function GET(request, { params }) {
   // found unreliable — it reports dates that match neither Bitmine's record nor payment dates,
   // and amounts that don't correspond to any dividend Bitmine has actually declared (verified
   // against its own 8-K filings). Serve the manually-verified stored record directly rather than
-  // merging in bad data on every request.
-  if (upper === 'BMNP') {
+  // merging in bad data on every request. CHAD gets the same treatment pre-emptively — it's an
+  // even newer, non-standard-cadence security with no established Yahoo dividend history yet.
+  if (upper === 'BMNP' || upper === 'CHAD') {
     return NextResponse.json({ history: stored, nextPaymentDate: null }, {
       headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=300' },
     });

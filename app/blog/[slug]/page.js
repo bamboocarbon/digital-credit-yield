@@ -43,6 +43,7 @@ const tickerColour = {
   STRC: '#4ade80',
   SATA: '#3b82f6',
   BMNP: '#fde047',
+  CHAD: '#f472b6',
   SOL: '#a78bfa',
   Metaplanet: '#7dd3fc',
 };
@@ -180,7 +181,7 @@ export default async function ArticlePage({ params }) {
           <p className="text-sm leading-6" style={{ color: 'var(--text-muted)' }}>
             <strong>Robin Gillingham</strong> is the founder of Digital Credit Yield. After a career in
             aircraft engineering, he moved into full-time trading in 2019 and now builds tools to track and
-            visualise preferred stocks such as STRC, SATA and BMNP.{' '}
+            visualise preferred stocks such as STRC, SATA, BMNP and CHAD.{' '}
             <Link prefetch={false} href="/about" className="transition-opacity hover:opacity-75" style={{ color: 'var(--accent-gold)' }}>Read more →</Link>
           </p>
         </div>

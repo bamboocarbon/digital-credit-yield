@@ -1,7 +1,7 @@
 // scripts/generateMp4.js
 // Renders the DCY daily card as an H.264 MP4 via ffmpeg: a short NASA launch
 // clip (7-day rotation, see daily-email-v2-rocket-race/rocketClipRotation.mjs)
-// followed by the vertical rocket-race chart (STRC/SATA/BMNP daily rotation
+// followed by the vertical rocket-race chart (STRC/SATA/BMNP/CHAD daily rotation
 // vs US Treasuries vs Bank Savings). v1 (the old single-chart design with no
 // intro clip) is preserved as the git tag daily-email-v1-classic-chart.
 //
