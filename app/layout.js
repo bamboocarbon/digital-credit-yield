@@ -1,23 +1,5 @@
 import './globals.css';
-import { DM_Sans, Roboto_Mono } from 'next/font/google';
 import Script from 'next/script';
-
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  weight: 'variable',
-  axes: ['opsz'],
-  style: ['normal', 'italic'],
-  variable: '--font-dm-sans',
-  display: 'swap',
-});
-
-const robotoMono = Roboto_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  style: ['normal', 'italic'],
-  variable: '--font-roboto-mono',
-  display: 'swap',
-});
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CookieBanner from '@/components/CookieBanner';
@@ -59,7 +41,7 @@ const orgJsonLd = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${robotoMono.variable}`}>
+    <html lang="en">
       <body className="flex flex-col min-h-screen">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
         <Navbar />

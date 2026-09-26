@@ -1,6 +1,6 @@
 'use client';
 
-const MONO = { fontFamily: "'Roboto Mono', 'Courier New', monospace" };
+const MONO = { fontFamily: "Arial, Helvetica, sans-serif" };
 
 export default function NumericInput({ value, onChange, step = 0.1, min, className, style, disabled, readOnly, 'aria-label': ariaLabel }) {
   function adj(delta) {

@@ -284,13 +284,13 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
                     onChange={e => update('investmentAmount', stripNum(e.target.value))}
                     aria-label="Investment amount in dollars"
                     className="w-full px-3 py-2 rounded-lg text-sm font-mono-data text-center"
-                    style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", background: 'var(--bg-card-hover)', border: '1px solid var(--border)', color: 'var(--text-primary)' }} />
+                    style={{ fontFamily: "Arial, Helvetica, sans-serif", background: 'var(--bg-card-hover)', border: '1px solid var(--border)', color: 'var(--text-primary)' }} />
                 ) : (
                   <input type="text" inputMode="numeric" placeholder="e.g. 1,000" value={fmtNum(form.numShares)}
                     onChange={e => update('numShares', stripNum(e.target.value))}
                     aria-label="Number of shares"
                     className="w-full px-3 py-2 rounded-lg text-sm font-mono-data text-center"
-                    style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", background: 'var(--bg-card-hover)', border: '1px solid var(--border)', color: 'var(--text-primary)' }} />
+                    style={{ fontFamily: "Arial, Helvetica, sans-serif", background: 'var(--bg-card-hover)', border: '1px solid var(--border)', color: 'var(--text-primary)' }} />
                 )}
               </div>
               <div style={{ opacity: form.inputMode === 'shares' ? 1 : 0.35, transition: 'opacity 0.2s' }}>
@@ -320,7 +320,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
                 <select value={form.horizon} onChange={e => update('horizon', e.target.value)}
                   aria-label="Time horizon"
                   className="w-full px-3 py-2 rounded-lg text-sm text-center"
-                  style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", background: 'var(--bg-card-hover)', border: '1px solid var(--border)', color: 'var(--text-primary)', textAlignLast: 'center', WebkitAppearance: 'none', appearance: 'none' }}>
+                  style={{ fontFamily: "Arial, Helvetica, sans-serif", background: 'var(--bg-card-hover)', border: '1px solid var(--border)', color: 'var(--text-primary)', textAlignLast: 'center', WebkitAppearance: 'none', appearance: 'none' }}>
                   {Object.keys(horizonMonths).map(h => <option key={h} value={h}>{horizonLabels[h]}</option>)}
                 </select>
               </div>
@@ -386,7 +386,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
               </p>
               {Number(form.pricePerShare || par) !== par && (
                 <p className="text-xs" style={{ color: 'var(--accent-gold)' }}>
-                  Effective yield on cost: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>
+                  Effective yield on cost: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>%</span>
                   {Number(form.pricePerShare) < par ? ' ↑' : ' ↓'}
                   <span style={{ color: 'var(--text-muted)' }}>
                     {form.yieldBasis === 'effective'
@@ -401,7 +401,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
           {form.inputMode !== 'shares' && livePrice && livePrice > 0 && Math.abs(livePrice - par) > 0.005 && (
             <div className="mt-3 text-center">
               <p className="text-xs" style={{ color: 'var(--accent-gold)' }}>
-                Effective yield at live price ${livePrice.toFixed(2)}: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>
+                Effective yield at live price ${livePrice.toFixed(2)}: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>%</span>
                 {livePrice < par ? ' ↑' : ' ↓'}
                 <span style={{ color: 'var(--text-muted)' }}>
                   {form.yieldBasis === 'effective'
@@ -483,16 +483,16 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
               <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
                 <div>
                   <p style={{ color: 'var(--text-muted)' }}>Final Value</p>
-                  <p className="font-mono-data" style={{ fontFamily: "'Roboto Mono','Courier New',monospace", color: row.color }}>{fmt(row.final)}</p>
+                  <p className="font-mono-data" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: row.color }}>{fmt(row.final)}</p>
                 </div>
                 <div>
                   <p style={{ color: 'var(--text-muted)' }}>Total Gain</p>
-                  <p className="font-mono-data" style={{ fontFamily: "'Roboto Mono','Courier New',monospace", color: row.final > startValue ? 'var(--accent-green)' : 'var(--accent-red)' }}>+{fmt(row.final - startValue)}</p>
+                  <p className="font-mono-data" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: row.final > startValue ? 'var(--accent-green)' : 'var(--accent-red)' }}>+{fmt(row.final - startValue)}</p>
                 </div>
                 {i !== rows.length - 1 && (
                   <div className="col-span-2 mt-1 pt-1" style={{ borderTop: '1px solid var(--border)' }}>
                     <p style={{ color: 'var(--text-muted)' }}>vs Bank Savings</p>
-                    <p className="font-mono-data" style={{ fontFamily: "'Roboto Mono','Courier New',monospace", color: i === 0 ? TICKER_COLOUR[ticker] : 'var(--text-muted)' }}>+{fmt(row.final - bankFinal)} more</p>
+                    <p className="font-mono-data" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: i === 0 ? TICKER_COLOUR[ticker] : 'var(--text-muted)' }}>+{fmt(row.final - bankFinal)} more</p>
                   </div>
                 )}
               </div>
@@ -514,11 +514,11 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
               {rows.map((row, i) => (
                 <tr key={i} style={{ borderBottom: '1px solid var(--border)', background: i === 0 ? TICKER_BG[ticker] : 'transparent' }}>
                   <td className="py-2 px-3 font-medium" style={{ color: row.color }}>{row.label}</td>
-                  <td className="py-2 px-3 font-mono-data" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: row.color }}>{fmt(row.final)}</td>
-                  <td className="py-2 px-3 font-mono-data" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: row.final > startValue ? 'var(--accent-green)' : 'var(--accent-red)' }}>
+                  <td className="py-2 px-3 font-mono-data" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: row.color }}>{fmt(row.final)}</td>
+                  <td className="py-2 px-3 font-mono-data" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: row.final > startValue ? 'var(--accent-green)' : 'var(--accent-red)' }}>
                     <span style={{marginRight:'2px'}}>+</span>{fmt(row.final - startValue)}
                   </td>
-                  <td className="py-2 px-3 font-mono-data" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: i === 0 ? TICKER_COLOUR[ticker] : 'var(--text-muted)' }}>
+                  <td className="py-2 px-3 font-mono-data" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: i === 0 ? TICKER_COLOUR[ticker] : 'var(--text-muted)' }}>
                     {i === rows.length - 1 ? '—' : <><span style={{marginRight:'2px'}}>+</span>{fmt(row.final - bankFinal)} more</>}
                   </td>
                 </tr>
@@ -540,17 +540,17 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {/* ETF — highlighted */}
             <div className="p-4 rounded-xl flex flex-col gap-1" style={{ background: 'rgba(200,137,58,0.12)', border: '2px solid var(--accent-gold)' }}>
-              <p className="text-xs font-semibold" style={{ color: 'var(--accent-gold)' }}>{ticker} — {annualYield.toFixed(1)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span></p>
+              <p className="text-xs font-semibold" style={{ color: 'var(--accent-gold)' }}>{ticker} — {annualYield.toFixed(1)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>%</span></p>
               <div>
                 <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Start</p>
-                <p className="font-mono-data text-lg font-bold" style={{ fontFamily: "'PercentFix','Roboto Mono','Courier New',monospace", color: 'var(--accent-gold)' }}>
+                <p className="font-mono-data text-lg font-bold" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: 'var(--accent-gold)' }}>
                   {fmt(assetMonthlyStart)}<span className="text-xs font-normal">/mo</span>
                 </p>
               </div>
               {reinvesting && (
                 <div>
                   <p className="text-xs" style={{ color: 'var(--text-muted)' }}>End of {horizonLabel}</p>
-                  <p className="font-mono-data text-lg font-bold" style={{ fontFamily: "'PercentFix','Roboto Mono','Courier New',monospace", color: 'var(--accent-gold)' }}>
+                  <p className="font-mono-data text-lg font-bold" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: 'var(--accent-gold)' }}>
                     {fmt(assetMonthlyEnd)}<span className="text-xs font-normal">/mo</span>
                   </p>
                 </div>
@@ -564,17 +564,17 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
               { label: 'Bank Savings', start: bankMonthlyStart, end: bankMonthlyEnd, rate: benchmarks.bank },
             ].map(({ label, start, end, rate }) => (
               <div key={label} className="p-4 rounded-xl flex flex-col gap-1" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
-                <p className="text-xs font-semibold" style={{ color: 'var(--text-muted)' }}>{label} — {rate.toFixed(1)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span></p>
+                <p className="text-xs font-semibold" style={{ color: 'var(--text-muted)' }}>{label} — {rate.toFixed(1)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>%</span></p>
                 <div>
                   <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Start</p>
-                  <p className="font-mono-data text-lg font-medium" style={{ fontFamily: "'PercentFix','Roboto Mono','Courier New',monospace", color: 'var(--text-primary)' }}>
+                  <p className="font-mono-data text-lg font-medium" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: 'var(--text-primary)' }}>
                     {fmt(start)}<span className="text-xs font-normal">/mo</span>
                   </p>
                 </div>
                 {reinvesting && (
                   <div>
                     <p className="text-xs" style={{ color: 'var(--text-muted)' }}>End of {horizonLabel}</p>
-                    <p className="font-mono-data text-lg font-medium" style={{ fontFamily: "'PercentFix','Roboto Mono','Courier New',monospace", color: 'var(--text-primary)' }}>
+                    <p className="font-mono-data text-lg font-medium" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: 'var(--text-primary)' }}>
                       {fmt(end)}<span className="text-xs font-normal">/mo</span>
                     </p>
                   </div>
@@ -618,7 +618,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
         ].map(({ label, diff }) => (
           <div key={label} className="card p-5 rounded-xl text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
             <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>{label}</p>
-            <p className="font-mono-data text-2xl font-bold" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: 'var(--accent-gold)' }}>
+            <p className="font-mono-data text-2xl font-bold" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: 'var(--accent-gold)' }}>
               <span style={{marginRight:'2px'}}>+</span>{diff}% more
             </p>
           </div>

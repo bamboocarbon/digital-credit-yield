@@ -6,7 +6,7 @@ import { ASSET_RATES, PAYMENT_FREQUENCY, STRC_SEMI_MONTHLY_START, PAR_VALUE } fr
 import { SATA_DAILY_START, getBusinessDaysInMonth, getSataDailyDividend, getSataExpectedPeriodAmount, getSataMonthProgress, getSataDailyPaymentsToDate, isSataDailyDividend } from '@/lib/sataBusinessDays';
 import { getBmnpExpectedMonthlyTotal } from '@/lib/bmnpSchedule';
 
-const MONO = { fontFamily: "'Roboto Mono', 'Courier New', monospace" };
+const MONO = { fontFamily: "Arial, Helvetica, sans-serif" };
 const fmtMoney = v => v.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
 
 function formatDate(dateStr) {
@@ -610,7 +610,7 @@ export default function DividendInteractive({ ticker }) {
               <p className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>{stat.label}</p>
               <p className="text-xl font-medium" style={{ ...MONO, color: stat.gold ? 'var(--accent-gold)' : 'var(--text-primary)' }}>
                 {typeof stat.value === 'string' && stat.value.endsWith('%')
-                  ? <>{stat.value.slice(0, -1)}<span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8em' }}>%</span></>
+                  ? <>{stat.value.slice(0, -1)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: '0.8em' }}>%</span></>
                   : stat.value}
               </p>
             </div>

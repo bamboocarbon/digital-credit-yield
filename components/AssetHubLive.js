@@ -40,13 +40,13 @@ export default function AssetHubLive({ ticker }) {
           </div>
         ) : (
           <div className="flex flex-wrap items-baseline gap-3 mt-2">
-            <span className="font-mono-data text-4xl font-bold" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace" }}>
+            <span className="font-mono-data text-4xl font-bold" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
               {data.price?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
             </span>
             <span className="font-mono-data text-lg"
-              style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: data.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
+              style={{ fontFamily: "Arial, Helvetica, sans-serif", color: data.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
               <span style={{ marginRight: '2px' }}>{data.change >= 0 ? '+' : '-'}</span>
-              {Math.abs(data.change)?.toFixed(2)} (<span style={{ marginRight: '2px' }}>{data.changePercent >= 0 ? '+' : '-'}</span>{Math.abs(data.changePercent)?.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>)
+              {Math.abs(data.change)?.toFixed(2)} (<span style={{ marginRight: '2px' }}>{data.changePercent >= 0 ? '+' : '-'}</span>{Math.abs(data.changePercent)?.toFixed(2)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>%</span>)
             </span>
             <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
               Last updated: {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
@@ -59,8 +59,8 @@ export default function AssetHubLive({ ticker }) {
       <div className={`grid grid-cols-1 sm:grid-cols-2 ${reserve ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-4 mb-8`}>
         <div className="card p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>Annual Dividend Rate</p>
-          <p className="font-mono-data text-2xl font-bold" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: 'var(--accent-gold)' }}>
-            {displayYield.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8em' }}>%</span>
+          <p className="font-mono-data text-2xl font-bold" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: 'var(--accent-gold)' }}>
+            {displayYield.toFixed(2)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: '0.8em' }}>%</span>
           </p>
           <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
             {yieldIsLive ? 'Trailing 12-month (Yahoo Finance)' : 'Announced rate (issuer disclosed)'}
@@ -69,8 +69,8 @@ export default function AssetHubLive({ ticker }) {
 
         <div className="card p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>Effective Yield at Current Price</p>
-          <p className="font-mono-data text-2xl font-bold" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: 'var(--accent-gold)' }}>
-            {effectiveYield.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8em' }}>%</span>
+          <p className="font-mono-data text-2xl font-bold" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: 'var(--accent-gold)' }}>
+            {effectiveYield.toFixed(2)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: '0.8em' }}>%</span>
           </p>
           <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
             {data?.price != null
@@ -92,7 +92,7 @@ export default function AssetHubLive({ ticker }) {
         {reserve && (
           <div className="card p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
             <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>{reserve.label}</p>
-            <p className="font-mono-data text-2xl font-bold" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: 'var(--accent-gold)' }}>
+            <p className="font-mono-data text-2xl font-bold" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: 'var(--accent-gold)' }}>
               {reserve.display}
             </p>
             <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{reserve.note}</p>

@@ -3,7 +3,7 @@ import DividendInteractive from '@/components/DividendInteractive';
 import { SATA_DAILY_START, isSataDailyDividend } from '@/lib/sataBusinessDays';
 import { STRC_SEMI_MONTHLY_START, BMNP_DIVIDEND_SCHEDULE } from '@/lib/constants';
 
-const MONO = { fontFamily: "'Roboto Mono', 'Courier New', monospace" };
+const MONO = { fontFamily: "Arial, Helvetica, sans-serif" };
 
 function formatDate(dateStr) {
   const [y, m, d] = dateStr.split('-');

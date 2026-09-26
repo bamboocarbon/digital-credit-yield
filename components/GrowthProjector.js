@@ -6,7 +6,7 @@ import { runProjection, computeAPY, HORIZON_MONTHS as horizonMonths, HORIZON_LAB
 import { PAR_VALUE } from '@/lib/constants';
 import NumericInput from '@/components/NumericInput';
 
-const MONO = { fontFamily: "'Roboto Mono', 'Courier New', monospace" };
+const MONO = { fontFamily: "Arial, Helvetica, sans-serif" };
 const inputStyle = { ...MONO, background: 'var(--bg-card-hover)', border: '1px solid var(--border)', color: 'var(--text-primary)' };
 const inputClass = 'w-full px-3 py-2 rounded-lg text-sm font-mono-data text-center';
 
@@ -310,7 +310,7 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
               </p>
               {Number(form.pricePerShare || par) !== par && (
                 <p className="text-xs" style={{ color: 'var(--accent-gold)' }}>
-                  Effective yield on cost: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>
+                  Effective yield on cost: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>%</span>
                   {Number(form.pricePerShare) < par ? ' ↑' : ' ↓'}
                   <span style={{ color: 'var(--text-muted)' }}>
                     {form.yieldBasis === 'effective'
@@ -325,7 +325,7 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
           {form.inputMode !== 'shares' && livePrice && livePrice > 0 && Math.abs(livePrice - par) > 0.005 && (
             <div className="mt-3 text-center">
               <p className="text-xs" style={{ color: 'var(--accent-gold)' }}>
-                Effective yield at live price ${livePrice.toFixed(2)}: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>
+                Effective yield at live price ${livePrice.toFixed(2)}: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>%</span>
                 {livePrice < par ? ' ↑' : ' ↓'}
                 <span style={{ color: 'var(--text-muted)' }}>
                   {form.yieldBasis === 'effective'
@@ -351,7 +351,7 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
                 <p className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>{stat.label}</p>
                 <p className="font-mono-data text-xl font-medium" style={{ ...MONO, color: stat.gold ? 'var(--accent-gold)' : 'var(--text-primary)' }}>
                   {typeof stat.value === 'string' && stat.value.endsWith('%')
-                    ? <>{stat.value.slice(0, -1)}<span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8em' }}>%</span></>
+                    ? <>{stat.value.slice(0, -1)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: '0.8em' }}>%</span></>
                     : stat.value}
                 </p>
               </div>

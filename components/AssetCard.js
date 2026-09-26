@@ -70,11 +70,11 @@ export default function AssetCard({ ticker }) {
         <div className="flex flex-col gap-2">
           {/* Latest price */}
           <div>
-            <div className="font-mono-data text-3xl font-bold" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace" }}>
+            <div className="font-mono-data text-3xl font-bold" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
               {data.price?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
             </div>
-            <div className="text-sm font-mono-data mt-1 whitespace-nowrap" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: data.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
-              <span style={{marginRight:'2px'}}>{data.change >= 0 ? '+' : '-'}</span>{Math.abs(data.change)?.toFixed(2)} (<span style={{marginRight:'2px'}}>{data.changePercent >= 0 ? '+' : '-'}</span>{Math.abs(data.changePercent)?.toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif" }}>%</span>)
+            <div className="text-sm font-mono-data mt-1 whitespace-nowrap" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: data.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
+              <span style={{marginRight:'2px'}}>{data.change >= 0 ? '+' : '-'}</span>{Math.abs(data.change)?.toFixed(2)} (<span style={{marginRight:'2px'}}>{data.changePercent >= 0 ? '+' : '-'}</span>{Math.abs(data.changePercent)?.toFixed(2)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>%</span>)
             </div>
           </div>
 
@@ -82,8 +82,8 @@ export default function AssetCard({ ticker }) {
           {data.price > 0 && ASSET_RATES[ticker] != null && (
             <div className="flex items-baseline justify-between pt-2" style={{ borderTop: '1px solid var(--border)' }}>
               <span className="text-xs uppercase whitespace-nowrap" style={{ color: 'var(--text-muted)', letterSpacing: '0.04em' }}>Effective Yield</span>
-              <span className="font-mono-data text-xl font-bold whitespace-nowrap" style={{ fontFamily: "'Roboto Mono', 'Courier New', monospace", color: 'var(--accent-gold)' }}>
-                {((ASSET_RATES[ticker] * (PAR_VALUE[ticker] ?? 100) / 100 / data.price) * 100).toFixed(2)}<span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8em' }}>%</span>
+              <span className="font-mono-data text-xl font-bold whitespace-nowrap" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: 'var(--accent-gold)' }}>
+                {((ASSET_RATES[ticker] * (PAR_VALUE[ticker] ?? 100) / 100 / data.price) * 100).toFixed(2)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: '0.8em' }}>%</span>
               </span>
             </div>
           )}

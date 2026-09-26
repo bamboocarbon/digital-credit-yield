@@ -19,12 +19,12 @@ html {
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-dm-sans), sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   min-height: 100vh;
 }
 
 .font-mono-data {
-  font-family: var(--font-roboto-mono), 'Courier New', monospace !important;
+  font-family: Arial, Helvetica, sans-serif !important;
 }
 
 input[type=number] {
