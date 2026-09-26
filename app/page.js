@@ -60,7 +60,7 @@ export default function HomePage() {
           Tracking {BMNP_ENABLED ? 'STRC, SATA, BMNP and CHAD' : 'STRC, SATA and CHAD'} for growth
         </div>
         <p className="text-lg sm:text-xl max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
-          Live prices, dividend tracking and income projections for the preferred stocks issued by Bitcoin and Ethereum treasury companies
+          Live prices, dividend tracking and income projections for the preferred stocks issued by Bitcoin, Ethereum and Solana treasury companies
         </p>
       </div>
 
@@ -89,7 +89,7 @@ export default function HomePage() {
         <h3 className="text-lg font-semibold mb-3">Who&rsquo;s behind this</h3>
         <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
           I&rsquo;m Robin Gillingham — a full-time independent investor for seven years. I built this site to highlight the
-          difference between annual yield and effective yield on the new preferred stocks issued by Bitcoin and Ethereum treasury companies,
+          difference between annual yield and effective yield on the new preferred stocks issued by Bitcoin, Ethereum and Solana treasury companies,
           and it has grown into growth projectors, dividend charts, and weekly money flow data across {BMNP_ENABLED ? 'STRC, SATA, BMNP and CHAD' : 'STRC, SATA and CHAD'}.
         </p>
         <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
