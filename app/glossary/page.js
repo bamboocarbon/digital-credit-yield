@@ -86,7 +86,7 @@ const terms = [
   },
   {
     term: 'Redemption premium',
-    def: 'An above-par price an issuer must pay to buy its preferred shares back early. BMNP can be bought back at 110% of par ($110) in the first 18 months, then 105%, then par — which helps anchor its price near term, the job STRC and SATA hand to their adjustable rate instead.',
+    def: 'An above-par price an issuer must pay to buy its preferred shares back early. BMNP can be bought back at 110% of par ($110) in the first 18 months, then 105%, then par — which helps anchor its price near term, the job STRC and SATA hand to their adjustable rate instead. CHAD carries one too: DeFi Development Corp. can buy it back at $11.00, 110% of its $10 stated value, at any time since it listed, with no step-down. For CHAD it sits alongside the variable rate rather than replacing it. Both are the issuer’s option, not a right for holders to sell back.',
     link: { href: '/blog/bmnp-dividend-rate-mechanism', label: 'BMNP’s price anchor' },
   },
 ];
