@@ -101,7 +101,9 @@ export default function CompareTable() {
             {' '}or{' '}
             <Link href="/blog/bmnp-vs-strc-sata" prefetch={false} style={{ color: 'var(--accent-gold)' }}>how BMNP compares to both</Link>
           </>
-        )}.
+        )}
+        {' '}or{' '}
+        <Link href="/blog/how-chad-works" prefetch={false} style={{ color: 'var(--accent-gold)' }}>how CHAD stacks up against the rest</Link>.
       </p>
     </div>
   );
