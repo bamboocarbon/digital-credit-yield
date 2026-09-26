@@ -1,7 +1,12 @@
 import Link from 'next/link';
 import { ASSET_RATES, PAYMENT_FREQUENCY, BMNP_ENABLED, STRIVE_BTC_HOLDINGS, STRATEGY_BTC_HOLDINGS, BITMINE_ETH_HOLDINGS, DFDV_SOL_HOLDINGS, PAR_VALUE } from '@/lib/constants';
 
-const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#7f1d1d' };
+const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#7f1d1d', MORE: '#a855f7', MTPL: '#14b8a6' };
+
+// TEST FLAG — local layout spacing check for a hypothetical 6-ticker site (MORE, Metaplanet).
+// Not a real feature; set to false / delete this and the MORE/MTPL row values before pushing.
+const SIX_TICKER_LAYOUT_TEST = true;
+const TEST_PAR_VALUE = { MORE: 100, MTPL: 100 };
 
 const ROWS = [
   {
@@ -10,6 +15,8 @@ const ROWS = [
     SATA: 'Strive (Nasdaq: ASST)',
     BMNP: 'Bitmine (NYSE: BMNR)',
     CHAD: 'DeFi Development Corp. (Nasdaq: DFDV)',
+    MORE: '[TEST] SmarterWeb UK',
+    MTPL: '[TEST] Metaplanet',
   },
   {
     label: 'Stated/par value',
@@ -17,6 +24,8 @@ const ROWS = [
     SATA: '$100',
     BMNP: '$100',
     CHAD: '$10',
+    MORE: '$100',
+    MTPL: '$100',
   },
   {
     label: 'Annual dividend rate',
@@ -24,6 +33,8 @@ const ROWS = [
     SATA: `${ASSET_RATES.SATA.toFixed(2)}%`,
     BMNP: `${ASSET_RATES.BMNP.toFixed(2)}% (fixed)`,
     CHAD: `${ASSET_RATES.CHAD.toFixed(2)}%`,
+    MORE: '~10.50% (test)',
+    MTPL: '~9.00% (test)',
   },
   {
     label: 'Payment frequency',
@@ -31,6 +42,8 @@ const ROWS = [
     SATA: `${PAYMENT_FREQUENCY.SATA.label} (~${PAYMENT_FREQUENCY.SATA.perYear}/year)`,
     BMNP: `${PAYMENT_FREQUENCY.BMNP.label} (${PAYMENT_FREQUENCY.BMNP.perYear}/year)`,
     CHAD: `${PAYMENT_FREQUENCY.CHAD.label} (~${PAYMENT_FREQUENCY.CHAD.perYear}/year)`,
+    MORE: 'Monthly (test, ~12/year)',
+    MTPL: 'Monthly (test, ~12/year)',
   },
   {
     label: 'Approx. per payment',
@@ -38,6 +51,8 @@ const ROWS = [
     SATA: '~$0.052/share',
     BMNP: '~$0.183/share',
     CHAD: '~$0.0052/share',
+    MORE: '~$0.875/share (test)',
+    MTPL: '~$0.75/share (test)',
   },
   {
     label: 'How the rate is set',
@@ -45,6 +60,8 @@ const ROWS = [
     SATA: 'Discretionary monthly review targeting a $99–$101 range',
     BMNP: 'Fixed at issue',
     CHAD: 'Discretionary review, managed toward a long-term price range',
+    MORE: 'Unknown — pending approval (test placeholder)',
+    MTPL: 'Unknown — speculative 2027 launch (test placeholder)',
   },
   {
     label: 'What backs it',
@@ -52,6 +69,8 @@ const ROWS = [
     SATA: `${STRIVE_BTC_HOLDINGS}+ Bitcoin plus an 18-month cash reserve`,
     BMNP: `${BITMINE_ETH_HOLDINGS}+ Ethereum treasury, staking income via the MAVAN validator network`,
     CHAD: `${DFDV_SOL_HOLDINGS}+ Solana treasury, funded by ongoing capital raises`,
+    MORE: 'Bitcoin treasury (test placeholder)',
+    MTPL: 'Bitcoin treasury (test placeholder)',
   },
   {
     label: 'Position in capital structure',
@@ -59,17 +78,21 @@ const ROWS = [
     SATA: 'Top of the stack — Strive is debt-free with one preferred series',
     BMNP: 'Above common stock; cumulative dividends',
     CHAD: 'Below company debt; above common stock; cumulative dividends',
+    MORE: 'Unknown (test placeholder)',
+    MTPL: 'Unknown (test placeholder)',
   },
 ];
 
 export default function CompareTable() {
-  const tickers = BMNP_ENABLED ? ['STRC', 'SATA', 'BMNP', 'CHAD'] : ['STRC', 'SATA', 'CHAD'];
+  const baseTickers = BMNP_ENABLED ? ['STRC', 'SATA', 'BMNP', 'CHAD'] : ['STRC', 'SATA', 'CHAD'];
+  const tickers = SIX_TICKER_LAYOUT_TEST ? [...baseTickers, 'MORE', 'MTPL'] : baseTickers;
+  const parValueFor = t => PAR_VALUE[t] ?? TEST_PAR_VALUE[t];
 
   return (
     <div className="mt-12 max-w-5xl mx-auto">
       <h2 className="text-2xl font-bold mb-2 text-center">{tickers.join(' vs ')} at a Glance</h2>
       <p className="text-sm text-center mb-6" style={{ color: 'var(--text-muted)' }}>
-        Different issuers, different structures — down to the par value itself: {tickers.map(t => `$${PAR_VALUE[t]} for ${t}`).join(', ')}.
+        Different issuers, different structures — down to the par value itself: {tickers.map(t => `$${parValueFor(t)} for ${t}`).join(', ')}.
       </p>
       <div className="overflow-x-auto rounded-2xl" style={{ border: '1px solid var(--border)' }}>
         <table className="w-full text-sm" style={{ background: 'var(--bg-card)' }}>

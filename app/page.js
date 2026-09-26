@@ -5,6 +5,10 @@ import SubscribeBox from '@/components/SubscribeBox';
 import CompareTable from '@/components/CompareTable';
 import { BMNP_ENABLED } from '@/lib/constants';
 
+// TEST FLAG — local layout spacing check for a hypothetical 6-ticker site (MORE, Metaplanet).
+// Not a real feature; set to false / delete this and the two dummy AssetCard blocks before pushing.
+const SIX_TICKER_LAYOUT_TEST = true;
+
 export function generateMetadata() {
   const instruments = BMNP_ENABLED ? 'STRC, SATA, BMNP & CHAD' : 'STRC, SATA & CHAD';
   const desc = `Track ${instruments} preferred stocks — live prices, dividend history, effective-yield charts and income projection tools.`;
@@ -65,11 +69,34 @@ export default function HomePage() {
       </div>
 
       {/* Asset selector cards */}
-      <div className={`grid grid-cols-1 gap-6 mb-12 ${BMNP_ENABLED ? 'md:grid-cols-4' : 'md:grid-cols-3'}`}>
+      {/* TEST — 6-ticker layout check (SIX_TICKER_LAYOUT_TEST), not real instruments. Remove before shipping. */}
+      <div className={`grid grid-cols-1 gap-6 mb-12 ${SIX_TICKER_LAYOUT_TEST ? 'sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6' : BMNP_ENABLED ? 'md:grid-cols-4' : 'md:grid-cols-3'}`}>
         <AssetCard ticker="STRC" />
         <AssetCard ticker="SATA" />
         {BMNP_ENABLED && <AssetCard ticker="BMNP" />}
         <AssetCard ticker="CHAD" />
+        {SIX_TICKER_LAYOUT_TEST && (
+          <>
+            <AssetCard
+              ticker="MORE"
+              href="#"
+              mock={{ price: 24.60, change: 0.28, changePercent: 1.15 }}
+              rate={10.5}
+              par={100}
+              incomeBadge="Monthly Income"
+              company="SmarterWeb UK [TEST]"
+            />
+            <AssetCard
+              ticker="MTPL"
+              href="#"
+              mock={{ price: 19.85, change: -0.12, changePercent: -0.60 }}
+              rate={9.0}
+              par={100}
+              incomeBadge="Monthly Income"
+              company="Metaplanet [TEST]"
+            />
+          </>
+        )}
       </div>
 
       <CompareTable />
