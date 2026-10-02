@@ -5,6 +5,7 @@ import SubNav from '@/components/SubNav';
 import AadsAd from '@/components/AadsAd';
 import AssetHubLive from '@/components/AssetHubLive';
 import HubStockSelector from '@/components/HubStockSelector';
+import CapitalStructure from '@/components/CapitalStructure';
 
 function PendingRateNote({ ticker }) {
   const pending = PENDING_RATE_CHANGES[ticker];
@@ -180,7 +181,10 @@ export default function AssetHub({ ticker, name }) {
       {/* About section — server-rendered for SEO */}
       <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <h2 className="text-lg font-semibold mb-3">About {ticker}</h2>
-        <div className="text-sm leading-6" style={{ color: 'var(--text-muted)' }}>{DESCRIPTIONS[ticker]}</div>
+        <div className="text-sm leading-6" style={{ color: 'var(--text-muted)' }}>
+          {DESCRIPTIONS[ticker]}
+          <CapitalStructure ticker={ticker} />
+        </div>
       </div>
 
       {/* Tools section */}
