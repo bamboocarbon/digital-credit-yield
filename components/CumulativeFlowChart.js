@@ -73,6 +73,16 @@ function filterCumulative(data, range) {
 
 const RANGE_OPTS = ['6M', '1Y', 'All'];
 
+// One entry per plotted line — the legend buttons toggle these on/off so the smaller
+// issuers can be compared without STRC's scale flattening them.
+const TICKER_LINES = [
+  { key: 'strc', color: '#15803d', label: 'STRC', sub: 'Strategy · IPO Jul 2025' },
+  { key: 'sata', color: '#2563eb', label: 'SATA', sub: 'Strive · IPO Nov 2025' },
+  ...(BMNP_ENABLED ? [{ key: 'bmnp', color: '#fde047', label: 'BMNP', sub: 'Bitmine · IPO Jun 2026' }] : []),
+  { key: 'chad', color: '#7f1d1d', label: 'CHAD', sub: 'DeFi Development Corp. · IPO Sep 2026' },
+  { key: 'more', color: '#a855f7', label: 'MORE', sub: 'Smarter Web Company · IPO Oct 2026 (£ converted)' },
+];
+
 const cardStyle = {
   background: '#111827',
   border: '1px solid #1f2937',
@@ -86,6 +96,7 @@ export default function CumulativeFlowChart() {
   const [range, setRange] = useState('all');
   const [liveData, setLiveData] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [hidden, setHidden] = useState([]);
 
   useEffect(() => {
     fetch('/api/money-flow-data')
@@ -100,26 +111,43 @@ export default function CumulativeFlowChart() {
   const activeData = liveData ?? data;
   const displayData = filterCumulative(activeData, range);
   const isLog = scale === 'log';
+  const visibleLines = TICKER_LINES.filter(t => !hidden.includes(t.key));
+
+  // Always keep at least one line on the chart.
+  const toggleLine = key => setHidden(h =>
+    h.includes(key) ? h.filter(k => k !== key) : (visibleLines.length > 1 ? [...h, key] : h)
+  );
+
+  // Log axis fitted to whatever is visible, so hiding STRC zooms in on the smaller issuers
+  // (the old fixed 10^2 floor would push anything under $100M off the bottom of the chart).
+  const visibleValues = displayData.flatMap(d => visibleLines.map(t => d[t.key])).filter(v => v > 0);
+  const logLo = visibleValues.length ? Math.floor(Math.log10(Math.min(...visibleValues)) * 2) / 2 : 2;
+  const logHi = visibleValues.length ? Math.max(logLo + 1, Math.ceil(Math.log10(Math.max(...visibleValues)) * 2) / 2) : 4.2;
+  const logTicks = [];
+  for (let v = logLo; v <= logHi + 1e-9; v += 0.5) logTicks.push(+v.toFixed(1));
 
   return (
     <div>
       {/* Legend + toggle */}
       <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
-        <div className="flex gap-5 text-xs" style={{ color: 'var(--text-muted)' }}>
-          {[
-            { color: '#15803d', label: 'STRC', sub: 'Strategy · IPO Jul 2025' },
-            { color: '#2563eb', label: 'SATA', sub: 'Strive · IPO Nov 2025' },
-            ...(BMNP_ENABLED ? [{ color: '#fde047', label: 'BMNP', sub: 'Bitmine · IPO Jun 2026' }] : []),
-            { color: '#7f1d1d', label: 'CHAD', sub: 'DeFi Development Corp. · IPO Sep 2026' },
-            { color: '#a855f7', label: 'MORE', sub: 'Smarter Web Company · IPO Oct 2026 (£ converted)' },
-          ].map(i => (
-            <div key={i.label} className="flex items-center gap-2">
-              <div style={{ width: 24, height: 2, background: i.color, borderRadius: 2 }} />
-              <div>
-                <p style={{ margin: 0, color: '#e5e7eb' }}>{i.label} — {i.sub}</p>
-              </div>
-            </div>
-          ))}
+        <div className="flex flex-wrap gap-x-3 gap-y-2 text-xs" style={{ color: 'var(--text-muted)' }}>
+          {TICKER_LINES.map(i => {
+            const on = !hidden.includes(i.key);
+            return (
+              <button key={i.key} type="button" onClick={() => toggleLine(i.key)} aria-pressed={on}
+                title={on ? `Hide ${i.label}` : `Show ${i.label}`}
+                className="flex items-center gap-2 transition-opacity"
+                style={{
+                  padding: '4px 10px', borderRadius: 8, cursor: 'pointer',
+                  background: 'var(--bg-card)',
+                  border: `1px solid ${on ? i.color : 'var(--border)'}`,
+                  opacity: on ? 1 : 0.45,
+                }}>
+                <div style={{ width: 24, height: 2, background: i.color, borderRadius: 2 }} />
+                <p style={{ margin: 0, color: '#e5e7eb', textDecoration: on ? 'none' : 'line-through' }}>{i.label} — {i.sub}</p>
+              </button>
+            );
+          })}
         </div>
         <div className="flex items-center gap-2">
           <div className="flex gap-1.5">
@@ -164,11 +192,9 @@ export default function CumulativeFlowChart() {
               <XAxis dataKey="period" tick={tick} angle={-45} textAnchor="end" interval={0} height={65} />
               <YAxis tickFormatter={fmtLinear} tick={tick} width={54} />
               <Tooltip content={<TooltipLinear />} />
-              <Line type="monotone" dataKey="strc" name="STRC" stroke="#15803d" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
-              <Line type="monotone" dataKey="sata" name="SATA" stroke="#2563eb" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
-              {BMNP_ENABLED && <Line type="monotone" dataKey="bmnp" name="BMNP" stroke="#fde047" strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />}
-              <Line type="monotone" dataKey="chad" name="CHAD" stroke="#7f1d1d" strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />
-              <Line type="monotone" dataKey="more" name="MORE" stroke="#a855f7" strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />
+              {visibleLines.map(t => (
+                <Line key={t.key} type="monotone" dataKey={t.key} name={t.label} stroke={t.color} strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />
+              ))}
             </LineChart>
           </ResponsiveContainer>
           </div>
@@ -189,13 +215,11 @@ export default function CumulativeFlowChart() {
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
               <XAxis dataKey="period" tick={tick} angle={-45} textAnchor="end" interval={0} height={65} />
-              <YAxis tickFormatter={fmtLog} tick={tick} width={54} domain={[2, 4.2]} ticks={[2, 2.5, 3, 3.5, 4]} />
+              <YAxis tickFormatter={fmtLog} tick={tick} width={54} domain={[logLo, logHi]} ticks={logTicks} />
               <Tooltip content={<TooltipLog />} />
-              <Line type="monotone" dataKey="strc" name="STRC" stroke="#15803d" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
-              <Line type="monotone" dataKey="sata" name="SATA" stroke="#2563eb" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
-              {BMNP_ENABLED && <Line type="monotone" dataKey="bmnp" name="BMNP" stroke="#fde047" strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />}
-              <Line type="monotone" dataKey="chad" name="CHAD" stroke="#7f1d1d" strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />
-              <Line type="monotone" dataKey="more" name="MORE" stroke="#a855f7" strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />
+              {visibleLines.map(t => (
+                <Line key={t.key} type="monotone" dataKey={t.key} name={t.label} stroke={t.color} strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />
+              ))}
             </LineChart>
           </ResponsiveContainer>
           </div>
