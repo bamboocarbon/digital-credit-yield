@@ -209,10 +209,11 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
     ctx.fill(); ctx.stroke();
 
     ctx.fillStyle = '#f5a623';
-    ctx.font = 'bold 15px Arial, sans-serif';
+    // 13px (was 15px) so the five-ticker line still fits inside the 460px-wide title box
+    ctx.font = 'bold 13px Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.letterSpacing = '0.04em';
-    ctx.fillText('Tracking STRC, SATA, BMNP & CHAD for Growth', W / 2, (TL_Y0 + TL_Y1) / 2 + 5);
+    ctx.fillText('Tracking STRC, SATA, BMNP, CHAD & MORE for Growth', W / 2, (TL_Y0 + TL_Y1) / 2 + 5);
     ctx.letterSpacing = '0';
   }
 
