@@ -7,7 +7,7 @@ import { BMNP_ENABLED } from '@/lib/constants';
 const STORY_UPDATED = '25 September 2026';
 
 export function generateMetadata() {
-  const instruments = BMNP_ENABLED ? 'STRC, SATA, BMNP & CHAD' : 'STRC, SATA & CHAD';
+  const instruments = BMNP_ENABLED ? 'STRC, SATA, BMNP, CHAD & MORE' : 'STRC, SATA, CHAD & MORE';
   const desc = `Weekly capital raised by ${instruments} tracked from SEC 8-K filings since each IPO. Bar charts and cumulative totals showing investor demand over time.`;
   return {
     alternates: { canonical: '/money-flow' },
@@ -35,7 +35,7 @@ export default function MoneyFlowPage() {
       <div className="text-center mb-10">
         <h1 className="text-4xl sm:text-5xl font-bold mb-3 tracking-tight">Money Flow</h1>
         <p className="text-lg max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
-          Weekly capital raised by {BMNP_ENABLED ? 'STRC, SATA, BMNP and CHAD' : 'STRC, SATA and CHAD'}, compiled
+          Weekly capital raised by {BMNP_ENABLED ? 'STRC, SATA, BMNP, CHAD and MORE' : 'STRC, SATA, CHAD and MORE'}, compiled
           from SEC 8-K filings since each IPO.
           {BMNP_ENABLED && ' BMNP listed on the NYSE in June 2026.'} CHAD listed on the Nasdaq in September 2026.
         </p>

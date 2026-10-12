@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { saveProjectorState, loadProjectorState, defaultProjectorState } from '@/lib/projectorState';
-import { runProjection, computeAPY, HORIZON_MONTHS as horizonMonths, HORIZON_LABELS as horizonLabels, fmt, fmtNum, stripNum } from '@/lib/projectorEngine';
+import { runProjection, computeAPY, HORIZON_MONTHS as horizonMonths, HORIZON_LABELS as horizonLabels, makeFmt, fmtNum, stripNum } from '@/lib/projectorEngine';
+import { currencySymbol } from '@/lib/currency';
 import { PAR_VALUE } from '@/lib/constants';
 import NumericInput from '@/components/NumericInput';
 
@@ -15,6 +16,8 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
   const chartInstanceRef = useRef(null);
 
   const par = PAR_VALUE[ticker] ?? 100;
+  const cur = currencySymbol(ticker);
+  const fmt = makeFmt(ticker);
 
   const [form, setForm] = useState(() => ({
     ...defaultProjectorState,
@@ -61,7 +64,7 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
   // identical, so the toggle only changes the result when shares are priced off par.
   const yieldForProjection = form.yieldBasis === 'effective' ? effectiveYield : Number(form.annualYield);
 
-  const paymentsPerYear = ticker === 'STRC' ? 24 : ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : ticker === 'CHAD' ? 250 : 12;
+  const paymentsPerYear = ticker === 'STRC' ? 24 : ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : ticker === 'CHAD' ? 250 : ticker === 'MORE' ? 52 : 12;
 
   const history = useMemo(
     () => runProjection(startValue, yieldForProjection, Number(form.monthlyContribution), Number(form.reinvestmentPct), months, paymentsPerYear),
@@ -179,10 +182,10 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
               {/* label row — grid makes all three cells the same height */}
               <div className="flex items-center justify-between">
                 <label className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                  {form.inputMode === 'shares' ? '# Shares' : 'Amount ($)'}
+                  {form.inputMode === 'shares' ? '# Shares' : `Amount (${cur})`}
                 </label>
                 <div className="flex rounded overflow-hidden" style={{ border: '1px solid var(--border)', fontSize: '10px' }}>
-                  {[{ key: 'dollars', label: '$' }, { key: 'shares', label: '#' }].map(({ key, label }) => (
+                  {[{ key: 'dollars', label: cur }, { key: 'shares', label: '#' }].map(({ key, label }) => (
                     <button key={key} type="button" onClick={() => update('inputMode', key)}
                       aria-label={key === 'dollars' ? 'Enter investment as dollar amount' : 'Enter investment as number of shares'}
                       className="px-2 py-0.5 font-medium"
@@ -196,7 +199,7 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
                 </div>
               </div>
               <div className="flex items-center" style={{ opacity: form.inputMode === 'shares' ? 1 : 0.35, transition: 'opacity 0.2s' }}>
-                <label className="text-xs" style={{ color: 'var(--text-muted)' }}>Price per Share ($)</label>
+                <label className="text-xs" style={{ color: 'var(--text-muted)' }}>Price per Share ({cur})</label>
               </div>
               <div className="flex items-center">
                 <label className="text-xs" style={{ color: 'var(--text-muted)' }}>
@@ -250,7 +253,7 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
                 </select>
               </div>
               <div>
-                <label className="block text-xs mb-1" style={{ color: 'var(--text-muted)' }}>Monthly ($)</label>
+                <label className="block text-xs mb-1" style={{ color: 'var(--text-muted)' }}>Monthly ({cur})</label>
                 <input type="text" inputMode="numeric" value={fmtNum(form.monthlyContribution)}
                   onChange={e => update('monthlyContribution', stripNum(e.target.value))}
                   aria-label="Monthly contribution in dollars"
@@ -284,6 +287,14 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
                 </p>
               )}
               {ticker === 'BMNP' && Number(form.reinvestmentPct) > 0 && (
+                <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
+                  Weekly compounding: {computeAPY(yieldForProjection, 52).toFixed(4)}% APY
+                  <span style={{ color: 'var(--text-muted)' }}>
+                    {' '}(+{((computeAPY(yieldForProjection, 52) - computeAPY(yieldForProjection, 12)) * 100).toFixed(1)} bps vs monthly)
+                  </span>
+                </p>
+              )}
+              {ticker === 'MORE' && Number(form.reinvestmentPct) > 0 && (
                 <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
                   Weekly compounding: {computeAPY(yieldForProjection, 52).toFixed(4)}% APY
                   <span style={{ color: 'var(--text-muted)' }}>
@@ -325,7 +336,7 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
           {form.inputMode !== 'shares' && livePrice && livePrice > 0 && Math.abs(livePrice - par) > 0.005 && (
             <div className="mt-3 text-center">
               <p className="text-xs" style={{ color: 'var(--accent-gold)' }}>
-                Effective yield at live price ${livePrice.toFixed(2)}: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>%</span>
+                Effective yield at live price {cur}{livePrice.toFixed(2)}: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>%</span>
                 {livePrice < par ? ' ↑' : ' ↓'}
                 <span style={{ color: 'var(--text-muted)' }}>
                   {form.yieldBasis === 'effective'

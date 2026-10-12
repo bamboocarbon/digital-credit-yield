@@ -12,6 +12,7 @@ const tickerColour = {
   SATA: '#3b82f6',
   BMNP: '#fde047',
   CHAD: '#7f1d1d',
+  MORE: '#a855f7',
   SOL: '#a78bfa',
   Metaplanet: '#7dd3fc',
 };
@@ -47,7 +48,7 @@ export default function BlogIndex({ articles }) {
   // CHAD is unioned in even though no article is tagged with it yet — the filter
   // button should exist alongside STRC/SATA/BMNP from launch, the same way it
   // would once a CHAD article exists, rather than waiting for one to appear.
-  const allCats = [...new Set([...articles.flatMap(a => [].concat(a.category)), 'CHAD'])];
+  const allCats = [...new Set([...articles.flatMap(a => [].concat(a.category)), 'CHAD', 'MORE'])];
   const categories = [
     'All',
     ...allCats.filter(c => !tail.includes(c)).sort(),

@@ -8,19 +8,19 @@ import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
 export const metadata = {
   metadataBase: new URL('https://www.digitalcredityield.com'),
   title: {
-    default: 'Digital Credit Yield — STRC, SATA, BMNP & CHAD Tracker',
+    default: 'Digital Credit Yield — STRC, SATA, BMNP, CHAD & MORE Tracker',
     template: '%s — Digital Credit Yield',
   },
-  description: 'Independent tracker for STRC, SATA, BMNP and CHAD preferred stocks. Live prices, dividend history, and income projectors.',
+  description: 'Independent tracker for STRC, SATA, BMNP, CHAD and MORE preferred stocks. Live prices, dividend history, and income projectors.',
   openGraph: {
-    title: 'Digital Credit Yield — STRC, SATA, BMNP & CHAD Preferred Stock Tracker',
-    description: 'Independent tracker for STRC, SATA, BMNP and CHAD preferred stocks. Live prices, dividend history, and income projectors.',
+    title: 'Digital Credit Yield — STRC, SATA, BMNP, CHAD & MORE Preferred Stock Tracker',
+    description: 'Independent tracker for STRC, SATA, BMNP, CHAD and MORE preferred stocks. Live prices, dividend history, and income projectors.',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Digital Credit Yield — STRC, SATA, BMNP & CHAD Preferred Stock Tracker',
-    description: 'Independent tracker for STRC, SATA, BMNP and CHAD preferred stocks. Live prices, dividend history, and income projectors.',
+    title: 'Digital Credit Yield — STRC, SATA, BMNP, CHAD & MORE Preferred Stock Tracker',
+    description: 'Independent tracker for STRC, SATA, BMNP, CHAD and MORE preferred stocks. Live prices, dividend history, and income projectors.',
   },
   other: {
     'google-adsense-account': 'ca-pub-2860789238138317',
@@ -35,7 +35,7 @@ const orgJsonLd = {
   name: 'Digital Credit Yield',
   url: 'https://www.digitalcredityield.com',
   logo: 'https://www.digitalcredityield.com/logo-tweet.png',
-  description: 'Independent tracker for STRC, SATA, BMNP and CHAD preferred stocks — live prices, dividend history, and income projectors.',
+  description: 'Independent tracker for STRC, SATA, BMNP, CHAD and MORE preferred stocks — live prices, dividend history, and income projectors.',
   sameAs: ['https://x.com/DCYieldHub'],
 };
 

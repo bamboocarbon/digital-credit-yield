@@ -20,13 +20,13 @@ export default function VsTreasuriesTool({ initialStock, liveYields, livePrices 
       <h1 className="text-2xl sm:text-3xl font-bold mb-4">vs Treasuries — How Does It Compare?</h1>
       <StockSelector selected={stock} onSelect={selectStock} />
       <p className="mb-3 text-sm leading-6 max-w-3xl" style={{ color: 'var(--text-muted)' }}>
-        Enter your investment details to see how {stock}&apos;s distribution yield stacks up against US
-        Treasuries and an ordinary savings account over your chosen time horizon. The comparison is built
+        Enter your investment details to see how {stock}&apos;s distribution yield stacks up against {stock === 'MORE' ? 'UK gilts' : 'US'}
+        {stock === 'MORE' ? '' : ' Treasuries'} and an ordinary savings account over your chosen time horizon. The comparison is built
         on effective yield — the return measured against the price you actually pay — not just the headline
         rate, so it reflects a realistic entry today.
       </p>
       <p className="mb-8 text-sm leading-6 max-w-3xl" style={{ color: 'var(--text-muted)' }}>
-        Seeing the income difference in dollar terms is the clearest way to weigh the extra yield against
+        Seeing the income difference in {stock === 'MORE' ? 'pound' : 'dollar'} terms is the clearest way to weigh the extra yield against
         the extra risk these instruments carry.{' '}
         <a href="/blog/what-is-effective-yield" style={{ color: 'var(--accent-gold)' }}>What effective yield means &rarr;</a>
       </p>

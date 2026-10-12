@@ -6,9 +6,9 @@ import { VALID_TICKERS, resolveStock } from '@/lib/constants';
 export const metadata = {
   alternates: { canonical: '/dividends' },
   title: 'Dividend History',
-  description: 'Complete dividend payment history for STRC, SATA, BMNP and CHAD preferred stock. Track per-share amounts and payment dates as the record grows over time.',
+  description: 'Complete dividend payment history for STRC, SATA, BMNP, CHAD and MORE preferred stock. Track per-share amounts and payment dates as the record grows over time.',
   openGraph: {
-    title: 'Dividend History — STRC, SATA, BMNP & CHAD',
+    title: 'Dividend History — STRC, SATA, BMNP, CHAD & MORE',
     description: 'Complete record of every dividend payment from Strategy, Strive, Bitmine and DeFi Development Corp. preferred stock.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/dividends',
@@ -16,7 +16,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Dividend History — STRC, SATA, BMNP & CHAD',
+    title: 'Dividend History — STRC, SATA, BMNP, CHAD & MORE',
     description: 'Complete record of every dividend payment from Strategy, Strive, Bitmine and DeFi Development Corp. preferred stock.',
   },
 };

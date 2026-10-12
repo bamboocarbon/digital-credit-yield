@@ -26,7 +26,7 @@ const terms = [
   },
   {
     term: 'Par value',
-    def: 'The face (stated) value of a preferred share — $100 for STRC, SATA and BMNP, but $10 for CHAD. The dividend rate is set against par, and the issuers manage their rates to keep the market price trading close to it.',
+    def: 'The face (stated) value of a preferred share — $100 for STRC, SATA and BMNP, $10 for CHAD, and a £100 reference value for MORE (its nominal value is only £0.001, but the dividend is calculated on £100). The dividend rate is set against par, and the issuers manage their rates to keep the market price trading close to it.',
   },
   {
     term: 'Effective yield',
@@ -71,7 +71,7 @@ const terms = [
   },
   {
     term: 'Dividend frequency',
-    def: 'How often payments arrive: STRC pays semi-monthly (24 times a year), SATA and CHAD pay daily on US market business days (~250 times a year), and BMNP pays weekly. Annual yield is unaffected by frequency, but faster payments mean more frequent compounding if you reinvest.',
+    def: 'How often payments arrive: STRC pays semi-monthly (24 times a year), SATA and CHAD pay daily on US market business days (~250 times a year), and BMNP and MORE pay weekly. Annual yield is unaffected by frequency, but faster payments mean more frequent compounding if you reinvest.',
     link: { href: '/blog/monthly-vs-daily-dividends', label: 'Does frequency matter?' },
   },
   {

@@ -2,15 +2,16 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { saveProjectorState, loadProjectorState, defaultProjectorState } from '@/lib/projectorState';
-import { runProjection, computeAPY, HORIZON_MONTHS as horizonMonths, HORIZON_LABELS as horizonLabels, fmt, fmtNum, stripNum } from '@/lib/projectorEngine';
+import { runProjection, computeAPY, HORIZON_MONTHS as horizonMonths, HORIZON_LABELS as horizonLabels, makeFmt, fmtNum, stripNum } from '@/lib/projectorEngine';
+import { currencySymbol } from '@/lib/currency';
 import { PAR_VALUE } from '@/lib/constants';
 import NumericInput from '@/components/NumericInput';
 
 const pct = (a, b) => (((a - b) / b) * 100).toFixed(1);
 
 // Brand colours — must stay in sync with insightEngine.js and generateMp4.js
-const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#7f1d1d' };
-const TICKER_BG     = { STRC: 'rgba(74,222,128,0.08)', SATA: 'rgba(59,130,246,0.08)', BMNP: 'rgba(253,224,71,0.08)', CHAD: 'rgba(127,29,29,0.08)' };
+const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#7f1d1d', MORE: '#a855f7' };
+const TICKER_BG     = { STRC: 'rgba(74,222,128,0.08)', SATA: 'rgba(59,130,246,0.08)', BMNP: 'rgba(253,224,71,0.08)', CHAD: 'rgba(127,29,29,0.08)', MORE: 'rgba(168,85,247,0.08)' };
 const C_TREASURY    = '#d1d5db';   // light cool grey
 const C_HIGH_YIELD  = '#b8a99a';   // warm taupe grey  — distinct hue from both other greys
 const C_BANK        = '#9ca3af';   // medium cool grey
@@ -24,6 +25,10 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
   const diffChartInstance = useRef(null);
 
   const par = PAR_VALUE[ticker] ?? 100;
+  const cur = currencySymbol(ticker);
+  // Sterling ticker -> compare against UK gilts rather than US Treasuries.
+  const govt = ticker === 'MORE' ? 'UK Gilts' : 'US Treasuries';
+  const fmt = makeFmt(ticker);
 
   const [form, setForm] = useState(() => ({
     ...defaultProjectorState,
@@ -72,7 +77,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
   const step = months <= 24 ? 1 : 12;
 
   // STRC uses 24 semi-monthly; SATA/CHAD use 250 business-day compounding; BMNP uses 52 weekly; benchmarks stay at 12
-  const paymentsPerYear = ticker === 'STRC' ? 24 : ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : ticker === 'CHAD' ? 250 : 12;
+  const paymentsPerYear = ticker === 'STRC' ? 24 : ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : ticker === 'CHAD' ? 250 : ticker === 'MORE' ? 52 : 12;
 
   const assetData = useMemo(
     () => runProjection(startValue, yieldForProjection, Number(form.monthlyContribution), Number(form.reinvestmentPct), months, paymentsPerYear),
@@ -134,7 +139,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
           labels,
           datasets: [
             { label: ticker, data: indices.map(i => assetData[i].portfolio + assetData[i].cashDistributions), borderColor: TICKER_COLOUR[ticker], backgroundColor: TICKER_BG[ticker], tension: 0.3, borderWidth: 2 },
-            { label: `US Treasuries (~ ${benchmarks.treasury}%)`, data: indices.map(i => treasuryData[i].portfolio + treasuryData[i].cashDistributions), borderColor: C_TREASURY, backgroundColor: 'rgba(209,213,219,0.05)', tension: 0.3, borderWidth: 2 },
+            { label: `${govt} (~ ${benchmarks.treasury}%)`, data: indices.map(i => treasuryData[i].portfolio + treasuryData[i].cashDistributions), borderColor: C_TREASURY, backgroundColor: 'rgba(209,213,219,0.05)', tension: 0.3, borderWidth: 2 },
             { label: `High-Yield Savings (~ ${benchmarks.highYield}%)`, data: indices.map(i => highYieldData[i].portfolio + highYieldData[i].cashDistributions), borderColor: C_HIGH_YIELD, backgroundColor: 'rgba(184,169,154,0.05)', tension: 0.3, borderWidth: 2 },
             { label: `Bank Savings (~ ${benchmarks.bank}%)`, data: indices.map(i => bankData[i].portfolio + bankData[i].cashDistributions), borderColor: C_BANK, backgroundColor: 'rgba(156,163,175,0.05)', tension: 0.3, borderWidth: 2 },
           ],
@@ -180,7 +185,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
         data: {
           labels,
           datasets: [{
-            label: `Advantage over US Treasuries ($)`,
+            label: `Advantage over ${govt} (${cur})`,
             data: diffData,
             borderColor: TICKER_COLOUR[ticker],
             backgroundColor: TICKER_BG[ticker],
@@ -213,7 +218,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
 
   const rows = [
     { label: ticker, final: assetFinal, color: TICKER_COLOUR[ticker] },
-    { label: `US Treasuries (~ ${benchmarks.treasury}%)`, final: treasuryFinal, color: C_TREASURY },
+    { label: `${govt} (~ ${benchmarks.treasury}%)`, final: treasuryFinal, color: C_TREASURY },
     { label: `High-Yield Savings (~ ${benchmarks.highYield}%)`, final: highYieldFinal, color: C_HIGH_YIELD },
     { label: `Bank Savings (~ ${benchmarks.bank}%)`, final: bankFinal, color: C_BANK },
   ];
@@ -252,10 +257,10 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
               {/* label row — grid makes all three cells the same height */}
               <div className="flex items-center justify-between">
                 <label className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                  {form.inputMode === 'shares' ? '# Shares' : 'Amount ($)'}
+                  {form.inputMode === 'shares' ? '# Shares' : `Amount (${cur})`}
                 </label>
                 <div className="flex rounded overflow-hidden" style={{ border: '1px solid var(--border)', fontSize: '10px' }}>
-                  {[{ key: 'dollars', label: '$' }, { key: 'shares', label: '#' }].map(({ key, label }) => (
+                  {[{ key: 'dollars', label: cur }, { key: 'shares', label: '#' }].map(({ key, label }) => (
                     <button key={key} type="button" onClick={() => update('inputMode', key)}
                       aria-label={key === 'dollars' ? 'Enter investment as dollar amount' : 'Enter investment as number of shares'}
                       className="px-2 py-0.5 font-medium"
@@ -269,7 +274,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
                 </div>
               </div>
               <div className="flex items-center" style={{ opacity: form.inputMode === 'shares' ? 1 : 0.35, transition: 'opacity 0.2s' }}>
-                <label className="text-xs" style={{ color: 'var(--text-muted)' }}>Price per Share ($)</label>
+                <label className="text-xs" style={{ color: 'var(--text-muted)' }}>Price per Share ({cur})</label>
               </div>
               <div className="flex items-center">
                 <label className="text-xs" style={{ color: 'var(--text-muted)' }}>
@@ -325,7 +330,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
                 </select>
               </div>
               <div>
-                <label className="block text-xs mb-1" style={{ color: 'var(--text-muted)' }}>Monthly ($)</label>
+                <label className="block text-xs mb-1" style={{ color: 'var(--text-muted)' }}>Monthly ({cur})</label>
                 <input type="text" inputMode="numeric" value={fmtNum(form.monthlyContribution)}
                   onChange={e => update('monthlyContribution', stripNum(e.target.value))}
                   aria-label="Monthly contribution in dollars"
@@ -367,6 +372,14 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
                   </span>
                 </p>
               )}
+              {ticker === 'MORE' && Number(form.reinvestmentPct) > 0 && (
+                <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
+                  Weekly compounding: {computeAPY(yieldForProjection, 52).toFixed(4)}% APY
+                  <span style={{ color: 'var(--text-muted)' }}>
+                    {' '}(+{((computeAPY(yieldForProjection, 52) - computeAPY(yieldForProjection, 12)) * 100).toFixed(1)} bps vs monthly)
+                  </span>
+                </p>
+              )}
               {ticker === 'CHAD' && Number(form.reinvestmentPct) > 0 && (
                 <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
                   Daily compounding: {computeAPY(yieldForProjection, 250).toFixed(4)}% APY
@@ -401,7 +414,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
           {form.inputMode !== 'shares' && livePrice && livePrice > 0 && Math.abs(livePrice - par) > 0.005 && (
             <div className="mt-3 text-center">
               <p className="text-xs" style={{ color: 'var(--accent-gold)' }}>
-                Effective yield at live price ${livePrice.toFixed(2)}: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>%</span>
+                Effective yield at live price {cur}{livePrice.toFixed(2)}: {effectiveYield.toFixed(2)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>%</span>
                 {livePrice < par ? ' ↑' : ' ↓'}
                 <span style={{ color: 'var(--text-muted)' }}>
                   {form.yieldBasis === 'effective'
@@ -421,7 +434,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
             {[
               { label: 'Bank Savings (%)', key: 'bank' },
               { label: 'High-Yield / ISA (%)', key: 'highYield' },
-              { label: 'US Treasuries / Gilts (%)', key: 'treasury' },
+              { label: `${govt} (%)`, key: 'treasury' },
             ].map(({ label, key }) => (
               <div key={key}>
                 <label className="block text-xs mb-1" style={{ color: 'var(--text-muted)' }}>{label}</label>
@@ -448,7 +461,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
         <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-3 px-1 sm:flex sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-2">
           {[
             { color: TICKER_COLOUR[ticker], name: ticker, rate: null },
-            { color: C_TREASURY,   name: 'US Treasuries',     rate: `~ ${benchmarks.treasury}%` },
+            { color: C_TREASURY,   name: govt,     rate: `~ ${benchmarks.treasury}%` },
             { color: C_HIGH_YIELD, name: 'High-Yield Savings', rate: `~ ${benchmarks.highYield}%` },
             { color: C_BANK,       name: 'Bank Savings',       rate: `~ ${benchmarks.bank}%` },
           ].map(({ color, name, rate }) => (
@@ -464,9 +477,9 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
 
       {/* Difference chart */}
       <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-        <h2 className="text-lg font-semibold mb-4">Advantage over US Treasuries</h2>
+        <h2 className="text-lg font-semibold mb-4">Advantage over {govt}</h2>
         <div style={{ position: 'relative', height: '240px' }} className="md:h-72">
-          <canvas ref={diffChartRef} aria-label="Advantage over US Treasuries chart" role="img" />
+          <canvas ref={diffChartRef} aria-label={`Advantage over ${govt} chart`} role="img" />
         </div>
       </div>
 
@@ -559,7 +572,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
 
             {/* Benchmarks */}
             {[
-              { label: 'US Treasuries', start: treasuryMonthlyStart, end: treasuryMonthlyEnd, rate: benchmarks.treasury },
+              { label: govt, start: treasuryMonthlyStart, end: treasuryMonthlyEnd, rate: benchmarks.treasury },
               { label: 'High-Yield / ISA', start: highYieldMonthlyStart, end: highYieldMonthlyEnd, rate: benchmarks.highYield },
               { label: 'Bank Savings', start: bankMonthlyStart, end: bankMonthlyEnd, rate: benchmarks.bank },
             ].map(({ label, start, end, rate }) => (
@@ -595,7 +608,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
         style={{ background: 'rgba(200,137,58,0.1)', border: '1px solid var(--accent-gold)' }}>
         <p className="text-base font-semibold leading-7">
           Over {horizonLabel}, {ticker} delivers{' '}
-          <span style={{ color: 'var(--accent-gold)' }}>{fmt(assetFinal - treasuryFinal)} more</span> than US Treasuries and{' '}
+          <span style={{ color: 'var(--accent-gold)' }}>{fmt(assetFinal - treasuryFinal)} more</span> than {govt} and{' '}
           <span style={{ color: 'var(--accent-gold)' }}>{fmt(assetFinal - bankFinal)} more</span> than a standard bank account — on the same{' '}
           <span style={{ color: 'var(--accent-gold)' }}>{fmt(startValue)}</span> investment.
         </p>
@@ -603,7 +616,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
           <p className="text-sm mt-2 leading-6" style={{ color: 'var(--text-muted)' }}>
             {reinvesting ? `By end of ${horizonLabel}, monthly income grows to ` : 'That is '}
             <span style={{ color: 'var(--accent-gold)' }}>{fmt(assetMonthlyEnd)}/month</span> with {ticker} — vs{' '}
-            <span style={{ color: 'var(--text-primary)' }}>{fmt(treasuryMonthlyEnd)}/month</span> from Treasuries and{' '}
+            <span style={{ color: 'var(--text-primary)' }}>{fmt(treasuryMonthlyEnd)}/month</span> from {ticker === 'MORE' ? 'Gilts' : 'Treasuries'} and{' '}
             <span style={{ color: 'var(--text-primary)' }}>{fmt(bankMonthlyEnd)}/month</span> from a bank account.
           </p>
         )}
@@ -614,7 +627,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
         {[
           { label: `${ticker} vs Bank`, diff: pct(assetFinal, bankFinal) },
           { label: `${ticker} vs High-Yield`, diff: pct(assetFinal, highYieldFinal) },
-          { label: `${ticker} vs Treasuries`, diff: pct(assetFinal, treasuryFinal) },
+          { label: `${ticker} vs ${ticker === 'MORE' ? 'Gilts' : 'Treasuries'}`, diff: pct(assetFinal, treasuryFinal) },
         ].map(({ label, diff }) => (
           <div key={label} className="card p-5 rounded-xl text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
             <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>{label}</p>

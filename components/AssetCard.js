@@ -2,14 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { PRE_LISTING_TICKERS, ASSET_RATES, PAR_VALUE } from '@/lib/constants';
+import { PRE_LISTING_TICKERS, PRE_LISTING_NOTE, ASSET_RATES, PAR_VALUE } from '@/lib/constants';
 import { COMPANY } from '@/lib/tickerDisplay';
+import { formatMoney } from '@/lib/currency';
 
 const INCOME_BADGE = {
   STRC: 'Semi-Monthly Income',
   SATA: 'Daily Income',
   BMNP: 'Weekly Income',
   CHAD: 'Daily Income',
+  MORE: 'Weekly Income',
 };
 
 
@@ -51,7 +53,7 @@ export default function AssetCard({ ticker, mock, company, incomeBadge, rate, pa
 
       {error ? (
         isPreListing
-          ? <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>Just listed — live price data will appear here shortly.</p>
+          ? <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>{PRE_LISTING_NOTE[ticker] ?? 'Just listed — live price data will appear here shortly.'}</p>
           : <p className="text-sm" style={{ color: 'var(--accent-red)' }}>Price data temporarily unavailable — please refresh</p>
       ) : !data ? (
         <div className="animate-pulse space-y-2 w-full">
@@ -68,7 +70,7 @@ export default function AssetCard({ ticker, mock, company, incomeBadge, rate, pa
           {/* Latest price */}
           <div>
             <div className="font-mono-data text-3xl font-bold" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
-              {data.price?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+              {formatMoney(ticker, data.price)}
             </div>
             <div className="text-sm font-mono-data mt-1 whitespace-nowrap" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: data.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
               <span style={{marginRight:'2px'}}>{data.change >= 0 ? '+' : '-'}</span>{Math.abs(data.change)?.toFixed(2)} (<span style={{marginRight:'2px'}}>{data.changePercent >= 0 ? '+' : '-'}</span>{Math.abs(data.changePercent)?.toFixed(2)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>%</span>)

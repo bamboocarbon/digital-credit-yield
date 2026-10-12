@@ -44,6 +44,7 @@ const tickerColour = {
   SATA: '#3b82f6',
   BMNP: '#fde047',
   CHAD: '#7f1d1d',
+  MORE: '#a855f7',
   SOL: '#a78bfa',
   Metaplanet: '#7dd3fc',
 };
