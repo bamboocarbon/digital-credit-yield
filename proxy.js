@@ -80,7 +80,13 @@ const NS = 'dcy:pv';
 //   reports old Chrome majors on current phones; one such UA was in this
 //   same sample, so this is a confirmed false-positive risk, not a
 //   hypothetical one.
-const BOT_UA = /bot|spider|crawl|slurp|facebookexternalhit|meta-externalagent|headless|lighthouse|pingdom|uptimerobot|monitor|preview|whatsapp|telegrambot|discordbot|google-inspectiontool|googleother|barkrowler|curl\/|wget\/|python-requests|python-urllib|go-http-client|okhttp|axios\/|node-fetch|postmanruntime|libwww-perl|apache-httpclient|guzzlehttp|insomnia|http\.rb|get_titles|forestengine|networkingextension|crusader-worker|appengine-google|chrome\/[\d.]+ safari\/604\.1|iphone os 13_2_3.*version\/13\.0\.3|panscient|wp-safe-scanner|censysinspect|domain-harvester|nomorevibe|^user-agent:|windows nt 10\.0\) applewebkit|^(?!.*(?:micromessenger|weixin|xweb)).*chrome\/(?:[0-9]|[1-8][0-9])\./i;
+// - Macintosh Chrome/142.0.0.0 exactly: one automated client found 2026-10-08
+//   (127 of 222 views on 7 Oct, 24 hours a day, ~7 min apart, cycling the
+//   same ~18 dividend/blog pages, some pairs recorded in the same second).
+//   Matches that exact version string on Mac only, so Chrome 142 on
+//   Windows/Linux is unaffected; a real Mac user still on 142 would be
+//   missed, which is an accepted cost given current Chrome is ~153.
+const BOT_UA = /bot|spider|crawl|slurp|facebookexternalhit|meta-externalagent|headless|lighthouse|pingdom|uptimerobot|monitor|preview|whatsapp|telegrambot|discordbot|google-inspectiontool|googleother|barkrowler|curl\/|wget\/|python-requests|python-urllib|go-http-client|okhttp|axios\/|node-fetch|postmanruntime|libwww-perl|apache-httpclient|guzzlehttp|insomnia|http\.rb|get_titles|forestengine|networkingextension|crusader-worker|appengine-google|chrome\/[\d.]+ safari\/604\.1|iphone os 13_2_3.*version\/13\.0\.3|panscient|wp-safe-scanner|censysinspect|domain-harvester|nomorevibe|macintosh.*chrome\/142\.0\.0\.0|^user-agent:|windows nt 10\.0\) applewebkit|^(?!.*(?:micromessenger|weixin|xweb)).*chrome\/(?:[0-9]|[1-8][0-9])\./i;
 
 // A different bot class UA filtering can never catch: these self-identify
 // by hitting a PATH that isn't a real route on this site at all, often with
@@ -158,6 +164,16 @@ function clientIp(request) {
   return request.headers.get('x-real-ip') || 'unknown';
 }
 
+// 2026-09-30 — Robin's own visits (home router, from phone/iPad/computer)
+// shouldn't count. Comma-separated client IPs in the PV_EXCLUDE_IPS Vercel
+// env var — an env var and not a constant because this repo is public.
+// Matches the same client IP the burst check above uses. Only works while
+// Robin is on that network; mobile data / other wifi still counts. If the
+// home ISP rotates the address, update the env var and redeploy.
+const EXCLUDED_IPS = new Set(
+  (process.env.PV_EXCLUDE_IPS || '').split(',').map((s) => s.trim()).filter(Boolean),
+);
+
 async function recordPageview(encoded, ip, ua) {
   const burstKey = `${NS}:burst:${ip}`;
   const hitsInWindow = await redis.incr(burstKey);
@@ -233,9 +249,10 @@ export function proxy(request, event) {
   const ua = request.headers.get('user-agent') || '';
   // A real browser always sends a User-Agent — a blank one is itself a
   // reliable bot signal, not just "unknown".
-  if (ua && !BOT_UA.test(ua) && !SCAN_PATH.test(request.nextUrl.pathname)) {
+  const ip = clientIp(request);
+  if (ua && !EXCLUDED_IPS.has(ip) && !BOT_UA.test(ua) && !SCAN_PATH.test(request.nextUrl.pathname)) {
     const encoded = encodePath(request.nextUrl.pathname);
-    event.waitUntil(recordPageview(encoded, clientIp(request), ua).catch(() => {}));
+    event.waitUntil(recordPageview(encoded, ip, ua).catch(() => {}));
   }
   return response;
 }

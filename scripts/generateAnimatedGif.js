@@ -212,7 +212,7 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
     ctx.font = 'bold 15px Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.letterSpacing = '0.04em';
-    ctx.fillText('Tracking STRC, SATA & BMNP for Growth', W / 2, (TL_Y0 + TL_Y1) / 2 + 5);
+    ctx.fillText('Tracking STRC, SATA, BMNP & CHAD for Growth', W / 2, (TL_Y0 + TL_Y1) / 2 + 5);
     ctx.letterSpacing = '0';
   }
 

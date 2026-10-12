@@ -15,7 +15,7 @@ const tiers = [
   },
   {
     label: 'SATA',
-    sub: '13% variable rate · Monthly payments · Only preferred series · Most senior security outstanding',
+    sub: '13% variable rate · Daily payments · Only preferred series · Most senior security outstanding',
     tag: 'PREFERRED',
     tagColor: '#2563eb',
     bg: 'rgba(37,99,235,0.08)',
@@ -41,7 +41,7 @@ const tiers = [
 
 export default function StriveCapitalStack() {
   return (
-    <div style={{ margin: '2rem 0', fontFamily: 'inherit' }}>
+    <div style={{ margin: '2rem auto', maxWidth: '640px', fontFamily: 'inherit' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
         <span style={{ fontSize: '0.75em', fontWeight: 600, letterSpacing: '0.08em', color: '#6b7280', textTransform: 'uppercase' }}>Most Senior</span>
         <div style={{ flex: 1, height: '1px', background: '#374151' }} />
