@@ -4,10 +4,10 @@ import { BMNP_ENABLED } from '@/lib/constants';
 export const metadata = {
   alternates: { canonical: '/risks' },
   title: 'Understanding the Risks',
-  description: 'A clear guide to the risks of STRC, SATA, BMNP and CHAD: board discretion over dividends, rate changes, crypto-collateral volatility, liquidity, and perpetual structure.',
+  description: 'A clear guide to the risks of STRC, SATA, BMNP, CHAD and MORE: board discretion over dividends, rate changes, crypto-collateral volatility, liquidity, and perpetual structure.',
   openGraph: {
     title: 'Understanding the Risks',
-    description: 'A clear guide to the risks of preferred stocks like STRC, SATA, BMNP and CHAD.',
+    description: 'A clear guide to the risks of preferred stocks like STRC, SATA, BMNP, CHAD and MORE.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/risks',
     images: [{ url: '/og?v=3&title=Understanding+the+Risks&sub=Read+before+you+invest' }],
@@ -15,7 +15,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Understanding the Risks',
-    description: 'A clear guide to the risks of preferred stocks like STRC, SATA, BMNP and CHAD.',
+    description: 'A clear guide to the risks of preferred stocks like STRC, SATA, BMNP, CHAD and MORE.',
   },
 };
 

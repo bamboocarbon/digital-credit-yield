@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ASSET_RATES, PAYMENT_FREQUENCY, PRE_LISTING_TICKERS, DIVIDEND_RESERVE, PAR_VALUE } from '@/lib/constants';
+import { formatMoney, currencySymbol } from '@/lib/currency';
+import { PRE_LISTING_NOTE, ASSET_RATES, PAYMENT_FREQUENCY, PRE_LISTING_TICKERS, DIVIDEND_RESERVE, PAR_VALUE } from '@/lib/constants';
 
 export default function AssetHubLive({ ticker }) {
   const [data, setData]   = useState(null);
@@ -24,6 +25,7 @@ export default function AssetHubLive({ ticker }) {
   const freq = PAYMENT_FREQUENCY[ticker] ?? { label: 'Monthly', perYear: 12, perPeriod: 'month' };
   const isPreListing = PRE_LISTING_TICKERS.includes(ticker);
   const reserve = DIVIDEND_RESERVE[ticker];
+  const cur = currencySymbol(ticker);
 
   return (
     <>
@@ -31,7 +33,7 @@ export default function AssetHubLive({ ticker }) {
       <div className="mb-8">
         {error ? (
           isPreListing
-            ? <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>Just listed — live price data will appear here shortly.</p>
+            ? <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>{PRE_LISTING_NOTE[ticker] ?? 'Just listed — live price data will appear here shortly.'}</p>
             : <p className="text-sm" style={{ color: 'var(--accent-red)' }}>Price data temporarily unavailable — please refresh</p>
         ) : !data ? (
           <div className="animate-pulse space-y-2 mt-4">
@@ -41,7 +43,7 @@ export default function AssetHubLive({ ticker }) {
         ) : (
           <div className="flex flex-wrap items-baseline gap-3 mt-2">
             <span className="font-mono-data text-4xl font-bold" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
-              {data.price?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+              {formatMoney(ticker, data.price)}
             </span>
             <span className="font-mono-data text-lg"
               style={{ fontFamily: "Arial, Helvetica, sans-serif", color: data.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
@@ -75,9 +77,9 @@ export default function AssetHubLive({ ticker }) {
           <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
             {data?.price != null
               ? data.price < par
-                ? `Buying at $${data.price.toFixed(2)} earns you more than the ${ASSET_RATES[ticker]}% par rate`
-                : `Based on current price of $${data.price.toFixed(2)} vs $${annualDividendDollars.toFixed(2)} annual dividend`
-              : `Based on $${annualDividendDollars.toFixed(2)} annual dividend at $${par} par`}
+                ? `Buying at ${cur}${data.price.toFixed(2)} earns you more than the ${ASSET_RATES[ticker]}% par rate`
+                : `Based on current price of ${cur}${data.price.toFixed(2)} vs ${cur}${annualDividendDollars.toFixed(2)} annual dividend`
+              : `Based on ${cur}${annualDividendDollars.toFixed(2)} annual dividend at ${cur}${par} ${ticker === 'MORE' ? 'reference value' : 'par'}`}
           </p>
         </div>
 
@@ -85,7 +87,7 @@ export default function AssetHubLive({ ticker }) {
           <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>Distribution Frequency</p>
           <p className="text-2xl font-bold">{freq.label}</p>
           <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
-            ~{(annualDividendDollars / freq.perYear).toLocaleString('en-US', { style: 'currency', currency: 'USD' })} per share/{freq.perPeriod}
+            ~{formatMoney(ticker, annualDividendDollars / freq.perYear)} per share/{freq.perPeriod}
           </p>
         </div>
 

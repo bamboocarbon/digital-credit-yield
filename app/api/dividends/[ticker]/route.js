@@ -23,7 +23,7 @@ export async function GET(request, { params }) {
   // against its own 8-K filings). Serve the manually-verified stored record directly rather than
   // merging in bad data on every request. CHAD gets the same treatment pre-emptively — it's an
   // even newer, non-standard-cadence security with no established Yahoo dividend history yet.
-  if (upper === 'BMNP' || upper === 'CHAD') {
+  if (upper === 'BMNP' || upper === 'CHAD' || upper === 'MORE') {
     return NextResponse.json({ history: stored, nextPaymentDate: null }, {
       headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=300' },
     });

@@ -4,9 +4,9 @@ import { resolveStock } from '@/lib/constants';
 export const metadata = {
   alternates: { canonical: '/chart' },
   title: 'Live Price & Yield Charts',
-  description: 'Live price charts for STRC, SATA, BMNP and CHAD preferred stock. Track each price against its par value and see how the effective yield changes with the market.',
+  description: 'Live price charts for STRC, SATA, BMNP, CHAD and MORE preferred stock. Track each price against its par value and see how the effective yield changes with the market.',
   openGraph: {
-    title: 'Live Price & Yield Charts — STRC, SATA, BMNP & CHAD',
+    title: 'Live Price & Yield Charts — STRC, SATA, BMNP, CHAD & MORE',
     description: 'Live price charts for Strategy, Strive, Bitmine and DeFi Development Corp. preferred stock. Track price vs par and effective yield.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/chart',
@@ -14,7 +14,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Live Price & Yield Charts — STRC, SATA, BMNP & CHAD',
+    title: 'Live Price & Yield Charts — STRC, SATA, BMNP, CHAD & MORE',
     description: 'Live price charts for Strategy, Strive, Bitmine and DeFi Development Corp. preferred stock.',
   },
 };

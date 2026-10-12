@@ -111,6 +111,7 @@ export default function CumulativeFlowChart() {
             { color: '#2563eb', label: 'SATA', sub: 'Strive · IPO Nov 2025' },
             ...(BMNP_ENABLED ? [{ color: '#fde047', label: 'BMNP', sub: 'Bitmine · IPO Jun 2026' }] : []),
             { color: '#7f1d1d', label: 'CHAD', sub: 'DeFi Development Corp. · IPO Sep 2026' },
+            { color: '#a855f7', label: 'MORE', sub: 'Smarter Web Company · IPO Oct 2026 (£ converted)' },
           ].map(i => (
             <div key={i.label} className="flex items-center gap-2">
               <div style={{ width: 24, height: 2, background: i.color, borderRadius: 2 }} />
@@ -156,7 +157,7 @@ export default function CumulativeFlowChart() {
           <p style={{ margin: '0 0 16px 44px', fontSize: 11, color: '#4b5563', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
             Linear Scale · Absolute Size
           </p>
-          <div role="img" aria-label={`STRC, SATA${BMNP_ENABLED ? ', BMNP' : ''} and CHAD cumulative capital raised — linear scale line chart`}>
+          <div role="img" aria-label={`STRC, SATA${BMNP_ENABLED ? ', BMNP' : ''} CHAD and MORE cumulative capital raised — linear scale line chart`}>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={displayData} margin={{ top: 4, right: 20, left: 8, bottom: 55 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
@@ -167,6 +168,7 @@ export default function CumulativeFlowChart() {
               <Line type="monotone" dataKey="sata" name="SATA" stroke="#2563eb" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
               {BMNP_ENABLED && <Line type="monotone" dataKey="bmnp" name="BMNP" stroke="#fde047" strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />}
               <Line type="monotone" dataKey="chad" name="CHAD" stroke="#7f1d1d" strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />
+              <Line type="monotone" dataKey="more" name="MORE" stroke="#a855f7" strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />
             </LineChart>
           </ResponsiveContainer>
           </div>
@@ -179,10 +181,10 @@ export default function CumulativeFlowChart() {
           <p style={{ margin: '0 0 16px 44px', fontSize: 11, color: '#4b5563', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
             Log Scale · Growth Trajectory
           </p>
-          <div role="img" aria-label={`STRC, SATA${BMNP_ENABLED ? ', BMNP' : ''} and CHAD cumulative capital raised — log scale line chart`}>
+          <div role="img" aria-label={`STRC, SATA${BMNP_ENABLED ? ', BMNP' : ''} CHAD and MORE cumulative capital raised — log scale line chart`}>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart
-              data={displayData.map(d => ({ ...d, strc: d.strc ? Math.log10(d.strc) : null, sata: d.sata ? Math.log10(d.sata) : null, bmnp: d.bmnp ? Math.log10(d.bmnp) : null, chad: d.chad ? Math.log10(d.chad) : null }))}
+              data={displayData.map(d => ({ ...d, strc: d.strc ? Math.log10(d.strc) : null, sata: d.sata ? Math.log10(d.sata) : null, bmnp: d.bmnp ? Math.log10(d.bmnp) : null, chad: d.chad ? Math.log10(d.chad) : null, more: d.more ? Math.log10(d.more) : null }))}
               margin={{ top: 4, right: 20, left: 8, bottom: 55 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
@@ -193,6 +195,7 @@ export default function CumulativeFlowChart() {
               <Line type="monotone" dataKey="sata" name="SATA" stroke="#2563eb" strokeWidth={2} dot={false} activeDot={{ r: 3 }} connectNulls={false} />
               {BMNP_ENABLED && <Line type="monotone" dataKey="bmnp" name="BMNP" stroke="#fde047" strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />}
               <Line type="monotone" dataKey="chad" name="CHAD" stroke="#7f1d1d" strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />
+              <Line type="monotone" dataKey="more" name="MORE" stroke="#a855f7" strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />
             </LineChart>
           </ResponsiveContainer>
           </div>
@@ -200,7 +203,7 @@ export default function CumulativeFlowChart() {
       )}
 
       <p style={{ fontSize: 10, color: '#374151', textAlign: 'center' }}>
-        Source: SEC 8-K filings · auto-updated weekly
+        Source: SEC 8-K filings (MORE: London Stock Exchange RNS, converted from £ at ~1.32) · auto-updated weekly
         {lastUpdated && ` · Last updated ${new Date(lastUpdated).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`}
       </p>
     </div>

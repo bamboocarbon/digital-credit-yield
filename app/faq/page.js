@@ -4,10 +4,10 @@ import { BMNP_ENABLED } from '@/lib/constants';
 export const metadata = {
   alternates: { canonical: '/faq' },
   title: 'FAQ — Frequently Asked Questions',
-  description: 'Answers to common questions about STRC, SATA, BMNP and CHAD: how to buy, whether dividends are guaranteed, why the price stays near par, tax basics, and more.',
+  description: 'Answers to common questions about STRC, SATA, BMNP, CHAD and MORE: how to buy, whether dividends are guaranteed, why the price stays near par, tax basics, and more.',
   openGraph: {
     title: 'FAQ — Frequently Asked Questions',
-    description: 'Answers to common questions about STRC, SATA, BMNP and CHAD preferred stocks.',
+    description: 'Answers to common questions about STRC, SATA, BMNP, CHAD and MORE preferred stocks.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/faq',
     images: [{ url: '/og?v=3&title=FAQ&sub=Frequently+Asked+Questions' }],
@@ -15,19 +15,19 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'FAQ — Frequently Asked Questions',
-    description: 'Answers to common questions about STRC, SATA, BMNP and CHAD preferred stocks.',
+    description: 'Answers to common questions about STRC, SATA, BMNP, CHAD and MORE preferred stocks.',
   },
 };
 
 const faqs = [
   {
-    q: 'How do I buy STRC, SATA, BMNP or CHAD?',
-    a: 'STRC, SATA and CHAD trade on the Nasdaq and BMNP on the NYSE, all like ordinary shares — under their own tickers "STRC", "SATA", "BMNP" and "CHAD". Search the ticker in any major brokerage account (Fidelity, Schwab, Interactive Brokers, eToro and most others carry them), choose the number of shares, and place the order during US market hours. There is no minimum investment beyond the price of one share, and no special account type is needed.',
+    q: 'How do I buy STRC, SATA, BMNP, CHAD or MORE?',
+    a: 'STRC, SATA and CHAD trade on the Nasdaq, BMNP on the NYSE and MORE on the London Stock Exchange Main Market, all like ordinary shares — under their own tickers "STRC", "SATA", "BMNP", "CHAD" and "MORE". Search the ticker in any major brokerage account (Fidelity, Schwab, Interactive Brokers, eToro and most others carry the US ones; MORE needs a platform that offers London-listed shares), choose the number of shares, and place the order during that exchange\'s market hours. MORE is priced in pounds sterling, the others in US dollars, so a UK investor buying the US four will normally pay a currency conversion on the way in and out. There is no minimum investment beyond the price of one share, and no special account type is needed.',
     link: { href: '/blog/what-is-preferred-stock', label: 'New to preferred stock? Start with the basics' },
   },
   {
     q: 'Are the dividends guaranteed?',
-    a: 'No. Like all preferred stock dividends, each payment must be declared by the issuer’s board of directors before it is paid. Strategy, Strive, Bitmine and DeFi Development Corp. all have strong incentives to maintain payments — a missed dividend would severely damage their ability to raise capital — but a dividend is a corporate decision, not a contractual debt obligation like a bond coupon. Always read the issuer’s prospectus for the exact terms.',
+    a: 'No. Like all preferred stock dividends, each payment must be declared by the issuer’s board of directors before it is paid. Strategy, Strive, Bitmine, DeFi Development Corp. and The Smarter Web Company all have strong incentives to maintain payments — a missed dividend would severely damage their ability to raise capital — but a dividend is a corporate decision, not a contractual debt obligation like a bond coupon. Always read the issuer’s prospectus for the exact terms.',
     link: { href: '/risks', label: 'Read more on the risks page' },
   },
   {

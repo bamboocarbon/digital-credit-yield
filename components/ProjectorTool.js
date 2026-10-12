@@ -24,7 +24,7 @@ export default function ProjectorTool({ initialStock, liveYields, livePrices }) 
         Model your future income and portfolio growth from holding {stock}. The yield is pre-filled from
         live market data, so just set an investment amount and a time horizon — every input recalculates
         instantly. Switch reinvestment on to see how compounding the dividends changes the outcome over
-        longer periods, and compare the result against US Treasuries and a savings account side by side.
+        longer periods, and compare the result against {stock === 'MORE' ? 'UK gilts' : 'US Treasuries'} and a savings account side by side.
       </p>
       <p className="mb-3 text-sm leading-6 max-w-3xl" style={{ color: 'var(--text-muted)' }}>
         In my experience the single biggest driver of the long-run figure isn&apos;t the headline rate at

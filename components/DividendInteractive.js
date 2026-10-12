@@ -4,10 +4,11 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { loadProjectorState } from '@/lib/projectorState';
 import { ASSET_RATES, PAYMENT_FREQUENCY, STRC_SEMI_MONTHLY_START, PAR_VALUE } from '@/lib/constants';
 import { SATA_DAILY_START, getBusinessDaysInMonth, getSataDailyDividend, getSataExpectedPeriodAmount, getSataMonthProgress, getSataDailyPaymentsToDate, isSataDailyDividend } from '@/lib/sataBusinessDays';
+import { currencySymbol, currencyCode, localeFor } from '@/lib/currency';
 import { getBmnpExpectedMonthlyTotal } from '@/lib/bmnpSchedule';
 
 const MONO = { fontFamily: "Arial, Helvetica, sans-serif" };
-const fmtMoney = v => v.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
+const makeFmtMoney = ticker => v => v.toLocaleString(localeFor(ticker), { style: 'currency', currency: currencyCode(ticker), maximumFractionDigits: 2 });
 
 function formatDate(dateStr) {
   const [y, m, d] = dateStr.split('-');
@@ -128,6 +129,7 @@ function predictNextDividend(dividends, confirmedDate = null, confirmedSource = 
 }
 
 function SataMonthlyProgress({ monthlyByMonth, todayYM, today, annualRate }) {
+  const cur = '$'; // SATA is always dollar-denominated
   // Just the current month — the chart below already shows the history.
   // Robin, 2026-09-16: "can we just have the current month box as monthly
   // progress." (Same change applied to MonthlyPaymentProgress below.)
@@ -150,7 +152,7 @@ function SataMonthlyProgress({ monthlyByMonth, todayYM, today, annualRate }) {
           const isComplete = fillPct >= 1;
           return (
             <div key={ym} className="flex flex-col items-center gap-1">
-              <div title={`$${paid.toFixed(4)} of $${expected.toFixed(4)} expected`}
+              <div title={`${cur}${paid.toFixed(4)} of ${cur}${expected.toFixed(4)} expected`}
                 style={{ position: 'relative', width: '100%', height: 52,
                   border: `2px solid ${isCurrentMonth ? '#f5a623' : 'rgba(200,137,58,0.5)'}`,
                   borderRadius: 6, overflow: 'hidden', background: '#111827' }}>
@@ -181,7 +183,7 @@ function SataMonthlyProgress({ monthlyByMonth, todayYM, today, annualRate }) {
 // announced-but-unpaid ones dated within that month (the same
 // paidDividends/announcedDividends split the chart above uses) — accurate
 // for both cadences without needing a separate schedule model per ticker.
-function MonthlyPaymentProgress({ paidDividends, announcedDividends, todayYM }) {
+function MonthlyPaymentProgress({ paidDividends, announcedDividends, todayYM, cur }) {
   // Just the current month — the chart below already shows the history.
   const displayMonths = [todayYM];
   return (
@@ -203,7 +205,7 @@ function MonthlyPaymentProgress({ paidDividends, announcedDividends, todayYM }) 
           const isComplete = fillPct >= 1;
           return (
             <div key={ym} className="flex flex-col items-center gap-1">
-              <div title={`$${paid.toFixed(4)} of $${expected.toFixed(4)} expected`}
+              <div title={`${cur}${paid.toFixed(4)} of ${cur}${expected.toFixed(4)} expected`}
                 style={{ position: 'relative', width: '100%', height: 52,
                   border: `2px solid ${isCurrentMonth ? '#f5a623' : 'rgba(200,137,58,0.5)'}`,
                   borderRadius: 6, overflow: 'hidden', background: '#111827' }}>
@@ -227,6 +229,8 @@ function MonthlyPaymentProgress({ paidDividends, announcedDividends, todayYM }) 
 }
 
 export default function DividendInteractive({ ticker }) {
+  const cur = currencySymbol(ticker);
+  const fmtMoney = makeFmtMoney(ticker);
   const chartRef      = useRef(null);
   const chartInstance = useRef(null);
   const [dividends, setDividends]             = useState(null);
@@ -425,18 +429,18 @@ export default function DividendInteractive({ ticker }) {
               legend: { display: false },
               tooltip: { filter: c => c.datasetIndex === 0, callbacks: { label: c => {
                 const ym = months[c.dataIndex];
-                const amount = `$${Number(c.raw).toFixed(4)}/share`;
+                const amount = `${cur}${Number(c.raw).toFixed(4)}/share`;
                 if (ym < '2026-06') return amount;
                 const paid = getSataDailyPaymentsToDate(ym, today);
                 const total = getBusinessDaysInMonth(ym) ?? '?';
                 const exp = expected[c.dataIndex];
                 const suffix = `(${paid}/${total} days)`;
-                return remaining[c.dataIndex] > 0 ? `${amount} of ~$${exp.toFixed(4)} expected ${suffix}` : `${amount} ${suffix}`;
+                return remaining[c.dataIndex] > 0 ? `${amount} of ~${cur}${exp.toFixed(4)} expected ${suffix}` : `${amount} ${suffix}`;
               }}},
             },
             scales: {
               x: { stacked: true, ticks: { color: '#6b7280', autoSkip: false, font: { size: 10 } }, grid: { color: '#1f2937' } },
-              y: { stacked: true, ticks: { color: '#6b7280', callback: v => `$${Number(v).toFixed(2)}` }, grid: { color: '#1f2937' } },
+              y: { stacked: true, ticks: { color: '#6b7280', callback: v => `${cur}${Number(v).toFixed(2)}` }, grid: { color: '#1f2937' } },
             },
           },
         });
@@ -496,14 +500,14 @@ export default function DividendInteractive({ ticker }) {
             plugins: {
               legend: { display: false },
               tooltip: { filter: c => c.datasetIndex === 0, callbacks: { label: c => {
-                const amount = `$${Number(c.raw).toFixed(4)}/share`;
+                const amount = `${cur}${Number(c.raw).toFixed(4)}/share`;
                 const exp = expected[c.dataIndex];
-                return remaining[c.dataIndex] > 0 ? `${amount} of ~$${exp.toFixed(4)} expected` : amount;
+                return remaining[c.dataIndex] > 0 ? `${amount} of ~${cur}${exp.toFixed(4)} expected` : amount;
               }}},
             },
             scales: {
               x: { stacked: true, ticks: { color: '#6b7280', autoSkip: false, font: { size: 10 } }, grid: { color: '#1f2937' } },
-              y: { stacked: true, ticks: { color: '#6b7280', callback: v => `$${Number(v).toFixed(2)}` }, grid: { color: '#1f2937' } },
+              y: { stacked: true, ticks: { color: '#6b7280', callback: v => `${cur}${Number(v).toFixed(2)}` }, grid: { color: '#1f2937' } },
             },
           },
         });
@@ -558,14 +562,14 @@ export default function DividendInteractive({ ticker }) {
             plugins: {
               legend: { display: false },
               tooltip: { filter: c => c.datasetIndex === 0, callbacks: { label: c => {
-                const amount = `$${Number(c.raw).toFixed(4)}/share`;
+                const amount = `${cur}${Number(c.raw).toFixed(4)}/share`;
                 const exp = expected[c.dataIndex];
-                return remaining[c.dataIndex] > 0 ? `${amount} of ~$${exp.toFixed(4)} expected` : amount;
+                return remaining[c.dataIndex] > 0 ? `${amount} of ~${cur}${exp.toFixed(4)} expected` : amount;
               }}},
             },
             scales: {
               x: { stacked: true, ticks: { color: '#6b7280', autoSkip: false, font: { size: 10 } }, grid: { color: '#1f2937' } },
-              y: { stacked: true, ticks: { color: '#6b7280', callback: v => `$${Number(v).toFixed(2)}` }, grid: { color: '#1f2937' } },
+              y: { stacked: true, ticks: { color: '#6b7280', callback: v => `${cur}${Number(v).toFixed(2)}` }, grid: { color: '#1f2937' } },
             },
           },
         });
@@ -595,15 +599,15 @@ export default function DividendInteractive({ ticker }) {
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4 mb-6">
           {(inDailyEra ? [
             { label: 'Daily Payments Made',    value: String(sataDailyStats.paymentsMade) },
-            { label: 'Daily Amount',           value: `$${sataDailyStats.dailyAmt.toFixed(6)}`, gold: true },
-            { label: 'This Month So Far',      value: `$${sataDailyStats.currentMonthPaid.toFixed(4)}`,  gold: true },
-            { label: 'Expected Monthly Total', value: `$${sataDailyStats.expectedMonthlyTotal.toFixed(4)}`, gold: true },
+            { label: 'Daily Amount',           value: `${cur}${sataDailyStats.dailyAmt.toFixed(6)}`, gold: true },
+            { label: 'This Month So Far',      value: `${cur}${sataDailyStats.currentMonthPaid.toFixed(4)}`,  gold: true },
+            { label: 'Expected Monthly Total', value: `${cur}${sataDailyStats.expectedMonthlyTotal.toFixed(4)}`, gold: true },
             { label: 'Current Annual Rate',    value: `${ASSET_RATES.SATA.toFixed(2)}%`,        gold: true },
           ] : [
             { label: 'Payments on Record',     value: String(monthlyDivs.length) },
-            { label: 'Latest Per Share',       value: `$${latestMonthly.amount.toFixed(4)}`,    gold: true },
-            { label: 'This Month So Far',      value: `$${monthToDateTotal.toFixed(4)}`,        gold: true },
-            { label: 'Expected Monthly Total', value: `$${expectedMonthlyTotal.toFixed(4)}`,    gold: true },
+            { label: 'Latest Per Share',       value: `${cur}${latestMonthly.amount.toFixed(4)}`,    gold: true },
+            { label: 'This Month So Far',      value: `${cur}${monthToDateTotal.toFixed(4)}`,        gold: true },
+            { label: 'Expected Monthly Total', value: `${cur}${expectedMonthlyTotal.toFixed(4)}`,    gold: true },
             { label: 'Current Annual Rate',    value: `${impliedAnnual.toFixed(2)}%`,           gold: true },
           ]).map(stat => (
             <div key={stat.label} className="p-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
@@ -650,7 +654,7 @@ export default function DividendInteractive({ ticker }) {
           </div>
           <div>
             <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>Predicted per share</p>
-            <p className="text-lg font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>${prediction.amount.toFixed(4)}</p>
+            <p className="text-lg font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>{cur}{prediction.amount.toFixed(4)}</p>
           </div>
           {sharesNum > 0 && (
             <div>
@@ -736,6 +740,7 @@ export default function DividendInteractive({ ticker }) {
           paidDividends={paidDividends}
           announcedDividends={announcedDividends}
           todayYM={todayYM}
+          cur={cur}
         />
       )}
 
@@ -782,7 +787,7 @@ export default function DividendInteractive({ ticker }) {
                   {g.dates.length === 1 ? formatDate(g.dates[0]) : `${formatDate(g.dates[0])} – ${formatDate(g.dates[g.dates.length - 1])} (${g.dates.length} payments)`}
                 </p>
                 <p className="text-sm font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>
-                  ${g.amount.toFixed(4)}/share{g.dates.length > 1 ? ' each' : ''}
+                  {cur}{g.amount.toFixed(4)}/share{g.dates.length > 1 ? ' each' : ''}
                 </p>
               </div>
             ))}
@@ -811,7 +816,7 @@ export default function DividendInteractive({ ticker }) {
                 <div key={ym} className="p-3 rounded-lg" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
                   <div className="flex justify-between items-center">
                     <p className="text-sm font-medium">{ymToLabel(ym)}</p>
-                    <p className="text-sm font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>${monthTotal.toFixed(4)}/share</p>
+                    <p className="text-sm font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>{cur}{monthTotal.toFixed(4)}/share</p>
                   </div>
                   <div className="flex gap-4 mt-1">
                     <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{paid} of {total} payments</p>
@@ -844,7 +849,7 @@ export default function DividendInteractive({ ticker }) {
                     <tr key={ym} style={{ borderBottom: '1px solid var(--border)' }}>
                       <td className="py-2 px-3">{ymToLabel(ym)}</td>
                       <td className="py-2 px-3" style={{ ...MONO, color: paid >= total ? 'var(--accent-green)' : 'var(--text-muted)' }}>{paid} / {total}</td>
-                      <td className="py-2 px-3" style={{ ...MONO, color: 'var(--accent-gold)' }}>${monthTotal.toFixed(4)}</td>
+                      <td className="py-2 px-3" style={{ ...MONO, color: 'var(--accent-gold)' }}>{cur}{monthTotal.toFixed(4)}</td>
                       {sharesNum > 0 && <td className="py-2 px-3" style={MONO}>{fmtMoney(sharesNum * monthTotal)}</td>}
                     </tr>
                   );
@@ -875,7 +880,7 @@ export default function DividendInteractive({ ticker }) {
                 <div key={ym} className="p-3 rounded-lg" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
                   <div className="flex justify-between items-center">
                     <p className="text-sm font-medium">{ymToLabel(ym)}</p>
-                    <p className="text-sm font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>${monthTotal.toFixed(4)}/share</p>
+                    <p className="text-sm font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>{cur}{monthTotal.toFixed(4)}/share</p>
                   </div>
                   <div className="flex gap-4 mt-1">
                     <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{entries.length} payment{entries.length !== 1 ? 's' : ''}</p>
@@ -907,7 +912,7 @@ export default function DividendInteractive({ ticker }) {
                     <tr key={ym} style={{ borderBottom: '1px solid var(--border)' }}>
                       <td className="py-2 px-3">{ymToLabel(ym)}</td>
                       <td className="py-2 px-3" style={MONO}>{entries.length}</td>
-                      <td className="py-2 px-3" style={{ ...MONO, color: 'var(--accent-gold)' }}>${monthTotal.toFixed(4)}</td>
+                      <td className="py-2 px-3" style={{ ...MONO, color: 'var(--accent-gold)' }}>{cur}{monthTotal.toFixed(4)}</td>
                       {sharesNum > 0 && <td className="py-2 px-3" style={MONO}>{fmtMoney(sharesNum * monthTotal)}</td>}
                     </tr>
                   );

@@ -109,6 +109,28 @@ const TOOLS = {
       description: 'A complete record of every CHAD dividend payment — per-share amount, payment date, and record date. Enter your holding size to calculate exactly how much you received or will receive from each daily distribution.',
     },
   ],
+  MORE: [
+    {
+      href: '/chart?stock=more',
+      label: 'Live Price Chart',
+      description: 'Track the MORE market price in pounds against its £100 reference value. As the price moves, the effective yield changes — use the chart to spot when MORE is trading at a premium or discount and understand what that means for your entry yield.',
+    },
+    {
+      href: '/projector?stock=more',
+      label: 'Growth Projector',
+      description: 'Enter an investment amount and time horizon to model your projected income and portfolio growth from holding MORE. Adjust the reinvestment rate to see the compounding effect of weekly dividends, and compare returns against UK gilts and bank savings.',
+    },
+    {
+      href: '/vs-treasuries?stock=more',
+      label: 'vs Gilts',
+      description: "Compare the income from MORE's dividend against UK gilts and bank savings over any time period. Enter your investment amount and the tool shows the difference in pound terms.",
+    },
+    {
+      href: '/dividends?stock=more',
+      label: 'Dividend History',
+      description: 'A complete record of every MORE dividend payment — per-share amount, payment date, and record date. Enter your holding size to calculate exactly how much you received or will receive from each weekly distribution.',
+    },
+  ],
 };
 
 const DESCRIPTIONS = {
@@ -157,6 +179,18 @@ const DESCRIPTIONS = {
       <a href="https://defidevcorp.com" target="_blank" rel="noopener noreferrer"
         className="inline-block text-sm underline mt-1" style={{ color: 'var(--accent-gold)' }}>
         Visit DefiDevCorp.com
+      </a>
+    </div>
+  ),
+  MORE: (
+    <div className="space-y-3">
+      <p>MORE is The Smarter Web Company&apos;s cumulative, variable-rate preferred share, admitted to the London Stock Exchange Main Market on <strong>14 October 2026</strong>. It pays an initial <strong>12% a year on a £100 reference value</strong> — £12 a share — distributed <strong>weekly</strong> in sterling. The retail offer priced the shares at <strong>£90</strong>, which is why the headline yield on the offer price works out nearer 13.3%. Dividends are cumulative, so anything unpaid is owed before the ordinary shareholders see a penny, but the board can vary the rate within the prospectus limits and can suspend payments. The company also has the right to redeem the shares, and holders have no vote at general meetings.</p>
+      <p>As preferred equity, MORE carries a liquidation preference ahead of the ordinary shares. The initial raise came in at about £10M gross (111,112 shares at £90), below the £15–25M the company first targeted, with a further 100,000 shares held back for sale into the market through Tennyson Capital Partners. Of the net proceeds, £4M is earmarked for additional bitcoin and about £3.85M for working capital and general corporate purposes, including dividend cash reserves. The first dividend is £0.2301 a share, with an ex-dividend date of 22 October and a record date of 23 October.</p>
+      <p>The Smarter Web Company is a UK bitcoin treasury company: bitcoin is its primary treasury reserve asset, with a stated aim of growing bitcoin per share over time. Its own documentation is blunt that an investment in the company is not an investment in bitcoin, directly or by proxy — and that is worth taking at face value for a preferred share, where the dividend is a corporate obligation rather than a bitcoin price bet.</p>
+      <p>What matters most to me about MORE is the currency, not the yield. Every other instrument on this site is priced in dollars, so a UK saver pays a foreign-exchange toll in and out before the dividend does any work. MORE is the first one I can buy in pounds, on a London screen, with no currency conversion at all. The trade-off is a brand-new issuer, a small raise and no track record — I&apos;d want to see the weekly dividend land on time before calling it proven.</p>
+      <a href="https://www.smarterwebcompany.co.uk" target="_blank" rel="noopener noreferrer"
+        className="inline-block text-sm underline mt-1" style={{ color: 'var(--accent-gold)' }}>
+        Visit SmarterWebCompany.co.uk
       </a>
     </div>
   ),

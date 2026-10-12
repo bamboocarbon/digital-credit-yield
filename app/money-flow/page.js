@@ -1,14 +1,13 @@
 import AadsAd from '@/components/AadsAd';
-import { STRCMoneyFlowChart, SATAMoneyFlowChart, BMNPMoneyFlowChart, CHADMoneyFlowChart } from '@/components/MoneyFlowChart';  // BMNPMoneyFlowChart only rendered when BMNP_ENABLED
 import CumulativeFlowChart from '@/components/CumulativeFlowChart';
-import MoneyFlowStats from '@/components/MoneyFlowStats';
+import MoneyFlowSelector from '@/components/MoneyFlowSelector';
 import { BMNP_ENABLED } from '@/lib/constants';
 
 // Date the narrative zones below were last revised — shown next to the story heading
 const STORY_UPDATED = '25 September 2026';
 
 export function generateMetadata() {
-  const instruments = BMNP_ENABLED ? 'STRC, SATA, BMNP & CHAD' : 'STRC, SATA & CHAD';
+  const instruments = BMNP_ENABLED ? 'STRC, SATA, BMNP, CHAD & MORE' : 'STRC, SATA, CHAD & MORE';
   const desc = `Weekly capital raised by ${instruments} tracked from SEC 8-K filings since each IPO. Bar charts and cumulative totals showing investor demand over time.`;
   return {
     alternates: { canonical: '/money-flow' },
@@ -36,67 +35,14 @@ export default function MoneyFlowPage() {
       <div className="text-center mb-10">
         <h1 className="text-4xl sm:text-5xl font-bold mb-3 tracking-tight">Money Flow</h1>
         <p className="text-lg max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
-          Weekly capital raised by {BMNP_ENABLED ? 'STRC, SATA, BMNP and CHAD' : 'STRC, SATA and CHAD'}, compiled
+          Weekly capital raised by {BMNP_ENABLED ? 'STRC, SATA, BMNP, CHAD and MORE' : 'STRC, SATA, CHAD and MORE'}, compiled
           from SEC 8-K filings since each IPO.
           {BMNP_ENABLED && ' BMNP listed on the NYSE in June 2026.'} CHAD listed on the Nasdaq in September 2026.
         </p>
       </div>
 
-      {/* Totals */}
-      <MoneyFlowStats />
-
-      {/* Side-by-side weekly bars */}
-      <div className={`grid grid-cols-1 gap-6 mb-6 ${BMNP_ENABLED ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-3'}`}>
-        <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-          <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-lg">STRC</span>
-              <span className="text-xs font-medium"
-                style={{ color: '#4ade80' }}>Strategy Preferred</span>
-            </div>
-          </div>
-          <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Jul 2025 · 12.00% · $4.2B ATM programme</p>
-          <STRCMoneyFlowChart />
-        </div>
-
-        <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-          <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-lg">SATA</span>
-              <span className="text-xs font-medium"
-                style={{ color: '#3b82f6' }}>Strive Preferred</span>
-            </div>
-          </div>
-          <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Nov 2025 · 13.00% · $500M ATM programme</p>
-          <SATAMoneyFlowChart />
-        </div>
-
-        {BMNP_ENABLED && (
-          <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-            <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-lg">BMNP</span>
-                <span className="text-xs font-medium"
-                  style={{ color: '#fde047' }}>Bitmine Preferred</span>
-              </div>
-            </div>
-            <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Jun 2026 · 9.50% · ATM programme TBC</p>
-            <BMNPMoneyFlowChart />
-          </div>
-        )}
-
-        <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-          <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-lg">CHAD</span>
-              <span className="text-xs font-medium"
-                style={{ color: '#7f1d1d' }}>DeFi Development Preferred</span>
-            </div>
-          </div>
-          <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>IPO Sep 2026 · 13.00% · $10 par</p>
-          <CHADMoneyFlowChart />
-        </div>
-      </div>
+      {/* Weekly capital raised — click a ticker (with its total raised) to load its chart below */}
+      <MoneyFlowSelector />
 
       {/* Cumulative line chart */}
       <div className="rounded-2xl p-6 mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>

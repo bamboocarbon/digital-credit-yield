@@ -2,6 +2,7 @@ import AadsAd from '@/components/AadsAd';
 import DividendInteractive from '@/components/DividendInteractive';
 import { SATA_DAILY_START, isSataDailyDividend } from '@/lib/sataBusinessDays';
 import { STRC_SEMI_MONTHLY_START, BMNP_DIVIDEND_SCHEDULE } from '@/lib/constants';
+import { currencySymbol } from '@/lib/currency';
 
 const MONO = { fontFamily: "Arial, Helvetica, sans-serif" };
 
@@ -25,6 +26,8 @@ export default function DividendHistoryPage({ ticker, dividends }) {
   // dates live in the dividends prop itself (data/dividends-CHAD.json), so this
   // checks the last entry there directly instead.
   const isChadComingSoon = ticker === 'CHAD' && dividends.length > 0 && today < dividends[dividends.length - 1].date;
+  const isMoreComingSoon = ticker === 'MORE' && dividends.length > 0 && today < dividends[dividends.length - 1].date;
+  const cur = currencySymbol(ticker);
   const isComingSoon = isSataComingSoon || isStrcComingSoon || isBmnpComingSoon || isChadComingSoon;
   const isBmnp = ticker === 'BMNP';
 
@@ -51,8 +54,8 @@ export default function DividendHistoryPage({ ticker, dividends }) {
       <p className="mb-6 text-sm" style={{ color: 'var(--text-muted)' }}>
         {ticker === 'SATA'
           ? 'All recorded dividend payments for SATA. Monthly payments through June 15, 2026; daily business-day payments from June 16, 2026 onward.'
-          : ticker === 'BMNP' || ticker === 'CHAD'
-          ? `All recorded dividend payments for ${ticker}. Verified against the issuer's own SEC filings and stored on this server — building a permanent record that grows over time.`
+          : ticker === 'BMNP' || ticker === 'CHAD' || ticker === 'MORE'
+          ? `All recorded dividend payments for ${ticker}. Verified against the issuer's own filings and stored on this server — building a permanent record that grows over time.`
           : `All recorded dividend payments for ${ticker}. Fetched from Yahoo Finance and stored on this server — building a permanent record that grows over time.`}
       </p>
 
@@ -100,6 +103,18 @@ export default function DividendHistoryPage({ ticker, dividends }) {
         </div>
       )}
 
+      {isMoreComingSoon && (
+        <div className="p-4 rounded-xl mb-6" style={{ background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.4)' }}>
+          <p className="text-xs font-semibold tracking-wide mb-1" style={{ color: 'var(--accent-gold)' }}>UPCOMING: FIRST DIVIDEND PAYMENT</p>
+          <p className="text-sm">
+            MORE is admitted to the London Stock Exchange Main Market on <strong>14 October 2026</strong>. The first weekly dividend,{' '}
+            <strong>£0.2301/share</strong>, has an ex-dividend date of <strong>22 October</strong> and a record date of <strong>23 October 2026</strong>,
+            and is payable no later than <strong>9 November 2026</strong>. After that, weekly payments of roughly <strong>£0.2308/share</strong> (12% of
+            the £100 reference value ÷ 52) follow while the rate is unchanged. Dividends are cumulative, but the board can vary the rate and may suspend payments.
+          </p>
+        </div>
+      )}
+
       {dividends.length === 0 && !isBmnp && (
         <div className="text-center py-16 text-sm" style={{ color: 'var(--text-muted)' }}>
           No dividend payments recorded yet for {ticker}. Data will appear after the first payment is made.
@@ -127,11 +142,11 @@ export default function DividendHistoryPage({ ticker, dividends }) {
                     <div key={d.date} className="p-3 rounded-lg" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
                       <div className="flex justify-between items-center">
                         <p className="text-sm font-medium">{formatDate(d.date)}</p>
-                        <p className="text-sm font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>${d.amount.toFixed(4)}/share</p>
+                        <p className="text-sm font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>{cur}{d.amount.toFixed(4)}/share</p>
                       </div>
                       {change !== null && (
                         <p className="text-xs mt-1" style={{ color: change > 0 ? 'var(--accent-green)' : change < 0 ? '#ef4444' : 'var(--text-muted)' }}>
-                          {change > 0 ? '▲' : change < 0 ? '▼' : '—'} {change !== 0 ? `${change > 0 ? '+' : ''}$${change.toFixed(4)}` : 'unchanged'}
+                          {change > 0 ? '▲' : change < 0 ? '▼' : '—'} {change !== 0 ? `${change > 0 ? '+' : ''}${cur}${change.toFixed(4)}` : 'unchanged'}
                         </p>
                       )}
                     </div>
@@ -156,9 +171,9 @@ export default function DividendHistoryPage({ ticker, dividends }) {
                       return (
                         <tr key={d.date} style={{ borderBottom: '1px solid var(--border)' }}>
                           <td className="py-2 px-3">{formatDate(d.date)}</td>
-                          <td className="py-2 px-3" style={{ ...MONO, color: 'var(--accent-gold)' }}>${d.amount.toFixed(4)}</td>
+                          <td className="py-2 px-3" style={{ ...MONO, color: 'var(--accent-gold)' }}>{cur}{d.amount.toFixed(4)}</td>
                           <td className="py-2 px-3" style={{ ...MONO, color: change === null ? 'var(--text-muted)' : change > 0 ? 'var(--accent-green)' : change < 0 ? '#ef4444' : 'var(--text-muted)' }}>
-                            {change === null ? '—' : change === 0 ? 'unchanged' : `${change > 0 ? '+' : ''}$${change.toFixed(4)}`}
+                            {change === null ? '—' : change === 0 ? 'unchanged' : `${change > 0 ? '+' : ''}${cur}${change.toFixed(4)}`}
                           </td>
                         </tr>
                       );
@@ -170,8 +185,8 @@ export default function DividendHistoryPage({ ticker, dividends }) {
           )}
 
           <p className="text-xs text-center pb-4" style={{ color: 'var(--text-muted)' }}>
-            {ticker === 'BMNP' || ticker === 'CHAD'
-              ? "Dividend data sourced from the issuer's own SEC filings and stored on this server."
+            {ticker === 'BMNP' || ticker === 'CHAD' || ticker === 'MORE'
+              ? "Dividend data sourced from the issuer's own filings and stored on this server."
               : 'Dividend data sourced from Yahoo Finance and stored on this server.'}
             {!inDailyEra && ' Predictions are estimates based on historical payment intervals and recent amount trends — not guaranteed.'}
             {inDailyEra && ' Daily payment amounts calculated from the Strive-published formula: $100 × annual rate ÷ 12 ÷ business days in month.'}

@@ -1,5 +1,6 @@
 'use client';
 
+import { currencySymbol } from '@/lib/currency';
 import { useEffect, useRef, useState } from 'react';
 import { CHART_PERIODS, PAR_VALUE } from '@/lib/constants';
 
@@ -20,6 +21,7 @@ export default function EffectiveYieldChart({ ticker, externalPeriod, onPeriodCh
   const [internalPeriod, setInternalPeriod] = useState('6mo');
   const period = externalPeriod ?? internalPeriod;
   const par = PAR_VALUE[ticker] ?? 100;
+  const cur = currencySymbol(ticker);
 
   function setPeriod(p) {
     setInternalPeriod(p);
@@ -171,7 +173,7 @@ export default function EffectiveYieldChart({ ticker, externalPeriod, onPeriodCh
       </div>
 
       <p className="text-xs mt-2" style={{ color: 'var(--text-muted)' }}>
-        When the gold line rises above the blue, the stock is trading below its ${par} par value. Hover to see exact values.
+        When the gold line rises above the blue, the stock is trading below its {cur}{par} {ticker === 'MORE' ? 'reference value' : 'par value'}. Hover to see exact values.
       </p>
     </div>
   );

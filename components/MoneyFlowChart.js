@@ -97,13 +97,15 @@ const BMNP_YELLOW = '#fde047';
 const BMNP_YELLOW_DIM = 'rgba(253,224,71,0.675)';
 const CHAD_RED = '#7f1d1d';
 const CHAD_RED_DIM = 'rgba(127,29,29,0.675)';
+const MORE_PURPLE = '#a855f7';
+const MORE_PURPLE_DIM = 'rgba(168,85,247,0.675)';
 
-function fmt(v) {
-  if (v >= 1000) return `$${(v / 1000).toFixed(2)}B`;
-  return `$${v}M`;
+function fmt(v, unit = '$') {
+  if (v >= 1000) return `${unit}${(v / 1000).toFixed(2)}B`;
+  return `${unit}${v}M`;
 }
 
-function useBarChart({ canvasRef, labels, datasets, logScale }) {
+function useBarChart({ canvasRef, labels, datasets, logScale, unit = '$' }) {
   const instanceRef = useRef(null);
 
   useEffect(() => {
@@ -125,7 +127,7 @@ function useBarChart({ canvasRef, labels, datasets, logScale }) {
             legend: { display: false },
             tooltip: {
               callbacks: {
-                label: ctx => ` ${fmt(ctx.parsed.y)}`,
+                label: ctx => ` ${fmt(ctx.parsed.y, unit)}`,
               },
             },
           },
@@ -145,7 +147,7 @@ function useBarChart({ canvasRef, labels, datasets, logScale }) {
               ticks: {
                 color: '#6b7280',
                 font: { size: 11 },
-                callback: v => fmt(v),
+                callback: v => fmt(v, unit),
               },
               grid: { color: '#1f2937' },
             },
@@ -159,7 +161,7 @@ function useBarChart({ canvasRef, labels, datasets, logScale }) {
       instanceRef.current?.destroy();
       instanceRef.current = null;
     };
-  }, [labels, datasets, logScale]);
+  }, [labels, datasets, logScale, unit]);
 }
 
 function currentWeekMonday() {
@@ -222,6 +224,7 @@ function RangeButtons({ range, setRange, activeColor }) {
 
 const BMNP_WEEKS = [];
 const CHAD_WEEKS = [];
+const MORE_WEEKS = []; // £M — see SEED_MORE_WEEKLY in lib/moneyFlowStore.js
 
 function useLiveWeekly(fallback, key) {
   const [rows, setRows] = useState(fallback);
@@ -348,6 +351,40 @@ export function CHADMoneyFlowChart() {
       <RangeButtons range={range} setRange={setRange} activeColor={CHAD_RED} />
       <div role="img" aria-label="CHAD weekly capital raised bar chart" style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
       <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering</p>
+    </div>
+  );
+}
+
+export function MOREMoneyFlowChart() {
+  const weeks = useLiveWeekly(MORE_WEEKS, 'moreWeekly');
+  const [range, setRange] = useState('all');
+  const canvasRef = useRef(null);
+  const filtered = filterByRange(padToCurrentWeek(weeks), range);
+  useBarChart({
+    canvasRef,
+    labels: filtered.map(d => d.week),
+    datasets: [{
+      data: filtered.map(d => d.value),
+      backgroundColor: filtered.map(d => d.ipo ? MORE_PURPLE : MORE_PURPLE_DIM),
+      borderColor: filtered.map(d => d.ipo ? MORE_PURPLE : 'transparent'),
+      borderWidth: 1,
+      borderRadius: 3,
+    }],
+    logScale: false,
+    unit: '£',
+  });
+  if (weeks.length === 0) {
+    return (
+      <div style={{ height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: '#6b7280', fontSize: 13, textAlign: 'center' }}>Admitted to the London Stock Exchange October 14, 2026<br />Capital flow data will appear once the issuer announces it</p>
+      </div>
+    );
+  }
+  return (
+    <div>
+      <RangeButtons range={range} setRange={setRange} activeColor={MORE_PURPLE} />
+      <div role="img" aria-label="MORE weekly capital raised bar chart, in millions of pounds" style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
+      <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering · figures in £ millions</p>
     </div>
   );
 }

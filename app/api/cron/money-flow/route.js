@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getMoneyFlowData, saveMoneyFlowData, buildCumulative, SEED_STRC_WEEKLY, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY } from '@/lib/moneyFlowStore';
+import { getMoneyFlowData, saveMoneyFlowData, buildCumulative, SEED_STRC_WEEKLY, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, SEED_MORE_WEEKLY } from '@/lib/moneyFlowStore';
 import { getRecentFilings, parseProceeds, weekLabel, weekDate } from '@/lib/edgarParser';
 
 export const maxDuration = 60;
@@ -17,6 +17,10 @@ export async function GET(request) {
     let sataWeekly = existing?.sataWeekly ?? [...SEED_SATA_WEEKLY];
     let bmnpWeekly = existing?.bmnpWeekly ?? [...SEED_BMNP_WEEKLY];
     let chadWeekly = existing?.chadWeekly ?? [...SEED_CHAD_WEEKLY];
+    // MORE is an LSE-listed sterling instrument with no SEC filings to parse — its weekly
+    // figures are maintained by hand (see moneyFlowStore.js), so the cron only carries them through.
+    // Seed it in too if the stored blob predates MORE.
+    let moreWeekly = existing?.moreWeekly ?? [...SEED_MORE_WEEKLY];
 
     const strcLastDate = strcWeekly.at(-1)?.date ?? '2026-05-25';
     const sataLastDate = sataWeekly.at(-1)?.date ?? '2026-05-25';
@@ -87,8 +91,8 @@ export async function GET(request) {
     }
 
     // Rebuild cumulative and save
-    const cumulative = buildCumulative(strcWeekly, sataWeekly, bmnpWeekly, chadWeekly);
-    await saveMoneyFlowData({ strcWeekly, sataWeekly, bmnpWeekly, chadWeekly, cumulative });
+    const cumulative = buildCumulative(strcWeekly, sataWeekly, bmnpWeekly, chadWeekly, moreWeekly);
+    await saveMoneyFlowData({ strcWeekly, sataWeekly, bmnpWeekly, chadWeekly, moreWeekly, cumulative });
 
     return NextResponse.json({ ok: true, ...results });
   } catch (err) {
