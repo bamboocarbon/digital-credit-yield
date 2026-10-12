@@ -7,7 +7,8 @@
 
 import { createCanvas, GlobalFonts } from '@napi-rs/canvas';
 import path from 'path';
-import { ASSET_RATES } from '../../lib/constants.js'; // read-only import: STRC 11.50 / SATA 13.00 / BMNP 9.50
+import { ASSET_RATES, MORE_LIVE_FROM } from '../../lib/constants.js'; // read-only import: STRC 11.50 / SATA 13.00 / BMNP 9.50
+import { currencySymbol } from '../../lib/currency.js';
 
 for (const file of ['inter-400.ttf', 'inter-700.ttf']) {
   try {
@@ -31,7 +32,7 @@ const XL_Y = CI_Y1 + 16, CW_Y1 = XL_Y + 6, IN_Y0 = CW_Y1 + 14, IN_H = 52;
 const LG_Y = IN_Y0 + IN_H + 16, DM_Y = LG_Y + 13, DC_Y = DM_Y + 13;
 const ML = 30, MR = 14;
 
-export const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#7f1d1d' };
+export const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#7f1d1d', MORE: '#a855f7' };
 export const FIXED_RATE    = ASSET_RATES; // { STRC: 11.5, SATA: 13.0, BMNP: 9.5 }
 const C_TREASURY = '#d1d5db';
 const C_BANK     = '#9ca3af';
@@ -64,22 +65,25 @@ function wrapText(ctx, text, maxWidth, maxLines) {
   return lines;
 }
 function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
-function fmtVal(v) { return v >= 1000 ? `$${(v/1000).toFixed(1)}k` : `$${Math.round(v)}`; }
+function fmtVal(v, c = '$') { return v >= 1000 ? `${c}${(v/1000).toFixed(1)}k` : `${c}${Math.round(v)}`; }
 function compound(rate, years) { return 10000 * Math.pow(1 + rate / 100, years); }
 
-// Snapshot strip now shows all four tickers — widened from 3 to 4 columns
-// (see the showSnapshot block below) once CHAD joined the daily rotation.
-export const TICKER_ORDER = ['STRC', 'SATA', 'BMNP', 'CHAD'];
+// Snapshot strip / lane positions. MORE (sterling, LSE) is only added from MORE_LIVE_FROM
+// (14 Oct 2026) — before that the strip stays four columns wide and MORE is never featured.
+// Computed per call (not a module constant) so a long-lived process rolls over at midnight.
+export function tickerOrder() {
+  const today = new Date().toISOString().split('T')[0];
+  return ['STRC', 'SATA', 'BMNP', 'CHAD', ...(today >= MORE_LIVE_FROM ? ['MORE'] : [])];
+}
 
 // Lane position for the featured ticker's bar — matches its column in the
-// snapshot strip above (0/1/2/3 = STRC/SATA/BMNP/CHAD's own position), the
-// same way STRC/SATA/BMNP's bars always have. Only 3 bars are ever drawn (1
-// featured + Treasuries + Bank Savings) across these 4 possible positions,
-// so whichever position the featured ticker doesn't occupy and the two
-// benchmarks don't fill in order stays empty for that day — e.g. when CHAD
-// (position 3) is featured, Treasury and Bank take positions 0 and 1, and
-// position 2 (BMNP's) is the blank one that day.
-const LANE_POSITION = { STRC: 0, SATA: 1, BMNP: 2, CHAD: 3 };
+// snapshot strip above (0..4 = STRC/SATA/BMNP/CHAD/MORE's own position).
+// Only 3 bars are ever drawn (1 featured + benchmarks) across these possible positions,
+// so whichever positions the featured ticker doesn't occupy and the two
+// benchmarks don't fill in order stay empty for that day — e.g. when CHAD
+// (position 3) is featured, the benchmarks take positions 0 and 1, and the
+// remaining positions are the blank ones that day.
+const LANE_POSITION = { STRC: 0, SATA: 1, BMNP: 2, CHAD: 3, MORE: 4 };
 
 export function buildLanes(featuredTicker) {
   const featuredVal  = compound(FIXED_RATE[featuredTicker], YEARS);
@@ -87,14 +91,18 @@ export function buildLanes(featuredTicker) {
   const bankVal      = compound(BANK_RATE, YEARS);
   const maxGain      = featuredVal - 10000;
 
-  const treasuryLane = { key: 'treasury', label: 'US Treasuries', rateLabel: `~${TREASURY_RATE.toFixed(1)}%`, color: C_TREASURY, finalVal: treasuryVal, heightFrac: (treasuryVal - 10000) / maxGain, flame: false };
+  // Sterling ticker -> UK gilts as the government-bond benchmark (same ~4.5% assumption as Treasuries)
+  const govtLabel = featuredTicker === 'MORE' ? 'UK Gilts' : 'US Treasuries';
+  const treasuryLane = { key: 'treasury', label: govtLabel, rateLabel: `~${TREASURY_RATE.toFixed(1)}%`, color: C_TREASURY, finalVal: treasuryVal, heightFrac: (treasuryVal - 10000) / maxGain, flame: false };
   const bankLane     = { key: 'bank',     label: 'Bank Savings',  rateLabel: `~${BANK_RATE.toFixed(1)}%`,     color: C_BANK,     finalVal: bankVal,     heightFrac: (bankVal - 10000) / maxGain,     flame: false };
-  const featuredLane = { key: featuredTicker, label: featuredTicker, rateLabel: `${FIXED_RATE[featuredTicker].toFixed(1)}% fixed`, color: TICKER_COLOUR[featuredTicker], finalVal: featuredVal, heightFrac: 1, flame: true };
+  const featuredLane = { key: featuredTicker, label: featuredTicker, rateLabel: `${FIXED_RATE[featuredTicker].toFixed(1)}% ${featuredTicker === 'MORE' ? 'variable' : 'fixed'}`, color: TICKER_COLOUR[featuredTicker], finalVal: featuredVal, heightFrac: 1, flame: true };
 
-  const slots = [null, null, null, null];
-  slots[LANE_POSITION[featuredTicker] ?? 0] = featuredLane;
+  const n = tickerOrder().length;
+  const slots = Array(n).fill(null);
+  const pos = LANE_POSITION[featuredTicker] ?? 0;
+  slots[pos < n ? pos : 0] = featuredLane;
   const remaining = [treasuryLane, bankLane];
-  for (let i = 0; i < 4 && remaining.length; i++) if (!slots[i]) slots[i] = remaining.shift();
+  for (let i = 0; i < n && remaining.length; i++) if (!slots[i]) slots[i] = remaining.shift();
   return slots;
 }
 
@@ -129,6 +137,7 @@ function drawBar(ctx, x, topY, bottomY, fillStyle) {
 
 export function renderFrame(ctx, frame, lanes, ctxInfo) {
   const { title, date, insightText, quotes } = ctxInfo;
+  const cur = ctxInfo.currency ?? '$'; // featured ticker's currency symbol (£ for MORE)
   const showTopbar    = frame >= 0;
   const showTitle     = frame >= 5;
   const showSnapshot  = frame >= 11;
@@ -168,9 +177,10 @@ export function renderFrame(ctx, frame, lanes, ctxInfo) {
     // is "featured" in the chart below. Widened from 3 to 4 columns (and
     // font sizes trimmed slightly) when CHAD joined the rotation — same
     // 460px canvas, so each cell is narrower than it used to be.
+    const order = tickerOrder();
     const gap = 8;
-    const cellW = (W - 2*PX - 3*gap) / 4;
-    TICKER_ORDER.forEach((t, i) => {
+    const cellW = (W - 2*PX - (order.length - 1)*gap) / order.length;
+    order.forEach((t, i) => {
       const cx = PX + i * (cellW + gap);
       ctx.fillStyle = '#0b1422';
       roundRect(ctx, cx, SN_Y0, cellW, SN_Y1 - SN_Y0, 10); ctx.fill();
@@ -187,7 +197,7 @@ export function renderFrame(ctx, frame, lanes, ctxInfo) {
         const up = (q.changePercent ?? 0) >= 0;
         ctx.fillStyle = '#e4eaf5';
         ctx.font = 'bold 11px Inter, Arial, sans-serif';
-        ctx.fillText(`$${q.price.toFixed(2)}`, centerX, SN_Y0 + 20 + lineGap);
+        ctx.fillText(`${currencySymbol(t)}${q.price.toFixed(2)}`, centerX, SN_Y0 + 20 + lineGap);
         ctx.fillStyle = up ? '#4ade80' : '#e05555';
         ctx.font = '10px Inter, Arial, sans-serif';
         ctx.fillText(`${up ? '▲' : '▼'} ${Math.abs(q.changePercent ?? 0).toFixed(2)}%`, centerX, SN_Y0 + 20 + lineGap * 2);
@@ -195,7 +205,7 @@ export function renderFrame(ctx, frame, lanes, ctxInfo) {
         ctx.fillStyle = '#8a9ab5';
         ctx.font = '10px Inter, Arial, sans-serif';
         ctx.fillText('Listing soon', centerX, SN_Y0 + 20 + lineGap);
-        ctx.fillText(`${FIXED_RATE[t].toFixed(1)}% fixed`, centerX, SN_Y0 + 20 + lineGap * 2);
+        ctx.fillText(`${FIXED_RATE[t].toFixed(1)}% ${t === 'BMNP' ? 'fixed' : 'rate'}`, centerX, SN_Y0 + 20 + lineGap * 2);
       }
     });
   }
@@ -207,7 +217,7 @@ export function renderFrame(ctx, frame, lanes, ctxInfo) {
     ctx.fillStyle = '#e4eaf5';
     ctx.font = 'bold 15px Inter, Arial, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`$10,000 over ${YEARS} years — who moves fastest?`, W / 2, CS_Y);
+    ctx.fillText(`${cur}10,000 over ${YEARS} years — who moves fastest?`, W / 2, CS_Y);
 
     // Headroom reserved above the tallest possible bar so the tracking label
     // above it never collides with the "$10,000 over 5 years" caption.
@@ -226,7 +236,7 @@ export function renderFrame(ctx, frame, lanes, ctxInfo) {
         ctx.font = 'bold 10px Inter, Arial, sans-serif';
         ctx.fillStyle = '#e4eaf5';
         ctx.textAlign = 'center';
-        ctx.fillText(fmtVal(lane.finalVal), laneX, CI_Y1 + 13);
+        ctx.fillText(fmtVal(lane.finalVal, cur), laneX, CI_Y1 + 13);
       }
 
       if (curH > 1) {

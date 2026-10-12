@@ -5,7 +5,8 @@ import { put } from '@vercel/blob';
 import { blobUrl } from '../lib/blobUrl.js';
 import { getStockQuote, fetchNextPaymentDate } from '../lib/fetchStockData.js';
 import { runProjection } from '../lib/projectorEngine.js';
-import { ASSET_RATES, PAR_VALUE } from '../lib/constants.js';
+import { ASSET_RATES, PAR_VALUE, MORE_LIVE_FROM } from '../lib/constants.js';
+import { currencySymbol } from '../lib/currency.js';
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 
@@ -20,7 +21,16 @@ try {
   }
 } catch { /* .env.local is optional on the server */ }
 
-export const TICKERS = ['STRC', 'SATA', 'BMNP', 'CHAD'];
+export const TICKERS = ['STRC', 'SATA', 'BMNP', 'CHAD', 'MORE'];
+
+// MORE only joins the daily rotation (email, evening email, rocket video) from its first
+// trading day — see MORE_LIVE_FROM in lib/constants.js.
+export function isMoreLive(todayStr = new Date().toISOString().split('T')[0]) {
+  return todayStr >= MORE_LIVE_FROM;
+}
+export function rotationTickers() {
+  return ['STRC', 'SATA', 'BMNP', 'CHAD', ...(isMoreLive() ? ['MORE'] : [])];
+}
 
 const BENCHMARKS = {
   TREASURY_1Y: 4.2,
@@ -34,6 +44,7 @@ const COLOR = {
   SATA:       '#3b82f6',
   BMNP:       '#fde047',
   CHAD:       '#7f1d1d',
+  MORE:       '#a855f7',
   TREASURIES: '#d1d5db',
   BANK:       '#9ca3af',
 };
@@ -54,14 +65,14 @@ export function effYield(ticker, price) {
 }
 
 function dirArrow(pct) { return pct >= 0 ? '▲' : '▼'; }
-function amtStr(amount) { return `$${amount.toLocaleString('en-US')}`; }
+function amtStr(amount, c = '$') { return `${c}${amount.toLocaleString('en-US')}`; }
 function tsyRate(months) { return months <= 12 ? BENCHMARKS.TREASURY_1Y : BENCHMARKS.TREASURY_5Y; }
 
 // 3-line comparison series: asset vs Treasuries vs Bank
-function compSeries(ticker, assetData, tsyData, bankData) {
+function compSeries(ticker, assetData, tsyData, bankData, govt = 'Treasuries') {
   return [
     { label: ticker,       color: COLOR[ticker],      values: assetData.map(d => d.portfolio) },
-    { label: 'Treasuries', color: COLOR.TREASURIES,   values: tsyData.map(d => d.portfolio)  },
+    { label: govt,        color: COLOR.TREASURIES,   values: tsyData.map(d => d.portfolio)  },
     { label: 'Bank',       color: COLOR.BANK,         values: bankData.map(d => d.portfolio)  },
   ];
 }
@@ -79,11 +90,11 @@ function comp4Series(strcData, sataData, tsyData, bankData) {
 export function buildHeader(quotes) {
   return '📊 ' + TICKERS.filter(t => quotes[t]?.price != null).map(t => {
     const { price, changePercent } = quotes[t];
-    return `${t} $${price.toFixed(2)} ${dirArrow(changePercent)} ${Math.abs(changePercent).toFixed(2)}%`;
+    return `${t} ${currencySymbol(t)}${price.toFixed(2)} ${dirArrow(changePercent)} ${Math.abs(changePercent).toFixed(2)}%`;
   }).join(' | ');
 }
 
-function buildInsightPool(quotes, nextDates) {
+export function buildInsightPool(quotes, nextDates) {
   const today = new Date().toISOString().split('T')[0];
   const priority = [];
   const byTicker = {};
@@ -101,6 +112,9 @@ function buildInsightPool(quotes, nextDates) {
     const price = quotes[t].price;
     const ey    = eYields[t];
     const slug  = t.toLowerCase();
+    // MORE is a sterling instrument: £ amounts and UK gilts instead of US Treasuries
+    const c     = currencySymbol(t);
+    const govt  = t === 'MORE' ? 'Gilts' : 'Treasuries';
 
     // Dividend upcoming → price chart (no comparison needed; it's a date event)
     const nd = nextDates[t];
@@ -110,7 +124,7 @@ function buildInsightPool(quotes, nextDates) {
         const perShare = (price * (ey / 100)) / 12;
         const dayStr   = daysUntil === 0 ? 'today' : `${daysUntil} day${daysUntil === 1 ? '' : 's'}`;
         priority.push({
-          text: `💰 ${t} pays its next dividend in ${dayStr} — ~$${perShare.toFixed(3)}/share at ${ey.toFixed(2)}% effective yield.`,
+          text: `💰 ${t} pays its next dividend in ${dayStr} — ~${c}${perShare.toFixed(3)}/share at ${ey.toFixed(2)}% effective yield.`,
           path: `/${slug}/dividends`,
           chartData: { type: 'price', ticker: t },
           ticker: t,
@@ -127,11 +141,11 @@ function buildInsightPool(quotes, nextDates) {
       const tsyData    = runProjection(amount, BENCHMARKS.TREASURY_1Y, 0, 100, 12);
       const bankData   = runProjection(amount, BENCHMARKS.BANK, 0, 100, 12);
       add(
-        `💵 ${amtStr(amount)} in ${t} earns ~$${monthly.toFixed(2)}/mo — vs ~$${tsyMonthly.toFixed(2)}/mo in Treasuries and ~$${bankMonthly.toFixed(2)}/mo in a bank account.`,
+        `💵 ${amtStr(amount, c)} in ${t} earns ~${c}${monthly.toFixed(2)}/mo — vs ~${c}${tsyMonthly.toFixed(2)}/mo in ${govt} and ~${c}${bankMonthly.toFixed(2)}/mo in a bank account.`,
         `/${slug}/projector`,
-        { type: 'comparison',
-          title: `${amtStr(amount)} in ${t} vs alternatives (1yr, reinvested)`, months: 12,
-          series: compSeries(t, assetData, tsyData, bankData),
+        { type: 'comparison', currency: c,
+          title: `${amtStr(amount, c)} in ${t} vs alternatives (1yr, reinvested)`, months: 12,
+          series: compSeries(t, assetData, tsyData, bankData, govt),
         },
         t,
       );
@@ -147,20 +161,20 @@ function buildInsightPool(quotes, nextDates) {
 
     if (a5f > t5f) {
       add(
-        `📈 $10k in ${t} reinvested over 5 years: ~$${(a5f / 1000).toFixed(1)}k vs ~$${(t5f / 1000).toFixed(1)}k in Treasuries and ~$${(b5f / 1000).toFixed(1)}k in a bank — $${((a5f - t5f) / 1000).toFixed(1)}k ahead of Treasuries.`,
+        `📈 ${c}10k in ${t} reinvested over 5 years: ~${c}${(a5f / 1000).toFixed(1)}k vs ~${c}${(t5f / 1000).toFixed(1)}k in ${govt} and ~${c}${(b5f / 1000).toFixed(1)}k in a bank — ${c}${((a5f - t5f) / 1000).toFixed(1)}k ahead of ${govt}.`,
         `/${slug}/differentiator`,
-        { type: 'comparison', title: `$10k: ${t} vs Treasuries vs Bank (5yr)`, months: 60,
-          series: compSeries(t, asset5y, tsy5y, bank5y),
+        { type: 'comparison', currency: c, title: `${c}10k: ${t} vs ${govt} vs Bank (5yr)`, months: 60,
+          series: compSeries(t, asset5y, tsy5y, bank5y, govt),
         },
         t,
       );
     }
 
     add(
-      `🏦 $10k in ${t} vs a bank account over 5 years: ~$${(a5f / 1000).toFixed(1)}k vs ~$${(b5f / 1000).toFixed(1)}k. That's $${((a5f - b5f) / 1000).toFixed(1)}k more — a difference that compounds every month.`,
+      `🏦 ${c}10k in ${t} vs a bank account over 5 years: ~${c}${(a5f / 1000).toFixed(1)}k vs ~${c}${(b5f / 1000).toFixed(1)}k. That's ${c}${((a5f - b5f) / 1000).toFixed(1)}k more — a difference that compounds every month.`,
       `/${slug}/differentiator`,
-      { type: 'comparison', title: `$10k: ${t} vs Treasuries vs Bank (5yr)`, months: 60,
-        series: compSeries(t, asset5y, tsy5y, bank5y),
+      { type: 'comparison', currency: c, title: `${c}10k: ${t} vs ${govt} vs Bank (5yr)`, months: 60,
+        series: compSeries(t, asset5y, tsy5y, bank5y, govt),
       },
       t,
     );
@@ -178,11 +192,11 @@ function buildInsightPool(quotes, nextDates) {
         const returnPct  = ((finalValue - amount) / amount) * 100;
 
         add(
-          `📊 ${amtStr(amount)} in ${t} reinvested over ${label}: ~$${(finalValue / 1000).toFixed(1)}k vs ~$${(tsyFinal / 1000).toFixed(1)}k in Treasuries and ~$${(bankFinal / 1000).toFixed(1)}k in a bank — ${returnPct.toFixed(0)}% total return.`,
+          `📊 ${amtStr(amount, c)} in ${t} reinvested over ${label}: ~${c}${(finalValue / 1000).toFixed(1)}k vs ~${c}${(tsyFinal / 1000).toFixed(1)}k in ${govt} and ~${c}${(bankFinal / 1000).toFixed(1)}k in a bank — ${returnPct.toFixed(0)}% total return.`,
           `/${slug}/projector`,
-          { type: 'comparison',
-            title: `${amtStr(amount)} in ${t}: reinvested vs alternatives (${label})`, months,
-            series: compSeries(t, assetData, tsyData, bankData),
+          { type: 'comparison', currency: c,
+            title: `${amtStr(amount, c)} in ${t}: reinvested vs alternatives (${label})`, months,
+            series: compSeries(t, assetData, tsyData, bankData, govt),
           },
           t,
         );
@@ -192,13 +206,13 @@ function buildInsightPool(quotes, nextDates) {
         const tsyIncome  = tsyData.map(d => (d.portfolio * (rate / 100)) / 12);
         const bankIncome = bankData.map(d => (d.portfolio * (BENCHMARKS.BANK / 100)) / 12);
         add(
-          `💸 ${amtStr(amount)} in ${t} pays ~$${incomeVals[0].toFixed(0)}/mo today — reinvest for ${label} and that grows to ~$${incomeVals.at(-1).toFixed(0)}/mo vs ~$${tsyIncome.at(-1).toFixed(0)}/mo from Treasuries.`,
+          `💸 ${amtStr(amount, c)} in ${t} pays ~${c}${incomeVals[0].toFixed(0)}/mo today — reinvest for ${label} and that grows to ~${c}${incomeVals.at(-1).toFixed(0)}/mo vs ~${c}${tsyIncome.at(-1).toFixed(0)}/mo from ${govt}.`,
           `/${slug}/projector`,
-          { type: 'comparison',
-            title: `Monthly income: ${amtStr(amount)} in ${t} vs alternatives (${label})`, months,
+          { type: 'comparison', currency: c,
+            title: `Monthly income: ${amtStr(amount, c)} in ${t} vs alternatives (${label})`, months,
             series: [
               { label: `${t} Income`,   color: COLOR[t],          values: incomeVals },
-              { label: 'Tsy Income',    color: COLOR.TREASURIES,  values: tsyIncome  },
+              { label: `${govt === 'Gilts' ? 'Gilt' : 'Tsy'} Income`,    color: COLOR.TREASURIES,  values: tsyIncome  },
               { label: 'Bank Income',   color: COLOR.BANK,        values: bankIncome },
             ],
           },
@@ -211,7 +225,7 @@ function buildInsightPool(quotes, nextDates) {
     const parT = PAR_VALUE[t] ?? 100;
     if (price < parT) {
       add(
-        `🔍 ${t} is trading at $${price.toFixed(2)} — below its $${parT} par value. Today's effective yield: ${ey.toFixed(2)}%, above the stated ${ASSET_RATES[t]}%.`,
+        `🔍 ${t} is trading at ${c}${price.toFixed(2)} — below its ${c}${parT} par value. Today's effective yield: ${ey.toFixed(2)}%, above the stated ${ASSET_RATES[t]}%.`,
         `/${slug}/chart`,
         { type: 'price', ticker: t },
         t,
@@ -310,23 +324,26 @@ async function saveThoughtHistory(history) {
 
 export function getDailyTicker(offset = 0) {
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-  return ['STRC', 'SATA', 'BMNP', 'CHAD'][(dayOfYear + offset) % 4];
+  const active = rotationTickers();
+  return active[(dayOfYear + offset) % active.length];
 }
 
 export async function generateDailyInsight(focusTicker) {
-  const [strc, sata, bmnp, chad, strc_nd, sata_nd, bmnp_nd, chad_nd] = await Promise.all([
+  const [strc, sata, bmnp, chad, more, strc_nd, sata_nd, bmnp_nd, chad_nd, more_nd] = await Promise.all([
     getStockQuote('STRC'),
     getStockQuote('SATA'),
     getStockQuote('BMNP').catch(() => null),
     getStockQuote('CHAD').catch(() => null),
+    getStockQuote('MORE').catch(() => null), // no quote until MORE.L starts trading on 14 Oct
     fetchNextPaymentDate('STRC'),
     fetchNextPaymentDate('SATA'),
     fetchNextPaymentDate('BMNP').catch(() => null),
     fetchNextPaymentDate('CHAD').catch(() => null),
+    fetchNextPaymentDate('MORE').catch(() => null),
   ]);
 
-  const quotes    = { STRC: strc, SATA: sata, ...(bmnp?.price != null ? { BMNP: bmnp } : {}), ...(chad?.price != null ? { CHAD: chad } : {}) };
-  const nextDates = { STRC: strc_nd, SATA: sata_nd, ...(bmnp_nd ? { BMNP: bmnp_nd } : {}), ...(chad_nd ? { CHAD: chad_nd } : {}) };
+  const quotes    = { STRC: strc, SATA: sata, ...(bmnp?.price != null ? { BMNP: bmnp } : {}), ...(chad?.price != null ? { CHAD: chad } : {}), ...(more?.price != null ? { MORE: more } : {}) };
+  const nextDates = { STRC: strc_nd, SATA: sata_nd, ...(bmnp_nd ? { BMNP: bmnp_nd } : {}), ...(chad_nd ? { CHAD: chad_nd } : {}), ...(more_nd ? { MORE: more_nd } : {}) };
 
   const { priority, normal } = buildInsightPool(quotes, nextDates);
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);

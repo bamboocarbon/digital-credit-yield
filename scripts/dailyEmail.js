@@ -7,12 +7,13 @@ import sharp from 'sharp';
 import { Resend } from 'resend';
 import { put } from '@vercel/blob';
 import { blobUrl } from '../lib/blobUrl.js';
-import { generateDailyInsight, getDailyTicker } from './insightEngine.js';
+import { generateDailyInsight, getDailyTicker, isMoreLive } from './insightEngine.js';
 import { generateMp4 } from './generateMp4.js';
 import { NOTO_400 } from './fontData.js';
 import { isNyseMarketDay } from '../lib/marketDays.js';
 import { alreadySentToday, markSentToday } from '../lib/sendGuard.js';
 import { ASSET_RATES, PAR_VALUE } from '../lib/constants.js';
+import { currencySymbol } from '../lib/currency.js';
 
 function cleanForApp(text) {
   return text
@@ -104,10 +105,10 @@ async function loadSubscribers() {
 }
 
 // DCY website brand colours — match the ticker tag colours on digitalcredityield.com
-const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#7f1d1d' };
+const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#7f1d1d', MORE: '#a855f7' };
 
 // Matches the category tag colours used on /blog (components/BlogIndex.js)
-const BLOG_CATEGORY_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#7f1d1d', SOL: '#a78bfa', Metaplanet: '#7dd3fc' };
+const BLOG_CATEGORY_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#7f1d1d', MORE: '#a855f7', SOL: '#a78bfa', Metaplanet: '#7dd3fc' };
 
 const CARD_BG = '#131a28';
 
@@ -129,9 +130,9 @@ const cH  = H - pad.top  - pad.bottom;
 function xScale(i, len)    { return pad.left + (i / (len - 1)) * cW; }
 function yScale(v, mn, mx) { return pad.top  + cH - ((v - mn) / (mx - mn)) * cH; }
 
-function fmtMoney(v) {
-  if (v >= 1000) return `$${(v / 1000).toFixed(1)}k`;
-  return `$${v.toFixed(0)}`;
+function fmtMoney(v, c = '$') {
+  if (v >= 1000) return `${c}${(v / 1000).toFixed(1)}k`;
+  return `${c}${v.toFixed(0)}`;
 }
 
 function svgToPng(svg) {
@@ -172,6 +173,7 @@ async function buildPriceChart(ticker) {
     const data = await res.json();
     if (!data || data.error || !Array.isArray(data) || data.length < 2) return null;
 
+    const sym     = currencySymbol(ticker);
     const candles = data.filter(d => d.close);
     const closes  = candles.map(d => d.close);
     const times   = candles.map(d => d.time);
@@ -188,7 +190,7 @@ async function buildPriceChart(ticker) {
       const p = minP + ((maxP - minP) * i / 4);
       const y = yS(p).toFixed(1);
       return `<line x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}" stroke="#4b5563" stroke-width="2"/>
-              <text x="${pad.left - 8}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#d1d5db" font-size="26" font-family="Geist">$${p.toFixed(2)}</text>`;
+              <text x="${pad.left - 8}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#d1d5db" font-size="26" font-family="Geist">${sym}${p.toFixed(2)}</text>`;
     }).join('');
 
     const xLabels = Array.from({ length: 6 }, (_, i) => {
@@ -209,7 +211,7 @@ async function buildPriceChart(ticker) {
   <path d="${line}" fill="none" stroke="${c}" stroke-width="7"/>
   ${xLabels}
   ${renderTitle(`${ticker} — 6 Month Price`, 36)}
-  <text x="${W - pad.right}" y="48" text-anchor="end" fill="${c}" font-size="32" font-family="Geist" font-weight="700">$${closes.at(-1).toFixed(2)}</text>
+  <text x="${W - pad.right}" y="48" text-anchor="end" fill="${c}" font-size="32" font-family="Geist" font-weight="700">${sym}${closes.at(-1).toFixed(2)}</text>
   ${chartFooter(H + 65)}
 </svg>`;
 
@@ -221,7 +223,7 @@ async function buildPriceChart(ticker) {
 }
 
 // Series chart — comparison, projection, or income-growth
-function buildSeriesChart({ title, series, months }) {
+function buildSeriesChart({ title, series, months, currency = '$' }) {
     try {
     const allValues = series.flatMap(s => s.values);
     const minV = Math.min(...allValues) * 0.98;
@@ -235,7 +237,7 @@ function buildSeriesChart({ title, series, months }) {
       const v = minV + ((maxV - minV) * i / 4);
       const y = yS(v).toFixed(1);
       return `<line x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}" stroke="#4b5563" stroke-width="2"/>
-              <text x="${pad.left - 8}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#d1d5db" font-size="26" font-family="Geist">${fmtMoney(v)}</text>`;
+              <text x="${pad.left - 8}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#d1d5db" font-size="26" font-family="Geist">${fmtMoney(v, currency)}</text>`;
     }).join('');
 
     // X axis labels
@@ -311,6 +313,8 @@ async function run() {
   const cleanInsight = cleanForApp(insight.text);
 
   // ── Snapshot cells ─────────────────────────────────────────────────────────
+  // MORE's cell only appears once it is trading (from MORE_LIVE_FROM) — before then there is no price.
+  const snapTickers = ['STRC', 'SATA', 'BMNP', 'CHAD', ...(isMoreLive() ? ['MORE'] : [])];
   function snapCell(t) {
     const colour = TICKER_COLOUR[t] || '#ffffff';
     const q = quotes[t];
@@ -318,16 +322,16 @@ async function run() {
     if (q?.price != null) {
       const up = (q.changePercent ?? 0) >= 0;
       const effYield = ASSET_RATES[t] != null ? (ASSET_RATES[t] * (PAR_VALUE[t] ?? 100) / q.price) : null;
-      priceLine  = `<div style="font-size:13px;font-weight:700;color:#e4eaf5;margin-top:3px;">$${q.price.toFixed(2)}</div>`;
+      priceLine  = `<div style="font-size:13px;font-weight:700;color:#e4eaf5;margin-top:3px;">${currencySymbol(t)}${q.price.toFixed(2)}</div>`;
       changeLine = `<div style="font-size:11px;margin-top:2px;color:${up ? '#4ade80' : '#ef4444'};">${up ? '▲' : '▼'} ${Math.abs(q.changePercent ?? 0).toFixed(2)}%</div>`;
       yieldLine  = effYield != null ? `<div style="font-size:11px;margin-top:2px;color:#8a9ab5;">${effYield.toFixed(2)}% yield</div>` : '';
     } else {
-      const rates = { STRC: '12.0%', SATA: '13.0%', BMNP: '9.5%', CHAD: '13.0%' };
+      const rates = { STRC: '12.0%', SATA: '13.0%', BMNP: '9.5%', CHAD: '13.0%', MORE: '12.0%' };
       priceLine  = `<div style="font-size:11px;font-weight:600;color:#8a9ab5;margin-top:3px;">Listing soon</div>`;
-      changeLine = `<div style="font-size:11px;margin-top:2px;color:#8a9ab5;">${rates[t] || ''} fixed</div>`;
+      changeLine = `<div style="font-size:11px;margin-top:2px;color:#8a9ab5;">${rates[t] || ''} ${t === 'BMNP' ? 'fixed' : 'rate'}</div>`;
       yieldLine  = '';
     }
-    return `<td width="25%" valign="top" bgcolor="#0b1422" style="background-color:#0b1422;border:1px solid #1a2740;border-radius:10px;padding:8px 10px;">` +
+    return `<td width="${100 / snapTickers.length}%" valign="top" bgcolor="#0b1422" style="background-color:#0b1422;border:1px solid #1a2740;border-radius:10px;padding:8px 10px;">` +
       `<div style="font-size:15px;font-weight:700;color:${colour};letter-spacing:0.05em;">${t}</div>` +
       priceLine + changeLine + yieldLine + `</td>`;
   }
@@ -387,11 +391,11 @@ async function run() {
       </tr></table>`;
 
   const titleHtml = box(
-    `<div style="text-align:center;font-size:20px;font-weight:700;color:#f5a623;letter-spacing:0.04em;">Tracking STRC, SATA, BMNP &amp; CHAD for Growth</div>`,
+    `<div style="text-align:center;font-size:18px;font-weight:700;color:#f5a623;letter-spacing:0.04em;">Tracking STRC, SATA, BMNP, CHAD &amp; MORE for Growth</div>`,
     { bg: '#181307', border: '#f5a623', padding: '10px 18px', marginBottom: '16px' }
   );
 
-  const snapRow = `<table role="presentation" width="100%" cellpadding="0" cellspacing="8" border="0" bgcolor="${CARD_BG}" style="width:100%;background-color:${CARD_BG};margin-bottom:14px;"><tr>${snapCell('STRC')}${snapCell('SATA')}${snapCell('BMNP')}${snapCell('CHAD')}</tr></table>`;
+  const snapRow = `<table role="presentation" width="100%" cellpadding="0" cellspacing="8" border="0" bgcolor="${CARD_BG}" style="width:100%;background-color:${CARD_BG};margin-bottom:14px;"><tr>${snapTickers.map(snapCell).join('')}</tr></table>`;
 
   const chartHtml = chartB64 ? box(
     `<img src="data:image/png;base64,${chartB64}" alt="chart" style="width:100%;display:block;">`,
@@ -491,11 +495,11 @@ async function run() {
   }
 
   // Save daily card to Blob for DCY app
-  const displayTickers = ['STRC', 'SATA', ...(quotes['BMNP']?.price != null ? ['BMNP'] : []), ...(quotes['CHAD']?.price != null ? ['CHAD'] : [])];
+  const displayTickers = ['STRC', 'SATA', ...(quotes['BMNP']?.price != null ? ['BMNP'] : []), ...(quotes['CHAD']?.price != null ? ['CHAD'] : []), ...(quotes['MORE']?.price != null ? ['MORE'] : [])];
   const cardBox2 = displayTickers.map(t => {
     const q = quotes[t];
     const arrow = (q.changePercent ?? 0) >= 0 ? '▲' : '▼';
-    return `${t} $${q.price.toFixed(2)} ${arrow} ${Math.abs(q.changePercent ?? 0).toFixed(2)}%`;
+    return `${t} ${currencySymbol(t)}${q.price.toFixed(2)} ${arrow} ${Math.abs(q.changePercent ?? 0).toFixed(2)}%`;
   }).join(' | ');
   await put('dcy-daily-card.json', JSON.stringify({
     box1: 'Snapshot', box2: cardBox2, box3: cleanForApp(insight.text),

@@ -13,10 +13,12 @@ const STRC_RATE = ASSET_RATES.STRC;
 const SATA_RATE = ASSET_RATES.SATA;
 const BMNP_RATE = ASSET_RATES.BMNP;
 const CHAD_RATE = ASSET_RATES.CHAD;
+const MORE_RATE = ASSET_RATES.MORE;
 
 const MONTHLY_ON_50K_STRC = Math.floor((50000 * STRC_RATE) / 1200 / 10) * 10;
 const MONTHLY_ON_50K_BMNP = Math.floor((50000 * BMNP_RATE) / 1200 / 10) * 10;
 const MONTHLY_ON_50K_CHAD = Math.floor((50000 * CHAD_RATE) / 1200 / 10) * 10;
+const MONTHLY_ON_50K_MORE = Math.floor((50000 * MORE_RATE) / 1200 / 10) * 10; // £ — MORE is a sterling instrument
 
 // Questions grouped by ticker — evening email always focuses on the ticker
 // one step ahead of the daily email (getDailyTicker(1)).
@@ -179,6 +181,41 @@ const QUESTIONS_BY_TICKER = {
       path: "/chad/differentiator",
     },
   ],
+  // MORE (The Smarter Web Company, London Stock Exchange) — sterling, weekly dividends. Only reaches
+  // the rotation from 14 Oct 2026 (see MORE_LIVE_FROM); the block must exist before then so
+  // getDailyTicker(1) can never land on a ticker with no questions.
+  MORE: [
+    {
+      question: "How much passive income could £25,000 in MORE generate each month?",
+      teaser: `At ${MORE_RATE}% on its £100 reference value, MORE pays weekly in pounds — no currency conversion. See the exact income breakdown.`,
+      path: "/more/projector",
+    },
+    {
+      question: "What would £50,000 in MORE earn you over the next 12 months?",
+      teaser: `At today's ${MORE_RATE}% rate, that's potentially £${MONTHLY_ON_50K_MORE} a month or more. Run your own projection.`,
+      path: "/more/projector",
+    },
+    {
+      question: "How does MORE's yield compare to a high-yield savings account or UK gilts?",
+      teaser: `Savings accounts and gilts sit around 4–5%. MORE's initial rate is ${MORE_RATE}%. See how the income gap adds up over time.`,
+      path: "/more/differentiator",
+    },
+    {
+      question: "How much would you need to invest in MORE to earn £500 a month?",
+      teaser: "The maths might be simpler than you think. Use the MORE projector to find your number.",
+      path: "/more/projector",
+    },
+    {
+      question: "Why does a sterling preferred matter to a UK investor?",
+      teaser: "Buying a dollar-priced stock from a UK account means paying a currency toll in and out. See how MORE avoids it — and what it doesn't.",
+      path: "/blog/more-preferred-uk-investor-fx",
+    },
+    {
+      question: "What makes MORE different from STRC, SATA, BMNP and CHAD?",
+      teaser: "Priced in pounds, listed in London, weekly dividends, and a UK bitcoin treasury company behind it. See how it compares.",
+      path: "/more",
+    },
+  ],
 };
 
 function getDayOfYear() {
@@ -215,7 +252,7 @@ export async function run() {
     </div>
 
     <div style="text-align:center;margin-bottom:20px;">
-      <span style="display:inline-block;color:#f5a623;border:1px solid #f5a623;border-radius:12px;padding:10px 24px;font-size:18px;font-weight:700;">Tracking STRC, SATA, BMNP and CHAD for growth</span>
+      <span style="display:inline-block;color:#f5a623;border:1px solid #f5a623;border-radius:12px;padding:10px 24px;font-size:18px;font-weight:700;">Tracking STRC, SATA, BMNP, CHAD and MORE for growth</span>
     </div>
 
     <div style="background:#111827;border:1px solid #1e2a3a;border-radius:12px;padding:28px 24px;text-align:center;">

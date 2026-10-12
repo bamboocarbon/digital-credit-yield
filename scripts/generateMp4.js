@@ -1,7 +1,7 @@
 // scripts/generateMp4.js
 // Renders the DCY daily card as an H.264 MP4 via ffmpeg: a short NASA launch
 // clip (7-day rotation, see daily-email-v2-rocket-race/rocketClipRotation.mjs)
-// followed by the vertical rocket-race chart (STRC/SATA/BMNP/CHAD daily rotation
+// followed by the vertical rocket-race chart (STRC/SATA/BMNP/CHAD daily rotation, plus MORE from 14 Oct 2026
 // vs US Treasuries vs Bank Savings). v1 (the old single-chart design with no
 // intro clip) is preserved as the git tag daily-email-v1-classic-chart.
 //
@@ -17,6 +17,7 @@ import fs                  from 'fs';
 import crypto               from 'crypto';
 import ffmpegPath          from 'ffmpeg-static';
 import { getDailyTicker }  from './insightEngine.js';
+import { currencySymbol }  from '../lib/currency.js';
 import { getDailyRocketClip } from './daily-email-v2-rocket-race/rocketClipRotation.mjs';
 import {
   PW, PH, TOTAL_FRAMES, buildLanes, renderFrame, createRaceCanvas,
@@ -38,8 +39,8 @@ function run(cmd, args) {
   return promisify(execFile)(cmd, args, { maxBuffer: 1024 * 1024 * 256 });
 }
 
-function moneyFmt(v) {
-  return `$${v.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+function moneyFmt(v, c = '$') {
+  return `${c}${v.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
 }
 
 // ── Public entry point ────────────────────────────────────────────────────────
@@ -56,8 +57,10 @@ export async function generateMp4(insight, quotes, date) {
     const lanes = buildLanes(ticker);
     const featured = lanes.find(l => l?.key === ticker);
     const others   = lanes.filter(l => l && l.key !== ticker);
-    const insightText = `${ticker} is on track to turn $10,000 into ${moneyFmt(featured.finalVal)} over 5 years at its ${featured.rateLabel} rate — well ahead of ${others.map(o => `${o.label} (${moneyFmt(o.finalVal)})`).join(' or ')}.`;
-    const ctxInfo = { title: `${ticker} vs US Treasuries vs Bank Savings`, date, insightText, quotes };
+    const cur = currencySymbol(ticker);
+    const insightText = `${ticker} is on track to turn ${cur}10,000 into ${moneyFmt(featured.finalVal, cur)} over 5 years at its ${featured.rateLabel} rate — well ahead of ${others.map(o => `${o.label} (${moneyFmt(o.finalVal, cur)})`).join(' or ')}.`;
+    const govtLabel = lanes.find(l => l?.key === 'treasury')?.label ?? 'US Treasuries';
+    const ctxInfo = { title: `${ticker} vs ${govtLabel} vs Bank Savings`, date, insightText, quotes, currency: cur };
 
     // Render chart segment
     await new Promise((resolve, reject) => {

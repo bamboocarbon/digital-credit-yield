@@ -18,6 +18,7 @@ import fs from 'fs';
 import ffmpegPath from 'ffmpeg-static';
 import { getDailyTicker } from '../insightEngine.js'; // read-only import, unchanged
 import { getStockQuote } from '../../lib/fetchStockData.js'; // read-only import, unchanged
+import { currencySymbol } from '../../lib/currency.js';
 import { ROCKET_CLIPS, getDailyRocketClip } from './rocketClipRotation.mjs';
 import {
   TOTAL_FRAMES, buildLanes, renderFrame, createRaceCanvas,
@@ -36,8 +37,8 @@ fs.mkdirSync(OUT, { recursive: true });
 function run(cmd, args) {
   return execFileP(cmd, args, { maxBuffer: 1024 * 1024 * 256 });
 }
-function moneyFmt(v) {
-  return `$${v.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+function moneyFmt(v, c = '$') {
+  return `${c}${v.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
 }
 
 const CLIP_FILES = {
@@ -58,20 +59,23 @@ async function buildChartSegment(chartMp4) {
   const lanes = buildLanes(ticker);
   const featured = lanes.find(l => l?.key === ticker);
   const others   = lanes.filter(l => l && l.key !== ticker);
-  const insightText = `${ticker} is on track to turn $10,000 into ${moneyFmt(featured.finalVal)} over 5 years at its ${featured.rateLabel} rate — well ahead of ${others.map(o => `${o.label} (${moneyFmt(o.finalVal)})`).join(' or ')}.`;
+  const cur = currencySymbol(ticker);
+  const insightText = `${ticker} is on track to turn ${cur}10,000 into ${moneyFmt(featured.finalVal, cur)} over 5 years at its ${featured.rateLabel} rate — well ahead of ${others.map(o => `${o.label} (${moneyFmt(o.finalVal, cur)})`).join(' or ')}.`;
 
-  const [strcQ, sataQ, bmnpQ, chadQ] = await Promise.all([
+  const [strcQ, sataQ, bmnpQ, chadQ, moreQ] = await Promise.all([
     getStockQuote('STRC').catch(() => null),
     getStockQuote('SATA').catch(() => null),
     getStockQuote('BMNP').catch(() => null),
     getStockQuote('CHAD').catch(() => null),
+    getStockQuote('MORE').catch(() => null),
   ]);
-  const quotes = { STRC: strcQ, SATA: sataQ, BMNP: bmnpQ, CHAD: chadQ };
+  const quotes = { STRC: strcQ, SATA: sataQ, BMNP: bmnpQ, CHAD: chadQ, MORE: moreQ };
 
   const ctxInfo = {
-    title: `${ticker} vs US Treasuries vs Bank Savings`,
+    title: `${ticker} vs ${lanes.find(l => l?.key === 'treasury')?.label ?? 'US Treasuries'} vs Bank Savings`,
     date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
     insightText,
+    currency: cur,
     featuredTicker: ticker,
     quotes,
   };
