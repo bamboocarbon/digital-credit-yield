@@ -28,6 +28,12 @@ const CHAD_TIERS = [
   { label: 'DFDV Common Stock', sub: 'Absorbs losses first · No dividend priority · Uncapped SOL upside', tag: 'COMMON EQUITY' },
 ];
 
+const MORE_TIERS = [
+  { label: 'Debt · Coinbase credit facility', sub: 'About £18.5m drawn at 3 Aug 2026 (around 13% of the treasury) · Repaid before any MORE dividend or liquidation claim · Smarter Web says it intends to use some IPO proceeds to pay it down', tag: 'DEBT' },
+  { label: 'MORE', sub: '12% initial, variable · Weekly · Cumulative · £100 reference value · Company may redeem · No vote', tag: 'PREFERRED', highlight: true },
+  { label: 'SWC Ordinary Shares', sub: 'Absorbs losses first · No dividend priority · Uncapped bitcoin upside', tag: 'COMMON EQUITY' },
+];
+
 const CONTENT = {
   STRC: {
     blog: [
@@ -132,6 +138,31 @@ const CONTENT = {
         <p>DFDV describes a &quot;capital flywheel&quot;: raise money through CHAD, buy SOL, earn staking yield, repeat. It holds {DFDV_SOL_HOLDINGS} SOL and discloses staking yields of 7–8% in 2025. The filings are careful <em>not</em> to promise that staking income will fund the dividend directly.</p>
         <p>CHAD proceeds and the $300m ATM programme are earmarked mainly for buying more SOL. Dividends are paid from whatever capital is legally available at the time.</p>
         <p>The dedicated cushion is a <strong>12-month dividend reserve</strong>: <strong>{DIVIDEND_RESERVE.CHAD.display}</strong> put aside at closing, enough for a full year at 13%. It isn&apos;t topped up if the rate rises or more shares are sold, and in an insolvency creditors could still reach it.</p>
+      </>
+    ),
+  },
+  MORE: {
+    blog: [
+      ['more-preferred-uk-investor-fx', 'MORE for UK investors: the currency angle'],
+    ],
+    diagram: <CapitalStackDiagram tiers={MORE_TIERS} caption="MORE in The Smarter Web Company's capital structure · Source: MORE prospectus (RNS, 29 Sep 2026) and bitcoin purchase RNS (3 Aug 2026)" />,
+    above: (
+      <>
+        <p><strong>A credit facility with Coinbase.</strong> Smarter Web&apos;s 3 August 2026 announcement shows £18.5m drawn on its Coinbase strategic credit facility, a leverage ratio of roughly 17% of the treasury at the time. The IPO prospectus put the balance higher, at about £20.8m, and said some of the proceeds would be used to bring it down to around £19.0m. Lenders are paid before any preferred holder.</p>
+        <p>The announcements I&apos;ve read describe a &quot;liquidation preference&quot; over the ordinary shares but don&apos;t spell out the ranking against debt. As with the other preferreds on this site, I&apos;d assume creditors come first and check the prospectus before relying on anything more.</p>
+      </>
+    ),
+    below: (
+      <>
+        <p><strong>SWC ordinary shares.</strong> They absorb losses first and are paid last. MORE&apos;s dividend is <strong>cumulative</strong>, so anything unpaid is owed before the ordinary shareholders receive a penny.</p>
+        <p>MORE holders have <strong>no vote</strong> at general meetings, and the company has the right to redeem the shares. MORE is the only preferred series Smarter Web has issued.</p>
+      </>
+    ),
+    financing: (
+      <>
+        <p>The prospectus says the dividend will be paid from recurring operating cash flow, cash reserves, the bitcoin treasury and access to the capital markets. Unlike Strategy or Bitmine, there is no staking or similar income stream behind it, and bitcoin itself pays nothing.</p>
+        <p>The IPO raised about £10m gross, of which about <strong>{DIVIDEND_RESERVE.MORE.display}</strong> is earmarked for working capital and general purposes, including dividend cash reserves. That money is shared with other uses, so it isn&apos;t a ring-fenced dividend fund. The annual dividend on the IPO shares is about £1.33m.</p>
+        <p>The board can vary the rate within the prospectus limits and can suspend payments, so the 12% is a starting point rather than a promise. Suspended dividends are not lost, because they accumulate, but they are not paid either.</p>
       </>
     ),
   },
