@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getMoneyFlowData, buildCumulative, SEED_STRC_WEEKLY, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, SEED_MORE_WEEKLY, SEED_CUMULATIVE } from '@/lib/moneyFlowStore';
+import { getMoneyFlowData, buildCumulative, SEED_STRC_WEEKLY, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, SEED_MORE_WEEKLY, SEED_CUMULATIVE, mergeMoreWeekly } from '@/lib/moneyFlowStore';
 
 export const revalidate = 3600; // cache for 1 hour
 
@@ -7,11 +7,10 @@ export async function GET() {
   const data = await getMoneyFlowData();
 
   if (data) {
-    // A stored blob that predates MORE has no moreWeekly key (the cron only rewrites it daily and
-    // would otherwise leave the new ticker missing until its next run) — fold the seed in so the
-    // page shows MORE immediately, with the cumulative series rebuilt to include it.
-    if (!data.moreWeekly) {
-      const moreWeekly = SEED_MORE_WEEKLY;
+    // MORE's weekly figures are hand/scan-maintained in the seed (no EDGAR feed), so merge the seed
+    // over the stored blob on every read and rebuild the cumulative series when it differs.
+    const moreWeekly = mergeMoreWeekly(data.moreWeekly);
+    if (JSON.stringify(moreWeekly) !== JSON.stringify(data.moreWeekly)) {
       return NextResponse.json({
         ...data,
         moreWeekly,

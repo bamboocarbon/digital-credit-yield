@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getMoneyFlowData, saveMoneyFlowData, buildCumulative, SEED_STRC_WEEKLY, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, SEED_MORE_WEEKLY } from '@/lib/moneyFlowStore';
+import { getMoneyFlowData, saveMoneyFlowData, buildCumulative, SEED_STRC_WEEKLY, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, SEED_MORE_WEEKLY, mergeMoreWeekly } from '@/lib/moneyFlowStore';
 import { getRecentFilings, parseProceeds, weekLabel, weekDate } from '@/lib/edgarParser';
 
 export const maxDuration = 60;
@@ -20,7 +20,7 @@ export async function GET(request) {
     // MORE is an LSE-listed sterling instrument with no SEC filings to parse — its weekly
     // figures are maintained by hand (see moneyFlowStore.js), so the cron only carries them through.
     // Seed it in too if the stored blob predates MORE.
-    let moreWeekly = existing?.moreWeekly ?? [...SEED_MORE_WEEKLY];
+    let moreWeekly = mergeMoreWeekly(existing?.moreWeekly);
 
     const strcLastDate = strcWeekly.at(-1)?.date ?? '2026-05-25';
     const sataLastDate = sataWeekly.at(-1)?.date ?? '2026-05-25';
