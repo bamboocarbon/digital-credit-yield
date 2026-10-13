@@ -67,7 +67,7 @@ const ROWS = [
     SATA: 'Top of the stack — Strive is debt-free with one preferred series',
     BMNP: 'Above common stock; cumulative dividends',
     CHAD: 'Below company debt; above common stock; cumulative dividends',
-    MORE: 'Liquidation preference ahead of ordinary shares; cumulative dividends; no vote; redeemable by the company',
+    MORE: 'Behind creditors, ahead of ordinary shares; cumulative dividends; non-voting; redeemable by the company at £110',
   },
 ];
 
