@@ -30,7 +30,7 @@ const CHAD_TIERS = [
 
 const MORE_TIERS = [
   { label: 'Debt · Coinbase credit facility', sub: 'About £18.5m drawn at 3 Aug 2026 (around 13% of the treasury) · Repaid before any MORE dividend or liquidation claim · Smarter Web says it intends to use some IPO proceeds to pay it down', tag: 'DEBT' },
-  { label: 'MORE', sub: '12% initial, variable · Weekly · Cumulative · £100 reference value · Company may redeem · No vote', tag: 'PREFERRED', highlight: true },
+  { label: 'MORE', sub: '12% initial, variable (20% cap) · Weekly · Cumulative · £100 reference value · Redeemable at £110 · No vote', tag: 'PREFERRED', highlight: true },
   { label: 'SWC Ordinary Shares', sub: 'Absorbs losses first · No dividend priority · Uncapped bitcoin upside', tag: 'COMMON EQUITY' },
 ];
 
@@ -145,24 +145,27 @@ const CONTENT = {
     blog: [
       ['more-preferred-uk-investor-fx', 'MORE for UK investors: the currency angle'],
     ],
-    diagram: <CapitalStackDiagram tiers={MORE_TIERS} caption="MORE in The Smarter Web Company's capital structure · Source: MORE prospectus (RNS, 29 Sep 2026) and bitcoin purchase RNS (3 Aug 2026)" />,
+    diagram: <CapitalStackDiagram tiers={MORE_TIERS} caption="MORE in The Smarter Web Company's capital structure · Source: Smarter Web MORE preferred shares page and prospectus, bitcoin purchase RNS (3 Aug 2026)" />,
     above: (
       <>
         <p><strong>A credit facility with Coinbase.</strong> Smarter Web&apos;s 3 August 2026 announcement shows £18.5m drawn on its Coinbase strategic credit facility, a leverage ratio of roughly 17% of the treasury at the time. The IPO prospectus put the balance higher, at about £20.8m, and said some of the proceeds would be used to bring it down to around £19.0m. Lenders are paid before any preferred holder.</p>
-        <p>The announcements I&apos;ve read describe a &quot;liquidation preference&quot; over the ordinary shares but don&apos;t spell out the ranking against debt. As with the other preferreds on this site, I&apos;d assume creditors come first and check the prospectus before relying on anything more.</p>
+        <p>Smarter Web&apos;s MORE page is explicit that the preferred shares &quot;sit behind creditors&quot; and that the £100-per-share liquidation entitlement is paid only from surplus assets after creditors. It also says the company may take on further debt that ranks ahead of MORE, and can&apos;t create senior share capital without the preferred holders&apos; consent.</p>
       </>
     ),
     below: (
       <>
-        <p><strong>SWC ordinary shares.</strong> They absorb losses first and are paid last. MORE&apos;s dividend is <strong>cumulative</strong>, so anything unpaid is owed before the ordinary shareholders receive a penny.</p>
-        <p>MORE holders have <strong>no vote</strong> at general meetings, and the company has the right to redeem the shares. MORE is the only preferred series Smarter Web has issued.</p>
+        <p><strong>SWC ordinary shares.</strong> They absorb losses first and are paid last. On a winding-up, MORE holders get £100 a share plus any accrued unpaid dividends before ordinary shareholders see anything (after creditors).</p>
+        <p><strong>Dividend stopper.</strong> While any MORE dividend is unpaid, the company can&apos;t pay ordinary or junior dividends, and can&apos;t pay equal-ranking dividends unless MORE holders are paid too.</p>
+        <p>MORE holders have <strong>no vote</strong> at general meetings. MORE is the only preferred series Smarter Web has issued, though it can issue more of equal or junior rank.</p>
       </>
     ),
     financing: (
       <>
         <p>The prospectus says the dividend will be paid from recurring operating cash flow, cash reserves, the bitcoin treasury and access to the capital markets. Unlike Strategy or Bitmine, there is no staking or similar income stream behind it, and bitcoin itself pays nothing.</p>
         <p>The IPO raised about £10m gross, of which about <strong>{DIVIDEND_RESERVE.MORE.display}</strong> is earmarked for working capital and general purposes, including dividend cash reserves. That money is shared with other uses, so it isn&apos;t a ring-fenced dividend fund. The annual dividend on the IPO shares is about £1.33m.</p>
-        <p>The board can vary the rate within the prospectus limits and can suspend payments, so the 12% is a starting point rather than a promise. Suspended dividends are not lost, because they accumulate, but they are not paid either.</p>
+        <p><strong>The rate is variable.</strong> The 12% start can move up to a 20% cap, down to a floor of Bank of England base rate plus 1%, and falls are limited to 0.5% a year in any four weeks. The rate can&apos;t be cut while any dividend is unpaid. The company says the initial rate may not be maintained.</p>
+        <p><strong>Payments can be suspended.</strong> The board can suspend any weekly payment, at its sole discretion and without giving a reason. Unpaid amounts build up as a balance that earns no interest and doesn&apos;t compound, and is paid only when the board resolves to pay it.</p>
+        <p><strong>The company can call it.</strong> It can redeem some or all shares at any time at £110 plus any unpaid dividends, on 10 working days&apos; notice. Holders can&apos;t require redemption and there is no maturity date.</p>
       </>
     ),
   },
