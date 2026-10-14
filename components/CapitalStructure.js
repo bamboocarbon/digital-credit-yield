@@ -1,8 +1,6 @@
 import Link from 'next/link';
-import StrategyCapitalPyramid from '@/components/StrategyCapitalPyramid';
-import StriveCapitalStack from '@/components/StriveCapitalStack';
+import CapitalPyramid from '@/components/CapitalPyramid';
 import StrategyCashPotsDiagram from '@/components/StrategyCashPotsDiagram';
-import CapitalStackDiagram from '@/components/CapitalStackDiagram';
 import { DIVIDEND_RESERVE, STRATEGY_BTC_HOLDINGS, STRIVE_BTC_HOLDINGS, BITMINE_ETH_HOLDINGS, DFDV_SOL_HOLDINGS } from '@/lib/constants';
 
 const gold = { color: 'var(--accent-gold)' };
@@ -16,24 +14,6 @@ function Panel({ title, children }) {
   );
 }
 
-const BMNP_TIERS = [
-  { label: 'No borrowings', sub: 'No notes, loans or convertibles on the balance sheet at 31 May 2026 · ~$30m total liabilities · future debt would rank ahead', tag: 'NO DEBT', dashed: true },
-  { label: 'BMNP', sub: '9.50% fixed · Weekly · Cumulative · Redeemable at 110% → 105% → 100% of $100', tag: 'PREFERRED', highlight: true },
-  { label: 'BMNR Common Stock', sub: 'Absorbs losses first · No dividend priority · Cannot be paid while BMNP arrears exist', tag: 'COMMON EQUITY' },
-];
-
-const CHAD_TIERS = [
-  { label: 'Debt · ~$216m outstanding', sub: 'Convertible notes (2030) · Borrowing against pledged digital assets · Paid before any CHAD dividend or liquidation claim', tag: 'DEBT' },
-  { label: 'CHAD', sub: '13% variable · Daily · Cumulative · $10 stated value · $11 redemption option', tag: 'PREFERRED', highlight: true },
-  { label: 'DFDV Common Stock', sub: 'Absorbs losses first · No dividend priority · Uncapped SOL upside', tag: 'COMMON EQUITY' },
-];
-
-const MORE_TIERS = [
-  { label: 'Debt · Coinbase credit facility', sub: '£20.8m drawn per the prospectus (about 11.8% leverage) · Secured against bitcoin · Repaid before any MORE dividend or liquidation claim', tag: 'DEBT' },
-  { label: 'MORE', sub: '12% initial, variable (20% cap) · Weekly · Cumulative · £100 reference value · Redeemable at £110 · No vote', tag: 'PREFERRED', highlight: true },
-  { label: 'SWC Ordinary Shares', sub: 'Absorbs losses first · No dividend priority · Uncapped bitcoin upside', tag: 'COMMON EQUITY' },
-];
-
 const CONTENT = {
   STRC: {
     blog: [
@@ -43,7 +23,7 @@ const CONTENT = {
     ],
     diagram: (
       <>
-        <StrategyCapitalPyramid />
+        <CapitalPyramid ticker="STRC" />
         <p className="mb-1">Where the money for dividends sits, and where it flows (Strategy&apos;s 8-K, 27 September 2026):</p>
         <StrategyCashPotsDiagram />
       </>
@@ -74,7 +54,7 @@ const CONTENT = {
       ['strive-capital-structure', "Strive's capital structure"],
       ['how-sata-works', 'How SATA works'],
     ],
-    diagram: <StriveCapitalStack />,
+    diagram: <CapitalPyramid ticker="SATA" />,
     above: (
       <>
         <p><strong>Nothing, today.</strong> Strive cleared the last of its inherited debt (the $120m of convertible notes that came with the Semler Scientific acquisition) in early 2026 and has committed to staying debt-free. SATA is the most senior security Strive has.</p>
@@ -97,7 +77,7 @@ const CONTENT = {
       ['bmnp-dividend-rate-mechanism', "How BMNP's dividend is set and funded"],
       ['bmnp-vs-strc-sata', 'BMNP vs STRC and SATA'],
     ],
-    diagram: <CapitalStackDiagram tiers={BMNP_TIERS} caption="BMNP in Bitmine's capital structure · Source: Bitmine 424B5 (5 June 2026) and 10-Q (quarter to 31 May 2026)" />,
+    diagram: <CapitalPyramid ticker="BMNP" />,
     above: (
       <>
         <p><strong>No borrowings today.</strong> Bitmine&apos;s 10-Q for the quarter to 31 May 2026 shows no notes, loans, convertible notes or credit facilities. Total liabilities were about $30m (accrued liabilities, a lease, warrant liability and other items) against roughly $11.6bn of assets.</p>
@@ -122,7 +102,7 @@ const CONTENT = {
     blog: [
       ['how-chad-works', 'How CHAD works'],
     ],
-    diagram: <CapitalStackDiagram tiers={CHAD_TIERS} caption="CHAD in DeFi Development Corp.'s capital structure · Source: CHAD prospectus and 10-Q, balances at 30 June 2026" />,
+    diagram: <CapitalPyramid ticker="CHAD" />,
     above: (
       <>
         <p><strong>About $216m of debt.</strong> At 30 June 2026 DeFi Development Corp. had approximately $215.8m of consolidated indebtedness, per the CHAD prospectus. The balance sheet splits it into $120.6m of long-term debt, which includes the April and July 2030 convertible notes, and $89.8m of digital asset financing arrangements, which are borrowings secured by pledged digital assets.</p>
@@ -145,7 +125,7 @@ const CONTENT = {
     blog: [
       ['more-preferred-uk-investor-fx', 'MORE for UK investors: the currency angle'],
     ],
-    diagram: <CapitalStackDiagram tiers={MORE_TIERS} caption="MORE in The Smarter Web Company's capital structure · Source: MORE prospectus (29 Sep 2026)" />,
+    diagram: <CapitalPyramid ticker="MORE" />,
     above: (
       <>
         <p><strong>A bitcoin-secured credit facility with Coinbase.</strong> The prospectus describes a US$30m facility, secured against the bitcoin Smarter Web holds at Coinbase, with £20.8m drawn at the prospectus date (an approximate leverage ratio of 11.8%). It carries a variable 6.25% interest rate, has no fixed maturity and is marked to market daily, so a fall in bitcoin can trigger a call for more collateral. On default, Coinbase can sell the collateral. The company says it may seek to reduce or repay the facility in future.</p>

@@ -1,24 +1,32 @@
 'use client';
 
-import { STRATEGY_STACK, STRATEGY_STACK_ASOF } from '@/lib/strategyStack';
+import { CAPITAL_STACKS } from '@/lib/capitalStacks';
 
 const COLOURS = {
   debt: { bg: 'linear-gradient(180deg, rgba(220,38,38,0.34), rgba(220,38,38,0.14))', border: '#dc2626', text: '#fecaca', tag: '#f87171' },
   pref: { bg: 'rgba(55,65,81,0.55)', border: '#4b5563', text: '#e5e7eb', tag: '#9ca3af' },
+  none: { bg: 'transparent', border: '#374151', text: '#9ca3af', tag: '#22c55e', dashed: true },
   common: { bg: 'linear-gradient(180deg, rgba(99,102,241,0.38), rgba(99,102,241,0.16))', border: '#6366f1', text: '#c7d2fe', tag: '#818cf8' },
   highlight: { bg: 'rgba(200,137,58,0.22)', border: '#c8893a', text: '#c8893a', tag: '#c8893a' },
 };
 
-const fmtBn = n => `$${n >= 10 ? n.toFixed(1) : n.toFixed(2).replace(/0$/, '')}bn`;
+// mcap is in millions of the stack's currency
+const fmtMoney = (m, cur) => {
+  if (m === 0) return 'None';
+  if (m >= 1000) { const b = m / 1000; return `${cur}${b >= 10 ? b.toFixed(1) : b.toFixed(2).replace(/0$/, '')}bn`; }
+  return `${cur}${m >= 100 ? Math.round(m) : m.toFixed(1).replace(/\.0$/, '')}m`;
+};
 const eyebrow = { fontSize: '0.75em', fontWeight: 600, letterSpacing: '0.08em', color: '#6b7280', textTransform: 'uppercase' };
 
 // Capital stack + market-cap pyramid in one. Block width scales with the SQUARE ROOT of market
 // cap relative to the largest block (MSTR common): a linear scale would shrink every preferred to
 // a sliver beside ~$60bn of equity; sqrt keeps them legible while still showing the credit layer
 // is small against the base. Labels carry the real dollar figures.
-export default function StrategyCapitalPyramid({ data = STRATEGY_STACK }) {
-  const max = Math.max(...data.map(d => d.mcap));
-  const rows = [...data].sort((a, b) => a.rank - b.rank);
+export default function CapitalPyramid({ ticker }) {
+  const stack = CAPITAL_STACKS[ticker];
+  if (!stack) return null;
+  const { rows, currency: cur, caption } = stack;
+  const max = Math.max(...rows.map(d => d.mcap));
 
   return (
     <div style={{ margin: '2rem auto', maxWidth: '820px' }}>
@@ -36,6 +44,7 @@ export default function StrategyCapitalPyramid({ data = STRATEGY_STACK }) {
         {rows.map(d => {
           const c = d.highlight ? COLOURS.highlight : COLOURS[d.kind];
           const pct = Math.max(14, Math.sqrt(d.mcap / max) * 100);
+          const dashed = c.dashed ? 'dashed' : 'solid';
           return (
             <div key={d.id} className="csp-row">
               <div style={{ minWidth: 0 }}>
@@ -54,16 +63,16 @@ export default function StrategyCapitalPyramid({ data = STRATEGY_STACK }) {
               </div>
               <div className="csp-bar" style={{ display: 'flex', justifyContent: 'center' }}>
                 <div
-                  title={`${d.label}: ${fmtBn(d.mcap)}`}
+                  title={`${d.label}: ${fmtMoney(d.mcap, cur)}`}
                   style={{
-                    width: `${pct}%`, height: '38px', background: c.bg, border: `1px solid ${c.border}`,
+                    width: `${pct}%`, height: '38px', background: c.bg, border: `1px ${dashed} ${c.border}`,
                     borderRadius: '6px', boxShadow: d.highlight ? '0 0 0 1px rgba(200,137,58,0.3)' : 'none',
                     transition: 'width 0.3s ease',
                   }}
                 />
               </div>
               <div style={{ fontSize: '0.8em', fontWeight: 600, color: '#9ca3af', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
-                {fmtBn(d.mcap)}
+                {fmtMoney(d.mcap, cur)}
               </div>
             </div>
           );
@@ -77,7 +86,7 @@ export default function StrategyCapitalPyramid({ data = STRATEGY_STACK }) {
 
       <p style={{ margin: '0.75rem 0 0', fontSize: '0.72em', color: '#4b5563', textAlign: 'center', lineHeight: 1.5 }}>
         Block width shows market value on a square-root scale (not linear) so the smaller layers stay visible;
-        labels show the actual figure. Strategy Inc capital structure as of {STRATEGY_STACK_ASOF} · Source: SEC filings
+        labels show the actual figure. {caption}
       </p>
     </div>
   );
