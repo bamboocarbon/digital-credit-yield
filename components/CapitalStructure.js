@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import StrategyCapitalStack from '@/components/StrategyCapitalStack';
+import StrategyCapitalPyramid from '@/components/StrategyCapitalPyramid';
 import StriveCapitalStack from '@/components/StriveCapitalStack';
 import StrategyCashPotsDiagram from '@/components/StrategyCashPotsDiagram';
 import CapitalStackDiagram from '@/components/CapitalStackDiagram';
@@ -44,6 +45,7 @@ const CONTENT = {
     diagram: (
       <>
         <StrategyCapitalStack />
+        <StrategyCapitalPyramid />
         <p className="mb-1">Where the money for dividends sits, and where it flows (Strategy&apos;s 8-K, 27 September 2026):</p>
         <StrategyCashPotsDiagram />
       </>
