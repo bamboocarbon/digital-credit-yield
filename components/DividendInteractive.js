@@ -140,7 +140,7 @@ function SataMonthlyProgress({ monthlyByMonth, todayYM, today, annualRate }) {
       <p className="text-xs mb-5" style={{ color: 'var(--text-muted)' }}>
         This month&apos;s box fills as payments land. Gold fill indicates the proportion of expected income received so far.
       </p>
-      <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 sm:gap-3">
+      <div className="flex flex-wrap gap-6">
         {displayMonths.map(ym => {
           const monthlyPaid = (monthlyByMonth[ym] ?? []).reduce((s, d) => s + d.amount, 0);
           // Count business days elapsed (= payments made), not lagging Yahoo events.
@@ -151,9 +151,9 @@ function SataMonthlyProgress({ monthlyByMonth, todayYM, today, annualRate }) {
           const isCurrentMonth = ym === todayYM;
           const isComplete = fillPct >= 1;
           return (
-            <div key={ym} className="flex flex-col items-center gap-1">
+            <div key={ym} className="flex items-center gap-5">
               <div title={`${cur}${paid.toFixed(4)} of ${cur}${expected.toFixed(4)} expected`}
-                style={{ position: 'relative', width: '100%', height: 52,
+                style={{ position: 'relative', width: 110, height: 76, flexShrink: 0,
                   border: `2px solid ${isCurrentMonth ? '#f5a623' : 'rgba(200,137,58,0.5)'}`,
                   borderRadius: 6, overflow: 'hidden', background: '#111827' }}>
                 <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0,
@@ -161,12 +161,15 @@ function SataMonthlyProgress({ monthlyByMonth, todayYM, today, annualRate }) {
                   background: isComplete ? '#f5a623' : 'rgba(245,166,35,0.6)',
                   transition: 'height 0.4s ease' }} />
               </div>
-              <span style={{ fontSize: 10, color: isCurrentMonth ? 'var(--text-primary)' : 'var(--text-muted)', whiteSpace: 'nowrap' }}>
-                {ymToLabel(ym)}
-              </span>
-              <span style={{ fontSize: 10, ...MONO, color: paid > 0 ? 'var(--accent-gold)' : 'var(--text-muted)' }}>
-                {dailyCount}/{dailyTotal}
-              </span>
+              <div className="flex flex-col gap-1">
+                <span style={{ fontSize: 22, fontWeight: 700, lineHeight: 1.1, color: isCurrentMonth ? 'var(--text-primary)' : 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                  {ymToLabel(ym)}
+                </span>
+                <span style={{ fontSize: 20, fontWeight: 600, ...MONO, color: paid > 0 ? 'var(--accent-gold)' : 'var(--text-muted)' }}>
+                  {dailyCount}/{dailyTotal}
+                </span>
+                <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>payments</span>
+              </div>
             </div>
           );
         })}
@@ -192,7 +195,7 @@ function MonthlyPaymentProgress({ paidDividends, announcedDividends, todayYM, cu
       <p className="text-xs mb-5" style={{ color: 'var(--text-muted)' }}>
         This month&apos;s box fills as payments land. Gold fill indicates the proportion of expected income received so far.
       </p>
-      <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 sm:gap-3">
+      <div className="flex flex-wrap gap-6">
         {displayMonths.map(ym => {
           const paidThisMonth = paidDividends.filter(d => d.date.slice(0, 7) === ym);
           const announcedThisMonth = announcedDividends.filter(d => d.date.slice(0, 7) === ym);
@@ -204,9 +207,9 @@ function MonthlyPaymentProgress({ paidDividends, announcedDividends, todayYM, cu
           const isCurrentMonth = ym === todayYM;
           const isComplete = fillPct >= 1;
           return (
-            <div key={ym} className="flex flex-col items-center gap-1">
+            <div key={ym} className="flex items-center gap-5">
               <div title={`${cur}${paid.toFixed(4)} of ${cur}${expected.toFixed(4)} expected`}
-                style={{ position: 'relative', width: '100%', height: 52,
+                style={{ position: 'relative', width: 110, height: 76, flexShrink: 0,
                   border: `2px solid ${isCurrentMonth ? '#f5a623' : 'rgba(200,137,58,0.5)'}`,
                   borderRadius: 6, overflow: 'hidden', background: '#111827' }}>
                 <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0,
@@ -214,12 +217,15 @@ function MonthlyPaymentProgress({ paidDividends, announcedDividends, todayYM, cu
                   background: isComplete ? '#f5a623' : 'rgba(245,166,35,0.6)',
                   transition: 'height 0.4s ease' }} />
               </div>
-              <span style={{ fontSize: 10, color: isCurrentMonth ? 'var(--text-primary)' : 'var(--text-muted)', whiteSpace: 'nowrap' }}>
-                {ymToLabel(ym)}
-              </span>
-              <span style={{ fontSize: 10, ...MONO, color: paid > 0 ? 'var(--accent-gold)' : 'var(--text-muted)' }}>
-                {countPaid}/{countTotal || countPaid}
-              </span>
+              <div className="flex flex-col gap-1">
+                <span style={{ fontSize: 22, fontWeight: 700, lineHeight: 1.1, color: isCurrentMonth ? 'var(--text-primary)' : 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                  {ymToLabel(ym)}
+                </span>
+                <span style={{ fontSize: 20, fontWeight: 600, ...MONO, color: paid > 0 ? 'var(--accent-gold)' : 'var(--text-muted)' }}>
+                  {countPaid}/{countTotal || countPaid}
+                </span>
+                <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>payments</span>
+              </div>
             </div>
           );
         })}
