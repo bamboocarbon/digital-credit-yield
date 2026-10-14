@@ -39,7 +39,8 @@ const MR = 14;  // right margin
 const CW_DRAW = W - ML - MR;  // 394px chart draw width
 
 // ── Brand colours ─────────────────────────────────────────────────────────────
-const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047' };
+const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#7f1d1d', MORE: '#a855f7' };
+const CURRENCY_SYMBOL = { MORE: '£' }; // everything else is dollars
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function xPx(t)         { return ML + t * CW_DRAW; }
@@ -219,10 +220,12 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
 
   // ── Snapshot strip ──────────────────────────────────────────────────────────
   if (showSnapshot) {
-    const gapBetween = 10;
-    const cellW = (W - 2*PX - 2*gapBetween) / 3; // ~132px
+    // Five cells (STRC, SATA, BMNP, CHAD, MORE) — narrower than the old three, so text is a size smaller.
+    const tickers = ['STRC', 'SATA', 'BMNP', 'CHAD', 'MORE'];
+    const gapBetween = 6;
+    const cellW = (W - 2*PX - (tickers.length - 1) * gapBetween) / tickers.length; // ~78px
 
-    ['STRC', 'SATA', 'BMNP'].forEach((t, i) => {
+    tickers.forEach((t, i) => {
       const cx = PX + i * (cellW + gapBetween);
       ctx.fillStyle = '#0b1422';
       roundRect(ctx, cx, SN_Y0, cellW, SN_Y1 - SN_Y0, 10);
@@ -231,29 +234,30 @@ function renderFrame(ctx, frame, series, yMin, yMax, title, date, months, quotes
 
       const col = TICKER_COLOUR[t];
       const q   = quotes[t];
-      const innerX = cx + 10;
-      const lineGap = 16;
+      const innerX = cx + 8;
+      const lineGap = 15;
+      const cur = CURRENCY_SYMBOL[t] ?? '$';
 
       // Ticker label
       ctx.fillStyle = col;
-      ctx.font = 'bold 14px Arial, sans-serif';
+      ctx.font = 'bold 13px Arial, sans-serif';
       ctx.textAlign = 'left';
       ctx.fillText(t, innerX, SN_Y0 + 20);
 
       if (q?.price != null) {
         const up = (q.changePercent ?? 0) >= 0;
         ctx.fillStyle = '#e4eaf5';
-        ctx.font = 'bold 12px Arial, sans-serif';
-        ctx.fillText(`$${q.price.toFixed(2)}`, innerX, SN_Y0 + 20 + lineGap);
+        ctx.font = 'bold 11px Arial, sans-serif';
+        ctx.fillText(`${cur}${q.price.toFixed(2)}`, innerX, SN_Y0 + 20 + lineGap);
         ctx.fillStyle = up ? '#4ade80' : '#e05555';
-        ctx.font = '11px Arial, sans-serif';
+        ctx.font = '10px Arial, sans-serif';
         ctx.fillText(`${up ? '▲' : '▼'} ${Math.abs(q.changePercent ?? 0).toFixed(2)}%`, innerX, SN_Y0 + 20 + lineGap * 2);
       } else {
-        const RATES = { STRC: '12.0%', SATA: '13.0%', BMNP: '9.5%' };
+        const RATES = { STRC: '12.0%', SATA: '13.0%', BMNP: '9.5%', CHAD: '13.0%', MORE: '12.0%' };
         ctx.fillStyle = '#8a9ab5';
-        ctx.font = '11px Arial, sans-serif';
+        ctx.font = '10px Arial, sans-serif';
         ctx.fillText('Listing soon', innerX, SN_Y0 + 20 + lineGap);
-        ctx.fillText(`${RATES[t] || ''} fixed`, innerX, SN_Y0 + 20 + lineGap * 2);
+        ctx.fillText(`${RATES[t] || ''} ${t === 'MORE' || t === 'CHAD' ? 'var.' : 'fixed'}`, innerX, SN_Y0 + 20 + lineGap * 2);
       }
     });
   }
