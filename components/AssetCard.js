@@ -12,6 +12,11 @@ const INCOME_BADGE = {
   BMNP: 'Weekly Income',
   CHAD: 'Daily Income',
   MORE: 'Weekly Income',
+  STRK: 'Quarterly Income',
+  STRF: 'Quarterly Income',
+  STRD: 'Quarterly Income',
+  STRE: 'Quarterly Income',
+  SATS: 'Daily Income',
 };
 
 

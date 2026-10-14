@@ -4,7 +4,7 @@ import { PENDING_RATE_CHANGES } from '@/lib/pendingRateChanges';
 import SubNav from '@/components/SubNav';
 import AadsAd from '@/components/AadsAd';
 import AssetHubLive from '@/components/AssetHubLive';
-import HubStockSelector from '@/components/HubStockSelector';
+import IssuerCards from '@/components/IssuerCards';
 import CapitalStructure from '@/components/CapitalStructure';
 
 function PendingRateNote({ ticker }) {
@@ -294,7 +294,7 @@ export default function AssetHub({ ticker, name }) {
         {ticker} — {name}
       </h1>
 
-      <HubStockSelector selected={ticker} />
+      <IssuerCards selected={ticker} />
 
       <PendingRateNote ticker={ticker} />
       <DailyProposalNote ticker={ticker} />
