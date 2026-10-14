@@ -1,6 +1,4 @@
-'use client';
-
-import { CAPITAL_STACKS } from '@/lib/capitalStacks';
+import { resolveStack } from '@/lib/capitalStacksLive';
 
 const COLOURS = {
   debt: { bg: 'linear-gradient(180deg, rgba(220,38,38,0.34), rgba(220,38,38,0.14))', border: '#dc2626', text: '#fecaca', tag: '#f87171' },
@@ -24,8 +22,8 @@ const eyebrow = { fontSize: '0.75em', fontWeight: 600, letterSpacing: '0.08em', 
 // is small against the base. Labels carry the real dollar figures.
 // `ticker` picks the stack; `highlightId` (optional) overrides which row gets the "This page" highlight,
 // so STRK/STRF/STRD/STRE can show Strategy's stack with their own row picked out.
-export default function CapitalPyramid({ ticker, highlightId }) {
-  const stack = CAPITAL_STACKS[ticker];
+export default async function CapitalPyramid({ ticker, highlightId }) {
+  const stack = await resolveStack(ticker);
   if (!stack) return null;
   const { rows, currency: cur, caption } = stack;
   const max = Math.max(...rows.map(d => d.mcap));
@@ -90,6 +88,7 @@ export default function CapitalPyramid({ ticker, highlightId }) {
       <p style={{ margin: '0.75rem 0 0', fontSize: '0.72em', color: '#4b5563', textAlign: 'center', lineHeight: 1.5 }}>
         Block width shows market value on a square-root scale (not linear) so the smaller layers stay visible;
         labels show the actual figure. {caption}
+        {stack.anyLive && ` · Market value = shares × price, refreshed hourly${stack.countsAsOf.length ? `; share counts from filings (${stack.countsAsOf.join(', ')})` : ''}`}
       </p>
     </div>
   );

@@ -1,6 +1,8 @@
 import AssetHub from '@/components/AssetHub';
 import { ASSET_RATES } from '@/lib/constants';
 
+export const revalidate = 3600; // refresh the live-priced capital-structure pyramid hourly
+
 const rate = ASSET_RATES.STRD.toFixed(2);
 
 export const metadata = {

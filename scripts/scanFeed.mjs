@@ -96,7 +96,11 @@ for (const [file, fn, key] of [['sec.json', secFeed, 'sec'], ['swc-rns.json', sw
 try {
   const read = async f => JSON.parse(await readFile(new URL(f, OUT), 'utf8'));
   const counts = await buildCounts({ sec: await read('sec.json').catch(() => null), swc: await read('swc-rns.json').catch(() => null), prevPath: new URL('../capital-stack-counts.json', OUT) });
-  await writeFile(new URL('../capital-stack-counts.json', OUT), JSON.stringify(counts, null, 1) + '\n');
+  // Only rewrite when a count actually changed (ignoring the timestamp): a rewrite is committed WITHOUT [skip ci],
+  // which redeploys the site so the pyramids pick up the new counts. Unchanged days must not trigger a deploy.
+  const prevCounts = await readFile(new URL('../capital-stack-counts.json', OUT), 'utf8').then(JSON.parse).catch(() => null);
+  const strip = c => JSON.stringify({ ...c, generatedAt: undefined });
+  if (!prevCounts || strip(prevCounts) !== strip(counts)) await writeFile(new URL('../capital-stack-counts.json', OUT), JSON.stringify(counts, null, 1) + '\n');
   meta.counts = { ok: true, warnings: counts.warnings };
 } catch (e) { meta.counts = { ok: false }; meta.errors.push(`capital-stack-counts: ${e.message}`); }
 await writeFile(new URL('meta.json', OUT), JSON.stringify(meta, null, 1) + '\n');
