@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { STRATEGY_STACK, STRATEGY_STACK_ASOF } from '@/lib/strategyStack';
 
 const COLOURS = {
@@ -18,11 +17,8 @@ const eyebrow = { fontSize: '0.75em', fontWeight: 600, letterSpacing: '0.08em', 
 // a sliver beside ~$60bn of equity; sqrt keeps them legible while still showing the credit layer
 // is small against the base. Labels carry the real dollar figures.
 export default function StrategyCapitalPyramid({ data = STRATEGY_STACK }) {
-  const [order, setOrder] = useState('seniority');
   const max = Math.max(...data.map(d => d.mcap));
-  const rows = order === 'size'
-    ? [...data].sort((a, b) => a.mcap - b.mcap)
-    : [...data].sort((a, b) => a.rank - b.rank);
+  const rows = [...data].sort((a, b) => a.rank - b.rank);
 
   return (
     <div style={{ margin: '2rem auto', maxWidth: '820px' }}>
@@ -32,26 +28,8 @@ export default function StrategyCapitalPyramid({ data = STRATEGY_STACK }) {
       `}</style>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.6rem', flexWrap: 'wrap' }}>
-        <span style={eyebrow}>{order === 'size' ? 'Smallest at top' : 'Most senior'}</span>
+        <span style={eyebrow}>Most senior</span>
         <div style={{ flex: 1, height: '1px', background: '#374151', minWidth: '20px' }} />
-        <div role="group" aria-label="Order blocks by" style={{ display: 'flex', gap: '4px' }}>
-          {[['seniority', 'By seniority'], ['size', 'By size']].map(([key, label]) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setOrder(key)}
-              aria-pressed={order === key}
-              style={{
-                fontSize: '0.75em', padding: '4px 10px', borderRadius: '6px', cursor: 'pointer',
-                border: `1px solid ${order === key ? '#c8893a' : '#374151'}`,
-                background: order === key ? 'rgba(200,137,58,0.15)' : 'transparent',
-                color: order === key ? '#c8893a' : '#9ca3af',
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -93,7 +71,7 @@ export default function StrategyCapitalPyramid({ data = STRATEGY_STACK }) {
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.6rem' }}>
-        <span style={eyebrow}>{order === 'size' ? 'Largest at bottom' : 'Most junior'}</span>
+        <span style={eyebrow}>Most junior</span>
         <div style={{ flex: 1, height: '1px', background: '#374151' }} />
       </div>
 
