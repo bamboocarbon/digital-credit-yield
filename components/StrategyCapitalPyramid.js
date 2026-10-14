@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { STRATEGY_STACK, STRATEGY_STACK_ASOF } from '@/lib/strategyStack';
 
 const COLOURS = {
-  debt: { bg: 'rgba(75,85,99,0.55)', border: '#6b7280', text: '#e5e7eb', tag: '#6b7280' },
+  debt: { bg: 'linear-gradient(180deg, rgba(220,38,38,0.34), rgba(220,38,38,0.14))', border: '#dc2626', text: '#fecaca', tag: '#f87171' },
   pref: { bg: 'rgba(55,65,81,0.55)', border: '#4b5563', text: '#e5e7eb', tag: '#9ca3af' },
   common: { bg: 'linear-gradient(180deg, rgba(99,102,241,0.38), rgba(99,102,241,0.16))', border: '#6366f1', text: '#c7d2fe', tag: '#818cf8' },
   highlight: { bg: 'rgba(200,137,58,0.22)', border: '#c8893a', text: '#c8893a', tag: '#c8893a' },
