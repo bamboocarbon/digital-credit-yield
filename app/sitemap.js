@@ -22,6 +22,11 @@ export default function sitemap() {
     ] : []),
     { url: `${base}/chad`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.9 },
     { url: `${base}/more`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.9 },
+    { url: `${base}/strk`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.8 },
+    { url: `${base}/strf`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.8 },
+    { url: `${base}/strd`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.8 },
+    { url: `${base}/stre`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.8 },
+    { url: `${base}/sats`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.8 },
     // Consolidated tool pages — one selectable page per tool, covering all instruments
     { url: `${base}/chart`,               lastModified: now,          changeFrequency: 'daily',   priority: 0.8 },
     { url: `${base}/dividends`,           lastModified: now,          changeFrequency: 'weekly',  priority: 0.7 },

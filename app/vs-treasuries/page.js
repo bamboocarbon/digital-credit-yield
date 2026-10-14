@@ -46,5 +46,5 @@ export default async function VsTreasuriesPage({ searchParams }) {
   const liveData = await getLiveData();
   const liveYields = Object.fromEntries(Object.entries(liveData).map(([t, d]) => [t, d.yield]));
   const livePrices = Object.fromEntries(Object.entries(liveData).map(([t, d]) => [t, d.price]));
-  return <VsTreasuriesTool initialStock={initialStock} liveYields={liveYields} livePrices={livePrices} />;
+  return <VsTreasuriesTool key={initialStock} initialStock={initialStock} liveYields={liveYields} livePrices={livePrices} />;
 }

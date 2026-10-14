@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { SELECTABLE_TICKERS, TICKER_COLOUR, COMPANY } from '@/lib/tickerDisplay';
+import { sameIssuerTickers, TICKER_COLOUR, COMPANY } from '@/lib/tickerDisplay';
 
 // Same look as StockSelector, but for the per-ticker hub pages (/strc, /sata, /bmnp),
 // which are separate routes with their own SEO metadata rather than a single page
@@ -7,7 +7,7 @@ import { SELECTABLE_TICKERS, TICKER_COLOUR, COMPANY } from '@/lib/tickerDisplay'
 export default function HubStockSelector({ selected }) {
   return (
     <div className="flex flex-wrap gap-2 mb-6" role="group" aria-label="Choose a stock">
-      {SELECTABLE_TICKERS.map(ticker => {
+      {sameIssuerTickers(selected).map(ticker => {
         const active = ticker === selected;
         const colour = TICKER_COLOUR[ticker];
         return (

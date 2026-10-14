@@ -8,11 +8,11 @@ import { BMNP_ENABLED } from '@/lib/constants';
 // Top row of the desktop navbar (plus the X icon); bottom row is everything else.
 const primaryLinks = [
   { label: 'Home', href: '/' },
-  { label: 'STRC', href: '/strc' },
-  { label: 'SATA', href: '/sata' },
-  { label: 'BMNP', href: '/bmnp', bmnpOnly: true },
-  { label: 'CHAD', href: '/chad' },
-  { label: 'MORE', href: '/more' },
+  { label: 'Hub', href: '/strc', hub: true },
+  { label: 'Chart', href: '/chart' },
+  { label: 'Growth', href: '/projector' },
+  { label: 'vs Treasuries', href: '/vs-treasuries' },
+  { label: 'Dividends', href: '/dividends' },
   { label: 'Money Flow', href: '/money-flow' },
   { label: 'Contact', href: '/contact' },
 ];
@@ -21,6 +21,9 @@ const secondaryLinks = [
   { label: 'Blog', href: '/blog' },
   { label: 'About Me', href: '/about' },
 ];
+
+// Ticker hub pages — the "Hub" link is highlighted on any of them
+const HUB_PATHS = ['/strc', '/sata', '/bmnp', '/chad', '/more'];
 
 const visible = list => list.filter(l => !l.bmnpOnly || BMNP_ENABLED);
 const primary = visible(primaryLinks);
@@ -37,8 +40,10 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  const isActive = href =>
-    pathname === href || (href !== '/' && pathname.startsWith(href + '/'));
+  const isActive = (href, hub) =>
+    hub
+      ? HUB_PATHS.includes(pathname)
+      : pathname === href || (href !== '/' && pathname.startsWith(href + '/'));
 
   const renderLink = link => (
     <Link
@@ -46,7 +51,7 @@ export default function Navbar() {
       href={link.href}
       prefetch={false}
       className="text-sm font-medium transition-colors"
-      style={{ color: isActive(link.href) ? 'var(--accent-gold)' : 'var(--text-muted)' }}
+      style={{ color: isActive(link.href, link.hub) ? 'var(--accent-gold)' : 'var(--text-muted)' }}
     >
       {link.label}
     </Link>

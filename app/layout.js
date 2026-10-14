@@ -1,6 +1,7 @@
 import './globals.css';
 import Script from 'next/script';
 import Navbar from '@/components/Navbar';
+import IssuerBar from '@/components/IssuerBar';
 import Footer from '@/components/Footer';
 import CookieBanner from '@/components/CookieBanner';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
@@ -46,6 +47,7 @@ export default function RootLayout({ children }) {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
         <Navbar />
         <main className="flex-1 pt-16 md:pt-24">
+          <IssuerBar />
           {children}
         </main>
         <Footer />

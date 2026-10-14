@@ -20,6 +20,28 @@ function PendingRateNote({ ticker }) {
   );
 }
 
+// Strategy's proposal (8-K 5 Oct 2026 / DEFA14A) to pay STRC, STRF, STRK and STRD every calendar day.
+// STRE is not part of it. Shown while the vote is pending — UPDATE OR REMOVE after the 28 Oct 2026
+// special meeting: if approved, change these tickers' PAYMENT_FREQUENCY and dividend files and drop
+// the "proposed" wording; if rejected, remove the note.
+const DAILY_PROPOSAL = {
+  STRC: 'If approved, the first daily dividend is expected on 2 November 2026 (record date 1 November).',
+  STRF: 'If approved, STRF stays quarterly until the first daily payment, expected on 4 January 2027.',
+  STRK: 'If approved, STRK stays quarterly until the first daily payment, expected on 4 January 2027.',
+  STRD: 'If approved, STRD stays quarterly until the first daily payment, expected on 4 January 2027.',
+};
+
+function DailyProposalNote({ ticker }) {
+  const when = DAILY_PROPOSAL[ticker];
+  if (!when) return null;
+  return (
+    <div className="text-sm mb-4 px-4 py-2.5 rounded-lg" style={{ background: 'var(--accent-gold-dim, rgba(212,175,55,0.1))', border: '1px solid var(--accent-gold)', color: 'var(--text)' }}>
+      <strong>Proposed:</strong> Strategy has proposed paying {ticker}&apos;s dividend every calendar day, with the same rate and annual total, subject to a shareholder vote on 28 October 2026. {when}{' '}
+      <Link href="/blog/strc-365-day-calendar-dividends-proposal" prefetch={false} className="underline">Read more</Link>
+    </div>
+  );
+}
+
 const TOOLS = {
   STRC: [
     {
@@ -196,6 +218,73 @@ const DESCRIPTIONS = {
   ),
 };
 
+// ── Strategy's other preferreds and Strive's SATS ─────────────────────────────────────────────
+// Reference-tier hubs: same tools as the main tickers, generated from one helper rather than
+// five hand-written blocks. Copy is factual (terms from each issuer's filings); no personal-voice
+// closing line — that's Robin's to write.
+const toolsFor = (t, { govt = 'US Treasuries', money = 'dollar', cadence = 'quarterly', par = '$100' } = {}) => {
+  const low = t.toLowerCase();
+  return [
+    { href: `/chart?stock=${low}`, label: 'Live Price Chart', description: `Track the ${t} market price against its ${par} stated value. As the price moves, the effective yield changes — use the chart to spot when ${t} trades at a premium or discount and what that means for your entry yield.` },
+    { href: `/projector?stock=${low}`, label: 'Growth Projector', description: `Enter an investment amount and time horizon to model projected income and portfolio growth from holding ${t}. Adjust the reinvestment rate to see the compounding effect of ${cadence} dividends, and compare returns against ${govt} and bank savings.` },
+    { href: `/vs-treasuries?stock=${low}`, label: govt === 'UK gilts' ? 'vs Gilts' : 'vs Treasuries', description: `Compare the income from ${t}'s dividend against ${govt} and bank savings over any time period. Enter your investment amount and the tool shows the difference in ${money} terms.` },
+    { href: `/dividends?stock=${low}`, label: 'Dividend History', description: `A record of every ${t} dividend payment — per-share amount and payment date. Enter your holding size to calculate what you received or will receive from each ${cadence} distribution.` },
+  ];
+};
+TOOLS.STRK = toolsFor('STRK');
+TOOLS.STRF = toolsFor('STRF');
+TOOLS.STRD = toolsFor('STRD');
+TOOLS.STRE = toolsFor('STRE', { money: 'euro', par: '€100' });
+TOOLS.SATS = toolsFor('SATS', { cadence: 'daily' });
+
+const Visit = ({ href, label }) => (
+  <a href={href} target="_blank" rel="noopener noreferrer"
+    className="inline-block text-sm underline mt-1" style={{ color: 'var(--accent-gold)' }}>
+    {label}
+  </a>
+);
+
+DESCRIPTIONS.STRK = (
+  <div className="space-y-3">
+    <p>STRK is Strategy&apos;s 8.00% Series A Perpetual Strike Preferred Stock, listed on the Nasdaq. It pays a fixed 8.00% annual dividend on a $100 stated value ($8.00 a share a year, $2.00 a quarter), in cash, cumulative if ever missed. Unlike STRC and STRF, it is <strong>convertible</strong>: each share can convert into 0.1 share of MSTR common stock, so holders get an equity option alongside the income.</p>
+    <p>STRK ranks below Strategy&apos;s debt, STRF, STRC and STRE, and above STRD and the common stock. The conversion feature is why it trades well below its $100 stated value at times: part of what you hold is an option on MSTR, and the headline 8% is lower than the other fixed-rate series as a result. When STRK trades below $100, the effective yield — the dividend measured against the price you actually pay — is higher than 8%.</p>
+    <p>Strategy (formerly MicroStrategy) is a Nasdaq-listed Bitcoin treasury company and the world&apos;s largest corporate holder of Bitcoin, with over {STRATEGY_BTC_HOLDINGS} BTC.</p>
+    <Visit href="https://www.strategy.com" label="Visit Strategy.com" />
+  </div>
+);
+DESCRIPTIONS.STRF = (
+  <div className="space-y-3">
+    <p>STRF is Strategy&apos;s 10.00% Series A Perpetual Strife Preferred Stock, listed on the Nasdaq. It pays a fixed 10.00% annual dividend on a $100 stated value ($10.00 a share a year, $2.50 a quarter), in cash, cumulative if ever missed.</p>
+    <p>STRF is the most senior of Strategy&apos;s preferred series: only Strategy&apos;s debt ranks ahead of it, and it ranks ahead of STRC, STRE, STRK and STRD. Because the rate is fixed and the instrument trades close to its stated value, STRF behaves most like conventional preferred income of the Strategy range.</p>
+    <p>Strategy (formerly MicroStrategy) is a Nasdaq-listed Bitcoin treasury company and the world&apos;s largest corporate holder of Bitcoin, with over {STRATEGY_BTC_HOLDINGS} BTC.</p>
+    <Visit href="https://www.strategy.com" label="Visit Strategy.com" />
+  </div>
+);
+DESCRIPTIONS.STRD = (
+  <div className="space-y-3">
+    <p>STRD is Strategy&apos;s 10.00% Series A Perpetual Stride Preferred Stock, listed on the Nasdaq. It pays a stated 10.00% annual dividend on a $100 stated value ($10.00 a share a year, $2.50 a quarter), in cash. Unlike STRF, STRK and STRC, STRD&apos;s dividend is <strong>non-cumulative</strong>: a payment that isn&apos;t declared doesn&apos;t build up as an amount owed.</p>
+    <p>STRD is the most junior of Strategy&apos;s preferred series, ranking just above the common stock. That position, together with the non-cumulative dividend, is why it trades well below its $100 stated value, and why its effective yield — the dividend against the price you actually pay — is well above the 10% headline rate.</p>
+    <p>Strategy (formerly MicroStrategy) is a Nasdaq-listed Bitcoin treasury company and the world&apos;s largest corporate holder of Bitcoin, with over {STRATEGY_BTC_HOLDINGS} BTC.</p>
+    <Visit href="https://www.strategy.com" label="Visit Strategy.com" />
+  </div>
+);
+DESCRIPTIONS.STRE = (
+  <div className="space-y-3">
+    <p>STRE is Strategy&apos;s 10.00% Series A Perpetual Stream Preferred Stock — its only <strong>euro-denominated</strong> preferred. It has a €100 stated value and pays a fixed 10.00% a year (€10.00 a share, €2.50 a quarter) in euros, cumulative if ever missed. It is listed on the Luxembourg Stock Exchange&apos;s Euro MTF market, not on Nasdaq, and is available only to professional and institutional investors in the European Economic Area — not to retail investors, and not in the UK.</p>
+    <p>STRE ranks below Strategy&apos;s debt, STRF and STRC, and above STRK, STRD and the common stock.</p>
+    <p>STRE has no standard market-data feed: the price shown here is the indicative mid-point of bid and ask as reported by a market maker, taken from Strategy&apos;s own STRE page and updated by hand, so it may lag the market.</p>
+    <Visit href="https://www.strategy.com/stre/learn" label="Visit Strategy.com/stre" />
+  </div>
+);
+DESCRIPTIONS.SATS = (
+  <div className="space-y-3">
+    <p>SATS is Strive&apos;s proposed 15.00% Series A Perpetual SATS Preferred Stock. On 13 October 2026 Strive announced an initial public offering of 5,000,000 shares at a $100 stated value (about $500 million), with a Nasdaq listing applied for. It would pay a 15.00% annual dividend ($15.00 a share a year) in cash on each business day, cumulative if ever missed, beginning 9 November 2026.</p>
+    <p>At closing Strive intends to set aside a dividend reserve of $22.50 per SATS share — 18 months of dividends. SATS would rank below Strive&apos;s SATA preferred, so it carries more risk than SATA, which is the trade-off for the higher rate. SATS has not priced or begun trading yet: <strong>everything on this page is based on the announced terms, not a live market</strong>, and will be updated once the offering prices.</p>
+    <p>Strive is a Nasdaq-listed Bitcoin treasury and asset management company, with over {STRIVE_BTC_HOLDINGS} Bitcoin.</p>
+    <Visit href="https://strive.com" label="Visit Strive.com" />
+  </div>
+);
+
 export default function AssetHub({ ticker, name }) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -208,6 +297,7 @@ export default function AssetHub({ ticker, name }) {
       <HubStockSelector selected={ticker} />
 
       <PendingRateNote ticker={ticker} />
+      <DailyProposalNote ticker={ticker} />
 
       {/* Live price + data cards (client-rendered) */}
       <AssetHubLive ticker={ticker} />

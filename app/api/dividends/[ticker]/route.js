@@ -23,7 +23,9 @@ export async function GET(request, { params }) {
   // against its own 8-K filings). Serve the manually-verified stored record directly rather than
   // merging in bad data on every request. CHAD gets the same treatment pre-emptively — it's an
   // even newer, non-standard-cadence security with no established Yahoo dividend history yet.
-  if (upper === 'BMNP' || upper === 'CHAD' || upper === 'MORE') {
+  // STRK/STRF/STRD/STRE: hand-kept from strategy.com's dividend tables so every row is a payout date
+  // (Yahoo returns record dates for the Nasdaq ones, and nothing for STRE).
+  if (upper === 'BMNP' || upper === 'CHAD' || upper === 'MORE' || upper === 'STRK' || upper === 'STRF' || upper === 'STRD' || upper === 'STRE' || upper === 'SATS') {
     return NextResponse.json({ history: stored, nextPaymentDate: null }, {
       headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=300' },
     });

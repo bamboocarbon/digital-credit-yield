@@ -22,7 +22,9 @@ const eyebrow = { fontSize: '0.75em', fontWeight: 600, letterSpacing: '0.08em', 
 // cap relative to the largest block (MSTR common): a linear scale would shrink every preferred to
 // a sliver beside ~$60bn of equity; sqrt keeps them legible while still showing the credit layer
 // is small against the base. Labels carry the real dollar figures.
-export default function CapitalPyramid({ ticker }) {
+// `ticker` picks the stack; `highlightId` (optional) overrides which row gets the "This page" highlight,
+// so STRK/STRF/STRD/STRE can show Strategy's stack with their own row picked out.
+export default function CapitalPyramid({ ticker, highlightId }) {
   const stack = CAPITAL_STACKS[ticker];
   if (!stack) return null;
   const { rows, currency: cur, caption } = stack;
@@ -42,7 +44,8 @@ export default function CapitalPyramid({ ticker }) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
         {rows.map(d => {
-          const c = d.highlight ? COLOURS.highlight : COLOURS[d.kind];
+          const isHi = highlightId ? d.id === highlightId : d.highlight;
+          const c = isHi ? COLOURS.highlight : COLOURS[d.kind];
           const pct = Math.max(14, Math.sqrt(d.mcap / max) * 100);
           const dashed = c.dashed ? 'dashed' : 'solid';
           return (
@@ -50,12 +53,12 @@ export default function CapitalPyramid({ ticker }) {
               <div style={{ minWidth: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                   <span style={{ fontWeight: 700, fontSize: '0.95em', color: c.text }}>{d.label}</span>
-                  {d.highlight && (
+                  {isHi && (
                     <span style={{
                       fontSize: '0.65em', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase',
                       background: 'rgba(200,137,58,0.15)', color: '#c8893a', border: '1px solid rgba(200,137,58,0.4)',
                       borderRadius: '4px', padding: '2px 6px',
-                    }}>This site</span>
+                    }}>This page</span>
                   )}
                   <span style={{ fontSize: '0.62em', fontWeight: 600, letterSpacing: '0.06em', color: c.tag }}>{d.tag}</span>
                 </div>
@@ -66,7 +69,7 @@ export default function CapitalPyramid({ ticker }) {
                   title={`${d.label}: ${fmtMoney(d.mcap, cur)}`}
                   style={{
                     width: `${pct}%`, height: '38px', background: c.bg, border: `1px ${dashed} ${c.border}`,
-                    borderRadius: '6px', boxShadow: d.highlight ? '0 0 0 1px rgba(200,137,58,0.3)' : 'none',
+                    borderRadius: '6px', boxShadow: isHi ? '0 0 0 1px rgba(200,137,58,0.3)' : 'none',
                     transition: 'width 0.3s ease',
                   }}
                 />

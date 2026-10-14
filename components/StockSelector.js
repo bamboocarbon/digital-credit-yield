@@ -1,11 +1,11 @@
 'use client';
 
-import { SELECTABLE_TICKERS, TICKER_COLOUR, COMPANY } from '@/lib/tickerDisplay';
+import { sameIssuerTickers, TICKER_COLOUR, COMPANY } from '@/lib/tickerDisplay';
 
 export default function StockSelector({ selected, onSelect }) {
   return (
     <div className="flex flex-wrap gap-2 mb-6" role="group" aria-label="Choose a stock">
-      {SELECTABLE_TICKERS.map(ticker => {
+      {sameIssuerTickers(selected).map(ticker => {
         const active = ticker === selected;
         const colour = TICKER_COLOUR[ticker];
         return (

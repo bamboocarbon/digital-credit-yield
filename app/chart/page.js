@@ -22,5 +22,5 @@ export const metadata = {
 export default async function ChartPage({ searchParams }) {
   const sp = await searchParams;
   const initialStock = resolveStock(sp?.stock);
-  return <ChartTool initialStock={initialStock} />;
+  return <ChartTool key={initialStock} initialStock={initialStock} />;
 }

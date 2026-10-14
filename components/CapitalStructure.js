@@ -152,6 +152,38 @@ const CONTENT = {
   },
 };
 
+// STRK / STRF / STRD / STRE: Strategy's other preferreds share the STRC stack, with their own row picked out.
+const stratPanels = (above, below) => ({
+  blog: [['strategy-capital-structure', "Strategy's capital structure"]],
+  diagramFor: t => <CapitalPyramid ticker="STRC" highlightId={t} />,
+  above: <p>{above}</p>,
+  below: <p>{below}</p>,
+  financing: CONTENT.STRC.financing,
+});
+const STRAT_SERIES = {
+  STRF: stratPanels(
+    'Only Strategy\'s debt — about $6.7bn of convertible senior notes — ranks above STRF. STRF is the most senior of Strategy\'s preferred series.',
+    'STRC, STRE, STRK and STRD all rank below STRF, and then the MSTR common stock.'),
+  STRK: stratPanels(
+    'Strategy\'s debt, then STRF, STRC and STRE, all rank above STRK.',
+    'STRD ranks below STRK, then the MSTR common stock. STRK is convertible into MSTR (0.1 share per STRK).'),
+  STRD: stratPanels(
+    'Strategy\'s debt, then STRF, STRC, STRE and STRK, all rank above STRD.',
+    'Only the MSTR common stock ranks below STRD. STRD\'s dividend is non-cumulative.'),
+  STRE: stratPanels(
+    'Strategy\'s debt, STRF and STRC rank above STRE.',
+    'STRK and STRD rank below STRE, then the MSTR common stock. STRE is euro-denominated; the dollar figures in the stack are converted.'),
+};
+for (const [t, v] of Object.entries(STRAT_SERIES)) CONTENT[t] = { ...v, diagram: v.diagramFor(t) };
+
+CONTENT.SATS = {
+  blog: [['strive-capital-structure', "Strive's capital structure"]],
+  diagram: <CapitalPyramid ticker="SATS" />,
+  above: <p><strong>SATA</strong> (13% variable, about $1.4bn outstanding) ranks above SATS, and Strive has no debt today. The prospectus terms are not final until the offering prices.</p>,
+  below: <p><strong>ASST common stock</strong> ranks below SATS: it absorbs losses first and is paid last.</p>,
+  financing: <p>Strive intends to set aside a dividend reserve of $22.50 per SATS share at closing — 18 months of the 15% dividend — and to use net proceeds for general corporate purposes, including buying bitcoin and repurchasing common stock or SATA. All of this is from the 13 October 2026 announcement of the proposed offering.</p>,
+};
+
 export default function CapitalStructure({ ticker }) {
   const c = CONTENT[ticker];
   if (!c) return null;

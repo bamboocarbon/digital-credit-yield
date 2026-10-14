@@ -35,5 +35,5 @@ export default async function DividendsPage({ searchParams }) {
   const initialStock = resolveStock(sp?.stock);
   const entries = await Promise.all(VALID_TICKERS.map(async ticker => [ticker, await getDividends(ticker)]));
   const dividendsByStock = Object.fromEntries(entries);
-  return <DividendsTool initialStock={initialStock} dividendsByStock={dividendsByStock} />;
+  return <DividendsTool key={initialStock} initialStock={initialStock} dividendsByStock={dividendsByStock} />;
 }

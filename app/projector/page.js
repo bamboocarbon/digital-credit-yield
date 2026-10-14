@@ -37,5 +37,5 @@ export default async function ProjectorPage({ searchParams }) {
   const liveData = await getLiveData();
   const liveYields = Object.fromEntries(Object.entries(liveData).map(([t, d]) => [t, d.yield]));
   const livePrices = Object.fromEntries(Object.entries(liveData).map(([t, d]) => [t, d.price]));
-  return <ProjectorTool initialStock={initialStock} liveYields={liveYields} livePrices={livePrices} />;
+  return <ProjectorTool key={initialStock} initialStock={initialStock} liveYields={liveYields} livePrices={livePrices} />;
 }
