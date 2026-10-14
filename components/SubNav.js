@@ -19,8 +19,8 @@ export default function SubNav({ ticker }) {
   ];
 
   return (
-    <div className="tab-strip flex flex-wrap justify-center gap-0.5 mb-4"
-      style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0' }}>
+    <div className="tab-strip sticky top-[calc(3rem+1px+2.5rem+1px)] z-20 flex flex-wrap justify-center gap-0.5 mb-4 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
+      style={{ background: 'var(--bg-primary)', borderBottom: '1px solid var(--border)', paddingBottom: '0' }}>
       {tabs.map(tab => {
         const active = pathname === tab.href.split('?')[0];
         return (

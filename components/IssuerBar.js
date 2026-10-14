@@ -26,8 +26,8 @@ function Bar() {
   const hrefFor = ticker => (isTool ? `${pathname}?stock=${ticker.toLowerCase()}` : hubPath(ticker));
 
   return (
-    <div style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
-      <nav aria-label="Issuers" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1 flex flex-wrap justify-center gap-x-2">
+    <div className="sticky top-[calc(3rem+1px)] z-30" style={{ background: 'var(--bg-primary)', borderBottom: '1px solid var(--border)' }}>
+      <nav aria-label="Issuers" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-10 flex flex-nowrap items-center gap-x-2 overflow-x-auto md:flex-wrap md:content-center md:justify-center md:overflow-hidden">
         {ISSUER_LIST.map(({ name, ticker, tickers }) => {
           const isActive = tickers.includes(active);
           const colour = TICKER_COLOUR[ticker];
