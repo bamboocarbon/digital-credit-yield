@@ -36,7 +36,7 @@ const CONTENT = {
     ),
     below: (
       <>
-        <p><strong>STRE</strong> (euro, 10% fixed, EEA professional investors only), <strong>STRK</strong> (the convertible, into MSTR) and <strong>STRD</strong> (8% stated, most junior preferred) all rank below STRC.</p>
+        <p><strong>STRE</strong> (euro, 10% fixed, EEA professional investors only), <strong>STRK</strong> (the convertible, into MSTR) and <strong>STRD</strong> (10% stated, most junior preferred) all rank below STRC.</p>
         <p><strong>MSTR common stock</strong> sits at the bottom: it absorbs losses first, gets paid last, and keeps the uncapped upside.</p>
       </>
     ),
