@@ -12,7 +12,7 @@ export const metadata = {
     description: `DeFi Development Corp.'s Solana-backed preferred stock paying ${rate}% annually in daily cash dividends. Track live price, yield, and dividend history.`,
     type: 'website',
     url: 'https://www.digitalcredityield.com/chad',
-    images: [{ url: `/og?v=3&title=CHAD+Stock&sub=DeFi+Development+Preferred+Stock&rate=${rate}%25` }],
+    images: [{ url: `/og?v=4&title=CHAD+Stock&sub=DeFi+Development+Preferred+Stock&rate=${rate}%25` }],
   },
   twitter: {
     card: 'summary_large_image',

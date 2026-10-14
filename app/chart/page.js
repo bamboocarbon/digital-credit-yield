@@ -10,7 +10,7 @@ export const metadata = {
     description: 'Live price charts for Strategy, Strive, Bitmine and DeFi Development Corp. preferred stock. Track price vs par and effective yield.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/chart',
-    images: [{ url: '/og?v=3&title=Price+%26+Yield+Charts&sub=STRC+SATA+BMNP+%26+CHAD&tag=Live+Chart' }],
+    images: [{ url: '/og?v=4&title=Price+%26+Yield+Charts&sub=STRC+SATA+BMNP+%26+CHAD&tag=Live+Chart' }],
   },
   twitter: {
     card: 'summary_large_image',

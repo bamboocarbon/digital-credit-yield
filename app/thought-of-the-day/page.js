@@ -30,7 +30,7 @@ export const metadata = {
     description: 'The daily Thought of the Day archive from @DCYieldHub — short reflections on income investing and preferred stock.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/thought-of-the-day',
-    images: [{ url: '/og?v=3&title=Thought+of+the+Day&sub=Daily+reflections+from+DCYieldHub' }],
+    images: [{ url: '/og?v=4&title=Thought+of+the+Day&sub=Daily+reflections+from+DCYieldHub' }],
   },
   twitter: {
     card: 'summary_large_image',

@@ -11,7 +11,7 @@ export const metadata = {
     description: 'Model your dividend income and portfolio growth from Strategy, Strive, Bitmine and DeFi Development Corp. preferred stock over any time horizon.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/projector',
-    images: [{ url: '/og?v=3&title=Income+Calculator&sub=Model+your+dividend+income&tag=Income+Tool' }],
+    images: [{ url: '/og?v=4&title=Income+Calculator&sub=Model+your+dividend+income&tag=Income+Tool' }],
   },
   twitter: {
     card: 'summary_large_image',
