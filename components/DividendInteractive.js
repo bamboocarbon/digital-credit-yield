@@ -135,7 +135,7 @@ function SataMonthlyProgress({ monthlyByMonth, todayYM, today, annualRate }) {
   // progress." (Same change applied to MonthlyPaymentProgress below.)
   const displayMonths = [todayYM];
   return (
-    <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+    <div className="card p-6 rounded-xl h-full" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
       <h2 className="text-lg font-semibold mb-1">Monthly Payment Progress</h2>
       <p className="text-xs mb-5" style={{ color: 'var(--text-muted)' }}>
         This month&apos;s box fills as payments land. Gold fill indicates the proportion of expected income received so far.
@@ -187,7 +187,7 @@ function MonthlyPaymentProgress({ paidDividends, announcedDividends, todayYM, cu
   // Just the current month — the chart below already shows the history.
   const displayMonths = [todayYM];
   return (
-    <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+    <div className="card p-6 rounded-xl h-full" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
       <h2 className="text-lg font-semibold mb-1">Monthly Payment Progress</h2>
       <p className="text-xs mb-5" style={{ color: 'var(--text-muted)' }}>
         This month&apos;s box fills as payments land. Gold fill indicates the proportion of expected income received so far.
@@ -669,8 +669,9 @@ export default function DividendInteractive({ ticker }) {
         </div>
       )}
 
-      {/* Income calculator */}
-      <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+      {/* Income calculator + monthly payment progress, side by side on wide screens (calculator alone if no progress box) */}
+      <div className={`grid grid-cols-1 gap-6 mb-6 items-stretch ${(inDailyEra || (ticker !== 'SATA' && paidDividends && paidDividends.length > 0)) ? 'lg:grid-cols-2' : ''}`}>
+      <div className="card p-6 rounded-xl h-full" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <h2 className="text-lg font-semibold mb-3">Income Calculator</h2>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <div className="flex items-center gap-3">
@@ -743,6 +744,7 @@ export default function DividendInteractive({ ticker }) {
           cur={cur}
         />
       )}
+      </div>
 
       {/* Chart */}
       <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
