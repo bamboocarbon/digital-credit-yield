@@ -17,7 +17,7 @@ export default function VsTreasuriesTool({ initialStock, liveYields, livePrices 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <SubNav ticker={stock} />
-      <h1 className="text-2xl sm:text-3xl font-bold mb-4">vs Treasuries — How Does It Compare?</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4">vs {stock === 'MORE' ? 'Gilts' : 'Treasuries'} — How Does It Compare?</h1>
       <StockSelector selected={stock} onSelect={selectStock} />
       <p className="mb-3 text-sm leading-6 max-w-3xl" style={{ color: 'var(--text-muted)' }}>
         Enter your investment details to see how {stock}&apos;s distribution yield stacks up against {stock === 'MORE' ? 'UK gilts' : 'US'}
