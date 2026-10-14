@@ -27,6 +27,8 @@ export default function sitemap() {
     { url: `${base}/dividends`,           lastModified: now,          changeFrequency: 'weekly',  priority: 0.7 },
     { url: `${base}/projector`,           lastModified: '2026-06-18', changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/vs-treasuries`,       lastModified: '2026-06-18', changeFrequency: 'monthly', priority: 0.6 },
+    // MORE's gilts comparison has its own canonical (?stock=more) and MORE-specific title, so it's a distinct indexable URL
+    { url: `${base}/vs-treasuries?stock=more`, lastModified: '2026-10-14', changeFrequency: 'monthly', priority: 0.6 },
     // Weekly — money flow updates on new payments
     { url: `${base}/money-flow`,          lastModified: now,          changeFrequency: 'weekly',  priority: 0.7 },
     { url: `${base}/blog`,                lastModified: now,          changeFrequency: 'weekly',  priority: 0.7 },
