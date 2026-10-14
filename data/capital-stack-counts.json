@@ -1,0 +1,71 @@
+{
+ "generatedAt": "2026-10-14T14:16:09.061Z",
+ "strategy": {
+  "ledger": {
+   "counts": {
+    "STRC": 87921000,
+    "STRF": 12840000,
+    "STRK": 14020000,
+    "STRD": 14024000,
+    "STRE": 7750000,
+    "MSTR": 422199000
+   },
+   "appliedThrough": "2026-10-11",
+   "applied": []
+  },
+  "asOf": "2026-10-11",
+  "counts": {
+   "STRC": 87921000,
+   "STRF": 12840000,
+   "STRK": 14020000,
+   "STRD": 14024000,
+   "STRE": 7750000,
+   "MSTR": 422199000
+  },
+  "base": {
+   "asOf": "2026-10-11",
+   "counts": {
+    "STRC": 87921000,
+    "STRF": 12840000,
+    "STRK": 14020000,
+    "STRD": 14024000,
+    "STRE": 7750000,
+    "MSTR": 422199000
+   },
+   "source": "strategy.com series pages (13 Oct 2026) + ADSO table (11 Oct 2026), entered by hand"
+  }
+ },
+ "strive": {
+  "asOf": "2026-10-09",
+  "classA": 101169907,
+  "classB": 9217297,
+  "commonEffective": 110387204,
+  "SATA": 14030176,
+  "SATS": null,
+  "bitcoinHeld": 32773,
+  "source": "https://www.sec.gov/Archives/edgar/data/1920406/000162828026065595/asst-20261013.htm",
+  "filed": "2026-10-13"
+ },
+ "swc": {
+  "ordinary": {
+   "shares": 378240705,
+   "asOf": "2026-10-12",
+   "source": "https://www.investegate.co.uk/announcement/rns/the-smarter-web-company-plc--swc/subscription-agreement-warrant-exercises-tvr/9816846",
+   "headline": "Subscription Agreement, Warrant Exercises & TVR"
+  },
+  "preferred": {
+   "issued": 211112,
+   "ipo": 111112,
+   "atmFacility": 100000,
+   "asOf": "2026-10-14",
+   "source": "https://www.investegate.co.uk/announcement/rns/the-smarter-web-company-plc--swc/first-day-of-dealings-in-preferred-shares/9821366",
+   "headline": "First day of dealings in Preferred Shares",
+   "note": "ATM-facility shares are issued to Tennyson to sell into the market; they exist but may not be sold yet."
+  }
+ },
+ "notes": [
+  "Prices are not stored here; multiply by the live price at render time.",
+  "Bitmine and DeFi Dev share counts are not parseable from weekly filings — see lib/capitalStacks.js."
+ ],
+ "warnings": []
+}
