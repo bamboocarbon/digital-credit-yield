@@ -7,10 +7,10 @@ const rate = ASSET_RATES.SATS.toFixed(2);
 
 export const metadata = {
   alternates: { canonical: '/sats' },
-  title: `SATS — Strive SATS Preferred Stock`,
+  title: `SATS — Strive's Proposed 15% Preferred Stock`,
   description: `Track SATS: Strive, Inc.’s proposed 15.00% Series A Perpetual SATS Preferred Stock, paying ${rate}% annually in daily cash. Listed on Nasdaq (proposed listing).`,
   openGraph: {
-    title: `SATS — Strive SATS Preferred Stock Tracker`,
+    title: `SATS — Strive's Proposed 15% Preferred Stock Tracker`,
     description: `Strive, Inc.’s proposed 15.00% Series A Perpetual SATS Preferred Stock, paying ${rate}% annually. Track the live price, effective yield and dividend history.`,
     type: 'website',
     url: 'https://www.digitalcredityield.com/sats',
@@ -18,7 +18,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: `SATS — Strive SATS Preferred Stock Tracker`,
+    title: `SATS — Strive's Proposed 15% Preferred Stock Tracker`,
     description: `Strive, Inc.’s proposed 15.00% Series A Perpetual SATS Preferred Stock, paying ${rate}% annually.`,
   },
 };
@@ -42,7 +42,7 @@ export default function SATSPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <AssetHub ticker="SATS" name="Strive SATS Preferred Stock" />
+      <AssetHub ticker="SATS" name="Strive's Proposed 15% Preferred Stock" />
     </>
   );
 }

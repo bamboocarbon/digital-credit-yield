@@ -46,7 +46,7 @@ export default function RootLayout({ children }) {
       <body className="flex flex-col min-h-screen">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
         <Navbar />
-        <main className="flex-1 pt-16">
+        <main className="flex-1 pt-12">
           <IssuerBar />
           {children}
         </main>

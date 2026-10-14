@@ -7,10 +7,10 @@ const rate = ASSET_RATES.STRE.toFixed(2);
 
 export const metadata = {
   alternates: { canonical: '/stre' },
-  title: `STRE — Strategy STRE Euro Preferred Stock`,
+  title: `STRE — Strategy's Euro Preferred Stock`,
   description: `Track STRE: Strategy Inc.’s 10.00% Series A Perpetual Stream Preferred Stock, paying ${rate}% annually in quarterly cash in euros. Listed on the Luxembourg Stock Exchange (Euro MTF).`,
   openGraph: {
-    title: `STRE — Strategy STRE Euro Preferred Stock Tracker`,
+    title: `STRE — Strategy's Euro Preferred Stock Tracker`,
     description: `Strategy Inc.’s 10.00% Series A Perpetual Stream Preferred Stock, paying ${rate}% annually. Track the live price, effective yield and dividend history.`,
     type: 'website',
     url: 'https://www.digitalcredityield.com/stre',
@@ -18,7 +18,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: `STRE — Strategy STRE Euro Preferred Stock Tracker`,
+    title: `STRE — Strategy's Euro Preferred Stock Tracker`,
     description: `Strategy Inc.’s 10.00% Series A Perpetual Stream Preferred Stock, paying ${rate}% annually.`,
   },
 };
@@ -42,7 +42,7 @@ export default function STREPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <AssetHub ticker="STRE" name="Strategy STRE Euro Preferred Stock" />
+      <AssetHub ticker="STRE" name="Strategy's Euro Preferred Stock" />
     </>
   );
 }

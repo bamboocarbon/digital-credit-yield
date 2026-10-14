@@ -7,10 +7,10 @@ const rate = ASSET_RATES.STRF.toFixed(2);
 
 export const metadata = {
   alternates: { canonical: '/strf' },
-  title: `STRF — Strategy STRF Preferred Stock`,
+  title: `STRF — Strategy's Senior Fixed-Rate Preferred Stock`,
   description: `Track STRF: Strategy Inc.’s 10.00% Series A Perpetual Strife Preferred Stock, paying ${rate}% annually in quarterly cash. Listed on Nasdaq.`,
   openGraph: {
-    title: `STRF — Strategy STRF Preferred Stock Tracker`,
+    title: `STRF — Strategy's Senior Fixed-Rate Preferred Stock Tracker`,
     description: `Strategy Inc.’s 10.00% Series A Perpetual Strife Preferred Stock, paying ${rate}% annually. Track the live price, effective yield and dividend history.`,
     type: 'website',
     url: 'https://www.digitalcredityield.com/strf',
@@ -18,7 +18,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: `STRF — Strategy STRF Preferred Stock Tracker`,
+    title: `STRF — Strategy's Senior Fixed-Rate Preferred Stock Tracker`,
     description: `Strategy Inc.’s 10.00% Series A Perpetual Strife Preferred Stock, paying ${rate}% annually.`,
   },
 };
@@ -42,7 +42,7 @@ export default function STRFPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <AssetHub ticker="STRF" name="Strategy STRF Preferred Stock" />
+      <AssetHub ticker="STRF" name="Strategy's Senior Fixed-Rate Preferred Stock" />
     </>
   );
 }

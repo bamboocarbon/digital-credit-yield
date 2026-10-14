@@ -19,7 +19,7 @@ export default function SubNav({ ticker }) {
   ];
 
   return (
-    <div className="tab-strip flex gap-0.5 mb-6 overflow-x-auto [&>:first-child]:ml-auto [&>:last-child]:mr-auto"
+    <div className="tab-strip flex flex-wrap justify-center gap-0.5 mb-4"
       style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0' }}>
       {tabs.map(tab => {
         const active = pathname === tab.href.split('?')[0];
@@ -28,7 +28,7 @@ export default function SubNav({ ticker }) {
             key={tab.href}
             href={tab.href}
             prefetch={false}
-            className="tab-item px-1.5 sm:px-4 py-3 text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center rounded-t-lg whitespace-nowrap flex-shrink-0"
+            className="tab-item px-1.5 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-colors min-h-[34px] flex items-center rounded-t-lg whitespace-nowrap flex-shrink-0"
             style={{
               color: active ? 'var(--accent-gold)' : 'var(--text-muted)',
               borderBottom: active ? '2px solid var(--accent-gold)' : '2px solid transparent',

@@ -7,10 +7,10 @@ const rate = ASSET_RATES.STRD.toFixed(2);
 
 export const metadata = {
   alternates: { canonical: '/strd' },
-  title: `STRD — Strategy STRD Preferred Stock`,
+  title: `STRD — Strategy's Junior Preferred Stock`,
   description: `Track STRD: Strategy Inc.’s 10.00% Series A Perpetual Stride Preferred Stock, paying ${rate}% annually in quarterly cash. Listed on Nasdaq.`,
   openGraph: {
-    title: `STRD — Strategy STRD Preferred Stock Tracker`,
+    title: `STRD — Strategy's Junior Preferred Stock Tracker`,
     description: `Strategy Inc.’s 10.00% Series A Perpetual Stride Preferred Stock, paying ${rate}% annually. Track the live price, effective yield and dividend history.`,
     type: 'website',
     url: 'https://www.digitalcredityield.com/strd',
@@ -18,7 +18,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: `STRD — Strategy STRD Preferred Stock Tracker`,
+    title: `STRD — Strategy's Junior Preferred Stock Tracker`,
     description: `Strategy Inc.’s 10.00% Series A Perpetual Stride Preferred Stock, paying ${rate}% annually.`,
   },
 };
@@ -42,7 +42,7 @@ export default function STRDPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <AssetHub ticker="STRD" name="Strategy STRD Preferred Stock" />
+      <AssetHub ticker="STRD" name="Strategy's Junior Preferred Stock" />
     </>
   );
 }

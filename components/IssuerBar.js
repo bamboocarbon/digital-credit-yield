@@ -27,7 +27,7 @@ function Bar() {
 
   return (
     <div style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
-      <nav aria-label="Issuers" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex gap-2 overflow-x-auto [&>:first-child]:ml-auto [&>:last-child]:mr-auto">
+      <nav aria-label="Issuers" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1 flex flex-wrap justify-center gap-x-2">
         {ISSUER_LIST.map(({ name, ticker, tickers }) => {
           const isActive = tickers.includes(active);
           const colour = TICKER_COLOUR[ticker];
@@ -37,7 +37,7 @@ function Bar() {
               href={hrefFor(ticker)}
               prefetch={false}
               aria-current={isActive ? 'page' : undefined}
-              className="px-3 py-1.5 rounded-lg text-sm font-semibold min-h-[36px] flex items-center gap-2 whitespace-nowrap flex-shrink-0 transition-colors"
+              className="px-3 py-1 rounded-lg text-sm font-semibold min-h-[30px] flex items-center gap-2 whitespace-nowrap flex-shrink-0 transition-colors"
               style={{
                 background: isActive ? 'var(--bg-card-hover)' : 'transparent',
                 color: isActive ? colour : 'var(--text-muted)',
