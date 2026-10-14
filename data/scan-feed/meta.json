@@ -1,0 +1,18 @@
+{
+ "generatedAt": "2026-10-14T13:50:29.161Z",
+ "windowDays": 14,
+ "errors": [],
+ "sec": {
+  "ok": true,
+  "items": {
+   "MSTR": 3,
+   "ASST": 7,
+   "BMNR": 4,
+   "DFDV": 2
+  }
+ },
+ "swc": {
+  "ok": true,
+  "items": 5
+ }
+}
