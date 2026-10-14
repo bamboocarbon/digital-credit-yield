@@ -3,32 +3,23 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BMNP_ENABLED } from '@/lib/constants';
 
-// Top row of the desktop navbar (plus the X icon); bottom row is everything else.
-const primaryLinks = [
+// One row, left to right. The four tools (Chart, Growth, vs Treasuries, Dividends) live in each ticker page's own tab strip,
+// not up here. Hub goes to the Strategy hub; the issuer row under the header switches issuer.
+const links = [
   { label: 'Home', href: '/' },
   { label: 'Hub', href: '/strc', hub: true },
-  { label: 'Chart', href: '/chart' },
-  { label: 'Growth', href: '/projector' },
-  { label: 'vs Treasuries', href: '/vs-treasuries' },
-  { label: 'Dividends', href: '/dividends' },
   { label: 'Money Flow', href: '/money-flow' },
-  { label: 'Contact', href: '/contact' },
-];
-const secondaryLinks = [
   { label: 'Thoughts', href: '/thought-of-the-day' },
   { label: 'Blog', href: '/blog' },
   { label: 'About Me', href: '/about' },
+  { label: 'Contact', href: '/contact' },
 ];
 
 // Ticker hub pages — the "Hub" link is highlighted on any of them
-const HUB_PATHS = ['/strc', '/sata', '/bmnp', '/chad', '/more'];
+const HUB_PATHS = ['/strc', '/strk', '/strf', '/strd', '/stre', '/sata', '/sats', '/bmnp', '/chad', '/more'];
 
-const visible = list => list.filter(l => !l.bmnpOnly || BMNP_ENABLED);
-const primary = visible(primaryLinks);
-const secondary = visible(secondaryLinks);
-const allLinks = [...primary, ...secondary];
+const allLinks = links;
 
 const XIcon = ({ size = 16 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -61,31 +52,26 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-40"
       style={{ background: 'var(--bg-card)', borderBottom: '1px solid var(--border)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-24">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" prefetch={false} className="flex items-center gap-2 font-bold text-lg tracking-tight">
             <span style={{ display: 'inline-block', width: 12, height: 12, background: 'var(--accent-gold)', borderRadius: 2, flexShrink: 0 }} />
             <span style={{ color: 'var(--text-primary)' }}>Digital Credit Yield</span>
           </Link>
 
-          {/* Desktop links — two rows */}
-          <div className="hidden md:flex flex-col items-end gap-2">
-            <div className="flex items-center gap-6">
-              {primary.map(renderLink)}
-              <a
-                href="https://x.com/DCYieldHub"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Follow @DCYieldHub on X"
-                className="transition-colors hover:text-white"
-                style={{ color: 'var(--text-muted)' }}
-              >
-                <XIcon />
-              </a>
-            </div>
-            <div className="flex items-center gap-6">
-              {secondary.map(renderLink)}
-            </div>
+          {/* Desktop links — one row */}
+          <div className="hidden md:flex items-center gap-6">
+            {links.map(renderLink)}
+            <a
+              href="https://x.com/DCYieldHub"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Follow @DCYieldHub on X"
+              className="transition-colors hover:text-white"
+              style={{ color: 'var(--text-muted)' }}
+            >
+              <XIcon />
+            </a>
           </div>
 
           {/* Hamburger */}
