@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { formatMoney, currencySymbol } from '@/lib/currency';
-import { PRE_LISTING_NOTE, ASSET_RATES, PAYMENT_FREQUENCY, PRE_LISTING_TICKERS, DIVIDEND_RESERVE, PAR_VALUE } from '@/lib/constants';
+import { ASSET_RATES, PAYMENT_FREQUENCY, DIVIDEND_RESERVE, PAR_VALUE } from '@/lib/constants';
 
 export default function AssetHubLive({ ticker }) {
   const [data, setData]   = useState(null);
@@ -23,40 +23,11 @@ export default function AssetHubLive({ ticker }) {
     ? (annualDividendDollars / data.price) * 100
     : ASSET_RATES[ticker];
   const freq = PAYMENT_FREQUENCY[ticker] ?? { label: 'Monthly', perYear: 12, perPeriod: 'month' };
-  const isPreListing = PRE_LISTING_TICKERS.includes(ticker);
   const reserve = DIVIDEND_RESERVE[ticker];
   const cur = currencySymbol(ticker);
 
   return (
     <>
-      {/* Live price header */}
-      <div className="mb-8">
-        {error ? (
-          isPreListing
-            ? <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>{PRE_LISTING_NOTE[ticker] ?? 'Just listed — live price data will appear here shortly.'}</p>
-            : <p className="text-sm" style={{ color: 'var(--accent-red)' }}>Price data temporarily unavailable — please refresh</p>
-        ) : !data ? (
-          <div className="animate-pulse space-y-2 mt-4">
-            <div className="h-10 w-48 rounded" style={{ background: 'var(--bg-card)' }} />
-            <div className="h-5 w-32 rounded" style={{ background: 'var(--bg-card)' }} />
-          </div>
-        ) : (
-          <div className="flex flex-wrap items-baseline gap-3 mt-2">
-            <span className="font-mono-data text-4xl font-bold" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
-              {formatMoney(ticker, data.price)}
-            </span>
-            <span className="font-mono-data text-lg"
-              style={{ fontFamily: "Arial, Helvetica, sans-serif", color: data.change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
-              <span style={{ marginRight: '2px' }}>{data.change >= 0 ? '+' : '-'}</span>
-              {Math.abs(data.change)?.toFixed(2)} (<span style={{ marginRight: '2px' }}>{data.changePercent >= 0 ? '+' : '-'}</span>{Math.abs(data.changePercent)?.toFixed(2)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>%</span>)
-            </span>
-            <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-              Last updated: {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-            </span>
-          </div>
-        )}
-      </div>
-
       {/* Data cards */}
       <div className={`grid grid-cols-1 sm:grid-cols-2 ${reserve ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-4 mb-8`}>
         <div className="card p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
