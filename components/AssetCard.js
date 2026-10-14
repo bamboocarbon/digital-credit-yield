@@ -41,7 +41,7 @@ export default function AssetCard({ ticker, mock, company, incomeBadge, rate, pa
   const href = hrefOverride ?? `/${ticker.toLowerCase()}`;
 
   return (
-    <div className="card p-6 flex flex-col items-center text-center gap-4 hover:bg-[var(--bg-card-hover)] transition-colors rounded-xl"
+    <div className="card relative p-6 flex flex-col items-center text-center gap-4 hover:bg-[var(--bg-card-hover)] transition-colors rounded-xl"
       style={{ border: '1px solid var(--border)' }}>
       <div className="flex flex-col items-center gap-1 w-full">
         <h2 className="text-xl font-bold">{ticker}</h2>
@@ -102,6 +102,15 @@ export default function AssetCard({ ticker, mock, company, incomeBadge, rate, pa
       >
         Explore {ticker} →
       </Link>
+
+      {/* Whole-card link: a transparent link stretched over the card. It is a child of the card (so the
+          card's hover colour still applies) and a sibling of the Explore button (so no nested links). */}
+      <Link
+        href={href}
+        prefetch={false}
+        aria-label={`Open the ${ticker} page`}
+        className="absolute inset-0 rounded-xl"
+      />
     </div>
   );
 }
