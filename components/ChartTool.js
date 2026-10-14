@@ -35,6 +35,18 @@ export default function ChartTool({ initialStock }) {
         on offer at a premium or a discount today.{' '}
         <a href="/blog/what-is-effective-yield" style={{ color: 'var(--accent-gold)' }}>More on effective yield &rarr;</a>
       </p>
+      {stock === 'STRE' && (
+        <div className="max-w-3xl mx-auto mb-4 px-4 py-2.5 rounded-lg text-sm text-center" style={{ background: 'var(--accent-gold-dim, rgba(212,175,55,0.1))', border: '1px solid var(--accent-gold)', color: 'var(--text)' }}>
+          <strong>Read this chart with care:</strong> STRE trades on the Luxembourg Euro MTF only a handful of days a year. The line is Yahoo
+          Finance&apos;s last traded price carried forward, so it can sit above or below the market maker&apos;s indicative price
+          (€79.00 on Strategy&apos;s own STRE page, which is what the hub shows). Treat the effective yield here as indicative.
+        </div>
+      )}
+      {stock === 'SATS' && (
+        <div className="max-w-3xl mx-auto mb-4 px-4 py-2.5 rounded-lg text-sm text-center" style={{ background: 'var(--accent-gold-dim, rgba(212,175,55,0.1))', border: '1px solid var(--accent-gold)', color: 'var(--text)' }}>
+          SATS has been announced but has not priced or started trading, so there is no price history yet. The chart will appear once it lists.
+        </div>
+      )}
       {/* key forces a clean remount of the chart instances when the stock changes */}
       <AssetChartContent key={stock} ticker={stock} />
 
