@@ -4,7 +4,7 @@ import { sameIssuerTickers, TICKER_COLOUR, COMPANY } from '@/lib/tickerDisplay';
 
 export default function StockSelector({ selected, onSelect }) {
   return (
-    <div className="flex flex-wrap gap-2 mb-6" role="group" aria-label="Choose a stock">
+    <div className="flex flex-wrap justify-center gap-2 mb-6" role="group" aria-label="Choose a stock">
       {sameIssuerTickers(selected).map(ticker => {
         const active = ticker === selected;
         const colour = TICKER_COLOUR[ticker];

@@ -16,7 +16,7 @@ export default function DividendsTool({ initialStock, dividendsByStock }) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <SubNav ticker={stock} />
-      <h1 className="text-2xl sm:text-3xl font-bold mb-4">Dividend History</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-center">Dividend History</h1>
       <StockSelector selected={stock} onSelect={selectStock} />
       <p className="mb-6 mt-2 text-sm leading-6 max-w-3xl" style={{ color: 'var(--text-muted)' }}>
         A complete record of every {stock} dividend — the per-share amount, the record date you need to

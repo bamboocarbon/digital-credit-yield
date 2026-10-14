@@ -6,7 +6,7 @@ import { sameIssuerTickers, TICKER_COLOUR, COMPANY } from '@/lib/tickerDisplay';
 // driven by client state — so this navigates via <Link> instead of an onSelect callback.
 export default function HubStockSelector({ selected }) {
   return (
-    <div className="flex flex-wrap gap-2 mb-6" role="group" aria-label="Choose a stock">
+    <div className="flex flex-wrap justify-center gap-2 mb-6" role="group" aria-label="Choose a stock">
       {sameIssuerTickers(selected).map(ticker => {
         const active = ticker === selected;
         const colour = TICKER_COLOUR[ticker];

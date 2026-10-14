@@ -18,7 +18,7 @@ export default function ProjectorTool({ initialStock, liveYields, livePrices }) 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <SubNav ticker={stock} />
-      <h1 className="text-2xl sm:text-3xl font-bold mb-4">Growth Projector</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-center">Growth Projector</h1>
       <StockSelector selected={stock} onSelect={selectStock} />
       <p className="mb-3 text-sm leading-6 max-w-3xl" style={{ color: 'var(--text-muted)' }}>
         Model your future income and portfolio growth from holding {stock}. The yield is pre-filled from

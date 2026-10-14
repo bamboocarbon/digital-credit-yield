@@ -27,7 +27,7 @@ function Bar() {
 
   return (
     <div style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
-      <nav aria-label="Issuers" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex gap-2 overflow-x-auto">
+      <nav aria-label="Issuers" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex gap-2 overflow-x-auto [&>:first-child]:ml-auto [&>:last-child]:mr-auto">
         {ISSUER_LIST.map(({ name, ticker, tickers }) => {
           const isActive = tickers.includes(active);
           const colour = TICKER_COLOUR[ticker];

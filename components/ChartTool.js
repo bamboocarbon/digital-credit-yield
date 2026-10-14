@@ -22,7 +22,7 @@ export default function ChartTool({ initialStock }) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <SubNav ticker={stock} />
-      <h1 className="text-2xl sm:text-3xl font-bold mb-4">Effective Yield &amp; Price Chart</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-center">Effective Yield &amp; Price Chart</h1>
       <StockSelector selected={stock} onSelect={selectStock} />
       <p className="mb-3 mt-2 text-sm leading-6 max-w-3xl" style={{ color: 'var(--text-muted)' }}>
         This chart tracks {stock}&apos;s live market price against its {cur}{par} {parWord}, alongside the
