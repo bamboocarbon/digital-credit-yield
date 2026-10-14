@@ -47,3 +47,6 @@ scripts/rocket-intro-preview/output/
 # Tesseract OCR language data — downloaded/cached on first run, not source
 *.traineddata
 .env*.local
+
+# rocket intro clips live in Vercel Blob (see scripts/generateMp4.js ensureClip); an optional local copy is fine but must not ship
+/public/rocket-clips/
