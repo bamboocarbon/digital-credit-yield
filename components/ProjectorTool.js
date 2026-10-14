@@ -20,18 +20,18 @@ export default function ProjectorTool({ initialStock, liveYields, livePrices }) 
       <SubNav ticker={stock} />
       <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-center">Growth Projector</h1>
       <StockSelector selected={stock} onSelect={selectStock} />
-      <p className="mb-3 text-sm leading-6 max-w-3xl" style={{ color: 'var(--text-muted)' }}>
+      <p className="mb-3 text-sm leading-6 max-w-3xl mx-auto text-center" style={{ color: 'var(--text-muted)' }}>
         Model your future income and portfolio growth from holding {stock}. The yield is pre-filled from
         live market data, so just set an investment amount and a time horizon — every input recalculates
         instantly. Switch reinvestment on to see how compounding the dividends changes the outcome over
         longer periods, and compare the result against {stock === 'MORE' ? 'UK gilts' : 'US Treasuries'} and a savings account side by side.
       </p>
-      <p className="mb-3 text-sm leading-6 max-w-3xl" style={{ color: 'var(--text-muted)' }}>
+      <p className="mb-3 text-sm leading-6 max-w-3xl mx-auto text-center" style={{ color: 'var(--text-muted)' }}>
         In my experience the single biggest driver of the long-run figure isn&apos;t the headline rate at
         all — it&apos;s whether you reinvest the dividends or take them as cash.{' '}
         <a href="/blog/how-to-use-the-growth-projector" style={{ color: 'var(--accent-gold)' }}>How to use this tool &rarr;</a>
       </p>
-      <p className="mb-8 text-sm" style={{ color: 'var(--text-muted)' }}>
+      <p className="mb-8 text-sm max-w-3xl mx-auto text-center" style={{ color: 'var(--text-muted)' }}>
         All projections are hypothetical illustrations only. They assume a constant dividend yield
         and do not account for price fluctuation, reinvestment risk, tax, or changes in the dividend
         rate. Past performance is not indicative of future results.
