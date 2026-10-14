@@ -42,7 +42,7 @@ export default function AssetCard({ ticker, mock, company, incomeBadge, rate, pa
   const href = hrefOverride ?? `/${ticker.toLowerCase()}`;
 
   return (
-    <div className="card relative p-6 flex flex-col items-center text-center gap-4 hover:bg-[var(--bg-card-hover)] transition-colors rounded-xl"
+    <div className="card relative w-full p-6 flex flex-col items-center text-center gap-4 hover:bg-[var(--bg-card-hover)] transition-colors rounded-xl"
       style={{ border: '1px solid var(--border)' }}>
       <div className="flex flex-col items-center gap-1 w-full">
         <h2 className="text-xl font-bold">{ticker}</h2>
