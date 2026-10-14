@@ -11,14 +11,14 @@ export async function generateMetadata({ searchParams }) {
     ? 'Compare MORE preferred share distributions against UK gilts and bank savings. See how much more income MORE generates over any time horizon.'
     : 'Compare STRC, SATA, BMNP and CHAD preferred stock dividends against US Treasuries and bank savings. See how much more income each generates over any time horizon.';
   return {
-    alternates: { canonical: '/vs-treasuries' },
+    alternates: { canonical: more ? '/vs-treasuries?stock=more' : '/vs-treasuries' },
     title: `Income vs ${bench}`,
     description,
     openGraph: {
       title: `Preferred Stock Income vs ${bench}`,
       description: `Compare ${more ? 'MORE' : 'STRC, SATA, BMNP and CHAD'} dividends against ${bench} and bank savings over your chosen time horizon.`,
       type: 'website',
-      url: 'https://www.digitalcredityield.com/vs-treasuries',
+      url: `https://www.digitalcredityield.com/vs-treasuries${more ? '?stock=more' : ''}`,
       images: [{ url: `/og?v=3&title=vs+${short}&sub=Compare+income+vs+${short}&tag=Comparison` }],
     },
     twitter: {
