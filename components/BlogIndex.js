@@ -51,7 +51,7 @@ export default function BlogIndex({ articles }) {
   const allCats = [...new Set([...articles.flatMap(a => [].concat(a.category)), 'CHAD', 'MORE'])];
   const categories = [
     'All',
-    ...allCats.filter(c => !tail.includes(c)).sort(),
+    ...allCats.filter(c => !tail.includes(c)).sort((a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' })),
     ...tail.filter(c => allCats.includes(c)),
   ];
   const shown = filter === 'All'
