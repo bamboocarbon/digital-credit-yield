@@ -20,7 +20,7 @@ export default function IssuerCards({ selected }) {
           className="rounded-xl flex"
           style={{ outline: t === selected ? '2px solid var(--accent-gold)' : 'none', outlineOffset: '2px' }}
         >
-          <div className="w-full flex"><AssetCard ticker={t} /></div>
+          <div className="w-full flex"><AssetCard ticker={t} current={t === selected} /></div>
         </div>
       ))}
     </div>

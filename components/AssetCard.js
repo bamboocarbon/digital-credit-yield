@@ -20,7 +20,8 @@ const INCOME_BADGE = {
 };
 
 
-export default function AssetCard({ ticker, mock, company, incomeBadge, rate, par, href: hrefOverride }) {
+// `current`: this card is the page you're already on (hub pages) — no Explore button and no link to itself.
+export default function AssetCard({ ticker, mock, company, incomeBadge, rate, par, href: hrefOverride, current = false }) {
   const [data, setData] = useState(mock ?? null);
   const [error, setError] = useState(false);
   const isPreListing = PRE_LISTING_TICKERS.includes(ticker);
@@ -94,23 +95,27 @@ export default function AssetCard({ ticker, mock, company, incomeBadge, rate, pa
         </div>
       )}
 
-      <Link
-        href={href}
-        prefetch={false}
-        className="mt-auto inline-flex items-center justify-center px-4 py-3 rounded-lg text-sm font-medium min-h-[44px] transition-opacity hover:opacity-80"
-        style={{ background: 'var(--accent-gold)', color: '#000' }}
-      >
-        Explore {ticker} →
-      </Link>
+      {!current && (
+        <>
+        <Link
+          href={href}
+          prefetch={false}
+          className="mt-auto inline-flex items-center justify-center px-4 py-3 rounded-lg text-sm font-medium min-h-[44px] transition-opacity hover:opacity-80"
+          style={{ background: 'var(--accent-gold)', color: '#000' }}
+        >
+          Explore {ticker} →
+        </Link>
 
-      {/* Whole-card link: a transparent link stretched over the card. It is a child of the card (so the
-          card's hover colour still applies) and a sibling of the Explore button (so no nested links). */}
-      <Link
-        href={href}
-        prefetch={false}
-        aria-label={`Open the ${ticker} page`}
-        className="absolute inset-0 rounded-xl"
-      />
+        {/* Whole-card link: a transparent link stretched over the card. It is a child of the card (so the
+            card's hover colour still applies) and a sibling of the Explore button (so no nested links). */}
+        <Link
+          href={href}
+          prefetch={false}
+          aria-label={`Open the ${ticker} page`}
+          className="absolute inset-0 rounded-xl"
+        />
+        </>
+      )}
     </div>
   );
 }
