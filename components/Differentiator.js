@@ -17,6 +17,10 @@ const C_HIGH_YIELD  = '#b8a99a';   // warm taupe grey  — distinct hue from bot
 const C_BANK        = '#9ca3af';   // medium cool grey
 
 const defaultBenchmarks = { bank: 0.5, highYield: 4.2, treasury: 5.0 };
+// UK equivalents for sterling tickers (approx., Oct 2026): high-street easy-access average ~1.5%,
+// best easy-access/cash ISA ~4.5%, 10-year gilt ~5.0%. Hand-kept — refresh occasionally.
+const ukBenchmarks = { bank: 1.5, highYield: 4.5, treasury: 5.0 };
+const benchmarksFor = ticker => (ticker === 'MORE' ? ukBenchmarks : defaultBenchmarks);
 
 export default function Differentiator({ ticker, liveYield, livePrice }) {
   const mainChartRef = useRef(null);
@@ -35,7 +39,9 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
     annualYield: liveYield ?? defaultProjectorState.annualYield,
     pricePerShare: par,
   }));
-  const [benchmarks, setBenchmarks] = useState(defaultBenchmarks);
+  const [benchmarks, setBenchmarks] = useState(() => benchmarksFor(ticker));
+  // Switching ticker (e.g. STRC -> MORE) swaps to that market's benchmark set.
+  useEffect(() => { setBenchmarks(benchmarksFor(ticker)); }, [ticker]);
 
   useEffect(() => {
     const saved = loadProjectorState(ticker);
