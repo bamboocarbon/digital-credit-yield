@@ -48,7 +48,7 @@ const tiers = [
   },
   {
     label: 'STRD',
-    sub: '8% stated rate · Most junior preferred · Trades below par',
+    sub: '10% stated rate · Most junior preferred · Trades below par',
     tag: 'PREFERRED',
     tagColor: '#9ca3af',
     bg: 'rgba(30,42,60,0.6)',
