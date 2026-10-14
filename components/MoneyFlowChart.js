@@ -172,20 +172,33 @@ function currentWeekMonday() {
   return monday;
 }
 
-// Weeks with no filed capital raise don't get pushed to the store, so the
-// series otherwise stops at the last week something actually happened —
-// making an idle chart look stale rather than current. Fill the gap up to
-// this week with $0 so the x-axis always reaches "now".
+// Weeks with no filed capital raise aren't stored, so the series has gaps (and stops at the last
+// week something happened). Rebuild a continuous weekly series from the first week up to this
+// week: entries are bucketed into 7-day weeks starting at the first date, and any week with
+// nothing in it becomes an explicit $0 bar, so the x-axis shows every week.
 function padToCurrentWeek(weeks) {
   if (!weeks.length) return weeks;
-  const result = [...weeks];
-  const target = currentWeekMonday();
-  let last = new Date(result[result.length - 1].date + 'T00:00:00Z');
-  while (last < target) {
-    last = new Date(last);
-    last.setUTCDate(last.getUTCDate() + 7);
-    const mon = last.toLocaleString('en-GB', { month: 'short', timeZone: 'UTC' });
-    result.push({ week: `${mon} ${last.getUTCDate()}`, date: last.toISOString().slice(0, 10), value: 0 });
+  const DAY = 86400000;
+  const sorted = [...weeks].sort((x, y) => x.date.localeCompare(y.date));
+  const start = new Date(sorted[0].date + 'T00:00:00Z').getTime();
+  const target = currentWeekMonday().getTime();
+  const lastEntry = new Date(sorted[sorted.length - 1].date + 'T00:00:00Z').getTime();
+  const end = Math.max(target, lastEntry);
+  const buckets = new Map();
+  for (const w of sorted) {
+    const idx = Math.floor((new Date(w.date + 'T00:00:00Z').getTime() - start) / (7 * DAY));
+    const prev = buckets.get(idx);
+    buckets.set(idx, prev
+      ? { ...prev, value: prev.value + w.value, ipo: prev.ipo || w.ipo }
+      : { ...w });
+  }
+  const result = [];
+  for (let t = start, idx = 0; t <= end; t += 7 * DAY, idx++) {
+    const d = new Date(t);
+    const hit = buckets.get(idx);
+    if (hit) { result.push(hit); continue; }
+    const mon = d.toLocaleString('en-GB', { month: 'short', timeZone: 'UTC' });
+    result.push({ week: `${mon} ${d.getUTCDate()}`, date: d.toISOString().slice(0, 10), value: 0 });
   }
   return result;
 }
