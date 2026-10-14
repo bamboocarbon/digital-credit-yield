@@ -2,7 +2,7 @@
 // egress proxy blocks sec.gov and UK RNS hosts) and writes them into data/scan-feed/ as JSON, so the
 // scan can read them straight from the cloned repo. Run by .github/workflows/scan-feed.yml ahead of the
 // scan; safe to run by hand:  node scripts/scanFeed.mjs
-//   data/scan-feed/sec.json      recent filings (8-K/10-Q/10-K/424B/FWP) for MSTR, ASST, BMNR, DFDV, with text
+//   data/scan-feed/sec.json      recent filings (8-K, 10-Q/K, 424B, FWP, DEFA14A, 425, S-1/S-3) for MSTR, ASST, BMNR, DFDV, with text
 //   data/scan-feed/swc-rns.json  recent RNS announcements for The Smarter Web Company (MORE's issuer), full text
 //   data/scan-feed/meta.json     when each part was fetched + any errors (the scan should flag a stale/failed feed)
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -14,7 +14,7 @@ const MAX_TEXT = 30000;
 const since = new Date(Date.now() - DAYS * 864e5).toISOString().slice(0, 10);
 
 const CIKS = { MSTR: '0001050446', ASST: '0001920406', BMNR: '0001829311', DFDV: '0001805526' };
-const FORMS = new Set(['8-K', '10-Q', '10-K', '424B5', '424B2', 'FWP']);
+const FORMS = new Set(['8-K', '8-K/A', '10-Q', '10-K', '424B5', '424B2', 'FWP', 'DEFA14A', 'DEF 14A', '425', 'S-1', 'S-3']);
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function get(url, asJson = false) {

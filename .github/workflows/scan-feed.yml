@@ -3,11 +3,14 @@ name: Scan feed
 # The daily DCY regulatory scan runs in a cloud sandbox whose egress proxy blocks sec.gov and UK RNS
 # hosts. This job fetches those primary sources from a normal runner ahead of the scan (13:00 UTC) and
 # commits them to data/scan-feed/, which the scan reads straight from the cloned repo.
+# US issuers (Strategy, Strive, Bitmine, DeFi Dev) publish ~08:00-08:52 ET, before the 13:30 UTC open
+# (14:30 UTC once US clocks go back on 1 Nov 2026 — their filings then land an hour later in UTC, so
+# REVISIT these times then). The scan itself runs at 13:10 UTC, so the feed must land before that.
 # Two schedules: the second is a backup in case GitHub delays or drops the first (it often does).
 on:
   schedule:
-    - cron: '30 11 * * *'
-    - cron: '30 12 * * *'
+    - cron: '0 13 * * *'
+    - cron: '5 13 * * *'
   workflow_dispatch:
 
 permissions:
