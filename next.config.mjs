@@ -48,11 +48,27 @@ const nextConfig = {
   // error ("Cannot find module 'bmp-js'") after the first fix deployed —
   // rather than fix these one at a time across repeated deploys, include
   // every declared dependency from tesseract.js's own package.json.
+  // NB: outputFileTracingExcludes is NOT honoured for the Turbopack trace, so the browser-only tesseract '.wasm.js' cores are
+  // removed from node_modules at install time instead — see scripts/slimTesseractCore.mjs (package.json "postinstall").
   outputFileTracingIncludes: {
     '/api/cron/daily-email': ['./public/fonts/**'],
     '/api/thoughts': [
       './node_modules/tesseract.js/**',
-      './node_modules/tesseract.js-core/**',
+      // The files Node loads: getCore.js requires <core>.js (which reads <core>.wasm) for the SIMD / relaxed-SIMD / plain builds,
+      // LSTM or not (the '.wasm.js' browser copies are stripped at install by scripts/slimTesseractCore.mjs).
+      './node_modules/tesseract.js-core/package.json',
+      './node_modules/tesseract.js-core/tesseract-core.js',
+      './node_modules/tesseract.js-core/tesseract-core.wasm',
+      './node_modules/tesseract.js-core/tesseract-core-lstm.js',
+      './node_modules/tesseract.js-core/tesseract-core-lstm.wasm',
+      './node_modules/tesseract.js-core/tesseract-core-simd.js',
+      './node_modules/tesseract.js-core/tesseract-core-simd.wasm',
+      './node_modules/tesseract.js-core/tesseract-core-simd-lstm.js',
+      './node_modules/tesseract.js-core/tesseract-core-simd-lstm.wasm',
+      './node_modules/tesseract.js-core/tesseract-core-relaxedsimd.js',
+      './node_modules/tesseract.js-core/tesseract-core-relaxedsimd.wasm',
+      './node_modules/tesseract.js-core/tesseract-core-relaxedsimd-lstm.js',
+      './node_modules/tesseract.js-core/tesseract-core-relaxedsimd-lstm.wasm',
       './node_modules/bmp-js/**',
       './node_modules/idb-keyval/**',
       './node_modules/is-url/**',
