@@ -58,11 +58,24 @@ export default function EffectiveYieldChart({ ticker, externalPeriod, onPeriodCh
         height: chartContainerRef.current.clientHeight,
       });
 
+      // Keep the y-axis at least 2 points tall so a near-zero gap between the two lines
+      // (e.g. a brand-new listing with a single day of data) doesn't autoscale into a huge one.
+      const minSpan = 2;
+      const autoscaleInfoProvider = original => {
+        const res = original();
+        if (!res || !res.priceRange) return res;
+        const { minValue, maxValue } = res.priceRange;
+        if (maxValue - minValue >= minSpan) return res;
+        const mid = (minValue + maxValue) / 2;
+        return { ...res, priceRange: { minValue: mid - minSpan / 2, maxValue: mid + minSpan / 2 } };
+      };
+
       // Announced rate at par — dotted pale blue step line
       const announcedSeries = chart.addSeries(LineSeries, {
         color: 'rgba(147, 197, 253, 0.65)',
         lineWidth: 3,
         lineStyle: LineStyle.Dotted,
+        autoscaleInfoProvider,
         priceFormat: { type: 'price', precision: 2, minMove: 0.01 },
       });
 
@@ -70,6 +83,7 @@ export default function EffectiveYieldChart({ ticker, externalPeriod, onPeriodCh
       const effectiveSeries = chart.addSeries(LineSeries, {
         color: '#c8893a',
         lineWidth: 2,
+        autoscaleInfoProvider,
         priceFormat: { type: 'price', precision: 2, minMove: 0.01 },
       });
 
