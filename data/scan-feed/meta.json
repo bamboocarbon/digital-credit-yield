@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-14T14:09:10.135Z",
+ "generatedAt": "2026-10-14T14:15:06.634Z",
  "windowDays": 14,
  "errors": [],
  "sec": {
@@ -14,5 +14,9 @@
  "swc": {
   "ok": true,
   "items": 5
+ },
+ "counts": {
+  "ok": true,
+  "warnings": []
  }
 }

@@ -35,7 +35,7 @@ jobs:
         run: |
           git config user.name "dcy-scan-feed"
           git config user.email "actions@users.noreply.github.com"
-          git add data/scan-feed
+          git add data/scan-feed data/capital-stack-counts.json
           if git diff --cached --quiet; then echo "no change"; exit 0; fi
           git commit -m "Scan feed $(date -u +%F) [skip ci] [vercel skip]"
           git pull --rebase origin main

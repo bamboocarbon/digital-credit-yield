@@ -5,7 +5,8 @@
 //   data/scan-feed/sec.json      recent filings (8-K, 10-Q/K, 424B, FWP, DEFA14A, 425, S-1/S-3) for MSTR, ASST, BMNR, DFDV, with text
 //   data/scan-feed/swc-rns.json  recent RNS announcements for The Smarter Web Company (MORE's issuer), full text
 //   data/scan-feed/meta.json     when each part was fetched + any errors (the scan should flag a stale/failed feed)
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile, readFile } from 'node:fs/promises';
+import { buildCounts } from './capitalCounts.mjs';
 
 const UA = 'Mozilla/5.0 (compatible; DCY-scan-feed; robin.gillingham@hotmail.co.uk)';
 const OUT = new URL('../data/scan-feed/', import.meta.url);
@@ -92,6 +93,12 @@ for (const [file, fn, key] of [['sec.json', secFeed, 'sec'], ['swc-rns.json', sw
     meta.errors.push(...errors);
   } catch (e) { meta[key] = { ok: false }; meta.errors.push(`${file}: ${e.message}`); }
 }
+try {
+  const read = async f => JSON.parse(await readFile(new URL(f, OUT), 'utf8'));
+  const counts = await buildCounts({ sec: await read('sec.json').catch(() => null), swc: await read('swc-rns.json').catch(() => null), prevPath: new URL('../capital-stack-counts.json', OUT) });
+  await writeFile(new URL('../capital-stack-counts.json', OUT), JSON.stringify(counts, null, 1) + '\n');
+  meta.counts = { ok: true, warnings: counts.warnings };
+} catch (e) { meta.counts = { ok: false }; meta.errors.push(`capital-stack-counts: ${e.message}`); }
 await writeFile(new URL('meta.json', OUT), JSON.stringify(meta, null, 1) + '\n');
 console.log(JSON.stringify(meta));
 if (!meta.sec?.ok && !meta.swc?.ok) process.exit(1);
