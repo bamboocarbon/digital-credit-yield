@@ -14,7 +14,7 @@ export const metadata = {
     description: `Strive, Inc.’s proposed 15.00% Series A Perpetual SATS Preferred Stock, paying ${rate}% annually. Track the live price, effective yield and dividend history.`,
     type: 'website',
     url: 'https://www.digitalcredityield.com/sats',
-    images: [{ url: `/og?v=3&title=SATS+Stock&sub=Strive+Preferred+Stock&rate=${rate}%25` }],
+    images: [{ url: `/og?v=4&title=SATS+Stock&sub=Strive+Preferred+Stock&rate=${rate}%25` }],
   },
   twitter: {
     card: 'summary_large_image',

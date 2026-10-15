@@ -14,7 +14,7 @@ export const metadata = {
     description: `Strategy Inc.’s 10.00% Series A Perpetual Strife Preferred Stock, paying ${rate}% annually. Track the live price, effective yield and dividend history.`,
     type: 'website',
     url: 'https://www.digitalcredityield.com/strf',
-    images: [{ url: `/og?v=3&title=STRF+Stock&sub=Strategy+Senior+Preferred&rate=${rate}%25` }],
+    images: [{ url: `/og?v=4&title=STRF+Stock&sub=Strategy+Senior+Preferred&rate=${rate}%25` }],
   },
   twitter: {
     card: 'summary_large_image',

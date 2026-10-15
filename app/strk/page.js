@@ -14,7 +14,7 @@ export const metadata = {
     description: `Strategy Inc.’s 8.00% Series A Perpetual Strike Preferred Stock, paying ${rate}% annually. Track the live price, effective yield and dividend history.`,
     type: 'website',
     url: 'https://www.digitalcredityield.com/strk',
-    images: [{ url: `/og?v=3&title=STRK+Stock&sub=Strategy+Convertible+Preferred&rate=${rate}%25` }],
+    images: [{ url: `/og?v=4&title=STRK+Stock&sub=Strategy+Convertible+Preferred&rate=${rate}%25` }],
   },
   twitter: {
     card: 'summary_large_image',

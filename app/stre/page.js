@@ -14,7 +14,7 @@ export const metadata = {
     description: `Strategy Inc.’s 10.00% Series A Perpetual Stream Preferred Stock, paying ${rate}% annually. Track the live price, effective yield and dividend history.`,
     type: 'website',
     url: 'https://www.digitalcredityield.com/stre',
-    images: [{ url: `/og?v=3&title=STRE+Stock&sub=Strategy+Euro+Preferred&rate=${rate}%25` }],
+    images: [{ url: `/og?v=4&title=STRE+Stock&sub=Strategy+Euro+Preferred&rate=${rate}%25` }],
   },
   twitter: {
     card: 'summary_large_image',
