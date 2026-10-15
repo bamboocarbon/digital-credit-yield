@@ -128,7 +128,7 @@ const CONTENT = {
     diagram: <CapitalPyramid ticker="MORE" />,
     above: (
       <>
-        <p><strong>A bitcoin-secured credit facility with Coinbase.</strong> The prospectus describes a US$30m facility, secured against the bitcoin Smarter Web holds at Coinbase, with £20.8m drawn at the prospectus date (an approximate leverage ratio of 11.8%). It carries a variable 6.25% interest rate, has no fixed maturity and is marked to market daily, so a fall in bitcoin can trigger a call for more collateral. On default, Coinbase can sell the collateral. The company says it may seek to reduce or repay the facility in future.</p>
+        <p><strong>A bitcoin-secured credit facility with Coinbase.</strong> The prospectus describes a US$30m facility, secured against the bitcoin Smarter Web holds at Coinbase, with £20.8m drawn at the prospectus date (an approximate leverage ratio of 11.8% then). It carries a variable 6.25% interest rate, has no fixed maturity and is marked to market daily, so a fall in bitcoin can trigger a call for more collateral. On default, Coinbase can sell the collateral. Smarter Web has since been paying it down: its 15 October 2026 RNS says drawings will fall from about £17m to about <strong>£16m</strong>, using part of the MORE proceeds, after an earlier reduction from about £19m to £17m (5 October).</p>
         <p>The prospectus says plainly that MORE &quot;will rank behind the claims of creditors&quot; on a winding-up, and that debt service ranks ahead of dividends. The company can take on more debt, and can&apos;t create senior share capital without the preferred holders&apos; consent as a class.</p>
       </>
     ),
