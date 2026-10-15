@@ -19,7 +19,7 @@ export async function generateMetadata({ searchParams }) {
       description: `Compare ${more ? 'MORE' : 'STRC, SATA, BMNP and CHAD'} dividends against ${bench} and bank savings over your chosen time horizon.`,
       type: 'website',
       url: `https://www.digitalcredityield.com/vs-treasuries${more ? '?stock=more' : ''}`,
-      images: [{ url: `/og?v=3&title=vs+${short}&sub=Compare+income+vs+${short}&tag=Comparison` }],
+      images: [{ url: `/og?v=4&title=vs+${short}&sub=Compare+income+vs+${short}&tag=Comparison` }],
     },
     twitter: {
       card: 'summary_large_image',

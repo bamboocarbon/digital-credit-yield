@@ -27,7 +27,7 @@ export const metadata = {
     description: 'Test your knowledge with the @DCYieldHub quiz posts — STRC, SATA, BMNP, CHAD, preferred stock and dividends.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/quiz',
-    images: [{ url: '/og?v=3&title=Quiz&sub=Test+your+knowledge+with+DCYieldHub' }],
+    images: [{ url: '/og?v=4&title=Quiz&sub=Test+your+knowledge+with+DCYieldHub' }],
   },
   twitter: {
     card: 'summary_large_image',

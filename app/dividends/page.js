@@ -12,7 +12,7 @@ export const metadata = {
     description: 'Complete record of every dividend payment from Strategy, Strive, Bitmine and DeFi Development Corp. preferred stock.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/dividends',
-    images: [{ url: '/og?v=3&title=Dividend+History&sub=STRC+SATA+BMNP+%26+CHAD&tag=Payment+Records' }],
+    images: [{ url: '/og?v=4&title=Dividend+History&sub=STRC+SATA+BMNP+%26+CHAD&tag=Payment+Records' }],
   },
   twitter: {
     card: 'summary_large_image',

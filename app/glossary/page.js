@@ -9,7 +9,7 @@ export const metadata = {
     description: 'Clear definitions of the preferred stock terms used across Digital Credit Yield.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/glossary',
-    images: [{ url: '/og?v=3&title=Glossary&sub=Key+terms+explained' }],
+    images: [{ url: '/og?v=4&title=Glossary&sub=Key+terms+explained' }],
   },
   twitter: {
     card: 'summary_large_image',

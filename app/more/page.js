@@ -14,7 +14,7 @@ export const metadata = {
     description: `A bitcoin-treasury preferred listed in London: a cumulative ${rate}% dividend paid weekly in sterling. Track the price, effective yield and dividend history.`,
     type: 'website',
     url: 'https://www.digitalcredityield.com/more',
-    images: [{ url: `/og?v=3&title=MORE+Preferred&sub=The+Smarter+Web+Company&rate=${rate}%25` }],
+    images: [{ url: `/og?v=4&title=MORE+Preferred&sub=The+Smarter+Web+Company&rate=${rate}%25` }],
   },
   twitter: {
     card: 'summary_large_image',

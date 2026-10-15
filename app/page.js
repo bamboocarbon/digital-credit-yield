@@ -18,7 +18,7 @@ export function generateMetadata() {
       description: desc,
       type: 'website',
       url: 'https://www.digitalcredityield.com',
-      images: [{ url: '/og?v=3&title=Digital+Credit+Yield&sub=Preferred+Stock+Tracker' }],
+      images: [{ url: '/og?v=4&title=Digital+Credit+Yield&sub=Preferred+Stock+Tracker' }],
     },
     twitter: {
       card: 'summary_large_image',

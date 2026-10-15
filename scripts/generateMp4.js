@@ -18,6 +18,7 @@ import crypto               from 'crypto';
 import ffmpegPath          from 'ffmpeg-static';
 import { getDailyTicker }  from './insightEngine.js';
 import { currencySymbol }  from '../lib/currency.js';
+import { blobUrl }         from '../lib/blobUrl.js';
 import { getDailyRocketClip } from './daily-email-v2-rocket-race/rocketClipRotation.mjs';
 import {
   PW, PH, TOTAL_FRAMES, buildLanes, renderFrame, createRaceCanvas,
@@ -27,13 +28,32 @@ import {
 const FFMPEG = ffmpegPath || 'ffmpeg';
 const FPS = 25;
 
-// Clip files are served from public/ (not scripts/) so Vercel's serverless
-// function bundler reliably includes them — mirrors how public/fonts/ is
-// used for the Inter font files elsewhere in this pipeline.
+// The rocket intro clips live in Vercel Blob (rocket-clips/<name>), NOT in public/: anything in public/ is copied
+// into every retained Vercel deployment, and ~11MB x hundreds of deployments filled the team's 10GB storage cap
+// (Oct 2026). They're downloaded to the temp dir on first use and reused while the function instance stays warm.
+// Locally, a copy in public/rocket-clips/ (git-ignored) is used first if you have one.
 const CLIP_PATHS = {
   launch1_ixpe: 'launch1_ixpe.mp4',
   launch2_blueghost: 'launch2_blueghost.mp4',
 };
+
+export async function ensureClip(key) {
+  const name = CLIP_PATHS[key];
+  const local = path.join(process.cwd(), 'public', 'rocket-clips', name);
+  if (fs.existsSync(local)) return local;
+  const dir = path.join(os.tmpdir(), 'rocket-clips');
+  const dest = path.join(dir, name);
+  if (fs.existsSync(dest) && fs.statSync(dest).size > 1_000_000) return dest;
+  fs.mkdirSync(dir, { recursive: true });
+  const res = await fetch(blobUrl(`rocket-clips/${name}`), {
+    headers: { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` },
+  });
+  if (!res.ok) throw new Error(`rocket clip ${name}: Blob fetch failed (HTTP ${res.status})`);
+  const tmp = `${dest}.${process.pid}.part`;
+  fs.writeFileSync(tmp, Buffer.from(await res.arrayBuffer()));
+  fs.renameSync(tmp, dest); // atomic, so a concurrent invocation never reads a half-written file
+  return dest;
+}
 
 function run(cmd, args) {
   return promisify(execFile)(cmd, args, { maxBuffer: 1024 * 1024 * 256 });
@@ -103,7 +123,7 @@ export async function generateMp4(insight, quotes, date) {
 
     // Pick today's rocket clip and concat: intro + chart
     const clip = getDailyRocketClip(0);
-    const introMp4 = path.join(process.cwd(), 'public', 'rocket-clips', CLIP_PATHS[clip.key]);
+    const introMp4 = await ensureClip(clip.key);
 
     await run(FFMPEG, ['-y', '-i', introMp4, '-c', 'copy', '-bsf:v', 'h264_mp4toannexb', '-f', 'mpegts', introTs]);
     await run(FFMPEG, ['-y', '-i', chartMp4, '-c', 'copy', '-bsf:v', 'h264_mp4toannexb', '-f', 'mpegts', chartTs]);

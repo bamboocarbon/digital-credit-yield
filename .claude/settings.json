@@ -1,0 +1,8 @@
+{
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "In this repo (digital-credit-yield), `git push` to main/production branches is pre-approved ONLY as the final step of the DCY Regulatory & News Scan routine's existing flow: changes already committed and pushed to the scan's own session branch, a written report already given to Robin summarizing what changed, and Robin has since replied in the conversation with explicit, specific go-ahead to push to main (not a standing approval from an earlier run, and not inferred from silence). Outside that exact flow, pushing to main/production in this repo is still a Production Deploy and should be blocked for confirmation as normal."
+    ]
+  }
+}
