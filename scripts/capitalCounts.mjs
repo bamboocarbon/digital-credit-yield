@@ -1,7 +1,8 @@
 // Turns the scan feed (data/scan-feed/*.json) into exact share counts for the capital-structure
 // pyramids: data/capital-stack-counts.json. Deterministic parsing — no model in the loop.
 //   Strive   exact, weekly: Class A/B common + SATA (+ SATS once it appears) from its Monday 8-K table
-//   SWC      exact: ordinary shares from each Total Voting Rights RNS; MORE preferred shares from the offer RNS
+//   SWC      exact: ordinary shares from each Total Voting Rights RNS; MORE preferred shares from the offer RNS,
+//            plus Tennyson's ATM-facility sales from the Thursday RNS (preferred.sold = IPO + ATM sold)
 //   Strategy ledger: starts from a hand-entered base (strategy.com, 11 Oct 2026) and applies each weekly 8-K's
 //            ATM shares sold and shares repurchased per series. Idempotent (periods already applied are skipped).
 //   Bitmine / DeFi Dev: NOT here — their weekly filings carry no share counts (only 10-Q/10-K do), so those
@@ -87,7 +88,40 @@ export function parseStrive(secFeed) {
 }
 
 // ---- Smarter Web ----------------------------------------------------------------------------------
-export function parseSwc(swcFeed) {
+// MORE preferred: 111,112 IPO shares were sold to investors; a further 100,000 were issued into the Tennyson ATM
+// facility and only count as "sold" (market value on the pyramid) once Tennyson sells them. The company announces
+// those sales each Thursday from 22 Oct 2026. Two formats are understood, balance first because it is absolute:
+//   1. "... the balance of Preferred Shares issued into the Preferred Shares ATM Facility which have not yet been
+//      sold is N"  (mirrors its ordinary-share Subscription Agreement RNS)  -> sold via ATM = facility - N
+//   2. "N Preferred Shares have been sold ..."  -> added to a ledger in the counts file; each RNS applied once
+// An RNS after admission that mentions preferred-share sales but matches neither is reported as a warning so a
+// human looks at it rather than the count silently going stale.
+const ADMISSION = '2026-10-14';
+export function parsePreferredAtmSales(items, atmFacility, prevLedger) {
+  const ledger = { total: prevLedger?.total ?? 0, applied: [...(prevLedger?.applied ?? [])] };
+  const warnings = [];
+  let balanceSold = null, balanceDate = null;
+  const sorted = [...items].sort((a, b) => (a.date + (a.time ?? '')).localeCompare(b.date + (b.time ?? '')));
+  for (const it of sorted) {
+    if (it.date <= ADMISSION) continue;
+    const t = (it.text ?? '').replace(/\s+/g, ' ');
+    if (!/Preferred Shares?[^.]{0,200}\b(sold|sale|sales)\b|\b(sold|sales?)\b[^.]{0,200}Preferred Shares/i.test(t)) continue;
+    const key = `${it.date}|${(it.headline ?? '').slice(0, 60)}`;
+    const bal = t.match(/balance of (?:the )?Preferred Shares[^.]{0,200}?(?:have|has) not (?:yet )?been sold (?:is|was|of) ([\d,]+)/i);
+    if (bal && atmFacility) { balanceSold = Math.max(0, atmFacility - num(bal[1])); balanceDate = it.date; continue; }
+    const sold = t.match(/([\d,]{3,}) Preferred Shares (?:have|has) been sold/i);
+    if (sold) {
+      if (!ledger.applied.includes(key)) { ledger.total += num(sold[1]); ledger.applied.push(key); }
+      continue;
+    }
+    if (/Preferred Shares ATM Facility/i.test(t) && /\bsold\b/i.test(t) && !/will be announced|will announce|each Thursday/i.test(t)) warnings.push(`SWC RNS ${key}: mentions preferred-share ATM sales but matched no known format — check MORE sold count by hand.`);
+  }
+  const atmSold = balanceSold != null ? balanceSold : ledger.total;
+  if (balanceSold != null) { ledger.total = balanceSold; ledger.applied = ledger.applied.slice(-50); }
+  return { atmSold: Math.min(atmSold, atmFacility ?? atmSold), ledger, balanceDate, warnings };
+}
+
+export function parseSwc(swcFeed, prev) {
   const items = [...(swcFeed?.items ?? [])].sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
   let ord = null, pref = null;
   for (const it of items) {
@@ -102,7 +136,15 @@ export function parseSwc(swcFeed) {
         note: 'ATM-facility shares are issued to Tennyson to sell into the market; they exist but may not be sold yet.' };
     }
   }
-  return { ordinary: ord, preferred: pref };
+  pref = pref ?? prev?.swc?.preferred ?? null;
+  const warnings = [];
+  if (pref) {
+    const atm = parsePreferredAtmSales(swcFeed?.items ?? [], pref.atmFacility, prev?.swc?.preferred?.atmSalesLedger);
+    warnings.push(...atm.warnings);
+    // `sold` = shares sold to investors (IPO + ATM sold so far): what the pyramid prices, like Strategy's counts.
+    pref = { ...pref, atmSold: atm.atmSold, sold: pref.ipo + atm.atmSold, atmSalesLedger: atm.ledger };
+  }
+  return { ordinary: ord, preferred: pref, warnings };
 }
 
 export async function buildCounts({ sec, swc, prevPath }) {
@@ -111,7 +153,7 @@ export async function buildCounts({ sec, swc, prevPath }) {
   const warnings = [];
   const strategy = updateStrategy(prev, sec); warnings.push(...strategy.warnings); delete strategy.warnings;
   const strive = parseStrive(sec) ?? prev?.strive ?? null; if (!parseStrive(sec)) warnings.push('No Strive share table in the feed window; kept previous.');
-  const sw = parseSwc(swc);
+  const sw = parseSwc(swc, prev); warnings.push(...sw.warnings);
   return {
     generatedAt: new Date().toISOString(),
     strategy,

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-15T13:37:28.861Z",
+ "generatedAt": "2026-10-15T14:39:12.509Z",
  "strategy": {
   "ledger": {
    "counts": {
@@ -60,7 +60,13 @@
    "asOf": "2026-10-14",
    "source": "https://www.investegate.co.uk/announcement/rns/the-smarter-web-company-plc--swc/first-day-of-dealings-in-preferred-shares/9821366",
    "headline": "First day of dealings in Preferred Shares",
-   "note": "ATM-facility shares are issued to Tennyson to sell into the market; they exist but may not be sold yet."
+   "note": "ATM-facility shares are issued to Tennyson to sell into the market; they exist but may not be sold yet.",
+   "atmSold": 0,
+   "sold": 111112,
+   "atmSalesLedger": {
+    "total": 0,
+    "applied": []
+   }
   }
  },
  "notes": [
