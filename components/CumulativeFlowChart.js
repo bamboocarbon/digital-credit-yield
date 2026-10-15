@@ -76,8 +76,8 @@ const RANGE_OPTS = ['6M', '1Y', 'All'];
 // One entry per plotted line — the legend buttons toggle these on/off so the smaller
 // issuers can be compared without STRC's scale flattening them.
 const TICKER_LINES = [
-  { key: 'strc', color: '#15803d', label: 'STRC', sub: 'Strategy · IPO Jul 2025' },
-  { key: 'sata', color: '#2563eb', label: 'SATA', sub: 'Strive · IPO Nov 2025' },
+  { key: 'strc', color: '#15803d', label: 'Strategy', sub: 'all 5 preferreds · IPO Jan 2025' },
+  { key: 'sata', color: '#2563eb', label: 'Strive', sub: 'SATA + SATS · IPO Nov 2025' },
   ...(BMNP_ENABLED ? [{ key: 'bmnp', color: '#fde047', label: 'BMNP', sub: 'Bitmine · IPO Jun 2026' }] : []),
   { key: 'chad', color: '#7f1d1d', label: 'CHAD', sub: 'DeFi Development Corp. · IPO Sep 2026' },
   { key: 'more', color: '#a855f7', label: 'MORE', sub: 'Smarter Web Company · IPO Oct 2026 (£ converted)' },
@@ -129,13 +129,13 @@ export default function CumulativeFlowChart() {
   return (
     <div>
       {/* Legend + toggle */}
-      <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
+      <div className="flex items-center justify-between flex-wrap gap-x-6 gap-y-3 mb-4">
         <div className="flex flex-wrap gap-x-3 gap-y-2 text-xs" style={{ color: 'var(--text-muted)' }}>
           {TICKER_LINES.map(i => {
             const on = !hidden.includes(i.key);
             return (
               <button key={i.key} type="button" onClick={() => toggleLine(i.key)} aria-pressed={on}
-                title={on ? `Hide ${i.label}` : `Show ${i.label}`}
+                title={`${on ? 'Hide' : 'Show'} ${i.label} — ${i.sub}`}
                 className="flex items-center gap-2 transition-opacity"
                 style={{
                   padding: '4px 10px', borderRadius: 8, cursor: 'pointer',
@@ -144,7 +144,7 @@ export default function CumulativeFlowChart() {
                   opacity: on ? 1 : 0.45,
                 }}>
                 <div style={{ width: 24, height: 2, background: i.color, borderRadius: 2 }} />
-                <p style={{ margin: 0, color: '#e5e7eb', textDecoration: on ? 'none' : 'line-through' }}>{i.label} — {i.sub}</p>
+                <p style={{ margin: 0, color: '#e5e7eb', textDecoration: on ? 'none' : 'line-through' }}>{i.label}</p>
               </button>
             );
           })}
@@ -185,7 +185,7 @@ export default function CumulativeFlowChart() {
           <p style={{ margin: '0 0 16px 44px', fontSize: 11, color: '#4b5563', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
             Linear Scale · Absolute Size
           </p>
-          <div role="img" aria-label={`STRC, SATA${BMNP_ENABLED ? ', BMNP' : ''} CHAD and MORE cumulative capital raised — linear scale line chart`}>
+          <div role="img" aria-label={`Strategy, Strive${BMNP_ENABLED ? ', BMNP' : ''} CHAD and MORE cumulative capital raised — linear scale line chart`}>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={displayData} margin={{ top: 4, right: 20, left: 8, bottom: 55 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
@@ -207,7 +207,7 @@ export default function CumulativeFlowChart() {
           <p style={{ margin: '0 0 16px 44px', fontSize: 11, color: '#4b5563', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
             Log Scale · Growth Trajectory
           </p>
-          <div role="img" aria-label={`STRC, SATA${BMNP_ENABLED ? ', BMNP' : ''} CHAD and MORE cumulative capital raised — log scale line chart`}>
+          <div role="img" aria-label={`Strategy, Strive${BMNP_ENABLED ? ', BMNP' : ''} CHAD and MORE cumulative capital raised — log scale line chart`}>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart
               data={displayData.map(d => ({ ...d, strc: d.strc ? Math.log10(d.strc) : null, sata: d.sata ? Math.log10(d.sata) : null, bmnp: d.bmnp ? Math.log10(d.bmnp) : null, chad: d.chad ? Math.log10(d.chad) : null, more: d.more ? Math.log10(d.more) : null }))}

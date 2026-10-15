@@ -1,12 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { STRCMoneyFlowChart, SATAMoneyFlowChart, BMNPMoneyFlowChart, CHADMoneyFlowChart, MOREMoneyFlowChart } from '@/components/MoneyFlowChart';
+import StrategyFlowView from '@/components/StrategyFlowView';
+import StriveFlowView from '@/components/StriveFlowView';
 import { BMNP_ENABLED } from '@/lib/constants';
 
 const TICKERS = [
-  { ticker: 'STRC', label: 'Strategy Preferred', color: '#4ade80', meta: 'IPO Jul 2025 · 12.00% · $4.2B ATM programme', dataKey: 'strcWeekly', Chart: STRCMoneyFlowChart },
-  { ticker: 'SATA', label: 'Strive Preferred', color: '#3b82f6', meta: 'IPO Nov 2025 · 13.00% · $500M ATM programme', dataKey: 'sataWeekly', Chart: SATAMoneyFlowChart },
+  { ticker: 'STRC', title: 'Strategy', label: 'all preferreds', color: '#4ade80', meta: 'STRK · STRF · STRD · STRE · STRC · IPOs from Jan 2025 · STRE shown in $', dataKey: 'strategyRaisedWeekly', Chart: STRCMoneyFlowChart },
+  { ticker: 'SATA', title: 'Strive', label: 'SATA + SATS', color: '#3b82f6', meta: 'SATA IPO Nov 2025 · 13.00% · SATS proposed, not yet priced', dataKey: 'sataWeekly', Chart: SATAMoneyFlowChart },
   ...(BMNP_ENABLED ? [{ ticker: 'BMNP', label: 'Bitmine Preferred', color: '#fde047', meta: 'IPO Jun 2026 · 9.50% · ATM programme TBC', dataKey: 'bmnpWeekly', Chart: BMNPMoneyFlowChart, pendingNote: 'Listed Jun 16, 2026 — capital flow data pending' }] : []),
   { ticker: 'CHAD', label: 'DeFi Development Preferred', color: '#7f1d1d', meta: 'IPO Sep 2026 · 13.00% · $10 par', dataKey: 'chadWeekly', Chart: CHADMoneyFlowChart, pendingNote: 'Listed Sep 8, 2026 — capital flow data pending' },
   { ticker: 'MORE', label: 'Smarter Web Preferred', color: '#a855f7', meta: 'IPO Oct 2026 · 12.00% · £ sterling · LSE', dataKey: 'moreWeekly', Chart: MOREMoneyFlowChart, unit: '£', pendingNote: 'Admitted Oct 14, 2026 — capital flow data pending' },
@@ -39,7 +42,14 @@ function deriveStats(weekly) {
 }
 
 export default function MoneyFlowSelector() {
-  const [selected, setSelected] = useState('STRC');
+  // The selected card lives in ?stock= so the issuer bar under the header can highlight the same company
+  // (and clicking a company there loads its chart here).
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+  const fromUrl = (params.get('stock') || 'strc').toUpperCase();
+  const selected = TICKERS.some(t => t.ticker === fromUrl) ? fromUrl : 'STRC';
+  const setSelected = t => router.replace(`${pathname}?stock=${t.toLowerCase()}`, { scroll: false });
   const [flowData, setFlowData] = useState(null);
 
   useEffect(() => {
@@ -70,7 +80,7 @@ export default function MoneyFlowSelector() {
               }}
             >
               <div className="flex items-center gap-2 mb-1">
-                <span className="font-bold text-lg">{t.ticker}</span>
+                <span className="font-bold text-lg">{t.title ?? t.ticker}</span>
                 <span className="text-xs font-medium" style={{ color: t.color }}>{t.label}</span>
               </div>
               <p className="text-xs mb-3" style={{ color: 'var(--text-muted)' }}>{t.meta}</p>
@@ -93,6 +103,8 @@ export default function MoneyFlowSelector() {
         })}
       </div>
 
+      {/* Strategy's and Strive's cards open their all-products views (STRC / SATA are one of their series) */}
+      {active.ticker === 'STRC' ? <StrategyFlowView /> : active.ticker === 'SATA' ? <StriveFlowView /> : (
       <div className="rounded-2xl p-6 mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <div className="flex items-center gap-2 mb-1">
           <span className="font-bold text-lg" style={{ color: active.color }}>{active.ticker}</span>
@@ -101,6 +113,7 @@ export default function MoneyFlowSelector() {
         <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>{active.meta}</p>
         <active.Chart />
       </div>
+      )}
     </>
   );
 }

@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import AadsAd from '@/components/AadsAd';
 import CumulativeFlowChart from '@/components/CumulativeFlowChart';
 import MoneyFlowSelector from '@/components/MoneyFlowSelector';
@@ -37,18 +38,20 @@ export default function MoneyFlowPage() {
         <p className="text-lg max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
           Weekly capital raised by {BMNP_ENABLED ? 'STRC, SATA, BMNP, CHAD and MORE' : 'STRC, SATA, CHAD and MORE'}, compiled
           from SEC 8-K filings since each IPO.
-          {BMNP_ENABLED && ' BMNP listed on the NYSE in June 2026.'} CHAD listed on the Nasdaq in September 2026.
+          {BMNP_ENABLED && ' BMNP listed on the NYSE in June 2026.'} CHAD listed on the Nasdaq in September 2026. MORE weekly figures are being added from 26 October 2026.
         </p>
       </div>
 
       {/* Weekly capital raised — click a ticker (with its total raised) to load its chart below */}
-      <MoneyFlowSelector />
+      <Suspense fallback={null}>
+        <MoneyFlowSelector />
+      </Suspense>
 
       {/* Cumulative line chart */}
       <div className="rounded-2xl p-6 mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <h2 className="text-lg font-bold mb-1">Cumulative Capital Raised</h2>
         <p className="text-xs mb-5" style={{ color: 'var(--text-muted)' }}>
-          Linear shows STRC&apos;s dominance. Switch to Log to compare growth trajectories side by side.
+          Linear shows Strategy&apos;s dominance. Switch to Log to compare growth trajectories side by side.
         </p>
         <CumulativeFlowChart />
       </div>

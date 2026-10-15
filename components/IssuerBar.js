@@ -3,14 +3,14 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { ISSUERS, TICKER_COLOUR } from '@/lib/tickerDisplay';
+import { ISSUERS } from '@/lib/tickerDisplay';
 
 // Issuer row shown under the main header on every page except Home. One chip per issuer; each
 // maps to that issuer's ticker for now (Strategy will later expand to its other series).
 const ISSUER_LIST = ISSUERS.map(i => ({ name: i.name, ticker: i.tickers[0], tickers: i.tickers }));
 
 // The consolidated tool pages carry the active stock in ?stock=; everything else is a per-ticker hub.
-const TOOL_PATHS = ['/chart', '/projector', '/vs-treasuries', '/dividends'];
+const TOOL_PATHS = ['/chart', '/projector', '/vs-treasuries', '/dividends', '/money-flow'];
 const hubPath = t => `/${t.toLowerCase()}`;
 
 function Bar() {
@@ -30,7 +30,6 @@ function Bar() {
       <nav aria-label="Issuers" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-10 flex flex-nowrap items-center gap-x-2 overflow-x-auto md:flex-wrap md:content-center md:justify-center md:overflow-hidden">
         {ISSUER_LIST.map(({ name, ticker, tickers }) => {
           const isActive = tickers.includes(active);
-          const colour = TICKER_COLOUR[ticker];
           return (
             <Link
               key={ticker}
@@ -40,11 +39,10 @@ function Bar() {
               className="px-3 py-1 rounded-lg text-sm font-semibold min-h-[30px] flex items-center gap-2 whitespace-nowrap flex-shrink-0 transition-colors"
               style={{
                 background: isActive ? 'var(--bg-card-hover)' : 'transparent',
-                color: isActive ? colour : 'var(--text-muted)',
-                border: `1px solid ${isActive ? colour : 'transparent'}`,
+                color: isActive ? 'var(--accent-gold)' : 'var(--text-primary)',
+                border: `1px solid ${isActive ? 'var(--accent-gold)' : 'transparent'}`,
               }}
             >
-              <span style={{ display: 'inline-block', width: 9, height: 9, borderRadius: 2, background: colour, flexShrink: 0 }} />
               {name}
             </Link>
           );

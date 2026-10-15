@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getMoneyFlowData, saveMoneyFlowData, buildCumulative, SEED_STRC_WEEKLY, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, SEED_MORE_WEEKLY, mergeMoreWeekly } from '@/lib/moneyFlowStore';
-import { getRecentFilings, parseProceeds, weekLabel, weekDate } from '@/lib/edgarParser';
+import { getMoneyFlowData, saveMoneyFlowData, buildCumulative, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, SEED_MORE_WEEKLY, mergeMoreWeekly } from '@/lib/moneyFlowStore';
+import { getRecentFilings, parseProceeds, parseStrategyWeek, weekLabel, weekDate } from '@/lib/edgarParser';
+import { mergeStrategyWeekly, deriveStrcWeekly, deriveStrategyRaisedWeekly, SEED_THROUGH } from '@/lib/strategyFlow';
 
 export const maxDuration = 60;
 
@@ -13,7 +14,8 @@ export async function GET(request) {
   try {
     // Load existing data or seed from hardcoded baseline
     let existing = await getMoneyFlowData();
-    let strcWeekly = existing?.strcWeekly ?? [...SEED_STRC_WEEKLY];
+    // Strategy (STRK/STRF/STRD/STRC/STRE): seed + any weeks the cron added after it; STRC's series is derived.
+    let strategyWeekly = mergeStrategyWeekly(existing?.strategyWeekly);
     let sataWeekly = existing?.sataWeekly ?? [...SEED_SATA_WEEKLY];
     let bmnpWeekly = existing?.bmnpWeekly ?? [...SEED_BMNP_WEEKLY];
     let chadWeekly = existing?.chadWeekly ?? [...SEED_CHAD_WEEKLY];
@@ -22,28 +24,34 @@ export async function GET(request) {
     // Seed it in too if the stored blob predates MORE.
     let moreWeekly = mergeMoreWeekly(existing?.moreWeekly);
 
-    const strcLastDate = strcWeekly.at(-1)?.date ?? '2026-05-25';
+    // The seed already covers the 8-K filed 13 Oct 2026 (w/c 5 Oct); only look at filings after that.
+    const strategyLastFiled = strategyWeekly.map(r => r.filed).filter(Boolean).sort().at(-1) ?? '2026-10-13';
     const sataLastDate = sataWeekly.at(-1)?.date ?? '2026-05-25';
     const bmnpLastDate = bmnpWeekly.at(-1)?.date ?? '2026-06-01';
     const chadLastDate = chadWeekly.at(-1)?.date ?? '2026-09-01';
 
     const results = { strcAdded: 0, sataAdded: 0, bmnpAdded: 0, chadAdded: 0, errors: [] };
 
-    // Fetch new STRC 8-Ks
+    // Fetch new Strategy 8-Ks — parses the weekly ATM + repurchase tables for every series at once
     try {
-      const filings = await getRecentFilings('STRC', strcLastDate);
+      const filings = await getRecentFilings('STRC', strategyLastFiled);
       for (const filing of filings.reverse()) { // oldest-first
-        const proceeds = await parseProceeds('STRC', filing);
-        if (!proceeds) continue;
-        const date = weekDate(filing.date);
-        // Skip if we already have this week
-        if (strcWeekly.some(d => d.date === date)) continue;
-        strcWeekly.push({ week: weekLabel(filing.date), date, value: proceeds });
+        const week = await parseStrategyWeek(filing);
+        if (!week) continue;
+        const i = strategyWeekly.findIndex(r => r.date === week.date);
+        if (i >= 0) {
+          // A second 8-K for the same week (e.g. a correction): add its products on top
+          strategyWeekly[i] = { ...strategyWeekly[i], filed: week.filed, net: { ...strategyWeekly[i].net, ...week.net }, bb: { ...strategyWeekly[i].bb, ...week.bb } };
+        } else {
+          strategyWeekly.push(week);
+        }
         results.strcAdded++;
       }
+      strategyWeekly.sort((a, b) => a.date.localeCompare(b.date));
     } catch (err) {
       results.errors.push(`STRC: ${err.message}`);
     }
+    const strcWeekly = deriveStrcWeekly(strategyWeekly);
 
     // Fetch new SATA 8-Ks
     try {
@@ -91,8 +99,8 @@ export async function GET(request) {
     }
 
     // Rebuild cumulative and save
-    const cumulative = buildCumulative(strcWeekly, sataWeekly, bmnpWeekly, chadWeekly, moreWeekly);
-    await saveMoneyFlowData({ strcWeekly, sataWeekly, bmnpWeekly, chadWeekly, moreWeekly, cumulative });
+    const cumulative = buildCumulative(deriveStrategyRaisedWeekly(strategyWeekly), sataWeekly, bmnpWeekly, chadWeekly, moreWeekly);
+    await saveMoneyFlowData({ strcWeekly, strategyWeekly: strategyWeekly.filter(r => r.date > SEED_THROUGH), sataWeekly, bmnpWeekly, chadWeekly, moreWeekly, cumulative });
 
     return NextResponse.json({ ok: true, ...results });
   } catch (err) {

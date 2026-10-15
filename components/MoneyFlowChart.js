@@ -1,61 +1,15 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { SEED_STRATEGY_WEEKLY, deriveStrcWeekly } from '@/lib/strategyFlow';
 
 // Weekly capital raised ($M) compiled from SEC 8-K filings.
-// Confirmed data points: STRC IPO $2,521M (Jul 29 2025), Oct 6-12 $27.3M,
-// Q4 2025 ATM total $157.6M, Mar 9-15 2026 ~$1,180M, Apr 6-12 ~$1,000M,
-// May 25 week ~$2,000M, 2026 YTD through May 3 = $5,580M.
+// STRC (IPO + ATM net proceeds) is derived from lib/strategyFlow.js — Strategy's own weekly 8-K tables.
 // SATA IPO $160M (Nov 10 2025), Jan 28 follow-on $225M,
 // Mar 9 ~$18M (179 BTC), Apr 27 ~$75M (789 BTC),
 // May 4 ~$37M (371 BTC), May 11 ~$46M (460 BTC), May 25 ~$79M (790 BTC).
 
-const STRC_WEEKS = [
-  { week: 'Jul 28',  date: '2025-07-28', value: 2521, ipo: true },
-  { week: 'Aug 4',   date: '2025-08-04', value: 3 },
-  { week: 'Aug 11',  date: '2025-08-11', value: 5 },
-  { week: 'Aug 18',  date: '2025-08-18', value: 8 },
-  { week: 'Aug 25',  date: '2025-08-25', value: 6 },
-  { week: 'Sep 1',   date: '2025-09-01', value: 9 },
-  { week: 'Sep 8',   date: '2025-09-08', value: 11 },
-  { week: 'Sep 15',  date: '2025-09-15', value: 8 },
-  { week: 'Sep 22',  date: '2025-09-22', value: 10 },
-  { week: 'Sep 29',  date: '2025-09-29', value: 8 },
-  { week: 'Oct 6',   date: '2025-10-06', value: 27 },
-  { week: 'Oct 13',  date: '2025-10-13', value: 16 },
-  { week: 'Oct 20',  date: '2025-10-20', value: 12 },
-  { week: 'Oct 27',  date: '2025-10-27', value: 10 },
-  { week: 'Nov 3',   date: '2025-11-03', value: 11 },
-  { week: 'Nov 10',  date: '2025-11-10', value: 13 },
-  { week: 'Nov 17',  date: '2025-11-17', value: 11 },
-  { week: 'Nov 24',  date: '2025-11-24', value: 8 },
-  { week: 'Dec 1',   date: '2025-12-01', value: 10 },
-  { week: 'Dec 8',   date: '2025-12-08', value: 12 },
-  { week: 'Dec 15',  date: '2025-12-15', value: 9 },
-  { week: 'Dec 22',  date: '2025-12-22', value: 7 },
-  { week: 'Dec 29',  date: '2025-12-29', value: 11 },
-  { week: 'Jan 5',   date: '2026-01-05', value: 100 },
-  { week: 'Jan 12',  date: '2026-01-12', value: 150 },
-  { week: 'Jan 19',  date: '2026-01-19', value: 200 },
-  { week: 'Jan 26',  date: '2026-01-26', value: 250 },
-  { week: 'Feb 2',   date: '2026-02-02', value: 150 },
-  { week: 'Feb 9',   date: '2026-02-09', value: 130 },
-  { week: 'Feb 16',  date: '2026-02-16', value: 160 },
-  { week: 'Feb 23',  date: '2026-02-23', value: 200 },
-  { week: 'Mar 2',   date: '2026-03-02', value: 200 },
-  { week: 'Mar 9',   date: '2026-03-09', value: 1180 },
-  { week: 'Mar 16',  date: '2026-03-16', value: 280 },
-  { week: 'Mar 23',  date: '2026-03-23', value: 300 },
-  { week: 'Mar 30',  date: '2026-03-30', value: 200 },
-  { week: 'Apr 6',   date: '2026-04-06', value: 1000 },
-  { week: 'Apr 13',  date: '2026-04-13', value: 300 },
-  { week: 'Apr 20',  date: '2026-04-20', value: 400 },
-  { week: 'Apr 27',  date: '2026-04-27', value: 250 },
-  { week: 'May 4',   date: '2026-05-04', value: 130 },
-  { week: 'May 11',  date: '2026-05-11', value: 200 },
-  { week: 'May 18',  date: '2026-05-18', value: 400 },
-  { week: 'May 25',  date: '2026-05-25', value: 2000 },
-];
+const STRC_WEEKS = deriveStrcWeekly(SEED_STRATEGY_WEEKLY);
 
 const SATA_WEEKS = [
   { week: 'Nov 10',  date: '2025-11-10', value: 160, ipo: true },
