@@ -112,6 +112,8 @@ export default function CumulativeFlowChart() {
   const displayData = filterCumulative(activeData, range);
   const isLog = scale === 'log';
   const visibleLines = TICKER_LINES.filter(t => !hidden.includes(t.key));
+  // A line with only one data point (MORE has had a single week so far) draws nothing, so give it a dot.
+  const dotFor = t => (displayData.filter(d => d[t.key] != null).length <= 1 ? { r: 4, fill: t.color, stroke: t.color } : false);
 
   // Always keep at least one line on the chart.
   const toggleLine = key => setHidden(h =>
@@ -193,7 +195,7 @@ export default function CumulativeFlowChart() {
               <YAxis tickFormatter={fmtLinear} tick={tick} width={54} />
               <Tooltip content={<TooltipLinear />} />
               {visibleLines.map(t => (
-                <Line key={t.key} type="monotone" dataKey={t.key} name={t.label} stroke={t.color} strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />
+                <Line key={t.key} type="monotone" dataKey={t.key} name={t.label} stroke={t.color} strokeWidth={2} dot={dotFor(t)} activeDot={{ r: 4 }} connectNulls={false} />
               ))}
             </LineChart>
           </ResponsiveContainer>
@@ -218,7 +220,7 @@ export default function CumulativeFlowChart() {
               <YAxis tickFormatter={fmtLog} tick={tick} width={54} domain={[logLo, logHi]} ticks={logTicks} />
               <Tooltip content={<TooltipLog />} />
               {visibleLines.map(t => (
-                <Line key={t.key} type="monotone" dataKey={t.key} name={t.label} stroke={t.color} strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls={false} />
+                <Line key={t.key} type="monotone" dataKey={t.key} name={t.label} stroke={t.color} strokeWidth={2} dot={dotFor(t)} activeDot={{ r: 4 }} connectNulls={false} />
               ))}
             </LineChart>
           </ResponsiveContainer>

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { currencySymbol } from '@/lib/currency';
-import { ASSET_RATES, PAYMENT_FREQUENCY, BMNP_ENABLED, STRIVE_BTC_HOLDINGS, STRATEGY_BTC_HOLDINGS, BITMINE_ETH_HOLDINGS, DFDV_SOL_HOLDINGS, PAR_VALUE } from '@/lib/constants';
+import { ASSET_RATES, PAYMENT_FREQUENCY, BMNP_ENABLED, STRIVE_BTC_HOLDINGS, STRATEGY_BTC_HOLDINGS, BITMINE_ETH_HOLDINGS, DFDV_SOL_HOLDINGS, SMARTER_WEB_BTC_HOLDINGS, PAR_VALUE } from '@/lib/constants';
 
 const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#7f1d1d', MORE: '#a855f7' };
 
@@ -59,7 +59,7 @@ const ROWS = [
     SATA: `${STRIVE_BTC_HOLDINGS}+ Bitcoin plus an 18-month cash reserve`,
     BMNP: `${BITMINE_ETH_HOLDINGS}+ Ethereum treasury, staking income via the MAVAN validator network`,
     CHAD: `${DFDV_SOL_HOLDINGS}+ Solana treasury, funded by ongoing capital raises`,
-    MORE: 'Bitcoin treasury; £4M of IPO proceeds earmarked for more bitcoin',
+    MORE: `${SMARTER_WEB_BTC_HOLDINGS}+ Bitcoin treasury; £4M of IPO proceeds earmarked for more bitcoin`,
   },
   {
     label: 'Position in capital structure',
