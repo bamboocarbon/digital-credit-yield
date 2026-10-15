@@ -351,7 +351,7 @@ export function MOREMoneyFlowChart() {
     <div>
       <RangeButtons range={range} setRange={setRange} activeColor={MORE_PURPLE} />
       <div role="img" aria-label="MORE weekly capital raised bar chart, in millions of pounds" style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
-      <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering · figures in £ millions</p>
+      <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering · figures in £ millions · weekly bars are Tennyson's ATM sales from SWC's Thursday RNS (£ proceeds as stated, else shares × price)</p>
     </div>
   );
 }

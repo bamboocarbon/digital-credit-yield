@@ -97,10 +97,13 @@ export function parseStrive(secFeed) {
 // An RNS after admission that mentions preferred-share sales but matches neither is reported as a warning so a
 // human looks at it rather than the count silently going stale.
 const ADMISSION = '2026-10-14';
+const gbp = (amount, unit) => { const v = num(amount); return /^m/i.test(unit ?? '') ? v * 1e6 : v; };
+// Ledger entries are { key, date, shares, proceeds } — `proceeds` is the gross £ stated in the RNS (null if not
+// stated). The money-flow page turns each entry into a weekly MORE bar (lib/moneyFlowStore.js moreAtmRows).
 export function parsePreferredAtmSales(items, atmFacility, prevLedger) {
-  const ledger = { total: prevLedger?.total ?? 0, applied: [...(prevLedger?.applied ?? [])] };
+  const entries = [...(prevLedger?.entries ?? [])];
   const warnings = [];
-  let balanceSold = null, balanceDate = null;
+  let balanceSold = null;
   const sorted = [...items].sort((a, b) => (a.date + (a.time ?? '')).localeCompare(b.date + (b.time ?? '')));
   for (const it of sorted) {
     if (it.date <= ADMISSION) continue;
@@ -108,17 +111,22 @@ export function parsePreferredAtmSales(items, atmFacility, prevLedger) {
     if (!/Preferred Shares?[^.]{0,200}\b(sold|sale|sales)\b|\b(sold|sales?)\b[^.]{0,200}Preferred Shares/i.test(t)) continue;
     const key = `${it.date}|${(it.headline ?? '').slice(0, 60)}`;
     const bal = t.match(/balance of (?:the )?Preferred Shares[^.]{0,200}?(?:have|has) not (?:yet )?been sold (?:is|was|of) ([\d,]+)/i);
-    if (bal && atmFacility) { balanceSold = Math.max(0, atmFacility - num(bal[1])); balanceDate = it.date; continue; }
+    if (bal && atmFacility) balanceSold = Math.max(0, atmFacility - num(bal[1]));
     const sold = t.match(/([\d,]{3,}) Preferred Shares (?:have|has) been sold/i);
-    if (sold) {
-      if (!ledger.applied.includes(key)) { ledger.total += num(sold[1]); ledger.applied.push(key); }
-      continue;
-    }
-    if (/Preferred Shares ATM Facility/i.test(t) && /\bsold\b/i.test(t) && !/will be announced|will announce|each Thursday/i.test(t)) warnings.push(`SWC RNS ${key}: mentions preferred-share ATM sales but matched no known format — check MORE sold count by hand.`);
+    const pro = t.match(/gross proceeds[^£.]{0,80}£\s?([\d,]+(?:\.\d+)?)\s?(million|m\b)?/i);
+    if (sold && !entries.some(e => e.key === key)) entries.push({ key, date: it.date, shares: num(sold[1]), proceeds: pro ? Math.round(gbp(pro[1], pro[2])) : null });
+    else if (!sold && !bal && /Preferred Shares ATM Facility/i.test(t) && /\bsold\b/i.test(t) && !/will be announced|will announce|each Thursday/i.test(t)) warnings.push(`SWC RNS ${key}: mentions preferred-share ATM sales but matched no known format — check MORE sold count by hand.`);
   }
-  const atmSold = balanceSold != null ? balanceSold : ledger.total;
-  if (balanceSold != null) { ledger.total = balanceSold; ledger.applied = ledger.applied.slice(-50); }
-  return { atmSold: Math.min(atmSold, atmFacility ?? atmSold), ledger, balanceDate, warnings };
+  const sum = () => entries.reduce((n, e) => n + e.shares, 0);
+  // Absolute balance wins over the running sum: if sales were missed or restated, book the difference as an
+  // entry (no proceeds known) on the date of the latest balance RNS so the weekly money-flow bar isn't lost.
+  if (balanceSold != null && balanceSold !== sum()) {
+    const last = sorted.filter(it => /balance of (?:the )?Preferred Shares/i.test((it.text ?? '').replace(/\s+/g, ' '))).pop();
+    const diff = balanceSold - sum();
+    if (diff > 0 && last) entries.push({ key: `${last.date}|balance`, date: last.date, shares: diff, proceeds: null });
+  }
+  const atmSold = Math.min(balanceSold != null ? balanceSold : sum(), atmFacility ?? Infinity);
+  return { atmSold, ledger: { entries: entries.slice(-200) }, warnings };
 }
 
 export function parseSwc(swcFeed, prev) {

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-15T14:39:12.509Z",
+ "generatedAt": "2026-10-15T14:44:29.033Z",
  "strategy": {
   "ledger": {
    "counts": {
@@ -64,8 +64,7 @@
    "atmSold": 0,
    "sold": 111112,
    "atmSalesLedger": {
-    "total": 0,
-    "applied": []
+    "entries": []
    }
   }
  },
