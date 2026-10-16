@@ -12,6 +12,11 @@ name: Scan feed
 # manual workflow_dispatch runs from setup on 2026-10-14), leaving the feed a full day stale and
 # missing same-day RNS/filings. A newly-added or just-edited schedule also only takes effect from the
 # next UTC day onward, so a same-day edit won't retroactively fix that day's run.
+# 2026-10-16: even the widened 4-schedule window fired zero times on time (confirmed over its first
+# full day in effect) — same "GitHub cron is best-effort" problem already solved for the email sends
+# in email-crons.yml. Primary trigger is now cron-job.org calling /api/cron/scan-feed, which dispatches
+# this workflow via the GitHub REST API on a reliable external clock. The `schedule:` entries below are
+# kept only as a free backup in case that external call itself gets missed.
 on:
   schedule:
     - cron: '55 12 * * *'
