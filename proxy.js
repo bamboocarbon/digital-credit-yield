@@ -263,5 +263,24 @@ export const config = {
   // path — covers favicon.ico, robots.txt, sitemap.xml, images, etc.). One
   // combined negative-lookahead pattern, not multiple matcher entries —
   // multiple entries are OR'd together, which would defeat the exclusions.
-  matcher: ['/((?!api/|_next/static/|_next/image/|admin|.*\\.).*)'],
+  matcher: [
+    {
+      source: '/((?!api/|_next/static/|_next/image/|admin|.*\\.).*)',
+      // 2026-10-16 — Vercel Fluid Active CPU hit 75% of Hobby's cap and the proxy was
+      // 41% of it (it runs, and does Redis work, on every page request incl. ISR hits).
+      // `missing` entries are AND'd: the proxy is skipped entirely if ANY of these is
+      // present. Only self-identifying bots and link prefetches — disguised crawlers
+      // still reach the proxy, whose own BOT_UA/burst checks stay as the backstop, so
+      // a miss here costs nothing but CPU. Case classes because the value is a plain regex.
+      missing: [
+        { type: 'header', key: 'next-router-prefetch' },
+        { type: 'header', key: 'purpose', value: 'prefetch' },
+        {
+          type: 'header',
+          key: 'user-agent',
+          value: '.*(?:[Bb]ot|[Ss]pider|[Cc]rawl|[Ss]lurp|[Hh]eadless|[Ll]ighthouse|[Pp]review|curl/|[Ww]get/|python-requests|python-urllib|Go-http-client|okhttp|axios/|node-fetch|facebookexternalhit|[Pp]ingdom|[Uu]ptime[Rr]obot).*',
+        },
+      ],
+    },
+  ],
 };
