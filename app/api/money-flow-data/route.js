@@ -50,5 +50,9 @@ export async function GET() {
     moreWeekly,
     cumulative: buildCumulative(strategyRaisedWeekly, sataWeekly, bmnpWeekly, chadWeekly, moreWeekly),
     lastUpdated: data?.lastUpdated ?? null,
+  }, {
+    // The Blob read makes this route dynamic, so `revalidate` above is ignored — cache at the CDN
+    // instead. /money-flow fires five of these per visit.
+    headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=600' },
   });
 }
