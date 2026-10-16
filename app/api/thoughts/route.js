@@ -81,7 +81,10 @@ function isAuthorised(request) {
 export async function GET(request) {
   const kind = new URL(request.url).searchParams.get('kind') || 'thoughts';
   const items = await loadItems(kind);
-  return NextResponse.json(items);
+  // CDN-cached — see the same note in /api/news. Admin list bypasses via ?_=.
+  return NextResponse.json(items, {
+    headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=300' },
+  });
 }
 
 export async function POST(request) {

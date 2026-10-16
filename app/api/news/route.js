@@ -30,7 +30,12 @@ function isAuthorised(request) {
 
 export async function GET() {
   const items = await loadNews();
-  return NextResponse.json(items);
+  // CDN-cached so page views don't each cost a function run + Blob read
+  // (Hobby Fluid Active CPU was at 75%, 2026-10-16). The admin list adds a
+  // cache-busting query param so edits show immediately there.
+  return NextResponse.json(items, {
+    headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=300' },
+  });
 }
 
 export async function POST(request) {

@@ -40,7 +40,7 @@ const emptyForm = () => ({
 
 // API endpoint + GET url for each section.
 const endpoint = section => (section === NEWS ? '/api/news' : '/api/thoughts');
-const listUrl  = section => (section === NEWS ? '/api/news' : `/api/thoughts?kind=${section}`);
+const listUrl  = section => (section === NEWS ? `/api/news?_=${Date.now()}` : `/api/thoughts?kind=${section}&_=${Date.now()}`);
 
 export default function Admin() {
   const [password, setPassword]   = useState('');
