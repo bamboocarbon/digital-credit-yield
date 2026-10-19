@@ -278,7 +278,7 @@ DESCRIPTIONS.STRE = (
 );
 DESCRIPTIONS.SATS = (
   <div className="space-y-3">
-    <p>SATS is Strive&apos;s proposed 15.00% Series A Perpetual SATS Preferred Stock. On 13 October 2026 Strive announced an initial public offering of 5,000,000 shares at a $100 stated value (about $500 million), with a Nasdaq listing applied for. It would pay a 15.00% annual dividend ($15.00 a share a year) in cash on each business day, cumulative if ever missed, beginning 9 November 2026.</p>
+    <p>SATS is Strive&apos;s 15.00% Series A Perpetual SATS Preferred Stock. On 15 October 2026 Strive priced an initial public offering of 7,000,000 shares at $90 each (about $630 million) against a $100 stated value, with a Nasdaq listing applied for. It pays a 15.00% annual dividend ($15.00 a share a year) in cash on each business day, if declared and cumulative if ever missed, beginning 9 November 2026.</p>
     <p>At closing Strive intends to set aside a dividend reserve of $22.50 per SATS share — 18 months of dividends. SATS would rank below Strive&apos;s SATA preferred, so it carries more risk than SATA, which is the trade-off for the higher rate. SATS has not priced or begun trading yet: <strong>everything on this page is based on the announced terms, not a live market</strong>, and will be updated once the offering prices.</p>
     <p>Strive is a Nasdaq-listed Bitcoin treasury and asset management company, with over {STRIVE_BTC_HOLDINGS} Bitcoin.</p>
     <Visit href="https://strive.com" label="Visit Strive.com" />

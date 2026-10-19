@@ -62,7 +62,10 @@ const CONTENT = {
       </>
     ),
     below: (
-      <p><strong>ASST common stock</strong> (Class A and Class B). It absorbs losses first, is paid last and keeps the uncapped upside from Bitcoin. SATA is Strive&apos;s only preferred series, so there is no junior preferred in between.</p>
+      <>
+        <p><strong>SATS</strong> (15% fixed, daily), Strive&apos;s second preferred. It priced on 15 October 2026: 7,000,000 shares at $90, about $630m. It ranks below SATA and above the common stock, and the prospectus lets Strive issue more stock that ranks equal to or above it.</p>
+        <p><strong>ASST common stock</strong> (Class A and Class B). It absorbs losses first, is paid last and keeps the uncapped upside from Bitcoin.</p>
+      </>
     ),
     financing: (
       <>
@@ -179,9 +182,9 @@ for (const [t, v] of Object.entries(STRAT_SERIES)) CONTENT[t] = { ...v, diagram:
 CONTENT.SATS = {
   blog: [['strive-capital-structure', "Strive's capital structure"]],
   diagram: <CapitalPyramid ticker="SATS" />,
-  above: <p><strong>SATA</strong> (13% variable, about $1.4bn outstanding) ranks above SATS, and Strive has no debt today. The prospectus terms are not final until the offering prices.</p>,
+  above: <p><strong>SATA</strong> (13% variable, about $1.4bn outstanding) ranks above SATS, and Strive reported no debt at 9 October 2026. The prospectus says any debt Strive takes on later would also rank ahead, and it does not stop Strive issuing more stock that ranks equal to or above SATS.</p>,
   below: <p><strong>ASST common stock</strong> ranks below SATS: it absorbs losses first and is paid last.</p>,
-  financing: <p>Strive intends to set aside a dividend reserve of $22.50 per SATS share at closing — 18 months of the 15% dividend — and to use net proceeds for general corporate purposes, including buying bitcoin and repurchasing common stock or SATA. All of this is from the 13 October 2026 announcement of the proposed offering.</p>,
+  financing: <p>At closing, due on 20 October 2026, Strive says it will add $22.50 per SATS share to its dividend reserve, 18 months of the 15% dividend (about $157.5m on 7 million shares). It plans to use the net proceeds for general corporate purposes, including buying bitcoin and repurchasing common stock or SATA. All of this is from Strive&apos;s 424B5 prospectus supplement dated 15 October 2026.</p>,
 };
 
 export default function CapitalStructure({ ticker }) {
