@@ -51,14 +51,34 @@ export default function YieldMap() {
     const fs = small ? 11 : 13;
     const ticks = []; for (let v = lo; v <= hi; v += 2) ticks.push(v);
     const ang = -Math.atan2(y(lo) - y(hi), x(hi) - x(lo)) * 180 / Math.PI;
+    // unit normal to the diagonal pointing up-left (into the green zone), and the distance from the diagonal's centre to the far corner
+    const vx = x(hi) - x(lo), vy = y(hi) - y(lo), vn = Math.hypot(vx, vy);
+    const g = { cx: x((lo + hi) / 2), cy: y((lo + hi) / 2), nx: vy / vn, ny: -vx / vn };
+    g.len = (x(lo) - g.cx) * g.nx + (y(hi) - g.cy) * g.ny;
     const maxM = Math.max(...points.map(p => p.mcap || 0), 1);
     const rad = m => (small ? 4 : 5) + Math.sqrt(m || 10) / (small ? 9 : 6.2);
     const refList = [[refs.treasury, '10-yr Treasury'], [refs.corporate, 'Corporate bonds (high quality)']].filter(([r]) => r);
 
     return (
       <svg viewBox={`0 0 ${w} ${H}`} width="100%" role="img" aria-label="Effective yield against stated rate for each preferred stock" style={{ display: 'block' }}>
-        <polygon points={`${x(lo)},${y(lo)} ${x(lo)},${y(hi)} ${x(hi)},${y(hi)}`} fill="#22c55e" fillOpacity=".10" />
-        <polygon points={`${x(lo)},${y(lo)} ${x(hi)},${y(lo)} ${x(hi)},${y(hi)}`} fill="#ef4444" fillOpacity=".10" />
+        <defs>
+          {/* Shading fades from nothing at the par diagonal to its strongest at the far corner, so the colour
+              gets stronger the further a preferred is from par. The gradient runs along the diagonal's normal. */}
+          <linearGradient id="ym-green" gradientUnits="userSpaceOnUse" x1={g.cx} y1={g.cy} x2={g.cx + g.nx * g.len} y2={g.cy + g.ny * g.len}>
+            <stop offset="0" stopColor="#22c55e" stopOpacity="0" />
+            <stop offset="0.3" stopColor="#22c55e" stopOpacity="0.09" />
+            <stop offset="0.65" stopColor="#22c55e" stopOpacity="0.21" />
+            <stop offset="1" stopColor="#22c55e" stopOpacity="0.34" />
+          </linearGradient>
+          <linearGradient id="ym-red" gradientUnits="userSpaceOnUse" x1={g.cx} y1={g.cy} x2={g.cx - g.nx * g.len} y2={g.cy - g.ny * g.len}>
+            <stop offset="0" stopColor="#ef4444" stopOpacity="0" />
+            <stop offset="0.3" stopColor="#ef4444" stopOpacity="0.09" />
+            <stop offset="0.65" stopColor="#ef4444" stopOpacity="0.21" />
+            <stop offset="1" stopColor="#ef4444" stopOpacity="0.34" />
+          </linearGradient>
+        </defs>
+        <polygon points={`${x(lo)},${y(lo)} ${x(lo)},${y(hi)} ${x(hi)},${y(hi)}`} fill="url(#ym-green)" />
+        <polygon points={`${x(lo)},${y(lo)} ${x(hi)},${y(lo)} ${x(hi)},${y(hi)}`} fill="url(#ym-red)" />
         <text x={x(lo) + 8} y={y(hi) + 18} fill="#4ade80" fillOpacity=".85" fontSize={fs}>{small ? 'Under par: you earn more' : 'Under par: you earn more than the stated rate'}</text>
         <text x={x(hi) - 8} y={y(lo) - 10} fill="#f87171" fillOpacity=".85" fontSize={fs} textAnchor="end">{small ? 'Over par: you earn less' : 'Over par: you earn less than the stated rate'}</text>
         {ticks.map(v => (
