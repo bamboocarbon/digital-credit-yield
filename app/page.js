@@ -3,6 +3,7 @@ import AadsAd from '@/components/AadsAd';
 import LatestNews from '@/components/LatestNews';
 import SubscribeBox from '@/components/SubscribeBox';
 import CompareTable from '@/components/CompareTable';
+import YieldMap from '@/components/YieldMap';
 import { BMNP_ENABLED } from '@/lib/constants';
 
 export function generateMetadata() {
@@ -72,6 +73,8 @@ export default function HomePage() {
         <AssetCard ticker="CHAD" />
         <AssetCard ticker="MORE" />
       </div>
+
+      <YieldMap />
 
       <CompareTable />
 

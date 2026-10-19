@@ -57,6 +57,7 @@ export default function TermsPage() {
 
       <Section title="3. Intellectual Property">
         <p>All content on this Site — including text, design, graphics, and code — is the property of Digital Credit Yield unless otherwise stated. You may not reproduce, distribute, or create derivative works without prior written consent.</p>
+        <p>Benchmark bond yields shown on the Site are sourced through FRED&reg;, the Federal Reserve Bank of St. Louis: Treasury yields from the Federal Reserve Board (H.15 release) and corporate bond yields from the U.S. Department of the Treasury. This site uses FRED data but is not endorsed or certified by the Federal Reserve Bank of St. Louis.</p>
         <p>Financial data sourced from Yahoo Finance is subject to their terms of service. Price and yield charts are rendered using lightweight-charts, an open-source library published by TradingView under the Apache 2.0 licence.</p>
       </Section>
 
