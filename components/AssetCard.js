@@ -21,7 +21,7 @@ const INCOME_BADGE = {
 
 
 // `current`: this card is the page you're already on (hub pages) — no Explore button and no link to itself.
-export default function AssetCard({ ticker, mock, company, incomeBadge, rate, par, href: hrefOverride, current = false }) {
+export default function AssetCard({ ticker, mock, company, incomeBadge, rate, par, href: hrefOverride, current = false, exploreLabel }) {
   const [data, setData] = useState(mock ?? null);
   const [error, setError] = useState(false);
   const isPreListing = PRE_LISTING_TICKERS.includes(ticker);
@@ -100,10 +100,10 @@ export default function AssetCard({ ticker, mock, company, incomeBadge, rate, pa
         <Link
           href={href}
           prefetch={false}
-          className="mt-auto inline-flex items-center justify-center px-4 py-3 rounded-lg text-sm font-medium min-h-[44px] transition-opacity hover:opacity-80"
+          className="mt-auto inline-flex items-center justify-center text-center px-4 py-3 rounded-lg text-sm font-medium min-h-[44px] sm:h-[96px] transition-opacity hover:opacity-80"
           style={{ background: 'var(--accent-gold)', color: '#000' }}
         >
-          Explore {ticker} →
+          Explore {exploreLabel ?? ticker} →
         </Link>
 
         {/* Whole-card link: a transparent link stretched over the card. It is a child of the card (so the

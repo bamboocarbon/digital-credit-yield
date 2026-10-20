@@ -67,8 +67,8 @@ export default function HomePage() {
 
       {/* Asset selector cards */}
       <div className={`grid grid-cols-1 gap-6 mb-12 ${BMNP_ENABLED ? 'sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5' : 'sm:grid-cols-2 lg:grid-cols-4'}`}>
-        <AssetCard ticker="STRC" />
-        <AssetCard ticker="SATA" />
+        <AssetCard ticker="STRC" exploreLabel="STRC, STRK, STRD, STRF, STRE" />
+        <AssetCard ticker="SATA" exploreLabel="SATA, SATS" />
         {BMNP_ENABLED && <AssetCard ticker="BMNP" />}
         <AssetCard ticker="CHAD" />
         <AssetCard ticker="MORE" />
