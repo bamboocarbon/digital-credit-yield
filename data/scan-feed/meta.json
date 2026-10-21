@@ -1,11 +1,11 @@
 {
- "generatedAt": "2026-10-20T17:56:48.493Z",
+ "generatedAt": "2026-10-21T11:50:35.393Z",
  "windowDays": 14,
  "errors": [],
  "sec": {
   "ok": true,
   "items": {
-   "MSTR": 13,
+   "MSTR": 14,
    "ASST": 11,
    "BMNR": 3,
    "DFDV": 5
