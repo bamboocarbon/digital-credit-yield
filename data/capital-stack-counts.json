@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-19T18:54:15.450Z",
+ "generatedAt": "2026-10-22T11:50:48.939Z",
  "strategy": {
   "ledger": {
    "counts": {
@@ -75,5 +75,7 @@
   "Prices are not stored here; multiply by the live price at render time.",
   "Bitmine and DeFi Dev share counts are not parseable from weekly filings — see lib/capitalStacks.js."
  ],
- "warnings": []
+ "warnings": [
+  "SWC RNS 2026-10-22|Ordinary and Preferred Shares ATM Update: mentions preferred-share ATM sales but matched no known format — check MORE sold count by hand."
+ ]
 }
