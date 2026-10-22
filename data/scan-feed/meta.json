@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-21T17:59:07.172Z",
+ "generatedAt": "2026-10-22T11:50:34.815Z",
  "windowDays": 14,
  "errors": [],
  "sec": {
@@ -7,16 +7,18 @@
   "items": {
    "MSTR": 14,
    "ASST": 12,
-   "BMNR": 3,
-   "DFDV": 5
+   "BMNR": 2,
+   "DFDV": 7
   }
  },
  "swc": {
   "ok": true,
-  "items": 5
+  "items": 6
  },
  "counts": {
   "ok": true,
-  "warnings": []
+  "warnings": [
+   "SWC RNS 2026-10-22|Ordinary and Preferred Shares ATM Update: mentions preferred-share ATM sales but matched no known format — check MORE sold count by hand."
+  ]
  }
 }
