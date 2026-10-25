@@ -72,7 +72,9 @@ export function parseStrive(secFeed) {
     if (!/Shares outstanding/.test(t) || !/SATA Stock/.test(t)) continue;
     const asOf = t.match(/As of ([A-Z][a-z]+ \d{1,2}, \d{4}) As of ([A-Z][a-z]+ \d{1,2}, \d{4})/);
     const cur = re => { const m = t.match(re); return m ? num(m[2]) : null; };
-    const row = label => cur(new RegExp(`${label}\\s+(?:\\(\\d\\)\\s*)?([\\d,]+)\\s+([\\d,]+)`));
+    // Accept '-' for either column (the week a series first appears, its prior-week count is '-', e.g. SATS
+    // before it priced) — mirrors the '|-' allowance already used for Strategy's ATM table below.
+    const row = label => cur(new RegExp(`${label}\\s+(?:\\(\\d\\)\\s*)?([\\d,]+|-)\\s+([\\d,]+|-)`));
     return {
       asOf: asOf ? isoDate(asOf[2]) : null,
       classA: row('Class A common stock'),
@@ -90,12 +92,19 @@ export function parseStrive(secFeed) {
 // ---- Smarter Web ----------------------------------------------------------------------------------
 // MORE preferred: 111,112 IPO shares were sold to investors; a further 100,000 were issued into the Tennyson ATM
 // facility and only count as "sold" (market value on the pyramid) once Tennyson sells them. The company announces
-// those sales each Thursday from 22 Oct 2026. Two formats are understood, balance first because it is absolute:
+// those sales each Thursday from 22 Oct 2026. Several formats are understood, balance first because it is absolute:
 //   1. "... the balance of Preferred Shares issued into the Preferred Shares ATM Facility which have not yet been
 //      sold is N"  (mirrors its ordinary-share Subscription Agreement RNS)  -> sold via ATM = facility - N
-//   2. "N Preferred Shares have been sold ..."  -> added to a ledger in the counts file; each RNS applied once
-// An RNS after admission that mentions preferred-share sales but matches neither is reported as a warning so a
-// human looks at it rather than the count silently going stale.
+//   1b. "... Preferred Shares ATM Facility and remaining unsold: N" (the structured "X and Y ATM Update" bullet
+//      format seen from 22 Oct 2026) -> same as #1, sold via ATM = facility - N
+//   2. "N Preferred Shares have been sold ..." (prose, number before the phrase)
+//   2b. "Preferred Shares sold: N" (the same bullet format's own line, number after the label)
+//   -> either #2 form is added to a ledger in the counts file; each RNS applied once. Gross proceeds for that
+//      entry are taken from "Average sale price per Preferred Share: £P" x N when given (the bullet format states
+//      net proceeds, not gross, and the RNS's overall "gross proceeds" line covers Ordinary + Preferred combined,
+//      so neither is safe to use directly once a dedicated Preferred breakdown exists).
+// An RNS after admission that mentions preferred-share sales but matches none of these is reported as a warning
+// so a human looks at it rather than the count silently going stale.
 const ADMISSION = '2026-10-14';
 const gbp = (amount, unit) => { const v = num(amount); return /^m/i.test(unit ?? '') ? v * 1e6 : v; };
 // Ledger entries are { key, date, shares, proceeds } — `proceeds` is the gross £ stated in the RNS (null if not
@@ -111,17 +120,25 @@ export function parsePreferredAtmSales(items, atmFacility, prevLedger) {
     if (!/Preferred Shares?[^.]{0,200}\b(sold|sale|sales)\b|\b(sold|sales?)\b[^.]{0,200}Preferred Shares/i.test(t)) continue;
     const key = `${it.date}|${(it.headline ?? '').slice(0, 60)}`;
     const bal = t.match(/balance of (?:the )?Preferred Shares[^.]{0,200}?(?:have|has) not (?:yet )?been sold (?:is|was|of) ([\d,]+)/i);
+    const remaining = t.match(/Preferred Shares? ATM Facility and remaining unsold:?\s*([\d,]+)/i);
     if (bal && atmFacility) balanceSold = Math.max(0, atmFacility - num(bal[1]));
-    const sold = t.match(/([\d,]{3,}) Preferred Shares (?:have|has) been sold/i);
+    else if (remaining && atmFacility) balanceSold = Math.max(0, atmFacility - num(remaining[1]));
+    const soldA = t.match(/([\d,]{1,}) Preferred Shares (?:have|has) been sold/i);
+    const soldB = t.match(/Preferred Shares sold:?\s*([\d,]+)/i);
+    const sold = soldA ?? soldB;
+    const avgPrice = t.match(/Average sale price per Preferred Share:?\s*£\s?([\d,]+(?:\.\d+)?)/i);
     const pro = t.match(/gross proceeds[^£.]{0,80}£\s?([\d,]+(?:\.\d+)?)\s?(million|m\b)?/i);
-    if (sold && !entries.some(e => e.key === key)) entries.push({ key, date: it.date, shares: num(sold[1]), proceeds: pro ? Math.round(gbp(pro[1], pro[2])) : null });
-    else if (!sold && !bal && /Preferred Shares ATM Facility/i.test(t) && /\bsold\b/i.test(t) && !/will be announced|will announce|each Thursday/i.test(t)) warnings.push(`SWC RNS ${key}: mentions preferred-share ATM sales but matched no known format — check MORE sold count by hand.`);
+    let proceeds = null;
+    if (sold && avgPrice) proceeds = Math.round(num(sold[1]) * num(avgPrice[1]));
+    else if (pro && !remaining && !soldB) proceeds = Math.round(gbp(pro[1], pro[2])); // only trust the combined "gross proceeds" line when there's no dedicated Preferred-only breakdown to confuse it with
+    if (sold && !entries.some(e => e.key === key)) entries.push({ key, date: it.date, shares: num(sold[1]), proceeds });
+    else if (!sold && !bal && !remaining && /Preferred Shares ATM Facility/i.test(t) && /\bsold\b/i.test(t) && !/will be announced|will announce|each Thursday/i.test(t)) warnings.push(`SWC RNS ${key}: mentions preferred-share ATM sales but matched no known format — check MORE sold count by hand.`);
   }
   const sum = () => entries.reduce((n, e) => n + e.shares, 0);
   // Absolute balance wins over the running sum: if sales were missed or restated, book the difference as an
   // entry (no proceeds known) on the date of the latest balance RNS so the weekly money-flow bar isn't lost.
   if (balanceSold != null && balanceSold !== sum()) {
-    const last = sorted.filter(it => /balance of (?:the )?Preferred Shares/i.test((it.text ?? '').replace(/\s+/g, ' '))).pop();
+    const last = sorted.filter(it => /balance of (?:the )?Preferred Shares|Preferred Shares? ATM Facility and remaining unsold/i.test((it.text ?? '').replace(/\s+/g, ' '))).pop();
     const diff = balanceSold - sum();
     if (diff > 0 && last) entries.push({ key: `${last.date}|balance`, date: last.date, shares: diff, proceeds: null });
   }

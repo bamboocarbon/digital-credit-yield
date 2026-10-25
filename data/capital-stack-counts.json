@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-22T11:50:48.939Z",
+ "generatedAt": "2026-10-25T15:07:57.483Z",
  "strategy": {
   "ledger": {
    "counts": {
@@ -64,10 +64,17 @@
    "source": "https://www.investegate.co.uk/announcement/rns/the-smarter-web-company-plc--swc/first-day-of-dealings-in-preferred-shares/9821366",
    "headline": "First day of dealings in Preferred Shares",
    "note": "ATM-facility shares are issued to Tennyson to sell into the market; they exist but may not be sold yet.",
-   "atmSold": 0,
-   "sold": 111112,
+   "atmSold": 25,
+   "sold": 111137,
    "atmSalesLedger": {
-    "entries": []
+    "entries": [
+     {
+      "key": "2026-10-22|Ordinary and Preferred Shares ATM Update",
+      "date": "2026-10-22",
+      "shares": 25,
+      "proceeds": 2500
+     }
+    ]
    }
   }
  },
@@ -75,7 +82,5 @@
   "Prices are not stored here; multiply by the live price at render time.",
   "Bitmine and DeFi Dev share counts are not parseable from weekly filings — see lib/capitalStacks.js."
  ],
- "warnings": [
-  "SWC RNS 2026-10-22|Ordinary and Preferred Shares ATM Update: mentions preferred-share ATM sales but matched no known format — check MORE sold count by hand."
- ]
+ "warnings": []
 }

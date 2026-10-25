@@ -17,8 +17,6 @@
  },
  "counts": {
   "ok": true,
-  "warnings": [
-   "SWC RNS 2026-10-22|Ordinary and Preferred Shares ATM Update: mentions preferred-share ATM sales but matched no known format — check MORE sold count by hand."
-  ]
+  "warnings": []
  }
 }
