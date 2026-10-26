@@ -18,7 +18,9 @@ async function loadNews() {
   // Anything else unreadable must NOT look like "no news": a write built on an empty list
   // would wipe the real one. Throw so the caller retries (or fails the request).
   if (!res.ok) throw new Error(`news read failed: ${res.status}`);
-  return { items: await res.json(), etag: res.headers.get('etag') };
+  // Compression/CDN can turn the ETag weak (W/"…"); Blob's ifMatch only matches the strong form.
+  const etag = (res.headers.get('etag') || '').replace(/^W\//, '') || null;
+  return { items: await res.json(), etag };
 }
 
 async function saveNews(items, etag) {
@@ -93,7 +95,11 @@ export async function POST(request) {
     description: description || '',
     url: url || '',
   };
-  await updateNews(items => [item, ...items].slice(0, 20)); // keep max 20
+  try {
+    await updateNews(items => [item, ...items].slice(0, 20)); // keep max 20
+  } catch (err) {
+    return NextResponse.json({ error: `Save failed: ${err.message}` }, { status: 500 });
+  }
   return NextResponse.json(item, { status: 201 });
 }
 
