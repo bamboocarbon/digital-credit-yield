@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-25T15:07:57.483Z",
+ "generatedAt": "2026-10-26T12:50:49.923Z",
  "strategy": {
   "ledger": {
    "counts": {
@@ -39,15 +39,15 @@
   }
  },
  "strive": {
-  "asOf": "2026-10-16",
-  "classA": 114847610,
-  "classB": 9216516,
-  "commonEffective": 124064126,
+  "asOf": "2026-10-23",
+  "classA": 118113644,
+  "classB": 9214702,
+  "commonEffective": 127328346,
   "SATA": 14030176,
   "SATS": null,
-  "bitcoinHeld": 36818,
-  "source": "https://www.sec.gov/Archives/edgar/data/1920406/000162828026066222/asst-20261019.htm",
-  "filed": "2026-10-19"
+  "bitcoinHeld": 43000,
+  "source": "https://www.sec.gov/Archives/edgar/data/1920406/000162828026067141/asst-20261026.htm",
+  "filed": "2026-10-26"
  },
  "swc": {
   "ordinary": {
