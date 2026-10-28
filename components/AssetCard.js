@@ -2,19 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { PRE_LISTING_TICKERS, PRE_LISTING_NOTE, ASSET_RATES, PAR_VALUE, isStrcDaily } from '@/lib/constants';
+import { PRE_LISTING_TICKERS, PRE_LISTING_NOTE, ASSET_RATES, PAR_VALUE, isDailyFor } from '@/lib/constants';
 import { COMPANY } from '@/lib/tickerDisplay';
 import { formatMoney } from '@/lib/currency';
 
 const INCOME_BADGE = {
-  get STRC() { return isStrcDaily() ? 'Daily Income' : 'Semi-Monthly Income'; },
+  get STRC() { return isDailyFor('STRC') ? 'Daily Income' : 'Semi-Monthly Income'; },
   SATA: 'Daily Income',
   BMNP: 'Weekly Income',
   CHAD: 'Daily Income',
   MORE: 'Weekly Income',
-  STRK: 'Quarterly Income',
-  STRF: 'Quarterly Income',
-  STRD: 'Quarterly Income',
+  get STRK() { return isDailyFor('STRK') ? 'Daily Income' : 'Quarterly Income'; },
+  get STRF() { return isDailyFor('STRF') ? 'Daily Income' : 'Quarterly Income'; },
+  get STRD() { return isDailyFor('STRD') ? 'Daily Income' : 'Quarterly Income'; },
   STRE: 'Quarterly Income',
   SATS: 'Daily Income',
 };

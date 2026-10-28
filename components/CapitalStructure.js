@@ -31,7 +31,7 @@ const CONTENT = {
     above: (
       <>
         <p><strong>~$6.7bn of convertible senior notes.</strong> Debt is paid first in every scenario, ahead of all preferred and common, including a claim on the {STRATEGY_BTC_HOLDINGS} Bitcoin. Many pay 0% interest; holders are in it for the option to convert into MSTR common.</p>
-        <p><strong>STRF</strong> (10% fixed, quarterly) is the only preferred series that ranks above STRC. Strategy&apos;s prospectus says so directly: STRC is senior to common, STRE, STRK and STRD, but &quot;the company&apos;s indebtedness and STRF Stock rank senior&quot;.</p>
+        <p><strong>STRF</strong> (10% fixed; quarterly, then daily from 1 January 2027) is the only preferred series that ranks above STRC. Strategy&apos;s prospectus says so directly: STRC is senior to common, STRE, STRK and STRD, but &quot;the company&apos;s indebtedness and STRF Stock rank senior&quot;.</p>
       </>
     ),
     below: (

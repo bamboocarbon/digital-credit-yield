@@ -2,7 +2,7 @@
 // Sends a nightly engagement question email linking to a relevant site page.
 
 import { Resend } from 'resend';
-import { ASSET_RATES } from '../lib/constants.js';
+import { ASSET_RATES, isDailyFor } from '../lib/constants.js';
 import { alreadySentToday, markSentToday } from '../lib/sendGuard.js';
 import { getDailyTicker } from './insightEngine.js';
 
@@ -31,7 +31,7 @@ const QUESTIONS_BY_TICKER = {
     },
     {
       question: "What monthly income would $50,000 invested in STRC generate?",
-      teaser: `At today's ${STRC_RATE}% rate, that's potentially over $${MONTHLY_ON_50K_STRC} a month, paid semi-monthly. See a full income breakdown.`,
+      teaser: `At today's ${STRC_RATE}% rate, that's potentially over $${MONTHLY_ON_50K_STRC} a month, paid ${isDailyFor('STRC') ? 'daily' : 'semi-monthly'}. See a full income breakdown.`,
       path: "/strc/projector",
     },
     {
@@ -46,7 +46,7 @@ const QUESTIONS_BY_TICKER = {
     },
     {
       question: "What would $100,000 in STRC earn you each month?",
-      teaser: `With STRC's ${STRC_RATE}% annual rate paid semi-monthly, the income adds up quickly. Model your own scenario.`,
+      teaser: `With STRC's ${STRC_RATE}% annual rate paid ${isDailyFor('STRC') ? 'daily' : 'semi-monthly'}, the income adds up quickly. Model your own scenario.`,
       path: "/strc/projector",
     },
     {
@@ -80,8 +80,8 @@ const QUESTIONS_BY_TICKER = {
       path: "/strc/differentiator",
     },
     {
-      question: "What's the real annual yield on STRC after semi-monthly compounding?",
-      teaser: `The headline rate is ${STRC_RATE}% — but reinvesting dividends twice a month pushes your effective return even higher.`,
+      question: `What's the real annual yield on STRC after ${isDailyFor('STRC') ? 'daily' : 'semi-monthly'} compounding?`,
+      teaser: `The headline rate is ${STRC_RATE}% — but reinvesting dividends ${isDailyFor('STRC') ? 'every day' : 'twice a month'} pushes your effective return even higher.`,
       path: "/strc/chart",
     },
   ],

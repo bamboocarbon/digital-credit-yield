@@ -1,7 +1,7 @@
 import AadsAd from '@/components/AadsAd';
 import DividendInteractive from '@/components/DividendInteractive';
 import { SATA_DAILY_START, isSataDailyDividend } from '@/lib/sataBusinessDays';
-import { STRC_SEMI_MONTHLY_START, STRC_DAILY_START, BMNP_DIVIDEND_SCHEDULE } from '@/lib/constants';
+import { STRC_SEMI_MONTHLY_START, DAILY_START, BMNP_DIVIDEND_SCHEDULE } from '@/lib/constants';
 import { currencySymbol } from '@/lib/currency';
 
 const MONO = { fontFamily: "Arial, Helvetica, sans-serif" };
@@ -41,12 +41,14 @@ export default function DividendHistoryPage({ ticker, dividends }) {
   // payments are grouped into the monthly summary table DividendInteractive.js
   // renders instead (same reasoning as SATA's daily entries: individually listing
   // every business day's payment would make this table hundreds of rows long).
-  // STRC's calendar-day era (from STRC_DAILY_START) is summarised by month in DividendInteractive.js
-  // for the same reason (30+ rows a month), so this flat table keeps only its earlier payments.
-  const strcDailyEra = ticker === 'STRC' && dividends.some(d => d.date >= STRC_DAILY_START && (d.payDate ?? d.date) <= today);
+  // The calendar-day era of STRC (and later STRF/STRK/STRD) is summarised by month in
+  // DividendInteractive.js for the same reason (30+ rows a month), so this flat table keeps only
+  // their earlier payments.
+  const dailyStart = DAILY_START[ticker];
+  const strcDailyEra = !!dailyStart && dividends.some(d => d.date >= dailyStart && (d.payDate ?? d.date) <= today);
   const allTableData = ticker === 'SATA' ? monthlyDivs
     : ticker === 'CHAD' ? []
-    : ticker === 'STRC' ? dividends.filter(d => d.date < STRC_DAILY_START)
+    : dailyStart ? dividends.filter(d => d.date < dailyStart)
     : dividends;
   // The stored record can include dates that haven't happened yet — STRC's
   // live-merged feed sometimes reports the next declared distribution before

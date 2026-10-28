@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { loadProjectorState } from '@/lib/projectorState';
-import { ASSET_RATES, PAYMENT_FREQUENCY, STRC_SEMI_MONTHLY_START, STRC_DAILY_START, PAR_VALUE } from '@/lib/constants';
+import { ASSET_RATES, PAYMENT_FREQUENCY, STRC_SEMI_MONTHLY_START, DAILY_START, PAR_VALUE } from '@/lib/constants';
 import { SATA_DAILY_START, getBusinessDaysInMonth, getSataDailyDividend, getSataExpectedPeriodAmount, getSataMonthProgress, getSataDailyPaymentsToDate, isSataDailyDividend } from '@/lib/sataBusinessDays';
 import { currencySymbol, currencyCode, localeFor } from '@/lib/currency';
 import { getBmnpExpectedMonthlyTotal } from '@/lib/bmnpSchedule';
@@ -39,13 +39,13 @@ function groupUpcoming(entries) {
   return groups;
 }
 
-// STRC's calendar-day era declares one dividend per day (30-31 a month), so the "announced" list
+// The calendar-day era (STRC from 1 Nov 2026; STRF/STRK/STRD from 1 Jan 2027) declares one dividend per day, so the "announced" list
 // collapses each month into a single row with its total — alternating $0.03/$0.04 amounts would
 // otherwise defeat groupUpcoming's same-amount runs and print ~30 rows.
-function groupStrcUpcoming(entries) {
-  const pre = entries.filter(d => d.date < STRC_DAILY_START);
+function groupDailyUpcoming(entries, dailyStart) {
+  const pre = entries.filter(d => d.date < dailyStart);
   const byMonth = {};
-  entries.filter(d => d.date >= STRC_DAILY_START).forEach(d => {
+  entries.filter(d => d.date >= dailyStart).forEach(d => {
     (byMonth[d.date.slice(0, 7)] ??= []).push(d);
   });
   const daily = Object.keys(byMonth).sort().map(ym => ({
@@ -323,8 +323,8 @@ export default function DividendInteractive({ ticker }) {
   const inDailyEra = ticker === 'SATA' && today >= SATA_DAILY_START;
   const isBmnp = ticker === 'BMNP';
   const isChad = ticker === 'CHAD';
-  // Daily-payment monthly summary table: CHAD (all of its history) and STRC (its calendar-day era only).
-  const summaryDivs = isChad ? monthlyDivs : (ticker === 'STRC' && paidDividends ? paidDividends.filter(d => d.date >= STRC_DAILY_START) : []);
+  // Daily-payment monthly summary table: CHAD (all of its history) and Strategy's preferreds (their calendar-day era only).
+  const summaryDivs = isChad ? monthlyDivs : (DAILY_START[ticker] && paidDividends ? paidDividends.filter(d => d.date >= DAILY_START[ticker]) : []);
   const summaryByMonth = isChad ? monthlyByMonth : groupByMonth(summaryDivs);
 
   const sataDailyStats = useMemo(() => {
@@ -367,12 +367,14 @@ export default function DividendInteractive({ ticker }) {
     ? getBmnpExpectedMonthlyTotal(todayYM, ASSET_RATES.BMNP)
     : impliedAnnualDollars / 12;
 
-  // STRC's calendar-day dividends are declared a month ahead (8-K), so the next payment is simply the
-  // next declared row — never extrapolated from the old semi-monthly cadence. Between declarations
+  // Calendar-day dividends are declared a month ahead (8-K), so the next payment is simply the next
+  // declared row — never extrapolated from the old semi-monthly/quarterly cadence. Between declarations
   // (e.g. the first days of a month before Strategy declares it) there is no banner rather than a guess.
-  const strcDailyDeclared = ticker === 'STRC' && !!dividends?.some(d => d.date >= STRC_DAILY_START);
+  const dailyStart = DAILY_START[ticker] ?? null;
+  const dailyDeclared = !!dailyStart && !!dividends?.some(d => d.date >= dailyStart);
+  const dailyWindow = dailyDeclared || (!!dailyStart && today >= dailyStart);
   const prediction = useMemo(() => {
-    if (strcDailyDeclared) {
+    if (dailyWindow) {
       const next = announcedDividends[0];
       return next ? { date: next.payDate ?? next.date, amount: next.amount, dateConfirmed: true, dateSource: 'declared' } : null;
     }
@@ -385,7 +387,7 @@ export default function DividendInteractive({ ticker }) {
     const freq = PAYMENT_FREQUENCY[ticker];
     const fixedAmount = freq ? parseFloat(((ASSET_RATES[ticker] * (PAR_VALUE[ticker] ?? 100) / 100) / freq.perYear).toFixed(4)) : null;
     return predictNextDividend(monthlyDivs, trusted.date, trusted.source, fixedAmount);
-  }, [inDailyEra, monthlyDivs, nextPaymentDate, ticker, today, strcDailyDeclared, announcedDividends]);
+  }, [inDailyEra, monthlyDivs, nextPaymentDate, ticker, today, dailyWindow, announcedDividends]);
 
   const predictionOverdue = prediction && prediction.date < today;
   const sharesNum         = parseFloat(shares) || 0;
@@ -677,9 +679,9 @@ export default function DividendInteractive({ ticker }) {
         </div>
       )}
 
-      {/* STRC calendar-day dividends (from 1 Nov 2026) */}
-      {strcDailyDeclared && (() => {
-        const refYM = today >= STRC_DAILY_START ? todayYM : STRC_DAILY_START.slice(0, 7);
+      {/* Calendar-day dividends (STRC from 1 Nov 2026, STRF/STRK/STRD from 1 Jan 2027) */}
+      {dailyWindow && (() => {
+        const refYM = today >= dailyStart ? todayYM : dailyStart.slice(0, 7);
         const [ry, rm] = refYM.split('-').map(Number);
         const daysInMonth = new Date(Date.UTC(ry, rm, 0)).getUTCDate();
         return (
@@ -687,7 +689,7 @@ export default function DividendInteractive({ ticker }) {
             style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
             <div>
               <p className="text-xs font-semibold tracking-wide mb-0.5" style={{ color: 'var(--accent-gold)' }}>
-                {today >= STRC_DAILY_START ? 'DAILY DIVIDEND PAYMENTS ACTIVE' : 'DAILY DIVIDENDS FROM 1 NOVEMBER 2026'}
+                {today >= dailyStart ? 'DAILY DIVIDEND PAYMENTS ACTIVE' : `DAILY DIVIDENDS FROM ${formatDate(dailyStart).toUpperCase()}`}
               </p>
               <p className="text-sm font-medium">Every calendar day, paid the next business day</p>
             </div>
@@ -698,7 +700,7 @@ export default function DividendInteractive({ ticker }) {
               </p>
             </div>
             <p className="text-xs sm:ml-auto" style={{ color: 'var(--text-muted)' }}>
-              Strategy declares each day in whole cents ($0.03 or $0.04 for November 2026), so the month still adds up to {cur}{expectedMonthlyTotal.toFixed(2)} · weekend and holiday dividends are paid together on the next business day
+              Strategy declares each day&apos;s dividend in whole cents, so the daily amount alternates slightly while a month still adds up to about {cur}{expectedMonthlyTotal.toFixed(2)} · weekend and holiday dividends are paid together on the next business day
             </p>
           </div>
         );
@@ -847,7 +849,7 @@ export default function DividendInteractive({ ticker }) {
             {ticker} has announced these upcoming payment dates and amounts, but they have not been paid yet.
           </p>
           <div className="space-y-2">
-            {(ticker === 'STRC' ? groupStrcUpcoming(announcedDividends) : groupUpcoming(announcedDividends)).map(g => (
+            {(dailyStart ? groupDailyUpcoming(announcedDividends, dailyStart) : groupUpcoming(announcedDividends)).map(g => (
               <div key={g.dates[0]} className="flex justify-between items-center p-3 rounded-lg" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
                 <p className="text-sm font-medium">
                   {g.dates.length === 1 ? formatDate(g.dates[0]) : `${formatDate(g.dates[0])} – ${formatDate(g.dates[g.dates.length - 1])} (${g.dates.length} ${g.total != null ? 'daily ' : ''}payments)`}
@@ -939,7 +941,7 @@ export default function DividendInteractive({ ticker }) {
         <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <h2 className="text-lg font-semibold mb-4">All Payments</h2>
           <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--accent-gold)' }}>
-            {isChad ? 'Daily Dividend Period (from September 8, 2026)' : 'Daily Dividend Period (from November 1, 2026)'}
+            {isChad ? 'Daily Dividend Period (from September 8, 2026)' : `Daily Dividend Period (from ${formatDate(DAILY_START[ticker])})`}
           </h3>
 
           <div className="sm:hidden space-y-2 mb-6">

@@ -8,7 +8,7 @@ const rate = ASSET_RATES.STRK.toFixed(2);
 export const metadata = {
   alternates: { canonical: '/strk' },
   title: `STRK — Strategy's Convertible Preferred Stock`,
-  description: `Track STRK: Strategy Inc.’s 8.00% Series A Perpetual Strike Preferred Stock, paying ${rate}% annually in quarterly cash. Listed on Nasdaq.`,
+  description: `Track STRK: Strategy Inc.’s 8.00% Series A Perpetual Strike Preferred Stock, paying ${rate}% annually in cash, quarterly until 2026 and daily from 1 January 2027. Listed on Nasdaq.`,
   openGraph: {
     title: `STRK — Strategy's Convertible Preferred Stock Tracker`,
     description: `Strategy Inc.’s 8.00% Series A Perpetual Strike Preferred Stock, paying ${rate}% annually. Track the live price, effective yield and dividend history.`,
@@ -27,7 +27,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'FinancialProduct',
   name: 'STRK — Strategy Inc.’s 8.00% Series A Perpetual Strike Preferred Stock',
-  description: `Strategy Inc.’s 8.00% Series A Perpetual Strike Preferred Stock, paying a ${rate}% annual dividend in quarterly cash.`,
+  description: `Strategy Inc.’s 8.00% Series A Perpetual Strike Preferred Stock, paying a ${rate}% annual dividend in cash, quarterly until 2026 and daily from 1 January 2027.`,
   url: 'https://www.digitalcredityield.com/strk',
   category: 'Preferred Stock',
   provider: {

@@ -8,10 +8,10 @@ const rate = ASSET_RATES.STRC.toFixed(2);
 export const metadata = {
   alternates: { canonical: '/strc' },
   title: `STRC — Strategy Preferred Stock`,
-  description: `Track STRC live price and yield. Strategy's preferred stock pays ${rate}% annually in semi-monthly cash. Listed on Nasdaq, backed by ${STRATEGY_BTC_HOLDINGS}+ Bitcoin.`,
+  description: `Track STRC live price and yield. Strategy's preferred stock pays ${rate}% annually in cash, daily from 1 November 2026. Listed on Nasdaq, backed by ${STRATEGY_BTC_HOLDINGS}+ Bitcoin.`,
   openGraph: {
     title: `STRC — Strategy Preferred Stock Tracker`,
-    description: `Strategy's preferred stock paying ${rate}% annually in semi-monthly cash dividends. Track live price, yield, and dividend history.`,
+    description: `Strategy's preferred stock paying ${rate}% annually in cash dividends, daily from 1 November 2026. Track live price, yield, and dividend history.`,
     type: 'website',
     url: 'https://www.digitalcredityield.com/strc',
     images: [{ url: `/og?v=4&title=STRC+Stock&sub=Strategy+Preferred+Stock&rate=${rate}%25` }],
@@ -19,7 +19,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: `STRC — Strategy Preferred Stock Tracker`,
-    description: `Strategy's preferred stock paying ${rate}% annually in semi-monthly cash dividends.`,
+    description: `Strategy's preferred stock paying ${rate}% annually in cash dividends, daily from 1 November 2026.`,
   },
 };
 
@@ -27,7 +27,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'FinancialProduct',
   name: 'STRC — Strategy Perpetual Preferred Stock',
-  description: `Strategy's perpetual preferred stock listed on Nasdaq, paying a ${rate}% annual dividend distributed semi-monthly in cash.`,
+  description: `Strategy's perpetual preferred stock listed on Nasdaq, paying a ${rate}% annual dividend in cash, paid daily from 1 November 2026.`,
   url: 'https://www.digitalcredityield.com/strc',
   category: 'Preferred Stock',
   provider: {

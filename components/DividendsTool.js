@@ -21,8 +21,8 @@ export default function DividendsTool({ initialStock, dividendsByStock }) {
       <p className="mb-6 mt-2 text-sm leading-6 max-w-3xl mx-auto text-center" style={{ color: 'var(--text-muted)' }}>
         A complete record of every {stock} dividend — the per-share amount, the record date you need to
         own the shares by, and the date the cash actually lands. Enter a holding size to see what each
-        payment is worth to you. The instruments pay on different rhythms — STRC semi-monthly, SATA, SATS and
-        CHAD daily, BMNP and MORE weekly, STRK, STRF, STRD and STRE quarterly — but the annual yield is the same however often it arrives.{' '}
+        payment is worth to you. The instruments pay on different rhythms — STRC semi-monthly until October 2026 and daily from 1 November, SATA, SATS and
+        CHAD daily, BMNP and MORE weekly, STRK, STRF and STRD quarterly until the end of 2026 and daily from 1 January 2027, STRE quarterly — but the annual yield is the same however often it arrives.{' '}
         <a href="/blog/monthly-vs-daily-dividends" style={{ color: 'var(--accent-gold)' }}>Does payment frequency matter? &rarr;</a>
       </p>
       <DividendHistoryPage ticker={stock} dividends={dividendsByStock[stock] || []} />

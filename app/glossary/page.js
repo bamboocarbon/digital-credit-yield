@@ -71,7 +71,7 @@ const terms = [
   },
   {
     term: 'Dividend frequency',
-    def: 'How often payments arrive: STRC pays semi-monthly (24 times a year), SATA and CHAD pay daily on US market business days (~250 times a year), and BMNP and MORE pay weekly. Annual yield is unaffected by frequency, but faster payments mean more frequent compounding if you reinvest.',
+    def: 'How often payments arrive: STRC pays semi-monthly (24 times a year) until October 2026 and every calendar day (365 times a year) from 1 November 2026, STRK, STRF and STRD move from quarterly to every calendar day on 1 January 2027, SATA and CHAD pay daily on US market business days (~250 times a year), and BMNP and MORE pay weekly. Annual yield is unaffected by frequency, but faster payments mean more frequent compounding if you reinvest.',
     link: { href: '/blog/monthly-vs-daily-dividends', label: 'Does frequency matter?' },
   },
   {

@@ -8,7 +8,7 @@ const rate = ASSET_RATES.STRF.toFixed(2);
 export const metadata = {
   alternates: { canonical: '/strf' },
   title: `STRF — Strategy's Senior Fixed-Rate Preferred Stock`,
-  description: `Track STRF: Strategy Inc.’s 10.00% Series A Perpetual Strife Preferred Stock, paying ${rate}% annually in quarterly cash. Listed on Nasdaq.`,
+  description: `Track STRF: Strategy Inc.’s 10.00% Series A Perpetual Strife Preferred Stock, paying ${rate}% annually in cash, quarterly until 2026 and daily from 1 January 2027. Listed on Nasdaq.`,
   openGraph: {
     title: `STRF — Strategy's Senior Fixed-Rate Preferred Stock Tracker`,
     description: `Strategy Inc.’s 10.00% Series A Perpetual Strife Preferred Stock, paying ${rate}% annually. Track the live price, effective yield and dividend history.`,
@@ -27,7 +27,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'FinancialProduct',
   name: 'STRF — Strategy Inc.’s 10.00% Series A Perpetual Strife Preferred Stock',
-  description: `Strategy Inc.’s 10.00% Series A Perpetual Strife Preferred Stock, paying a ${rate}% annual dividend in quarterly cash.`,
+  description: `Strategy Inc.’s 10.00% Series A Perpetual Strife Preferred Stock, paying a ${rate}% annual dividend in cash, quarterly until 2026 and daily from 1 January 2027.`,
   url: 'https://www.digitalcredityield.com/strf',
   category: 'Preferred Stock',
   provider: {

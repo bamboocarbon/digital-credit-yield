@@ -12,7 +12,7 @@ const tiers = [
   },
   {
     label: 'STRF',
-    sub: '10% fixed rate · Quarterly payments · Most senior preferred',
+    sub: '10% fixed rate · Quarterly, then daily from Jan 2027 · Most senior preferred',
     tag: 'PREFERRED',
     tagColor: '#9ca3af',
     bg: 'rgba(30,42,60,0.6)',
@@ -21,7 +21,7 @@ const tiers = [
   },
   {
     label: 'STRC',
-    sub: '12.00% variable rate · Semi-monthly payments · Second most senior preferred',
+    sub: '12.00% variable rate · Daily payments from Nov 2026 · Second most senior preferred',
     tag: 'PREFERRED',
     tagColor: '#c8893a',
     bg: 'rgba(200,137,58,0.08)',
