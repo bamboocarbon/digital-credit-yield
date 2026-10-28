@@ -391,7 +391,8 @@ export default function DividendInteractive({ ticker }) {
 
   // A month box means nothing for a quarterly payer (STRK/STRF/STRD/STRE show "0/0" in most months), so it is
   // hidden until the ticker pays daily (PAYMENT_FREQUENCY flips to 365 on STRF/STRK/STRD's 1 Jan 2027 start).
-  const showMonthlyBox = ticker !== 'SATA' && !!paidDividends && paidDividends.length > 0 && PAYMENT_FREQUENCY[ticker]?.perYear !== 4;
+  const isQuarterly = PAYMENT_FREQUENCY[ticker]?.perYear === 4;
+  const showMonthlyBox = ticker !== 'SATA' && !!paidDividends && paidDividends.length > 0 && !isQuarterly;
   const predictionOverdue = prediction && prediction.date < today;
   const sharesNum         = parseFloat(shares) || 0;
   const incomePerPayment  = sharesNum * (latestMonthly?.amount ?? 0);
@@ -572,7 +573,9 @@ export default function DividendInteractive({ ticker }) {
           const ym = d.date.slice(0, 7);
           announcedByMonth[ym] = (announcedByMonth[ym] ?? 0) + d.amount;
         });
-        const monthsSet = new Set([...Object.keys(paidByMonth), ...Object.keys(announcedByMonth), todayYM]);
+        // The current month is always charted (as a still-filling bar) — except for quarterly payers, where an
+        // empty current month would just be a ghost bar for a payment that isn't due.
+        const monthsSet = new Set([...Object.keys(paidByMonth), ...Object.keys(announcedByMonth), ...(isQuarterly ? [] : [todayYM])]);
         const rangeLimit = chartRange === '12M' ? 12 : chartRange === '24M' ? 24 : Infinity;
         const allMonths  = Array.from(monthsSet).sort();
         const months     = rangeLimit === Infinity ? allMonths : allMonths.slice(-rangeLimit);
@@ -580,7 +583,7 @@ export default function DividendInteractive({ ticker }) {
         const expected   = months.map((ym, i) => {
           const announcedReal = announcedByMonth[ym] ?? 0;
           if (announcedReal > 0) return totals[i] + announcedReal;
-          return ym === todayYM ? expectedMonthlyTotal : totals[i];
+          return ym === todayYM && !isQuarterly ? expectedMonthlyTotal : totals[i];
         });
         const remaining  = months.map((ym, i) => Math.max(0, expected[i] - totals[i]));
 
@@ -617,7 +620,7 @@ export default function DividendInteractive({ ticker }) {
     }
     draw();
     return () => { destroyed = true; };
-  }, [paidDividends, announcedDividends, ticker, dailyDivs, monthlyDivs, dailyByMonth, monthlyByMonth, chartRange, todayYM, today, expectedMonthlyTotal]);
+  }, [paidDividends, announcedDividends, ticker, dailyDivs, monthlyDivs, dailyByMonth, monthlyByMonth, chartRange, todayYM, today, expectedMonthlyTotal, isQuarterly]);
 
   if (fetchError) return (
     <div className="p-4 rounded-lg mb-6 text-sm" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', color: '#ef4444' }}>
