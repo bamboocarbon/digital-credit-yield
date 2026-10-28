@@ -1,7 +1,7 @@
 import AadsAd from '@/components/AadsAd';
 import DividendInteractive from '@/components/DividendInteractive';
 import { SATA_DAILY_START, isSataDailyDividend } from '@/lib/sataBusinessDays';
-import { STRC_SEMI_MONTHLY_START, BMNP_DIVIDEND_SCHEDULE } from '@/lib/constants';
+import { STRC_SEMI_MONTHLY_START, STRC_DAILY_START, BMNP_DIVIDEND_SCHEDULE } from '@/lib/constants';
 import { currencySymbol } from '@/lib/currency';
 
 const MONO = { fontFamily: "Arial, Helvetica, sans-serif" };
@@ -41,13 +41,19 @@ export default function DividendHistoryPage({ ticker, dividends }) {
   // payments are grouped into the monthly summary table DividendInteractive.js
   // renders instead (same reasoning as SATA's daily entries: individually listing
   // every business day's payment would make this table hundreds of rows long).
-  const allTableData = ticker === 'SATA' ? monthlyDivs : ticker === 'CHAD' ? [] : dividends;
+  // STRC's calendar-day era (from STRC_DAILY_START) is summarised by month in DividendInteractive.js
+  // for the same reason (30+ rows a month), so this flat table keeps only its earlier payments.
+  const strcDailyEra = ticker === 'STRC' && dividends.some(d => d.date >= STRC_DAILY_START && (d.payDate ?? d.date) <= today);
+  const allTableData = ticker === 'SATA' ? monthlyDivs
+    : ticker === 'CHAD' ? []
+    : ticker === 'STRC' ? dividends.filter(d => d.date < STRC_DAILY_START)
+    : dividends;
   // The stored record can include dates that haven't happened yet — STRC's
   // live-merged feed sometimes reports the next declared distribution before
   // it pays, and BMNP's schedule is stored months ahead since Bitmine
   // announces it in advance. Robin, 2026-09-16: these must never render in
   // "All Payments" as if already paid.
-  const tableData = allTableData.filter(d => d.date <= today);
+  const tableData = allTableData.filter(d => (d.payDate ?? d.date) <= today);
 
   return (
     <div>
@@ -130,7 +136,7 @@ export default function DividendHistoryPage({ ticker, dividends }) {
           {tableData.length > 0 && (
             <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
               <h2 className="text-lg font-semibold mb-4">
-                {inDailyEra ? 'Monthly Payments (Pre-Daily Era)' : 'All Payments'}
+                {inDailyEra ? 'Monthly Payments (Pre-Daily Era)' : strcDailyEra ? 'Earlier Payments (Before Daily Dividends)' : 'All Payments'}
               </h2>
 
               {/* Mobile cards */}

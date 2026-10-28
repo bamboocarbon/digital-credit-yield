@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { saveProjectorState, loadProjectorState, defaultProjectorState } from '@/lib/projectorState';
 import { runProjection, computeAPY, HORIZON_MONTHS as horizonMonths, HORIZON_LABELS as horizonLabels, makeFmt, fmtNum, stripNum } from '@/lib/projectorEngine';
 import { currencySymbol } from '@/lib/currency';
-import { PAR_VALUE } from '@/lib/constants';
+import { PAR_VALUE, PAYMENT_FREQUENCY } from '@/lib/constants';
 import NumericInput from '@/components/NumericInput';
 
 const MONO = { fontFamily: "Arial, Helvetica, sans-serif" };
@@ -64,7 +64,7 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
   // identical, so the toggle only changes the result when shares are priced off par.
   const yieldForProjection = form.yieldBasis === 'effective' ? effectiveYield : Number(form.annualYield);
 
-  const paymentsPerYear = ticker === 'STRC' ? 24 : ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : ticker === 'CHAD' ? 250 : ticker === 'MORE' ? 52 : 12;
+  const paymentsPerYear = ticker === 'STRC' ? PAYMENT_FREQUENCY.STRC.perYear : ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : ticker === 'CHAD' ? 250 : ticker === 'MORE' ? 52 : 12;
 
   const history = useMemo(
     () => runProjection(startValue, yieldForProjection, Number(form.monthlyContribution), Number(form.reinvestmentPct), months, paymentsPerYear),
@@ -272,9 +272,9 @@ export default function GrowthProjector({ ticker, liveYield, livePrice }) {
                 className="w-full" style={{ accentColor: 'var(--accent-gold)' }} />
               {ticker === 'STRC' && Number(form.reinvestmentPct) > 0 && (
                 <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
-                  Semi-monthly compounding: {computeAPY(yieldForProjection, 24).toFixed(4)}% APY
+                  {PAYMENT_FREQUENCY.STRC.label === 'Daily' ? 'Daily' : 'Semi-monthly'} compounding: {computeAPY(yieldForProjection, PAYMENT_FREQUENCY.STRC.perYear).toFixed(4)}% APY
                   <span style={{ color: 'var(--text-muted)' }}>
-                    {' '}(+{((computeAPY(yieldForProjection, 24) - computeAPY(yieldForProjection, 12)) * 100).toFixed(1)} bps vs monthly)
+                    {' '}(+{((computeAPY(yieldForProjection, PAYMENT_FREQUENCY.STRC.perYear) - computeAPY(yieldForProjection, 12)) * 100).toFixed(1)} bps vs monthly)
                   </span>
                 </p>
               )}

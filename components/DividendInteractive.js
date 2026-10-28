@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { loadProjectorState } from '@/lib/projectorState';
-import { ASSET_RATES, PAYMENT_FREQUENCY, STRC_SEMI_MONTHLY_START, PAR_VALUE } from '@/lib/constants';
+import { ASSET_RATES, PAYMENT_FREQUENCY, STRC_SEMI_MONTHLY_START, STRC_DAILY_START, PAR_VALUE } from '@/lib/constants';
 import { SATA_DAILY_START, getBusinessDaysInMonth, getSataDailyDividend, getSataExpectedPeriodAmount, getSataMonthProgress, getSataDailyPaymentsToDate, isSataDailyDividend } from '@/lib/sataBusinessDays';
 import { currencySymbol, currencyCode, localeFor } from '@/lib/currency';
 import { getBmnpExpectedMonthlyTotal } from '@/lib/bmnpSchedule';
@@ -37,6 +37,23 @@ function groupUpcoming(entries) {
     }
   }
   return groups;
+}
+
+// STRC's calendar-day era declares one dividend per day (30-31 a month), so the "announced" list
+// collapses each month into a single row with its total — alternating $0.03/$0.04 amounts would
+// otherwise defeat groupUpcoming's same-amount runs and print ~30 rows.
+function groupStrcUpcoming(entries) {
+  const pre = entries.filter(d => d.date < STRC_DAILY_START);
+  const byMonth = {};
+  entries.filter(d => d.date >= STRC_DAILY_START).forEach(d => {
+    (byMonth[d.date.slice(0, 7)] ??= []).push(d);
+  });
+  const daily = Object.keys(byMonth).sort().map(ym => ({
+    amount: null,
+    dates: byMonth[ym].map(d => d.date),
+    total: byMonth[ym].reduce((s, d) => s + d.amount, 0),
+  }));
+  return [...groupUpcoming(pre), ...daily];
 }
 
 function ymToLabel(ym) {
@@ -281,9 +298,10 @@ export default function DividendInteractive({ ticker }) {
   // announced dates from the daily scan and should not be read as already
   // paid." announcedDividends feeds the "not yet paid" ghost/prediction
   // treatment instead of being dropped outright.
-  const paidDividends = dividends ? dividends.filter(d => d.date <= today) : null;
+  // STRC's daily rows are keyed by record date but carry a payDate (next business day); they count as paid from then.
+  const paidDividends = dividends ? dividends.filter(d => (d.payDate ?? d.date) <= today) : null;
   const announcedDividends = useMemo(
-    () => (dividends ? dividends.filter(d => d.date > today).sort((a, b) => a.date.localeCompare(b.date)) : []),
+    () => (dividends ? dividends.filter(d => (d.payDate ?? d.date) > today).sort((a, b) => a.date.localeCompare(b.date)) : []),
     [dividends, today]
   );
 
@@ -305,6 +323,9 @@ export default function DividendInteractive({ ticker }) {
   const inDailyEra = ticker === 'SATA' && today >= SATA_DAILY_START;
   const isBmnp = ticker === 'BMNP';
   const isChad = ticker === 'CHAD';
+  // Daily-payment monthly summary table: CHAD (all of its history) and STRC (its calendar-day era only).
+  const summaryDivs = isChad ? monthlyDivs : (ticker === 'STRC' && paidDividends ? paidDividends.filter(d => d.date >= STRC_DAILY_START) : []);
+  const summaryByMonth = isChad ? monthlyByMonth : groupByMonth(summaryDivs);
 
   const sataDailyStats = useMemo(() => {
     if (ticker !== 'SATA') return null;
@@ -346,7 +367,15 @@ export default function DividendInteractive({ ticker }) {
     ? getBmnpExpectedMonthlyTotal(todayYM, ASSET_RATES.BMNP)
     : impliedAnnualDollars / 12;
 
+  // STRC's calendar-day dividends are declared a month ahead (8-K), so the next payment is simply the
+  // next declared row — never extrapolated from the old semi-monthly cadence. Between declarations
+  // (e.g. the first days of a month before Strategy declares it) there is no banner rather than a guess.
+  const strcDailyDeclared = ticker === 'STRC' && !!dividends?.some(d => d.date >= STRC_DAILY_START);
   const prediction = useMemo(() => {
+    if (strcDailyDeclared) {
+      const next = announcedDividends[0];
+      return next ? { date: next.payDate ?? next.date, amount: next.amount, dateConfirmed: true, dateSource: 'declared' } : null;
+    }
     if (inDailyEra || monthlyDivs.length < 2) return null;
     const lastDate = monthlyDivs[monthlyDivs.length - 1].date;
     const knownDate = nextKnownRecordDate(ticker, lastDate);
@@ -356,7 +385,7 @@ export default function DividendInteractive({ ticker }) {
     const freq = PAYMENT_FREQUENCY[ticker];
     const fixedAmount = freq ? parseFloat(((ASSET_RATES[ticker] * (PAR_VALUE[ticker] ?? 100) / 100) / freq.perYear).toFixed(4)) : null;
     return predictNextDividend(monthlyDivs, trusted.date, trusted.source, fixedAmount);
-  }, [inDailyEra, monthlyDivs, nextPaymentDate, ticker, today]);
+  }, [inDailyEra, monthlyDivs, nextPaymentDate, ticker, today, strcDailyDeclared, announcedDividends]);
 
   const predictionOverdue = prediction && prediction.date < today;
   const sharesNum         = parseFloat(shares) || 0;
@@ -648,6 +677,33 @@ export default function DividendInteractive({ ticker }) {
         </div>
       )}
 
+      {/* STRC calendar-day dividends (from 1 Nov 2026) */}
+      {strcDailyDeclared && (() => {
+        const refYM = today >= STRC_DAILY_START ? todayYM : STRC_DAILY_START.slice(0, 7);
+        const [ry, rm] = refYM.split('-').map(Number);
+        const daysInMonth = new Date(Date.UTC(ry, rm, 0)).getUTCDate();
+        return (
+          <div className="p-4 rounded-xl mb-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8"
+            style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
+            <div>
+              <p className="text-xs font-semibold tracking-wide mb-0.5" style={{ color: 'var(--accent-gold)' }}>
+                {today >= STRC_DAILY_START ? 'DAILY DIVIDEND PAYMENTS ACTIVE' : 'DAILY DIVIDENDS FROM 1 NOVEMBER 2026'}
+              </p>
+              <p className="text-sm font-medium">Every calendar day, paid the next business day</p>
+            </div>
+            <div>
+              <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>Average per day ({ymToLabel(refYM)})</p>
+              <p className="text-lg font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>
+                {cur}{(expectedMonthlyTotal / daysInMonth).toFixed(4)}
+              </p>
+            </div>
+            <p className="text-xs sm:ml-auto" style={{ color: 'var(--text-muted)' }}>
+              Strategy declares each day in whole cents ($0.03 or $0.04 for November 2026), so the month still adds up to {cur}{expectedMonthlyTotal.toFixed(2)} · weekend and holiday dividends are paid together on the next business day
+            </p>
+          </div>
+        );
+      })()}
+
       {/* Monthly prediction banner */}
       {!inDailyEra && prediction && (
         <div className="p-4 rounded-xl mb-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8"
@@ -659,18 +715,20 @@ export default function DividendInteractive({ ticker }) {
             <p className="text-sm font-medium">{formatDate(prediction.date)}</p>
           </div>
           <div>
-            <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>Predicted per share</p>
+            <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>{prediction.dateSource === 'declared' ? 'Declared per share' : 'Predicted per share'}</p>
             <p className="text-lg font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>{cur}{prediction.amount.toFixed(4)}</p>
           </div>
           {sharesNum > 0 && (
             <div>
-              <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>Your predicted income</p>
+              <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>{prediction.dateSource === 'declared' ? 'Your income' : 'Your predicted income'}</p>
               <p className="text-lg font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>{fmtMoney(sharesNum * prediction.amount)}</p>
             </div>
           )}
           <p className="text-xs sm:ml-auto" style={{ color: 'var(--text-muted)' }}>
-            {prediction.dateSource === 'schedule' ? 'Date confirmed by the announced dividend schedule · '
-              : prediction.dateConfirmed ? 'Date confirmed by Yahoo Finance · ' : ''}Amount estimated from {monthlyDivs.length} payment{monthlyDivs.length !== 1 ? 's' : ''} on record
+            {prediction.dateSource === 'declared'
+              ? 'Date and amount declared by Strategy · each daily dividend is paid on the next business day after its record date'
+              : <>{prediction.dateSource === 'schedule' ? 'Date confirmed by the announced dividend schedule · '
+                : prediction.dateConfirmed ? 'Date confirmed by Yahoo Finance · ' : ''}Amount estimated from {monthlyDivs.length} payment{monthlyDivs.length !== 1 ? 's' : ''} on record</>}
           </p>
         </div>
       )}
@@ -789,13 +847,15 @@ export default function DividendInteractive({ ticker }) {
             {ticker} has announced these upcoming payment dates and amounts, but they have not been paid yet.
           </p>
           <div className="space-y-2">
-            {groupUpcoming(announcedDividends).map(g => (
+            {(ticker === 'STRC' ? groupStrcUpcoming(announcedDividends) : groupUpcoming(announcedDividends)).map(g => (
               <div key={g.dates[0]} className="flex justify-between items-center p-3 rounded-lg" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
                 <p className="text-sm font-medium">
-                  {g.dates.length === 1 ? formatDate(g.dates[0]) : `${formatDate(g.dates[0])} – ${formatDate(g.dates[g.dates.length - 1])} (${g.dates.length} payments)`}
+                  {g.dates.length === 1 ? formatDate(g.dates[0]) : `${formatDate(g.dates[0])} – ${formatDate(g.dates[g.dates.length - 1])} (${g.dates.length} ${g.total != null ? 'daily ' : ''}payments)`}
                 </p>
                 <p className="text-sm font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>
-                  {cur}{g.amount.toFixed(4)}/share{g.dates.length > 1 ? ' each' : ''}
+                  {g.total != null
+                    ? `${cur}${g.total.toFixed(4)}/share in total`
+                    : `${cur}${g.amount.toFixed(4)}/share${g.dates.length > 1 ? ' each' : ''}`}
                 </p>
               </div>
             ))}
@@ -875,14 +935,16 @@ export default function DividendInteractive({ ticker }) {
           this one). No published business-days-per-month table exists for CHAD the
           way Strive publishes one for SATA, so this shows real recorded payment
           counts only, not an "X/Y expected" comparison. */}
-      {isChad && monthlyDivs.length > 0 && (
+      {summaryDivs.length > 0 && (
         <div className="card p-6 rounded-xl mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <h2 className="text-lg font-semibold mb-4">All Payments</h2>
-          <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--accent-gold)' }}>Daily Dividend Period (from September 8, 2026)</h3>
+          <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--accent-gold)' }}>
+            {isChad ? 'Daily Dividend Period (from September 8, 2026)' : 'Daily Dividend Period (from November 1, 2026)'}
+          </h3>
 
           <div className="sm:hidden space-y-2 mb-6">
-            {Object.keys(monthlyByMonth).sort().reverse().map(ym => {
-              const entries = monthlyByMonth[ym];
+            {Object.keys(summaryByMonth).sort().reverse().map(ym => {
+              const entries = summaryByMonth[ym];
               const monthTotal = entries.reduce((s, d) => s + d.amount, 0);
               return (
                 <div key={ym} className="p-3 rounded-lg" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border)' }}>
@@ -913,8 +975,8 @@ export default function DividendInteractive({ ticker }) {
                 </tr>
               </thead>
               <tbody>
-                {Object.keys(monthlyByMonth).sort().reverse().map(ym => {
-                  const entries = monthlyByMonth[ym];
+                {Object.keys(summaryByMonth).sort().reverse().map(ym => {
+                  const entries = summaryByMonth[ym];
                   const monthTotal = entries.reduce((s, d) => s + d.amount, 0);
                   return (
                     <tr key={ym} style={{ borderBottom: '1px solid var(--border)' }}>

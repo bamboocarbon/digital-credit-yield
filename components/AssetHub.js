@@ -20,23 +20,24 @@ function PendingRateNote({ ticker }) {
   );
 }
 
-// Strategy's proposal (8-K 5 Oct 2026 / DEFA14A) to pay STRC, STRF, STRK and STRD every calendar day.
-// STRE is not part of it. Shown while the vote is pending — UPDATE OR REMOVE after the 28 Oct 2026
-// special meeting: if approved, change these tickers' PAYMENT_FREQUENCY and dividend files and drop
-// the "proposed" wording; if rejected, remove the note.
-const DAILY_PROPOSAL = {
-  STRC: 'If approved, the first daily dividend is expected on 2 November 2026 (record date 1 November).',
-  STRF: 'If approved, STRF stays quarterly until the first daily payment, expected on 4 January 2027.',
-  STRK: 'If approved, STRK stays quarterly until the first daily payment, expected on 4 January 2027.',
-  STRD: 'If approved, STRD stays quarterly until the first daily payment, expected on 4 January 2027.',
+// Strategy's daily dividends for STRC, STRF, STRK and STRD (8-K 5 Oct 2026 / DEFA14A; stockholders
+// approved at the 28 Oct 2026 special meeting, per the 28 Oct 8-K, on preliminary voting results and
+// subject to the amended certificates of designations being filed and taking effect). STRE is not part of it.
+// TODO when each switch goes live (STRC 1 Nov 2026, STRF/STRK/STRD 1 Jan 2027): change that ticker's
+// PAYMENT_FREQUENCY + dividend files, then drop its entry here.
+const DAILY_APPROVED = {
+  STRC: 'Daily dividends take effect for STRC from 1 November 2026.',
+  STRF: 'STRF stays quarterly until daily dividends take effect on 1 January 2027, with the first daily payment expected on 4 January 2027.',
+  STRK: 'STRK stays quarterly until daily dividends take effect on 1 January 2027, with the first daily payment expected on 4 January 2027.',
+  STRD: 'STRD stays quarterly until daily dividends take effect on 1 January 2027, with the first daily payment expected on 4 January 2027.',
 };
 
 function DailyProposalNote({ ticker }) {
-  const when = DAILY_PROPOSAL[ticker];
+  const when = DAILY_APPROVED[ticker];
   if (!when) return null;
   return (
     <div className="text-sm mb-4 px-4 py-2.5 rounded-lg" style={{ background: 'var(--accent-gold-dim, rgba(212,175,55,0.1))', border: '1px solid var(--accent-gold)', color: 'var(--text)' }}>
-      <strong>Proposed:</strong> Strategy has proposed paying {ticker}&apos;s dividend every calendar day, with the same rate and annual total, subject to a shareholder vote on 28 October 2026. {when}{' '}
+      <strong>Approved:</strong> Strategy&apos;s stockholders voted on 28 October 2026 to pay {ticker}&apos;s dividend every calendar day, with the same rate and annual total (preliminary voting results; the amended terms still have to be filed). {when}{' '}
       <Link href="/blog/strc-365-day-calendar-dividends-proposal" prefetch={false} className="underline">Read more</Link>
     </div>
   );

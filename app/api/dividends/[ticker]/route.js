@@ -3,6 +3,8 @@ import { VALID_TICKERS } from '@/lib/constants';
 import { fetchDividendEvents, fetchNextPaymentDate } from '@/lib/fetchStockData';
 import { readDividends, writeDividends, mergeDividends } from '@/lib/dividendStore';
 
+const STRC_SEMI_MONTHLY_FINAL = '2026-10-31'; // first record date NOT merged from Yahoo (superseded; see below)
+
 export async function GET(request, { params }) {
   const { ticker } = await params;
   const upper = ticker.toUpperCase();
@@ -36,7 +38,14 @@ export async function GET(request, { params }) {
       fetchDividendEvents(upper),
       fetchNextPaymentDate(upper),
     ]);
-    const merged = mergeDividends(stored, live, upper);
+    // STRC's calendar-day era (record dates from STRC_DAILY_START) is hand-kept from Strategy's 8-K
+    // tables: Yahoo's feed has no payDate, and the gap+amount de-dupe in mergeDividends would collapse
+    // consecutive same-amount daily rows. So only pre-daily Yahoo events are merged in — and the 31 Oct
+    // semi-monthly dividend (declared 30 Sep, payable 15 Nov) is superseded by the November daily
+    // dividends once the daily amendments take effect (8-K 15 Oct, "Conditional Dividends"), so it must
+    // not be merged back in from Yahoo either.
+    const liveForMerge = upper === 'STRC' ? live.filter(e => e.date < STRC_SEMI_MONTHLY_FINAL) : live;
+    const merged = mergeDividends(stored, liveForMerge, upper);
 
     // Best-effort persistence only — production's filesystem is read-only at
     // request time, so this throws (EROFS) on every call there. The merged

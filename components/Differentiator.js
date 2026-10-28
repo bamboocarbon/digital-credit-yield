@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { saveProjectorState, loadProjectorState, defaultProjectorState } from '@/lib/projectorState';
 import { runProjection, computeAPY, HORIZON_MONTHS as horizonMonths, HORIZON_LABELS as horizonLabels, makeFmt, fmtNum, stripNum } from '@/lib/projectorEngine';
 import { currencySymbol } from '@/lib/currency';
-import { PAR_VALUE } from '@/lib/constants';
+import { PAR_VALUE, PAYMENT_FREQUENCY } from '@/lib/constants';
 import NumericInput from '@/components/NumericInput';
 
 const pct = (a, b) => (((a - b) / b) * 100).toFixed(1);
@@ -83,7 +83,7 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
   const step = months <= 24 ? 1 : 12;
 
   // STRC uses 24 semi-monthly; SATA/CHAD use 250 business-day compounding; BMNP uses 52 weekly; benchmarks stay at 12
-  const paymentsPerYear = ticker === 'STRC' ? 24 : ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : ticker === 'CHAD' ? 250 : ticker === 'MORE' ? 52 : 12;
+  const paymentsPerYear = ticker === 'STRC' ? PAYMENT_FREQUENCY.STRC.perYear : ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : ticker === 'CHAD' ? 250 : ticker === 'MORE' ? 52 : 12;
 
   const assetData = useMemo(
     () => runProjection(startValue, yieldForProjection, Number(form.monthlyContribution), Number(form.reinvestmentPct), months, paymentsPerYear),
@@ -356,9 +356,9 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
                 className="w-full" style={{ accentColor: 'var(--accent-gold)' }} />
               {ticker === 'STRC' && Number(form.reinvestmentPct) > 0 && (
                 <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
-                  Semi-monthly compounding: {computeAPY(yieldForProjection, 24).toFixed(4)}% APY
+                  {PAYMENT_FREQUENCY.STRC.label === 'Daily' ? 'Daily' : 'Semi-monthly'} compounding: {computeAPY(yieldForProjection, PAYMENT_FREQUENCY.STRC.perYear).toFixed(4)}% APY
                   <span style={{ color: 'var(--text-muted)' }}>
-                    {' '}(+{((computeAPY(yieldForProjection, 24) - computeAPY(yieldForProjection, 12)) * 100).toFixed(1)} bps vs monthly)
+                    {' '}(+{((computeAPY(yieldForProjection, PAYMENT_FREQUENCY.STRC.perYear) - computeAPY(yieldForProjection, 12)) * 100).toFixed(1)} bps vs monthly)
                   </span>
                 </p>
               )}
