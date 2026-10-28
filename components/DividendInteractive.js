@@ -389,6 +389,9 @@ export default function DividendInteractive({ ticker }) {
     return predictNextDividend(monthlyDivs, trusted.date, trusted.source, fixedAmount);
   }, [inDailyEra, monthlyDivs, nextPaymentDate, ticker, today, dailyWindow, announcedDividends]);
 
+  // A month box means nothing for a quarterly payer (STRK/STRF/STRD/STRE show "0/0" in most months), so it is
+  // hidden until the ticker pays daily (PAYMENT_FREQUENCY flips to 365 on STRF/STRK/STRD's 1 Jan 2027 start).
+  const showMonthlyBox = ticker !== 'SATA' && !!paidDividends && paidDividends.length > 0 && PAYMENT_FREQUENCY[ticker]?.perYear !== 4;
   const predictionOverdue = prediction && prediction.date < today;
   const sharesNum         = parseFloat(shares) || 0;
   const incomePerPayment  = sharesNum * (latestMonthly?.amount ?? 0);
@@ -736,7 +739,7 @@ export default function DividendInteractive({ ticker }) {
       )}
 
       {/* Income calculator + monthly payment progress, side by side on wide screens (calculator alone if no progress box) */}
-      <div className={`grid grid-cols-1 gap-6 mb-6 items-stretch ${(inDailyEra || (ticker !== 'SATA' && paidDividends && paidDividends.length > 0)) ? 'lg:grid-cols-2' : ''}`}>
+      <div className={`grid grid-cols-1 gap-6 mb-6 items-stretch ${(inDailyEra || showMonthlyBox) ? 'lg:grid-cols-2' : ''}`}>
       <div className="card p-6 rounded-xl h-full" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
         <h2 className="text-lg font-semibold mb-3">Income Calculator</h2>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
@@ -802,7 +805,7 @@ export default function DividendInteractive({ ticker }) {
           annualRate={ASSET_RATES.SATA}
         />
       )}
-      {ticker !== 'SATA' && paidDividends && paidDividends.length > 0 && (
+      {showMonthlyBox && (
         <MonthlyPaymentProgress
           paidDividends={paidDividends}
           announcedDividends={announcedDividends}
