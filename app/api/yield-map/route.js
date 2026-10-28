@@ -8,6 +8,7 @@ import { ASSET_RATES, PAR_VALUE, PRE_LISTING_TICKERS } from '@/lib/constants';
 // current price, same sum as the price cards), the stated rate, and market cap in USD for dot size.
 // Prices reuse getStockQuote's 5-minute cache and market caps reuse the capital-stack resolver's
 // 10-minute cache, so this adds no extra Yahoo traffic beyond what the cards already cause.
+// CDN-cached for 15 min (was 5, 2026-10-28) to cut Fluid Active CPU; same as /api/quote so the map and cards agree.
 export const revalidate = 0;
 
 const yahoo = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
@@ -62,6 +63,6 @@ export async function GET() {
   const [treasury, corporate] = await Promise.all([fred('DGS10'), fred('HQMCB10YRP')]);
 
   return NextResponse.json({ points, refs: { treasury, corporate }, asOf: new Date().toISOString() }, {
-    headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60' },
+    headers: { 'Cache-Control': 'public, s-maxage=900, stale-while-revalidate=60' },
   });
 }

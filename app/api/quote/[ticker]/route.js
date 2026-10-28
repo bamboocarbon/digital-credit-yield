@@ -11,7 +11,7 @@ export async function GET(request, { params }) {
   try {
     const data = await getStockQuote(upper);
     return NextResponse.json(data, {
-      headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60' },
+      headers: { 'Cache-Control': 'public, s-maxage=900, stale-while-revalidate=60' },
     });
   } catch (err) {
     console.error(`Quote fetch failed for ${ticker}:`, err);
