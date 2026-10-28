@@ -1,0 +1,27 @@
+name: Prune Vercel deployments
+
+# Hobby plan has no deployment-retention setting, and every retained deployment counts toward the
+# 10 GB Function Storage cap (it filled twice in Oct 2026: 14 Oct and 27 Oct). Daily prune keeps the
+# current production build + the newest 10 production builds and deletes the rest.
+on:
+  schedule:
+    - cron: '30 3 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only log what would be deleted'
+        type: boolean
+        default: true
+
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prune
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: team_aoPD7jhnWT4HaMQQDDjoMh2J
+          VERCEL_PROJECT_ID: prj_s1iAt31nYu5VzUyua5MxAfhamnPL
+          DRY_RUN: ${{ github.event.inputs.dry_run == 'true' && '1' || '0' }}
+        run: node scripts/prune-deployments.mjs
