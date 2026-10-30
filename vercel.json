@@ -1,3 +1,4 @@
 {
-  "crons": []
+  "crons": [],
+  "ignoreCommand": "git diff --quiet \"${VERCEL_GIT_PREVIOUS_SHA:-HEAD^}\" HEAD -- . ':(exclude)data/scan-feed' && exit 0 || exit 1"
 }

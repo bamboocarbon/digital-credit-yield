@@ -47,7 +47,8 @@ jobs:
         run: |
           git config user.name "dcy-scan-feed"
           git config user.email "actions@users.noreply.github.com"
-          # Raw feed files: no site deploy needed.
+          # Raw feed files: no site deploy needed. The skip is enforced by vercel.json's ignoreCommand
+          # (pushes touching only data/scan-feed/ are ignored); "[vercel skip]" alone does nothing.
           git add data/scan-feed
           if ! git diff --cached --quiet; then git commit -m "Scan feed $(date -u +%F) [skip ci] [vercel skip]"; fi
           # Share counts: a change here SHOULD redeploy the site (the pyramids read this file), so no skip tokens.
