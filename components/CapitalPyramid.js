@@ -88,7 +88,7 @@ export default async function CapitalPyramid({ ticker, highlightId }) {
       <p style={{ margin: '0.75rem 0 0', fontSize: '0.72em', color: '#4b5563', textAlign: 'center', lineHeight: 1.5 }}>
         Block width shows market value on a square-root scale (not linear) so the smaller layers stay visible;
         labels show the actual figure. {caption}
-        {stack.anyLive && ` · Market value = shares × price, refreshed hourly${stack.countsAsOf.length ? `; share counts from filings (${stack.countsAsOf.join(', ')})` : ''}`}
+        {stack.anyLive && ` · Market value = shares × last closing price, updated daily${stack.countsAsOf.length ? `; share counts from filings (${stack.countsAsOf.join(', ')})` : ''}`}
       </p>
     </div>
   );

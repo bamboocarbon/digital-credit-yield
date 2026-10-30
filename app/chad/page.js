@@ -1,7 +1,7 @@
 import AssetHub from '@/components/AssetHub';
 import { ASSET_RATES } from '@/lib/constants';
 
-export const revalidate = 3600; // refresh the live-priced capital-structure pyramid hourly
+export const revalidate = 86400; // pyramid uses last closes; /api/cron/refresh-pyramids refreshes it after the US close
 
 const rate = ASSET_RATES.CHAD.toFixed(2);
 

@@ -21,15 +21,20 @@ on:
   # adds filings newer than its last-seen date, so a daily miss just gets
   # caught the next day) — GH Actions' occasional drops are an acceptable
   # trade for no longer depending on Strive filing on the exact right weekday.
+  #
+  # refresh-pyramids (2026-10-30): weekdays after the US close, marks the ticker pages stale so
+  # their capital pyramids pick up that day's closing prices. A dropped run is harmless — the
+  # pages' revalidate = 86400 rebuilds them within a day anyway.
   schedule:
     - cron: '0 14 * * *'
+    - cron: '15 22 * * 1-5'
   workflow_dispatch:
     inputs:
       email:
         description: 'Which job to trigger'
         required: true
         type: choice
-        options: [daily-email, motivation-email, evening-email, money-flow, analytics-report, scan-feed]
+        options: [daily-email, motivation-email, evening-email, money-flow, analytics-report, scan-feed, refresh-pyramids]
 
 jobs:
   trigger:
@@ -45,6 +50,7 @@ jobs:
             "30 13 * * 1"|"0 22 * * 1"|"0 14 * * *"|money-flow)      echo "path=money-flow" >> "$GITHUB_OUTPUT" ;;
             analytics-report)                                        echo "path=analytics-report" >> "$GITHUB_OUTPUT" ;;
             scan-feed)                                                echo "path=scan-feed" >> "$GITHUB_OUTPUT" ;;
+            "15 22 * * 1-5"|refresh-pyramids)                         echo "path=refresh-pyramids" >> "$GITHUB_OUTPUT" ;;
             *) echo "Unknown schedule: ${{ github.event.schedule }}" >&2; exit 1 ;;
           esac
 
