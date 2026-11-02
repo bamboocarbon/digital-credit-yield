@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getMoneyFlowData, saveMoneyFlowData, buildCumulative, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, SEED_MORE_WEEKLY, mergeMoreWeekly } from '@/lib/moneyFlowStore';
-import { getRecentFilings, parseProceeds, parseStrategyWeek, weekLabel, weekDate } from '@/lib/edgarParser';
+import { getMoneyFlowData, saveMoneyFlowData, buildCumulative, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, SEED_MORE_WEEKLY, mergeMoreWeekly, mergeSatsWeekly } from '@/lib/moneyFlowStore';
+import { getRecentFilings, parseProceeds, parseSatsShares, parseStrategyWeek, weekLabel, weekDate } from '@/lib/edgarParser';
+import { getStockQuote } from '@/lib/fetchStockData';
 import { mergeStrategyWeekly, deriveStrcWeekly, deriveStrategyRaisedWeekly, SEED_THROUGH } from '@/lib/strategyFlow';
 
 export const maxDuration = 60;
@@ -17,6 +18,7 @@ export async function GET(request) {
     // Strategy (STRK/STRF/STRD/STRC/STRE): seed + any weeks the cron added after it; STRC's series is derived.
     let strategyWeekly = mergeStrategyWeekly(existing?.strategyWeekly);
     let sataWeekly = existing?.sataWeekly ?? [...SEED_SATA_WEEKLY];
+    let satsWeekly = mergeSatsWeekly(existing?.satsWeekly);
     let bmnpWeekly = existing?.bmnpWeekly ?? [...SEED_BMNP_WEEKLY];
     let chadWeekly = existing?.chadWeekly ?? [...SEED_CHAD_WEEKLY];
     // MORE is an LSE-listed sterling instrument with no SEC filings to parse — its weekly
@@ -68,6 +70,26 @@ export async function GET(request) {
       results.errors.push(`SATA: ${err.message}`);
     }
 
+    // SATS: the IPO is seeded; any ATM sales show up as growth in the SATS share count in Strive's weekly 8-K
+    // table. Value = new shares x the current SATS price, less the ATM's 2% maximum commission (an estimate —
+    // Strive doesn't state SATS ATM proceeds in dollars), flagged `est`.
+    try {
+      const counted = () => satsWeekly.reduce((n, r) => n + (r.shares ?? 0), 0);
+      const filings = await getRecentFilings('SATA', '2026-10-25');
+      for (const filing of filings.reverse()) {
+        const shares = await parseSatsShares(filing);
+        if (!shares || shares <= counted()) continue;
+        const date = weekDate(filing.date);
+        if (satsWeekly.some(d => d.date === date)) continue;
+        const price = await getStockQuote('SATS').then(q => q.price).catch(() => null);
+        const delta = shares - counted();
+        satsWeekly.push({ week: weekLabel(filing.date), date, value: Math.round(delta * (price ?? 90) * 0.98 / 1e5) / 10, shares: delta, est: true });
+        results.satsAdded = (results.satsAdded ?? 0) + 1;
+      }
+    } catch (err) {
+      results.errors.push(`SATS: ${err.message}`);
+    }
+
     // Fetch new BMNP 8-Ks
     try {
       const filings = await getRecentFilings('BMNP', bmnpLastDate);
@@ -99,8 +121,8 @@ export async function GET(request) {
     }
 
     // Rebuild cumulative and save
-    const cumulative = buildCumulative(deriveStrategyRaisedWeekly(strategyWeekly), sataWeekly, bmnpWeekly, chadWeekly, moreWeekly);
-    await saveMoneyFlowData({ strcWeekly, strategyWeekly: strategyWeekly.filter(r => r.date > SEED_THROUGH), sataWeekly, bmnpWeekly, chadWeekly, moreWeekly, cumulative });
+    const cumulative = buildCumulative(deriveStrategyRaisedWeekly(strategyWeekly), sataWeekly, bmnpWeekly, chadWeekly, moreWeekly, satsWeekly);
+    await saveMoneyFlowData({ strcWeekly, strategyWeekly: strategyWeekly.filter(r => r.date > SEED_THROUGH), sataWeekly, satsWeekly, bmnpWeekly, chadWeekly, moreWeekly, cumulative });
 
     return NextResponse.json({ ok: true, ...results });
   } catch (err) {

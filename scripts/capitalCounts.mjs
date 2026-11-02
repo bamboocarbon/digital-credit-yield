@@ -74,7 +74,7 @@ export function parseStrive(secFeed) {
     const cur = re => { const m = t.match(re); return m ? num(m[2]) : null; };
     // Accept '-' for either column (the week a series first appears, its prior-week count is '-', e.g. SATS
     // before it priced) — mirrors the '|-' allowance already used for Strategy's ATM table below.
-    const row = label => cur(new RegExp(`${label}\\s+(?:\\(\\d\\)\\s*)?([\\d,]+|-)\\s+([\\d,]+|-)`));
+    const row = label => cur(new RegExp(`${label}\\s+(?:\\(\\d\\)\\s*)?([\\d,]+|[-—–])\\s+([\\d,]+|[-—–])`));
     return {
       asOf: asOf ? isoDate(asOf[2]) : null,
       classA: row('Class A common stock'),

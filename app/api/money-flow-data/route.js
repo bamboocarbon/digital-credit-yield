@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { getMoneyFlowData, buildCumulative, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, mergeMoreWeekly, moreAtmRows } from '@/lib/moneyFlowStore';
+import { getMoneyFlowData, buildCumulative, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, mergeSatsWeekly, mergeMoreWeekly, moreAtmRows } from '@/lib/moneyFlowStore';
 import { getStockQuote } from '@/lib/fetchStockData';
 import { mergeStrategyWeekly, deriveStrcWeekly, deriveStrategyRaisedWeekly } from '@/lib/strategyFlow';
 
@@ -34,6 +34,7 @@ export async function GET() {
   const sataWeekly = data?.sataWeekly ?? SEED_SATA_WEEKLY;
   const bmnpWeekly = data?.bmnpWeekly ?? SEED_BMNP_WEEKLY;
   const chadWeekly = data?.chadWeekly ?? SEED_CHAD_WEEKLY;
+  const satsWeekly = mergeSatsWeekly(data?.satsWeekly);
   // MORE's weekly figures are hand/scan-maintained in the seed (no EDGAR feed), so merge the seed
   // over the stored blob on every read.
   const moreWeekly = mergeMoreWeekly(data?.moreWeekly, await moreAtm());
@@ -44,11 +45,11 @@ export async function GET() {
     strategyWeekly,
     strategyRaisedWeekly,
     sataWeekly,
-    satsWeekly: data?.satsWeekly ?? [], // Strive's SATS — not priced yet, so empty
+    satsWeekly,
     bmnpWeekly,
     chadWeekly,
     moreWeekly,
-    cumulative: buildCumulative(strategyRaisedWeekly, sataWeekly, bmnpWeekly, chadWeekly, moreWeekly),
+    cumulative: buildCumulative(strategyRaisedWeekly, sataWeekly, bmnpWeekly, chadWeekly, moreWeekly, satsWeekly),
     lastUpdated: data?.lastUpdated ?? null,
   }, {
     // The Blob read makes this route dynamic, so `revalidate` above is ignored — cache at the CDN

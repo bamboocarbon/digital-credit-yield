@@ -4,8 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { FlowLegend, FlowStackedChart, fmtMoney as fmt, monthYear } from '@/components/FlowChartParts';
 
 // Strive's two preferreds on one weekly axis, same style as the Strategy view. SATA has been raising
-// since Nov 2025; SATS was only proposed on 13 Oct 2026 and isn't priced yet, so its series is empty
-// until `satsWeekly` (same row shape as sataWeekly) starts to fill.
+// since Nov 2025; SATS priced its IPO on 15 Oct 2026 and has raised through `satsWeekly` (same row shape as
+// sataWeekly) since.
 const COLOURS = { SATA: '#3b82f6', SATS: '#38bdf8' };
 const SERIES = [
   { key: 'SATA', label: 'SATA', colour: COLOURS.SATA, value: r => r.SATA ?? 0 },
@@ -55,7 +55,7 @@ export default function StriveFlowView() {
         <span className="text-sm" style={{ color: 'var(--text-muted)' }}>SATA and SATS</span>
       </div>
       <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>
-        Weekly capital raised by Strive&apos;s preferreds, from its 8-K filings. SATS was proposed on 13 October 2026 and isn&apos;t priced yet, so it has no bars until it raises.
+        Weekly capital raised by Strive&apos;s preferreds, from its 8-K filings. SATS priced its IPO on 15 October 2026 and has a $1bn ATM programme.
         Click a ticker to hide or show it.
       </p>
 
@@ -91,7 +91,7 @@ export default function StriveFlowView() {
             <tr style={{ borderBottom: '1px solid var(--border)' }}>
               <td className="text-left px-3 py-2 font-bold">SATS</td>
               <td className={td} style={{ color: 'var(--text-muted)' }}>15.00%</td>
-              <td className={td}>{s.offerings ? fmt(s.offerings) : <span style={{ color: 'var(--text-muted)' }}>$500M proposed</span>}</td>
+              <td className={td}>{s.offerings ? fmt(s.offerings) : '—'}</td>
               <td className={td}>{s.atm ? fmt(s.atm) : '—'}</td>
               <td className={`${td} font-semibold`}>{s.total ? fmt(s.total) : '—'}</td>
               <td className={td} style={{ color: 'var(--text-muted)' }}>{monthYear(s.lastAtm)}</td>
@@ -109,7 +109,7 @@ export default function StriveFlowView() {
       </div>
       <p className="text-xs mt-3" style={{ color: 'var(--text-muted)' }}>
         SATA&apos;s IPO was $160M in November 2025 and a $118.8M follow-on in January 2026; the rest is its ATM programme. SATS is junior to SATA and
-        pays 15% daily; its $500M is the announced IPO size, not money raised.
+        pays 15%: its IPO was 7,000,000 shares at $90 ($630M gross, $608M net of fees; settled 20 October 2026). Its $1bn ATM programme was filed on 26 October. Figures are net.
       </p>
     </div>
   );
