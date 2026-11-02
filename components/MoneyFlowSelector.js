@@ -5,14 +5,15 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { STRCMoneyFlowChart, SATAMoneyFlowChart, BMNPMoneyFlowChart, CHADMoneyFlowChart, MOREMoneyFlowChart } from '@/components/MoneyFlowChart';
 import StrategyFlowView from '@/components/StrategyFlowView';
 import StriveFlowView from '@/components/StriveFlowView';
+import IssuerFlowTable from '@/components/IssuerFlowTable';
 import { BMNP_ENABLED } from '@/lib/constants';
 
 const TICKERS = [
   { ticker: 'STRC', title: 'Strategy', label: 'all preferreds', color: '#4ade80', meta: 'STRK · STRF · STRD · STRE · STRC · IPOs from Jan 2025 · STRE shown in $', dataKey: 'strategyRaisedWeekly', Chart: STRCMoneyFlowChart },
   { ticker: 'SATA', title: 'Strive', label: 'SATA + SATS', color: '#3b82f6', meta: 'SATA IPO Nov 2025 · 13.00% · SATS IPO Oct 2026 · 15.00%', dataKey: 'sataWeekly', Chart: SATAMoneyFlowChart },
-  ...(BMNP_ENABLED ? [{ ticker: 'BMNP', label: 'Bitmine Preferred', color: '#fde047', meta: 'IPO Jun 2026 · 9.50% · ATM programme TBC', dataKey: 'bmnpWeekly', Chart: BMNPMoneyFlowChart, pendingNote: 'Listed Jun 16, 2026 — capital flow data pending' }] : []),
-  { ticker: 'CHAD', label: 'DeFi Development Preferred', color: '#7f1d1d', meta: 'IPO Sep 2026 · 13.00% · $10 par', dataKey: 'chadWeekly', Chart: CHADMoneyFlowChart, pendingNote: 'Listed Sep 8, 2026 — capital flow data pending' },
-  { ticker: 'MORE', label: 'Smarter Web Preferred', color: '#a855f7', meta: 'IPO Oct 2026 · 12.00% · £ sterling · LSE', dataKey: 'moreWeekly', Chart: MOREMoneyFlowChart, unit: '£', pendingNote: 'Admitted Oct 14, 2026 — capital flow data pending' },
+  ...(BMNP_ENABLED ? [{ ticker: 'BMNP', label: 'Bitmine Preferred', color: '#fde047', meta: 'IPO Jun 2026 · 9.50% · ATM programme TBC', rate: '9.50%', dataKey: 'bmnpWeekly', Chart: BMNPMoneyFlowChart, pendingNote: 'Listed Jun 16, 2026 — capital flow data pending' }] : []),
+  { ticker: 'CHAD', label: 'DeFi Development Preferred', color: '#7f1d1d', meta: 'IPO Sep 2026 · 13.00% · $10 par', rate: '13.00%', dataKey: 'chadWeekly', Chart: CHADMoneyFlowChart, pendingNote: 'Listed Sep 8, 2026 — capital flow data pending' },
+  { ticker: 'MORE', label: 'Smarter Web Preferred', color: '#a855f7', meta: 'IPO Oct 2026 · 12.00% · £ sterling · LSE', rate: '12.00%', dataKey: 'moreWeekly', Chart: MOREMoneyFlowChart, unit: '£', pendingNote: 'Admitted Oct 14, 2026 — capital flow data pending' },
 ];
 
 function fmt(v, unit = '$') {
@@ -112,6 +113,7 @@ export default function MoneyFlowSelector() {
         </div>
         <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>{active.meta}</p>
         <active.Chart />
+        {active.rate && <IssuerFlowTable ticker={active.ticker} dataKey={active.dataKey} rate={active.rate} unit={active.unit} />}
       </div>
       )}
     </>
