@@ -67,7 +67,11 @@ export default function MoneyFlowSelector() {
       <div className={`grid grid-cols-1 gap-4 mb-6 ${TICKERS.length >= 5 ? 'sm:grid-cols-2 lg:grid-cols-5' : 'md:grid-cols-2 lg:grid-cols-4'}`}>
         {TICKERS.map(t => {
           const isActive = t.ticker === selected;
-          const stats = t.dataKey ? deriveStats(flowData?.[t.dataKey]) : null;
+          // Strive's card is SATA + SATS together
+          const weekly = t.ticker === 'SATA' && flowData?.[t.dataKey]
+            ? [...flowData[t.dataKey], ...(flowData.satsWeekly ?? [])].sort((a, b) => a.date.localeCompare(b.date))
+            : flowData?.[t.dataKey];
+          const stats = t.dataKey ? deriveStats(weekly) : null;
           return (
             <button
               key={t.ticker}
