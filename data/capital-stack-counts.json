@@ -1,30 +1,32 @@
 {
- "generatedAt": "2026-11-02T12:50:49.676Z",
+ "generatedAt": "2026-11-02T22:00:39.391Z",
  "strategy": {
   "ledger": {
    "counts": {
-    "STRC": 83913761,
+    "STRC": 81821726,
     "STRF": 12840000,
     "STRK": 14020000,
     "STRD": 14024000,
     "STRE": 7750000,
-    "MSTR": 422339872
+    "MSTR": 423518424
    },
-   "appliedThrough": "2026-10-25",
+   "appliedThrough": "2026-11-01",
    "applied": [
     "sold|2026-10-18",
     "repurchased|2026-10-18",
-    "repurchased|2026-10-25"
+    "repurchased|2026-10-25",
+    "sold|2026-11-01",
+    "repurchased|2026-11-01"
    ]
   },
-  "asOf": "2026-10-25",
+  "asOf": "2026-11-01",
   "counts": {
-   "STRC": 83913761,
+   "STRC": 81821726,
    "STRF": 12840000,
    "STRK": 14020000,
    "STRD": 14024000,
    "STRE": 7750000,
-   "MSTR": 422339872
+   "MSTR": 423518424
   },
   "base": {
    "asOf": "2026-10-11",
