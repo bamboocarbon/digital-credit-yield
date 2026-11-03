@@ -19,7 +19,7 @@ export async function GET(request) {
     let strategyWeekly = mergeStrategyWeekly(existing?.strategyWeekly);
     let sataWeekly = existing?.sataWeekly ?? [...SEED_SATA_WEEKLY];
     let satsWeekly = mergeSatsWeekly(existing?.satsWeekly);
-    // One-off (2026-11-03): Strive rows were dated by the 8-K's filing week; re-date them by the week covered so
+    // One-off (2026-11-03): Strive, Bitmine and DeFi Dev rows were dated by the 8-K's filing week; re-date them by the week covered so
     // they line up with Strategy's. Flagged `p` so it only ever runs once per row. Seed/IPO rows and anything
     // before 2 Jun 2026 (hand-built from share counts) are left alone.
     const shiftWeek = (date, days) => new Date(Date.parse(date + 'T12:00:00Z') + days * 864e5).toISOString().slice(0, 10);
@@ -30,8 +30,8 @@ export async function GET(request) {
     }).sort((a, b) => a.date.localeCompare(b.date));
     sataWeekly = toPeriod(sataWeekly);
     satsWeekly = toPeriod(satsWeekly);
-    let bmnpWeekly = existing?.bmnpWeekly ?? [...SEED_BMNP_WEEKLY];
-    let chadWeekly = existing?.chadWeekly ?? [...SEED_CHAD_WEEKLY];
+    let bmnpWeekly = toPeriod(existing?.bmnpWeekly ?? [...SEED_BMNP_WEEKLY]);
+    let chadWeekly = toPeriod(existing?.chadWeekly ?? [...SEED_CHAD_WEEKLY]);
     // MORE is an LSE-listed sterling instrument with no SEC filings to parse — its weekly
     // figures are maintained by hand (see moneyFlowStore.js), so the cron only carries them through.
     // Seed it in too if the stored blob predates MORE.
@@ -41,8 +41,8 @@ export async function GET(request) {
     const strategyLastFiled = strategyWeekly.map(r => r.filed).filter(Boolean).sort().at(-1) ?? '2026-10-13';
     // rows are dated by week covered; filings land one week later, so look for filings after (last row + 7 days)
     const sataLastDate = sataWeekly.at(-1)?.date ? shiftWeek(sataWeekly.at(-1).date, 7) : '2026-05-25';
-    const bmnpLastDate = bmnpWeekly.at(-1)?.date ?? '2026-06-01';
-    const chadLastDate = chadWeekly.at(-1)?.date ?? '2026-09-01';
+    const bmnpLastDate = bmnpWeekly.at(-1)?.date ? shiftWeek(bmnpWeekly.at(-1).date, 7) : '2026-06-01';
+    const chadLastDate = chadWeekly.at(-1)?.date ? shiftWeek(chadWeekly.at(-1).date, 7) : '2026-09-01';
 
     const results = { strcAdded: 0, sataAdded: 0, bmnpAdded: 0, chadAdded: 0, errors: [] };
 
@@ -108,9 +108,9 @@ export async function GET(request) {
       for (const filing of filings.reverse()) {
         const proceeds = await parseProceeds('BMNP', filing);
         if (!proceeds) continue;
-        const date = weekDate(filing.date);
+        const date = periodWeekDate(filing.date);
         if (bmnpWeekly.some(d => d.date === date)) continue;
-        bmnpWeekly.push({ week: weekLabel(filing.date), date, value: proceeds });
+        bmnpWeekly.push({ week: weekLabel(date), date, value: proceeds, p: 1 });
         results.bmnpAdded++;
       }
     } catch (err) {
@@ -123,9 +123,9 @@ export async function GET(request) {
       for (const filing of filings.reverse()) {
         const proceeds = await parseProceeds('CHAD', filing);
         if (!proceeds) continue;
-        const date = weekDate(filing.date);
+        const date = periodWeekDate(filing.date);
         if (chadWeekly.some(d => d.date === date)) continue;
-        chadWeekly.push({ week: weekLabel(filing.date), date, value: proceeds });
+        chadWeekly.push({ week: weekLabel(date), date, value: proceeds, p: 1 });
         results.chadAdded++;
       }
     } catch (err) {
