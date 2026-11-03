@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getMoneyFlowData, saveMoneyFlowData, buildCumulative, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, SEED_MORE_WEEKLY, mergeMoreWeekly, mergeSatsWeekly } from '@/lib/moneyFlowStore';
-import { getRecentFilings, parseProceeds, parseSatsShares, parseStrategyWeek, weekLabel, weekDate } from '@/lib/edgarParser';
+import { getRecentFilings, parseProceeds, parseSatsShares, parseStrategyWeek, weekLabel, weekDate, periodWeekDate } from '@/lib/edgarParser';
 import { getStockQuote } from '@/lib/fetchStockData';
 import { mergeStrategyWeekly, deriveStrcWeekly, deriveStrategyRaisedWeekly, SEED_THROUGH } from '@/lib/strategyFlow';
 
@@ -19,6 +19,17 @@ export async function GET(request) {
     let strategyWeekly = mergeStrategyWeekly(existing?.strategyWeekly);
     let sataWeekly = existing?.sataWeekly ?? [...SEED_SATA_WEEKLY];
     let satsWeekly = mergeSatsWeekly(existing?.satsWeekly);
+    // One-off (2026-11-03): Strive rows were dated by the 8-K's filing week; re-date them by the week covered so
+    // they line up with Strategy's. Flagged `p` so it only ever runs once per row. Seed/IPO rows and anything
+    // before 2 Jun 2026 (hand-built from share counts) are left alone.
+    const shiftWeek = (date, days) => new Date(Date.parse(date + 'T12:00:00Z') + days * 864e5).toISOString().slice(0, 10);
+    const toPeriod = rows => rows.map(r => {
+      if (r.p || r.ipo || r.date < '2026-06-02') return r;
+      const date = shiftWeek(r.date, -7);
+      return { ...r, date, week: weekLabel(date), p: 1 };
+    }).sort((a, b) => a.date.localeCompare(b.date));
+    sataWeekly = toPeriod(sataWeekly);
+    satsWeekly = toPeriod(satsWeekly);
     let bmnpWeekly = existing?.bmnpWeekly ?? [...SEED_BMNP_WEEKLY];
     let chadWeekly = existing?.chadWeekly ?? [...SEED_CHAD_WEEKLY];
     // MORE is an LSE-listed sterling instrument with no SEC filings to parse — its weekly
@@ -28,7 +39,8 @@ export async function GET(request) {
 
     // The seed already covers the 8-K filed 13 Oct 2026 (w/c 5 Oct); only look at filings after that.
     const strategyLastFiled = strategyWeekly.map(r => r.filed).filter(Boolean).sort().at(-1) ?? '2026-10-13';
-    const sataLastDate = sataWeekly.at(-1)?.date ?? '2026-05-25';
+    // rows are dated by week covered; filings land one week later, so look for filings after (last row + 7 days)
+    const sataLastDate = sataWeekly.at(-1)?.date ? shiftWeek(sataWeekly.at(-1).date, 7) : '2026-05-25';
     const bmnpLastDate = bmnpWeekly.at(-1)?.date ?? '2026-06-01';
     const chadLastDate = chadWeekly.at(-1)?.date ?? '2026-09-01';
 
@@ -61,9 +73,9 @@ export async function GET(request) {
       for (const filing of filings.reverse()) {
         const proceeds = await parseProceeds('SATA', filing);
         if (!proceeds) continue;
-        const date = weekDate(filing.date);
+        const date = periodWeekDate(filing.date);
         if (sataWeekly.some(d => d.date === date)) continue;
-        sataWeekly.push({ week: weekLabel(filing.date), date, value: proceeds });
+        sataWeekly.push({ week: weekLabel(date), date, value: proceeds, p: 1 });
         results.sataAdded++;
       }
     } catch (err) {
@@ -79,11 +91,11 @@ export async function GET(request) {
       for (const filing of filings.reverse()) {
         const shares = await parseSatsShares(filing);
         if (!shares || shares <= counted()) continue;
-        const date = weekDate(filing.date);
+        const date = periodWeekDate(filing.date);
         if (satsWeekly.some(d => d.date === date)) continue;
         const price = await getStockQuote('SATS').then(q => q.price).catch(() => null);
         const delta = shares - counted();
-        satsWeekly.push({ week: weekLabel(filing.date), date, value: Math.round(delta * (price ?? 90) * 0.98 / 1e5) / 10, shares: delta, est: true });
+        satsWeekly.push({ week: weekLabel(date), date, value: Math.round(delta * (price ?? 90) * 0.98 / 1e5) / 10, shares: delta, est: true, p: 1 });
         results.satsAdded = (results.satsAdded ?? 0) + 1;
       }
     } catch (err) {
