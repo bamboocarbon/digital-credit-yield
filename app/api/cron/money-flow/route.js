@@ -21,11 +21,13 @@ export async function GET(request) {
     let sataWeekly = existing?.sataWeekly ?? [...SEED_SATA_WEEKLY];
     let satsWeekly = mergeSatsWeekly(existing?.satsWeekly);
     // One-off (2026-11-03): Strive, Bitmine and DeFi Dev rows were dated by the 8-K's filing week; re-date them by the week covered so
-    // they line up with Strategy's. Flagged `p` so it only ever runs once per row. Seed/IPO rows and anything
-    // before 2 Jun 2026 (hand-built from share counts) are left alone.
+    // they line up with Strategy's. Flagged `p` so it only ever runs once per row. IPO/follow-on rows and anything
+    // before 1 Mar 2026 (the Nov 10 IPO, Jan 26 follow-on and Feb 9 catch-up — event-dated) are left alone;
+    // the Mar–May rows were hand-built from the weekly 8-Ks and are filing-week dated too, so they shift as well
+    // (checked 2026-11-03: the 26 May 8-K's 515,298 SATA shares = the $51.5M 'May 25' row).
     const shiftWeek = (date, days) => new Date(Date.parse(date + 'T12:00:00Z') + days * 864e5).toISOString().slice(0, 10);
     const toPeriod = rows => rows.map(r => {
-      if (r.p || r.ipo || r.date < '2026-06-02') return r;
+      if (r.p || r.ipo || r.date < '2026-03-01') return r;
       const date = shiftWeek(r.date, -7);
       return { ...r, date, week: weekLabel(date), p: 1 };
     }).sort((a, b) => a.date.localeCompare(b.date));
