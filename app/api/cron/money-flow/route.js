@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getMoneyFlowData, saveMoneyFlowData, buildCumulative, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, SEED_MORE_WEEKLY, mergeMoreWeekly, mergeSatsWeekly } from '@/lib/moneyFlowStore';
 import { getRecentFilings, parseProceeds, parseSatsShares, parseStrategyWeek, weekLabel, weekDate, periodWeekDate } from '@/lib/edgarParser';
 import { getStockQuote } from '@/lib/fetchStockData';
@@ -135,6 +136,11 @@ export async function GET(request) {
     // Rebuild cumulative and save
     const cumulative = buildCumulative(deriveStrategyRaisedWeekly(strategyWeekly), sataWeekly, bmnpWeekly, chadWeekly, moreWeekly, satsWeekly);
     await saveMoneyFlowData({ strcWeekly, strategyWeekly: strategyWeekly.filter(r => r.date > SEED_THROUGH), sataWeekly, satsWeekly, bmnpWeekly, chadWeekly, moreWeekly, cumulative });
+
+    // /api/money-flow-data is CDN-cached for an hour (s-maxage=3600); purge it now so the charts show this
+    // run's data straight away instead of whatever copy the edge cached before the write (found 2026-11-03:
+    // a manual run left the page showing the old week-dating for up to an hour).
+    revalidatePath('/api/money-flow-data');
 
     return NextResponse.json({ ok: true, ...results });
   } catch (err) {
