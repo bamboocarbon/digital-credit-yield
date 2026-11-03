@@ -17,12 +17,17 @@ name: Scan feed
 # in email-crons.yml. Primary trigger is now cron-job.org calling /api/cron/scan-feed, which dispatches
 # this workflow via the GitHub REST API on a reliable external clock. The `schedule:` entries below are
 # kept only as a free backup in case that external call itself gets missed.
+# PAUSED 2026-11-03: the four backup `schedule:` entries are commented out. GitHub fired all four ~7 h late and
+# together on 2026-11-03 (19:53-20:03 UTC); the 4th run's checkout predated the 1st run's push, so its rebase
+# conflicted on data/scan-feed/*.json and failed (harmless, but it emailed). cron-job.org's "DCY scan-feed
+# dispatch" job (12:50 daily) calls /api/cron/scan-feed, which triggers this workflow through workflow_dispatch —
+# that stays enabled. To re-enable the backups, uncomment the schedule block below.
 on:
-  schedule:
-    - cron: '55 12 * * *'
-    - cron: '0 13 * * *'
-    - cron: '5 13 * * *'
-    - cron: '8 13 * * *'
+  # schedule:
+  #   - cron: '55 12 * * *'
+  #   - cron: '0 13 * * *'
+  #   - cron: '5 13 * * *'
+  #   - cron: '8 13 * * *'
   workflow_dispatch:
 
 permissions:
