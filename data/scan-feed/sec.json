@@ -1,5 +1,5 @@
 {
- "fetchedAt": "2026-11-03T12:50:44.112Z",
+ "fetchedAt": "2026-11-03T19:54:14.640Z",
  "MSTR": {
   "cik": "0001050446",
   "filings": [
@@ -141,6 +141,13 @@
  "ASST": {
   "cik": "0001920406",
   "filings": [
+   {
+    "form": "FWP",
+    "date": "2026-11-03",
+    "accession": "0000950103-26-016703",
+    "url": "https://www.sec.gov/Archives/edgar/data/1920406/000095010326016703/dp255954_fwp.htm",
+    "docs": []
+   },
    {
     "form": "8-K",
     "date": "2026-11-02",
