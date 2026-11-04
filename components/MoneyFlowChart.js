@@ -55,11 +55,13 @@ const MORE_PURPLE = '#a855f7';
 const MORE_PURPLE_DIM = 'rgba(168,85,247,0.675)';
 
 function fmt(v, unit = '$') {
-  if (v >= 1000) return `${unit}${(v / 1000).toFixed(2)}B`;
-  return `${unit}${v}M`;
+  const a = Math.abs(v);
+  const sign = v < 0 ? '−' : '';
+  if (a >= 1000) return `${sign}${unit}${(a / 1000).toFixed(2)}B`;
+  return `${sign}${unit}${a}M`;
 }
 
-function useBarChart({ canvasRef, labels, datasets, logScale, unit = '$' }) {
+function useBarChart({ canvasRef, labels, datasets, logScale, unit = '$', stacked = false }) {
   const instanceRef = useRef(null);
 
   useEffect(() => {
@@ -80,13 +82,15 @@ function useBarChart({ canvasRef, labels, datasets, logScale, unit = '$' }) {
           plugins: {
             legend: { display: false },
             tooltip: {
+              mode: 'index',
               callbacks: {
-                label: ctx => ` ${fmt(ctx.parsed.y, unit)}`,
+                label: ctx => (ctx.parsed.y === 0 ? null : ` ${ctx.dataset.label ? ctx.dataset.label + ': ' : ''}${fmt(ctx.parsed.y, unit)}`),
               },
             },
           },
           scales: {
             x: {
+              stacked,
               ticks: {
                 color: '#6b7280',
                 maxRotation: 45,
@@ -98,6 +102,7 @@ function useBarChart({ canvasRef, labels, datasets, logScale, unit = '$' }) {
             },
             y: {
               type: logScale ? 'logarithmic' : 'linear',
+              stacked,
               ticks: {
                 color: '#6b7280',
                 font: { size: 11 },
@@ -115,7 +120,7 @@ function useBarChart({ canvasRef, labels, datasets, logScale, unit = '$' }) {
       instanceRef.current?.destroy();
       instanceRef.current = null;
     };
-  }, [labels, datasets, logScale, unit]);
+  }, [labels, datasets, logScale, unit, stacked]);
 }
 
 function currentWeekMonday() {
@@ -322,23 +327,42 @@ export function CHADMoneyFlowChart() {
   );
 }
 
+const MORE_BUYBACKS_FALLBACK = []; // £M — see SEED_MORE_BUYBACKS in lib/moneyFlowStore.js
+
 export function MOREMoneyFlowChart() {
   const weeks = useLiveWeekly(MORE_WEEKS, 'moreWeekly');
+  const buybacks = useLiveWeekly(MORE_BUYBACKS_FALLBACK, 'moreBuybacks');
   const [range, setRange] = useState('all');
   const canvasRef = useRef(null);
   const filtered = filterByRange(padToCurrentWeek(weeks), range);
+  const buybackByDate = Object.fromEntries(buybacks.map(b => [b.date, b.value]));
+  const hasBuybacks = buybacks.length > 0;
   useBarChart({
     canvasRef,
     labels: filtered.map(d => d.week),
-    datasets: [{
-      data: filtered.map(d => d.value),
-      backgroundColor: filtered.map(d => d.ipo ? MORE_PURPLE : MORE_PURPLE_DIM),
-      borderColor: filtered.map(d => d.ipo ? MORE_PURPLE : 'transparent'),
-      borderWidth: 1,
-      borderRadius: 3,
-    }],
+    datasets: [
+      {
+        label: 'Raised',
+        data: filtered.map(d => d.value),
+        backgroundColor: filtered.map(d => d.ipo ? MORE_PURPLE : MORE_PURPLE_DIM),
+        borderColor: filtered.map(d => d.ipo ? MORE_PURPLE : 'transparent'),
+        borderWidth: 1,
+        borderRadius: 3,
+        stack: 'flow',
+      },
+      ...(hasBuybacks ? [{
+        label: 'Buybacks',
+        data: filtered.map(d => -(buybackByDate[d.date] ?? 0)),
+        backgroundColor: '#ef4444',
+        borderColor: 'transparent',
+        borderWidth: 1,
+        borderRadius: 3,
+        stack: 'flow',
+      }] : []),
+    ],
     logScale: false,
     unit: '£',
+    stacked: true,
   });
   if (weeks.length === 0) {
     return (
@@ -350,8 +374,8 @@ export function MOREMoneyFlowChart() {
   return (
     <div>
       <RangeButtons range={range} setRange={setRange} activeColor={MORE_PURPLE} />
-      <div role="img" aria-label="MORE weekly capital raised bar chart, in millions of pounds" style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
-      <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering · figures in £ millions · weekly bars are Tennyson's ATM sales from SWC's Thursday RNS (£ proceeds as stated, else shares × price)</p>
+      <div role="img" aria-label="MORE weekly capital raised bar chart, in millions of pounds, with any share buybacks shown below zero" style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
+      <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering · figures in £ millions · weekly bars are Tennyson's ATM sales from SWC's Thursday RNS (£ proceeds as stated, else shares × price){hasBuybacks ? ' · red bars below zero are MORE share buybacks' : ''}</p>
     </div>
   );
 }

@@ -22,13 +22,19 @@ function totalsOf(weekly) {
   return { offerings, atm, total: offerings + atm, first: weekly[0]?.date ?? null, lastAtm };
 }
 
-export default function IssuerFlowTable({ ticker, dataKey, rate, unit = '$' }) {
+export default function IssuerFlowTable({ ticker, dataKey, rate, unit = '$', buybackKey }) {
   const [weekly, setWeekly] = useState(null);
+  const [buybacks, setBuybacks] = useState(null);
   useEffect(() => {
-    fetch('/api/money-flow-data').then(r => r.json()).then(d => setWeekly(d?.[dataKey] ?? [])).catch(() => {});
-  }, [dataKey]);
+    fetch('/api/money-flow-data').then(r => r.json()).then(d => {
+      setWeekly(d?.[dataKey] ?? []);
+      setBuybacks(buybackKey ? (d?.[buybackKey] ?? []) : []);
+    }).catch(() => {});
+  }, [dataKey, buybackKey]);
 
   const t = totalsOf(weekly ?? []);
+  const buyback = (buybacks ?? []).reduce((sum, r) => sum + r.value, 0);
+  const netTotal = t.total - buyback;
   const th = 'text-right font-medium px-3 py-2 whitespace-nowrap';
   const td = 'text-right px-3 py-2 whitespace-nowrap';
   const dash = '—';
@@ -41,7 +47,8 @@ export default function IssuerFlowTable({ ticker, dataKey, rate, unit = '$' }) {
             <th className={th}>Rate</th>
             <th className={th}>IPO &amp; follow-on</th>
             <th className={th}>ATM raised</th>
-            <th className={th}>Total raised</th>
+            <th className={th}>Buybacks</th>
+            <th className={th}>Net total</th>
             <th className={th}>Last ATM sale</th>
           </tr>
         </thead>
@@ -51,7 +58,8 @@ export default function IssuerFlowTable({ ticker, dataKey, rate, unit = '$' }) {
             <td className={td} style={{ color: 'var(--text-muted)' }}>{rate}</td>
             <td className={td}>{t.offerings ? fmt(t.offerings, unit) : dash} {t.first && t.offerings > 0 && <span style={{ color: 'var(--text-muted)' }}>· {monthYear(t.first)}</span>}</td>
             <td className={td}>{t.atm ? fmt(t.atm, unit) : dash}</td>
-            <td className={`${td} font-semibold`}>{t.total ? fmt(t.total, unit) : dash}</td>
+            <td className={td}>{buyback ? `−${fmt(buyback, unit)}` : dash}</td>
+            <td className={`${td} font-semibold`}>{netTotal ? fmt(netTotal, unit) : dash}</td>
             <td className={td} style={{ color: 'var(--text-muted)' }}>{monthYear(t.lastAtm)}</td>
           </tr>
         </tbody>

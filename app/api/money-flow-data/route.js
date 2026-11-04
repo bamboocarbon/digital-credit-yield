@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { getMoneyFlowData, buildCumulative, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, mergeSatsWeekly, mergeMoreWeekly, moreAtmRows } from '@/lib/moneyFlowStore';
+import { getMoneyFlowData, buildCumulative, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, mergeSatsWeekly, mergeMoreWeekly, mergeMoreBuybacks, moreAtmRows } from '@/lib/moneyFlowStore';
 import { getStockQuote } from '@/lib/fetchStockData';
 import { mergeStrategyWeekly, deriveStrcWeekly, deriveStrategyRaisedWeekly } from '@/lib/strategyFlow';
 
@@ -38,6 +38,9 @@ export async function GET() {
   // MORE's weekly figures are hand/scan-maintained in the seed (no EDGAR feed), so merge the seed
   // over the stored blob on every read.
   const moreWeekly = mergeMoreWeekly(data?.moreWeekly, await moreAtm());
+  // MORE's share buybacks are hand-kept too (see SEED_MORE_BUYBACKS) — shown on the MORE chart as
+  // negative bars and netted off its "capital raised" total, the same way STRC's buybacks are.
+  const moreBuybacks = mergeMoreBuybacks(data?.moreBuybacks);
 
   return NextResponse.json({
     ...(data ?? {}),
@@ -49,6 +52,7 @@ export async function GET() {
     bmnpWeekly,
     chadWeekly,
     moreWeekly,
+    moreBuybacks,
     cumulative: buildCumulative(strategyRaisedWeekly, sataWeekly, bmnpWeekly, chadWeekly, moreWeekly, satsWeekly),
     lastUpdated: data?.lastUpdated ?? null,
   }, {
