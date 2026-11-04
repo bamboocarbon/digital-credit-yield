@@ -280,7 +280,7 @@ export function BMNPMoneyFlowChart() {
   });
   if (weeks.length === 0) {
     return (
-      <div style={{ height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ height: 240, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ color: '#6b7280', fontSize: 13, textAlign: 'center' }}>Listed on the NYSE June 16, 2026<br />Capital flow data will appear automatically once filed</p>
       </div>
     );
@@ -288,7 +288,7 @@ export function BMNPMoneyFlowChart() {
   return (
     <div>
       <RangeButtons range={range} setRange={setRange} activeColor={BMNP_YELLOW} />
-      <div role="img" aria-label="BMNP weekly capital raised bar chart" style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
+      <div role="img" aria-label="BMNP weekly capital raised bar chart" style={{ height: 240, position: 'relative' }}><canvas ref={canvasRef} /></div>
       <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering</p>
     </div>
   );
@@ -313,7 +313,7 @@ export function CHADMoneyFlowChart() {
   });
   if (weeks.length === 0) {
     return (
-      <div style={{ height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ height: 240, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ color: '#6b7280', fontSize: 13, textAlign: 'center' }}>Listed on the Nasdaq September 8, 2026<br />Capital flow data will appear automatically once filed</p>
       </div>
     );
@@ -321,7 +321,7 @@ export function CHADMoneyFlowChart() {
   return (
     <div>
       <RangeButtons range={range} setRange={setRange} activeColor={CHAD_RED} />
-      <div role="img" aria-label="CHAD weekly capital raised bar chart" style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
+      <div role="img" aria-label="CHAD weekly capital raised bar chart" style={{ height: 240, position: 'relative' }}><canvas ref={canvasRef} /></div>
       <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering</p>
     </div>
   );
@@ -366,7 +366,7 @@ export function MOREMoneyFlowChart() {
   });
   if (weeks.length === 0) {
     return (
-      <div style={{ height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ height: 240, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ color: '#6b7280', fontSize: 13, textAlign: 'center' }}>Admitted to the London Stock Exchange October 14, 2026<br />Capital flow data will appear once the issuer announces it</p>
       </div>
     );
@@ -374,7 +374,7 @@ export function MOREMoneyFlowChart() {
   return (
     <div>
       <RangeButtons range={range} setRange={setRange} activeColor={MORE_PURPLE} />
-      <div role="img" aria-label="MORE weekly capital raised bar chart, in millions of pounds, with any share buybacks shown below zero" style={{ height: 120, position: 'relative' }}><canvas ref={canvasRef} /></div>
+      <div role="img" aria-label="MORE weekly capital raised bar chart, in millions of pounds, with any share buybacks shown below zero" style={{ height: 240, position: 'relative' }}><canvas ref={canvasRef} /></div>
       <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering · figures in £ millions · weekly bars are Tennyson's ATM sales from SWC's Thursday RNS (£ proceeds as stated, else shares × price){hasBuybacks ? ' · red bars below zero are MORE share buybacks' : ''}</p>
     </div>
   );
