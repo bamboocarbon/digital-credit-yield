@@ -120,7 +120,7 @@ const CONTENT = {
       <>
         <p>DFDV describes a &quot;capital flywheel&quot;: raise money through CHAD, buy SOL, earn staking yield, repeat. It holds {DFDV_SOL_HOLDINGS} SOL and discloses staking yields of 7–8% in 2025. The filings are careful <em>not</em> to promise that staking income will fund the dividend directly.</p>
         <p>CHAD proceeds and the $300m ATM programme are earmarked mainly for buying more SOL. Dividends are paid from whatever capital is legally available at the time.</p>
-        <p>The dedicated cushion is a <strong>12-month dividend reserve</strong>: <strong>{DIVIDEND_RESERVE.CHAD.display}</strong> put aside at closing, enough for a full year at the original 13% rate. It isn&apos;t topped up if the rate rises (it went to 14% on 1 November) or more shares are sold, and in an insolvency creditors could still reach it.</p>
+        <p>The dedicated cushion is a <strong>12-month dividend reserve</strong>: <strong>{DIVIDEND_RESERVE.CHAD.display}</strong> put aside at closing, enough for a full year at 13%. It isn&apos;t topped up if the rate rises or more shares are sold, and in an insolvency creditors could still reach it.</p>
       </>
     ),
   },

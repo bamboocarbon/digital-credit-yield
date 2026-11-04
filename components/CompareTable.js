@@ -42,7 +42,7 @@ const ROWS = [
     STRC: '~$0.479/share',
     SATA: '~$0.052/share',
     BMNP: '~$0.183/share',
-    CHAD: '~$0.0061/share',
+    CHAD: '~$0.0052/share',
     MORE: '~£0.231/share',
   },
   {
