@@ -173,9 +173,9 @@ function filterByRange(weeks, range) {
 
 const RANGE_OPTS = ['6M', '1Y', 'All'];
 
-function RangeButtons({ range, setRange, activeColor }) {
+function RangeButtons({ range, setRange, activeColor, bare = false }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 5, marginBottom: 10 }}>
+    <div style={bare ? { display: 'flex', gap: 5 } : { display: 'flex', justifyContent: 'flex-end', gap: 5, marginBottom: 10 }}>
       {RANGE_OPTS.map(r => {
         const active = range === r.toLowerCase();
         return (
@@ -187,6 +187,34 @@ function RangeButtons({ range, setRange, activeColor }) {
               border: `1px solid ${active ? activeColor : '#374151'}`,
             }}>
             {r}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// Toggleable series legend — click a button to hide/show that dataset, same idea as
+// FlowLegend in FlowChartParts.js (used by Strategy/Strive) but matching this file's
+// plain-hex styling instead of the themed `var(--...)` tokens.
+function SeriesToggle({ series, off, toggle }) {
+  return (
+    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+      {series.map(s => {
+        const active = !off.has(s.key);
+        return (
+          <button key={s.key} type="button" onClick={() => toggle(s.key)} aria-pressed={active}
+            title={`${active ? 'Hide' : 'Show'} ${s.label}`}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '2px 9px', fontSize: 11, borderRadius: 6, fontWeight: 500, cursor: 'pointer',
+              background: 'transparent',
+              border: `1px solid ${active ? s.colour : '#374151'}`,
+              color: active ? '#e5e7eb' : '#6b7280',
+              opacity: active ? 1 : 0.5,
+            }}>
+            <span style={{ width: 14, height: 2, background: s.colour, borderRadius: 2 }} />
+            {s.label}
           </button>
         );
       })}
@@ -333,15 +361,23 @@ export function MOREMoneyFlowChart() {
   const weeks = useLiveWeekly(MORE_WEEKS, 'moreWeekly');
   const buybacks = useLiveWeekly(MORE_BUYBACKS_FALLBACK, 'moreBuybacks');
   const [range, setRange] = useState('all');
+  const [off, setOff] = useState(() => new Set());
+  const toggle = k => setOff(prev => { const n = new Set(prev); if (n.has(k)) n.delete(k); else n.add(k); return n; });
   const canvasRef = useRef(null);
   const filtered = filterByRange(padToCurrentWeek(weeks), range);
   const buybackByDate = Object.fromEntries(buybacks.map(b => [b.date, b.value]));
   const hasBuybacks = buybacks.length > 0;
+  const showRaised = !off.has('RAISED');
+  const showBuybacks = hasBuybacks && !off.has('BUYBACK');
+  const series = [
+    { key: 'RAISED', label: 'MORE', colour: MORE_PURPLE },
+    ...(hasBuybacks ? [{ key: 'BUYBACK', label: 'MORE buybacks', colour: '#ef4444' }] : []),
+  ];
   useBarChart({
     canvasRef,
     labels: filtered.map(d => d.week),
     datasets: [
-      {
+      ...(showRaised ? [{
         label: 'Raised',
         data: filtered.map(d => d.value),
         backgroundColor: filtered.map(d => d.ipo ? MORE_PURPLE : MORE_PURPLE_DIM),
@@ -349,8 +385,8 @@ export function MOREMoneyFlowChart() {
         borderWidth: 1,
         borderRadius: 3,
         stack: 'flow',
-      },
-      ...(hasBuybacks ? [{
+      }] : []),
+      ...(showBuybacks ? [{
         label: 'Buybacks',
         data: filtered.map(d => -(buybackByDate[d.date] ?? 0)),
         backgroundColor: '#ef4444',
@@ -373,9 +409,12 @@ export function MOREMoneyFlowChart() {
   }
   return (
     <div>
-      <RangeButtons range={range} setRange={setRange} activeColor={MORE_PURPLE} />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
+        <SeriesToggle series={series} off={off} toggle={toggle} />
+        <RangeButtons range={range} setRange={setRange} activeColor={MORE_PURPLE} bare />
+      </div>
       <div role="img" aria-label="MORE weekly capital raised bar chart, in millions of pounds, with any share buybacks shown below zero" style={{ height: 240, position: 'relative' }}><canvas ref={canvasRef} /></div>
-      <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering · figures in £ millions · weekly bars are Tennyson's ATM sales from SWC's Thursday RNS (£ proceeds as stated, else shares × price){hasBuybacks ? ' · red bars below zero are MORE share buybacks' : ''}</p>
+      <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering · figures in £ millions · weekly bars are Tennyson's ATM sales from SWC's Thursday RNS (£ proceeds as stated, else shares × price){hasBuybacks ? ' · red bars below zero are MORE share buybacks · click a button above to hide or show either series' : ''}</p>
     </div>
   );
 }
