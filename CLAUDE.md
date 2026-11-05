@@ -24,6 +24,38 @@ the scheduled feed had to be triggered by hand. The workflow now runs 4 backup s
 13:00-13:08 UTC window instead of 2, which should make full silent drops rarer going forward, but isn't
 a substitute for this check.
 
+## DCY Regulatory & News Scan — Buybacks, ALL issuers (ADDED 5 Nov 2026)
+This section ADDS to the routine prompt (it does not replace any step). Treat it as a Step 10b, run after Step 10.
+
+- **Materiality (adds to Step 4):** ANY buyback/repurchase is MATERIAL — of a tracked preferred (STRC, STRF, STRK, STRD,
+  STRE, SATA, SATS, BMNP, CHAD, MORE) or of an issuer's common stock (MSTR, ASST, BMNR, DFDV, SWC ordinary), including a
+  new or enlarged buyback authorisation. Include it in the push notification.
+- **Report (adds to Step 5):** every report gets a "Buybacks (last 7 days)" section covering every issuer's preferred(s)
+  AND common: security, shares bought, average price, total cost (in the security's own currency — £ for MORE/SWC),
+  funding source, remaining authorisation if stated. Write "none found" for an issuer only after searching
+  (pair the ticker with the company name + "buyback"/"repurchase", e.g. "Smarter Web Company MORE preferred shares buyback").
+- **Website — the /money-flow page draws each preferred's buybacks as red bars below zero and nets them off its total,
+  automatically, as soon as a buyback row exists.** Per issuer:
+  - **Strategy (STRC/STRF/STRK/STRD/STRE) — AUTOMATIC.** The money-flow cron parses the "Shares Repurchased" table in
+    Strategy's weekly 8-K for all five series; capital-stack-counts.json nets them off the share counts. Do not hand-edit;
+    report the 8-K figures and flag it if one is missing from the counts file.
+  - **MORE — AUTOMATIC for SWC's usual wording.** scripts/capitalCounts.mjs parses each "MORE Preferred Shares Buyback"
+    RNS into `data/capital-stack-counts.json` `swc.preferred.buybackLedger`; `swc.preferred.sold` (the pyramid count)
+    takes off treasury shares, and the money-flow API draws the ledger as red bars. CHECK it: if a buyback RNS in the feed
+    is missing from `buybackLedger`, or the counts file `warnings` mention a MORE buyback, add the week by hand to
+    `SEED_MORE_BUYBACKS` in lib/moneyFlowStore.js — `{ week: 'Nov 2', date: '<Monday of the trade date>', value: <£ total
+    consideration in millions, 3 dp> }` — and flag it. Never hand-edit capital-stack-counts.json.
+  - **SATA, SATS (Strive), BMNP (Bitmine), CHAD (DeFi Dev) — HAND-KEPT.** When the issuer's own 8-K/press release discloses
+    a repurchase of that preferred WITH an amount, add a row to `SEED_SATA_BUYBACKS` / `SEED_SATS_BUYBACKS` /
+    `SEED_BMNP_BUYBACKS` / `SEED_CHAD_BUYBACKS` in lib/moneyFlowStore.js: `{ week: 'Nov 2', date: '<Monday of the week the
+    shares were bought>', value: <$ millions, up to 3 dp> }`, chronological; if that Monday already has a row, update it to
+    the week's total. Shares × stated average price is fine; with no price/amount stated, do NOT estimate — flag for Robin.
+    Second source needed unless the figure is straight from the filing text in the Step 0 feed. CHAD's stated value is $10.
+  - **Common-stock buybacks (MSTR, ASST, BMNR, DFDV, SWC ordinary) — REPORT ONLY**, no file changes (money-flow tracks
+    preferred capital).
+- Commit `lib/moneyFlowStore.js` changes with the same commit rule as the other steps. Add a one-line report note, e.g.
+  "Buybacks: MORE 1,775 sh £0.143M (auto, RNS); SATA/SATS/BMNP/CHAD none; STRC $151.8M (auto, 8-K)."
+
 ## AdSense ad units (T10)
 GoogleAd component uses placeholder slot strings ("home-banner", "strc-hub", etc.) not numeric AdSense IDs.
 Decision pending: either (a) switch to Auto ads and remove the manual <ins> render path, or (b) create real
