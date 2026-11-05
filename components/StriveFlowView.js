@@ -7,17 +7,28 @@ import { FlowLegend, FlowStackedChart, fmtMoney as fmt, monthYear } from '@/comp
 // since Nov 2025; SATS priced its IPO on 15 Oct 2026 and has raised through `satsWeekly` (same row shape as
 // sataWeekly) since.
 const COLOURS = { SATA: '#3b82f6', SATS: '#38bdf8' };
-const SERIES = [
-  { key: 'SATA', label: 'SATA', colour: COLOURS.SATA, value: r => r.SATA ?? 0 },
-  { key: 'SATS', label: 'SATS', colour: COLOURS.SATS, value: r => r.SATS ?? 0 },
-];
+// Buybacks (sataBuybacks / satsBuybacks from the API, kept in lib/moneyFlowStore.js) stack below zero in red,
+// like STRC's in the Strategy view. A buyback button only appears once that product has a buyback.
+const BUYBACK_COLOURS = { SATA: '#ef4444', SATS: '#f87171' };
+function seriesFor(bbSata, bbSats) {
+  return [
+    { key: 'SATA', label: 'SATA', colour: COLOURS.SATA, value: r => r.SATA ?? 0 },
+    { key: 'SATS', label: 'SATS', colour: COLOURS.SATS, value: r => r.SATS ?? 0 },
+    ...(bbSata.length ? [{ key: 'BB_SATA', label: 'SATA buybacks', colour: BUYBACK_COLOURS.SATA, value: r => -(r.BB_SATA ?? 0) }] : []),
+    ...(bbSats.length ? [{ key: 'BB_SATS', label: 'SATS buybacks', colour: BUYBACK_COLOURS.SATS, value: r => -(r.BB_SATS ?? 0) }] : []),
+  ];
+}
 
-function mergeRows(sata, sats) {
+function mergeRows(sata, sats, bbSata = [], bbSats = []) {
   const by = new Map();
-  for (const r of sata) by.set(r.date, { date: r.date, SATA: r.value });
-  for (const r of sats) by.set(r.date, { ...(by.get(r.date) ?? { date: r.date }), SATS: r.value });
+  const add = (rows, key) => { for (const r of rows) by.set(r.date, { ...(by.get(r.date) ?? { date: r.date }), [key]: (by.get(r.date)?.[key] ?? 0) + r.value }); };
+  add(sata, 'SATA');
+  add(sats, 'SATS');
+  add(bbSata, 'BB_SATA');
+  add(bbSats, 'BB_SATS');
   return [...by.values()].sort((a, b) => a.date.localeCompare(b.date));
 }
+const sumOf = rows => rows.reduce((n, r) => n + r.value, 0);
 
 function totalsOf(weekly) {
   let offerings = 0, atm = 0, last = null, lastAtm = null;
@@ -32,19 +43,26 @@ function totalsOf(weekly) {
 export default function StriveFlowView() {
   const [sata, setSata] = useState(null);
   const [sats, setSats] = useState([]);
+  const [bbSata, setBbSata] = useState([]);
+  const [bbSats, setBbSats] = useState([]);
   const [range, setRange] = useState('all');
   const [off, setOff] = useState(() => new Set());
   const toggle = k => setOff(prev => { const n = new Set(prev); if (n.has(k)) n.delete(k); else n.add(k); return n; });
   useEffect(() => {
     fetch('/api/money-flow-data')
       .then(r => r.json())
-      .then(d => { setSata(d?.sataWeekly ?? []); setSats(d?.satsWeekly ?? []); })
+      .then(d => { setSata(d?.sataWeekly ?? []); setSats(d?.satsWeekly ?? []); setBbSata(d?.sataBuybacks ?? []); setBbSats(d?.satsBuybacks ?? []); })
       .catch(() => {});
   }, []);
 
-  const rows = useMemo(() => mergeRows(sata ?? [], sats), [sata, sats]);
+  const rows = useMemo(() => mergeRows(sata ?? [], sats, bbSata, bbSats), [sata, sats, bbSata, bbSats]);
+  const series = useMemo(() => seriesFor(bbSata, bbSats), [bbSata, bbSats]);
   const a = totalsOf(sata ?? []);
   const s = totalsOf(sats);
+  const bbA = sumOf(bbSata);
+  const bbS = sumOf(bbSats);
+  const anyBb = bbA > 0 || bbS > 0;
+  const bbCell = v => (v ? `−${fmt(v)}` : '—');
   const th = 'text-right font-medium px-3 py-2 whitespace-nowrap';
   const td = 'text-right px-3 py-2 whitespace-nowrap';
 
@@ -56,12 +74,12 @@ export default function StriveFlowView() {
       </div>
       <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>
         Weekly capital raised by Strive&apos;s preferreds, from its 8-K filings. SATS priced its IPO on 15 October 2026 and has a $1bn ATM programme.
-        Click a ticker to hide or show it.
+        {' '}{anyBb ? 'Red bars below zero are buybacks. ' : ''}Click a ticker to hide or show it.
       </p>
 
-      <FlowLegend series={SERIES} off={off} toggle={toggle} range={range} setRange={setRange} />
+      <FlowLegend series={series} off={off} toggle={toggle} range={range} setRange={setRange} />
       {rows.length ? (
-        <FlowStackedChart rows={rows} series={SERIES} off={off} range={range}
+        <FlowStackedChart rows={rows} series={series} off={off} range={range}
           ariaLabel="Strive weekly capital raised by product, SATA and SATS, stacked" />
       ) : (
         <div style={{ height: 240 }} />
@@ -75,7 +93,8 @@ export default function StriveFlowView() {
               <th className={th}>Rate</th>
               <th className={th}>IPO &amp; follow-on</th>
               <th className={th}>ATM raised</th>
-              <th className={th}>Total raised</th>
+              {anyBb && <th className={th}>Buybacks</th>}
+              <th className={th}>{anyBb ? 'Net total' : 'Total raised'}</th>
               <th className={th}>Last ATM sale</th>
             </tr>
           </thead>
@@ -85,7 +104,8 @@ export default function StriveFlowView() {
               <td className={td} style={{ color: 'var(--text-muted)' }}>13.00%</td>
               <td className={td}>{a.offerings ? fmt(a.offerings) : '—'} {a.first && <span style={{ color: 'var(--text-muted)' }}>· {monthYear(a.first)}</span>}</td>
               <td className={td}>{a.atm ? fmt(a.atm) : '—'}</td>
-              <td className={`${td} font-semibold`}>{a.total ? fmt(a.total) : '—'}</td>
+              {anyBb && <td className={td}>{bbCell(bbA)}</td>}
+              <td className={`${td} font-semibold`}>{a.total - bbA ? fmt(a.total - bbA) : '—'}</td>
               <td className={td} style={{ color: 'var(--text-muted)' }}>{monthYear(a.lastAtm)}</td>
             </tr>
             <tr style={{ borderBottom: '1px solid var(--border)' }}>
@@ -93,7 +113,8 @@ export default function StriveFlowView() {
               <td className={td} style={{ color: 'var(--text-muted)' }}>15.00%</td>
               <td className={td}>{s.offerings ? fmt(s.offerings) : '—'}</td>
               <td className={td}>{s.atm ? fmt(s.atm) : '—'}</td>
-              <td className={`${td} font-semibold`}>{s.total ? fmt(s.total) : '—'}</td>
+              {anyBb && <td className={td}>{bbCell(bbS)}</td>}
+              <td className={`${td} font-semibold`}>{s.total - bbS ? fmt(s.total - bbS) : '—'}</td>
               <td className={td} style={{ color: 'var(--text-muted)' }}>{monthYear(s.lastAtm)}</td>
             </tr>
             <tr>
@@ -101,7 +122,8 @@ export default function StriveFlowView() {
               <td className={td} />
               <td className={td}>{fmt(a.offerings + s.offerings)}</td>
               <td className={td}>{fmt(a.atm + s.atm)}</td>
-              <td className={`${td} font-bold`}>{fmt(a.total + s.total)}</td>
+              {anyBb && <td className={td}>{bbCell(bbA + bbS)}</td>}
+              <td className={`${td} font-bold`}>{fmt(a.total + s.total - bbA - bbS)}</td>
               <td className={td} />
             </tr>
           </tbody>

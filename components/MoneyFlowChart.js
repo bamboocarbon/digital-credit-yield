@@ -224,7 +224,6 @@ function SeriesToggle({ series, off, toggle }) {
 
 const BMNP_WEEKS = [];
 const CHAD_WEEKS = [];
-const MORE_WEEKS = []; // £M — see SEED_MORE_WEEKLY in lib/moneyFlowStore.js
 
 function useLiveWeekly(fallback, key) {
   const [rows, setRows] = useState(fallback);
@@ -289,89 +288,35 @@ export function SATAMoneyFlowChart() {
   );
 }
 
-export function BMNPMoneyFlowChart() {
-  const weeks = useLiveWeekly(BMNP_WEEKS, 'bmnpWeekly');
-  const [range, setRange] = useState('all');
-  const canvasRef = useRef(null);
-  const filtered = filterByRange(padToCurrentWeek(weeks), range);
-  useBarChart({
-    canvasRef,
-    labels: filtered.map(d => d.week),
-    datasets: [{
-      data: filtered.map(d => d.value),
-      backgroundColor: filtered.map(d => d.ipo ? BMNP_YELLOW : BMNP_YELLOW_DIM),
-      borderColor: filtered.map(d => d.ipo ? BMNP_YELLOW : 'transparent'),
-      borderWidth: 1,
-      borderRadius: 3,
-    }],
-    logScale: false,
-  });
-  if (weeks.length === 0) {
-    return (
-      <div style={{ height: 240, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: '#6b7280', fontSize: 13, textAlign: 'center' }}>Listed on the NYSE June 16, 2026<br />Capital flow data will appear automatically once filed</p>
-      </div>
-    );
-  }
-  return (
-    <div>
-      <RangeButtons range={range} setRange={setRange} activeColor={BMNP_YELLOW} />
-      <div role="img" aria-label="BMNP weekly capital raised bar chart" style={{ height: 240, position: 'relative' }}><canvas ref={canvasRef} /></div>
-      <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering</p>
-    </div>
-  );
-}
-
-export function CHADMoneyFlowChart() {
-  const weeks = useLiveWeekly(CHAD_WEEKS, 'chadWeekly');
-  const [range, setRange] = useState('all');
-  const canvasRef = useRef(null);
-  const filtered = filterByRange(padToCurrentWeek(weeks), range);
-  useBarChart({
-    canvasRef,
-    labels: filtered.map(d => d.week),
-    datasets: [{
-      data: filtered.map(d => d.value),
-      backgroundColor: filtered.map(d => d.ipo ? CHAD_RED : CHAD_RED_DIM),
-      borderColor: filtered.map(d => d.ipo ? CHAD_RED : 'transparent'),
-      borderWidth: 1,
-      borderRadius: 3,
-    }],
-    logScale: false,
-  });
-  if (weeks.length === 0) {
-    return (
-      <div style={{ height: 240, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: '#6b7280', fontSize: 13, textAlign: 'center' }}>Listed on the Nasdaq September 8, 2026<br />Capital flow data will appear automatically once filed</p>
-      </div>
-    );
-  }
-  return (
-    <div>
-      <RangeButtons range={range} setRange={setRange} activeColor={CHAD_RED} />
-      <div role="img" aria-label="CHAD weekly capital raised bar chart" style={{ height: 240, position: 'relative' }}><canvas ref={canvasRef} /></div>
-      <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering</p>
-    </div>
-  );
-}
-
-const MORE_BUYBACKS_FALLBACK = []; // £M — see SEED_MORE_BUYBACKS in lib/moneyFlowStore.js
-
-export function MOREMoneyFlowChart() {
-  const weeks = useLiveWeekly(MORE_WEEKS, 'moreWeekly');
-  const buybacks = useLiveWeekly(MORE_BUYBACKS_FALLBACK, 'moreBuybacks');
+// Single-product chart (BMNP, CHAD, MORE): weekly capital raised, with that product's buybacks (if it has
+// any) stacked below zero in red and a toggle button for each series — the same treatment as STRC's
+// buybacks in the Strategy view. Buyback rows come from /api/money-flow-data `<ticker>Buybacks`.
+const BUYBACK_RED = '#ef4444';
+const NO_ROWS = [];
+function IssuerMoneyFlowChart({ ticker, colour, dim, weeksKey, buybackKey, unit = '$', emptyNote, footnote, aria }) {
+  const weeks = useLiveWeekly(NO_ROWS, weeksKey);
+  const buybacks = useLiveWeekly(NO_ROWS, buybackKey);
   const [range, setRange] = useState('all');
   const [off, setOff] = useState(() => new Set());
   const toggle = k => setOff(prev => { const n = new Set(prev); if (n.has(k)) n.delete(k); else n.add(k); return n; });
   const canvasRef = useRef(null);
   const filtered = filterByRange(padToCurrentWeek(weeks), range);
-  const buybackByDate = Object.fromEntries(buybacks.map(b => [b.date, b.value]));
+  // Buybacks are keyed to the Monday of their week; padToCurrentWeek buckets from the first raise, so sum
+  // each buyback into the padded week that contains it rather than relying on an exact date match.
+  const DAY = 86400000;
+  const buybackFor = d => {
+    const t = new Date(d.date + 'T00:00:00Z').getTime();
+    return buybacks.reduce((sum, b) => {
+      const bt = new Date(b.date + 'T00:00:00Z').getTime();
+      return bt >= t && bt < t + 7 * DAY ? sum + b.value : sum;
+    }, 0);
+  };
   const hasBuybacks = buybacks.length > 0;
   const showRaised = !off.has('RAISED');
   const showBuybacks = hasBuybacks && !off.has('BUYBACK');
   const series = [
-    { key: 'RAISED', label: 'MORE', colour: MORE_PURPLE },
-    ...(hasBuybacks ? [{ key: 'BUYBACK', label: 'MORE buybacks', colour: '#ef4444' }] : []),
+    { key: 'RAISED', label: ticker, colour },
+    ...(hasBuybacks ? [{ key: 'BUYBACK', label: `${ticker} buybacks`, colour: BUYBACK_RED }] : []),
   ];
   useBarChart({
     canvasRef,
@@ -380,16 +325,16 @@ export function MOREMoneyFlowChart() {
       ...(showRaised ? [{
         label: 'Raised',
         data: filtered.map(d => d.value),
-        backgroundColor: filtered.map(d => d.ipo ? MORE_PURPLE : MORE_PURPLE_DIM),
-        borderColor: filtered.map(d => d.ipo ? MORE_PURPLE : 'transparent'),
+        backgroundColor: filtered.map(d => d.ipo ? colour : dim),
+        borderColor: filtered.map(d => d.ipo ? colour : 'transparent'),
         borderWidth: 1,
         borderRadius: 3,
         stack: 'flow',
       }] : []),
       ...(showBuybacks ? [{
         label: 'Buybacks',
-        data: filtered.map(d => -(buybackByDate[d.date] ?? 0)),
-        backgroundColor: '#ef4444',
+        data: filtered.map(d => -buybackFor(d)),
+        backgroundColor: BUYBACK_RED,
         borderColor: 'transparent',
         borderWidth: 1,
         borderRadius: 3,
@@ -397,26 +342,45 @@ export function MOREMoneyFlowChart() {
       }] : []),
     ],
     logScale: false,
-    unit: '£',
+    unit,
     stacked: true,
   });
   if (weeks.length === 0) {
     return (
       <div style={{ height: 240, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: '#6b7280', fontSize: 13, textAlign: 'center' }}>Admitted to the London Stock Exchange October 14, 2026<br />Capital flow data will appear once the issuer announces it</p>
+        <p style={{ color: '#6b7280', fontSize: 13, textAlign: 'center' }}>{emptyNote}</p>
       </div>
     );
   }
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
-        <SeriesToggle series={series} off={off} toggle={toggle} />
-        <RangeButtons range={range} setRange={setRange} activeColor={MORE_PURPLE} bare />
+      <div style={{ display: 'flex', justifyContent: hasBuybacks ? 'space-between' : 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
+        {hasBuybacks && <SeriesToggle series={series} off={off} toggle={toggle} />}
+        <RangeButtons range={range} setRange={setRange} activeColor={colour} bare />
       </div>
-      <div role="img" aria-label="MORE weekly capital raised bar chart, in millions of pounds, with any share buybacks shown below zero" style={{ height: 240, position: 'relative' }}><canvas ref={canvasRef} /></div>
-      <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering · figures in £ millions · weekly bars are Tennyson's ATM sales from SWC's Thursday RNS (£ proceeds as stated, else shares × price){hasBuybacks ? ' · red bars below zero are MORE share buybacks · click a button above to hide or show either series' : ''}</p>
+      <div role="img" aria-label={`${aria}${hasBuybacks ? ', with share buybacks shown below zero' : ''}`} style={{ height: 240, position: 'relative' }}><canvas ref={canvasRef} /></div>
+      <p style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>Highlighted bar = IPO or follow-on offering{footnote ? ` · ${footnote}` : ''}{hasBuybacks ? ` · red bars below zero are ${ticker} share buybacks · click a button above to hide or show either series` : ''}</p>
     </div>
   );
+}
+
+export function BMNPMoneyFlowChart() {
+  return <IssuerMoneyFlowChart ticker="BMNP" colour={BMNP_YELLOW} dim={BMNP_YELLOW_DIM} weeksKey="bmnpWeekly" buybackKey="bmnpBuybacks"
+    aria="BMNP weekly capital raised bar chart"
+    emptyNote={<>Listed on the NYSE June 16, 2026<br />Capital flow data will appear automatically once filed</>} />;
+}
+
+export function CHADMoneyFlowChart() {
+  return <IssuerMoneyFlowChart ticker="CHAD" colour={CHAD_RED} dim={CHAD_RED_DIM} weeksKey="chadWeekly" buybackKey="chadBuybacks"
+    aria="CHAD weekly capital raised bar chart"
+    emptyNote={<>Listed on the Nasdaq September 8, 2026<br />Capital flow data will appear automatically once filed</>} />;
+}
+
+export function MOREMoneyFlowChart() {
+  return <IssuerMoneyFlowChart ticker="MORE" colour={MORE_PURPLE} dim={MORE_PURPLE_DIM} weeksKey="moreWeekly" buybackKey="moreBuybacks" unit="£"
+    aria="MORE weekly capital raised bar chart, in millions of pounds"
+    footnote="figures in £ millions · weekly bars are Tennyson's ATM sales from SWC's Thursday RNS (£ proceeds as stated, else shares × price)"
+    emptyNote={<>Admitted to the London Stock Exchange October 14, 2026<br />Capital flow data will appear once the issuer announces it</>} />;
 }
 
 // Combined chart: STRC ATM (post-IPO) vs SATA on shared weekly axis

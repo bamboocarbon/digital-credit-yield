@@ -146,6 +146,43 @@ export function parsePreferredAtmSales(items, atmFacility, prevLedger) {
   return { atmSold, ledger: { entries: entries.slice(-200) }, warnings };
 }
 
+// MORE buybacks: SWC buys MORE back into treasury (from 3 Nov 2026, under its 28 Sep 2026 GM authority) and announces
+// each purchase in a "MORE Preferred Shares Buyback" RNS: "on 3 November 2026, it purchased 1,775 of its MORE Preferred
+// Shares ... at a price of £80.354 per Preferred Share. The aggregate total consideration was £142,985 ... excluding
+// the 1,775 Preferred Shares held in treasury". Each RNS is applied once to a ledger ({ key, date, tradeDate, shares,
+// price, consideration }); treasury shares are no longer held by investors, so they come off `sold` (the pyramid
+// count), and the money-flow page draws each week's consideration as a red bar below zero (moreBuybackRows).
+// A buyback RNS that matches no known wording, or a stated treasury total that disagrees with the ledger, is warned.
+const DMY = s => { const m = s?.match(/(\d{1,2}) ([A-Z][a-z]+) (\d{4})/); return m && MONTHS[m[2]] ? `${m[3]}-${String(MONTHS[m[2]]).padStart(2, '0')}-${m[1].padStart(2, '0')}` : null; };
+export function parsePreferredBuybacks(items, prevLedger) {
+  const entries = [...(prevLedger?.entries ?? [])];
+  const warnings = [];
+  let treasury = null;
+  const sorted = [...items].sort((a, b) => (a.date + (a.time ?? '')).localeCompare(b.date + (b.time ?? '')));
+  for (const it of sorted) {
+    if (it.date <= ADMISSION) continue;
+    const t = (it.text ?? '').replace(/\s+/g, ' ');
+    const isBuyback = /Preferred Shares? (?:Buy ?back|Repurchase)/i.test(it.headline ?? '') ||
+      /(?:purchased|bought back|repurchased) [\d,]+ (?:of its )?(?:MORE )?Preferred Shares/i.test(t);
+    if (!isBuyback) continue;
+    const key = `${it.date}|${(it.headline ?? '').slice(0, 60)}`;
+    const held = t.match(/([\d,]+) Preferred Shares (?:are |now )?held in treasury/i);
+    if (held) treasury = num(held[1]);
+    if (entries.some(e => e.key === key)) continue;
+    const bought = t.match(/(?:on (\d{1,2} [A-Z][a-z]+ \d{4}),? )?(?:it |the Company )?(?:purchased|bought back|repurchased) ([\d,]+) (?:of its )?(?:MORE )?Preferred Shares/i);
+    if (!bought) { warnings.push(`SWC RNS ${key}: looks like a MORE buyback but matched no known wording — check MORE treasury shares by hand.`); continue; }
+    const shares = num(bought[2]);
+    const price = t.match(/(?:average )?price of £\s?([\d,]+(?:\.\d+)?) per (?:MORE )?Preferred Share/i);
+    const cons = t.match(/(?:aggregate )?(?:total )?consideration (?:was|of|paid was) £\s?([\d,]+(?:\.\d+)?)\s?(million|m\b)?/i);
+    const consideration = cons ? Math.round(gbp(cons[1], cons[2])) : price ? Math.round(shares * num(price[1])) : null;
+    if (consideration == null) warnings.push(`SWC RNS ${key}: MORE buyback of ${shares} shares has no £ amount — money-flow bar needs a hand entry (SEED_MORE_BUYBACKS).`);
+    entries.push({ key, date: it.date, tradeDate: DMY(bought[1]) ?? it.date, shares, price: price ? num(price[1]) : null, consideration });
+  }
+  const repurchased = entries.reduce((n, e) => n + e.shares, 0);
+  if (treasury != null && treasury !== repurchased) warnings.push(`MORE treasury shares stated as ${treasury} but the buyback ledger sums to ${repurchased} — check by hand (shares may have been cancelled, or an RNS missed).`);
+  return { repurchased, treasury, ledger: { entries: entries.slice(-200) }, warnings };
+}
+
 export function parseSwc(swcFeed, prev) {
   const items = [...(swcFeed?.items ?? [])].sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
   let ord = null, pref = null;
@@ -166,8 +203,11 @@ export function parseSwc(swcFeed, prev) {
   if (pref) {
     const atm = parsePreferredAtmSales(swcFeed?.items ?? [], pref.atmFacility, prev?.swc?.preferred?.atmSalesLedger);
     warnings.push(...atm.warnings);
-    // `sold` = shares sold to investors (IPO + ATM sold so far): what the pyramid prices, like Strategy's counts.
-    pref = { ...pref, atmSold: atm.atmSold, sold: pref.ipo + atm.atmSold, atmSalesLedger: atm.ledger };
+    const bb = parsePreferredBuybacks(swcFeed?.items ?? [], prev?.swc?.preferred?.buybackLedger);
+    warnings.push(...bb.warnings);
+    // `sold` = shares held by investors (IPO + ATM sold so far, less shares bought back into treasury): what the
+    // pyramid prices, like Strategy's counts.
+    pref = { ...pref, atmSold: atm.atmSold, repurchased: bb.repurchased, sold: pref.ipo + atm.atmSold - bb.repurchased, atmSalesLedger: atm.ledger, buybackLedger: bb.ledger };
   }
   return { ordinary: ord, preferred: pref, warnings };
 }

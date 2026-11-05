@@ -8,11 +8,22 @@ import { FlowLegend, FlowStackedChart, fmtMoney as fmt, monthYear } from '@/comp
 // included), with buybacks drawn as negative bars. STRE is a euro security, converted to dollars at the
 // EUR/USD rate on its IPO closing date so it sits on the same axis and in the same total.
 const USD = ['STRK', 'STRF', 'STRD', 'STRE', 'STRC'];
-const COLOURS = { STRK: '#a3e635', STRF: '#2dd4bf', STRD: '#60a5fa', STRC: '#15803d', STRE: '#f472b6', BUYBACK: '#ef4444' };
-const SERIES = [
-  ...USD.map(k => ({ key: k, label: k, colour: COLOURS[k], value: r => (r.net?.[k] ?? 0) * (STRATEGY_IPO[k].fx ?? 1) })),
-  { key: 'BUYBACK', label: 'STRC buybacks', colour: COLOURS.BUYBACK, value: r => -(r.bb?.STRC ?? 0) },
-];
+const COLOURS = { STRK: '#a3e635', STRF: '#2dd4bf', STRD: '#60a5fa', STRC: '#15803d', STRE: '#f472b6' };
+// Buybacks of any series (parsed from the same 8-K repurchase table) are drawn below zero in shades of red.
+// A series only gets a buyback button once Strategy has actually repurchased some of it.
+const BUYBACK_COLOURS = { STRC: '#ef4444', STRF: '#b91c1c', STRK: '#f87171', STRD: '#fca5a5', STRE: '#7f1d1d' };
+const BUYBACK_ORDER = ['STRC', 'STRF', 'STRK', 'STRD', 'STRE'];
+function seriesFor(weekly) {
+  return [
+    ...USD.map(k => ({ key: k, label: k, colour: COLOURS[k], value: r => (r.net?.[k] ?? 0) * (STRATEGY_IPO[k].fx ?? 1) })),
+    ...BUYBACK_ORDER.filter(k => weekly.some(r => (r.bb?.[k] ?? 0) > 0)).map(k => ({
+      key: `BB_${k}`, label: `${k} buybacks`, colour: BUYBACK_COLOURS[k], value: r => -(r.bb?.[k] ?? 0) * (STRATEGY_IPO[k].fx ?? 1),
+    })),
+  ];
+}
+function joinNames(list) {
+  return list.length <= 1 ? list.join('') : `${list.slice(0, -1).join(', ')} and ${list[list.length - 1]}`;
+}
 
 export default function StrategyFlowView() {
   const [weekly, setWeekly] = useState(SEED_STRATEGY_WEEKLY);
@@ -27,6 +38,8 @@ export default function StrategyFlowView() {
   }, []);
 
   const rows = strategyTotals(weekly);
+  const series = seriesFor(weekly);
+  const bbNames = joinNames(rows.filter(r => r.buyback > 0).map(r => r.ticker));
   const sum = k => rows.reduce((s, r) => s + r.usd[k], 0);
   const th = 'text-right font-medium px-3 py-2 whitespace-nowrap';
   const td = 'text-right px-3 py-2 whitespace-nowrap';
@@ -38,12 +51,12 @@ export default function StrategyFlowView() {
         <span className="text-sm" style={{ color: 'var(--text-muted)' }}>all preferred products</span>
       </div>
       <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>
-        Net cash raised each week by STRK, STRF, STRD, STRE and STRC, from Strategy&apos;s own 8-K tables. Red bars below zero are STRC buybacks. Click a ticker to hide or show it.
+        Net cash raised each week by STRK, STRF, STRD, STRE and STRC, from Strategy&apos;s own 8-K tables. {bbNames ? <>Red bars below zero are {bbNames} buybacks. </> : null}Click a ticker to hide or show it.
       </p>
 
-      <FlowLegend series={SERIES} off={off} toggle={toggle} range={range} setRange={setRange} />
-      <FlowStackedChart rows={weekly} series={SERIES} off={off} range={range}
-        ariaLabel="Strategy weekly capital raised by product, stacked, with STRC buybacks below zero" />
+      <FlowLegend series={series} off={off} toggle={toggle} range={range} setRange={setRange} />
+      <FlowStackedChart rows={weekly} series={series} off={off} range={range}
+        ariaLabel="Strategy weekly capital raised by product, stacked, with buybacks below zero" />
 
       <div className="overflow-x-auto mt-5">
         <table className="w-full text-sm" style={{ borderCollapse: 'collapse' }}>

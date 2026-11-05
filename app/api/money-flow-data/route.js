@@ -1,16 +1,23 @@
 import { NextResponse } from 'next/server';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { getMoneyFlowData, buildCumulative, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, mergeSatsWeekly, mergeMoreWeekly, mergeMoreBuybacks, moreAtmRows } from '@/lib/moneyFlowStore';
+import { getMoneyFlowData, buildCumulative, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, SEED_CHAD_WEEKLY, mergeSatsWeekly, mergeMoreWeekly, mergeMoreBuybacks, moreAtmRows, moreBuybackRows, mergeBuybacks, SEED_SATA_BUYBACKS, SEED_SATS_BUYBACKS, SEED_BMNP_BUYBACKS, SEED_CHAD_BUYBACKS } from '@/lib/moneyFlowStore';
 import { getStockQuote } from '@/lib/fetchStockData';
 import { mergeStrategyWeekly, deriveStrcWeekly, deriveStrategyRaisedWeekly } from '@/lib/strategyFlow';
 
 export const revalidate = 3600; // cache for 1 hour
 
-// MORE's weekly ATM sales, from the share-count ledger the daily scan-feed job maintains.
-async function moreAtm() {
+async function readCounts() {
   try {
-    const counts = JSON.parse(await readFile(join(process.cwd(), 'data', 'capital-stack-counts.json'), 'utf8'));
+    return JSON.parse(await readFile(join(process.cwd(), 'data', 'capital-stack-counts.json'), 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+// MORE's weekly ATM sales, from the share-count ledger the daily scan-feed job maintains.
+async function moreAtm(counts) {
+  try {
     const entries = counts?.swc?.preferred?.atmSalesLedger?.entries ?? [];
     if (!entries.length) return [];
     // Price only matters for entries whose RNS stated no £ proceeds
@@ -37,10 +44,16 @@ export async function GET() {
   const satsWeekly = mergeSatsWeekly(data?.satsWeekly);
   // MORE's weekly figures are hand/scan-maintained in the seed (no EDGAR feed), so merge the seed
   // over the stored blob on every read.
-  const moreWeekly = mergeMoreWeekly(data?.moreWeekly, await moreAtm());
-  // MORE's share buybacks are hand-kept too (see SEED_MORE_BUYBACKS) — shown on the MORE chart as
-  // negative bars and netted off its "capital raised" total, the same way STRC's buybacks are.
-  const moreBuybacks = mergeMoreBuybacks(data?.moreBuybacks);
+  const counts = await readCounts();
+  const moreWeekly = mergeMoreWeekly(data?.moreWeekly, await moreAtm(counts));
+  // Preferred buybacks for the non-Strategy issuers — shown on each chart as negative bars and netted off
+  // its "capital raised" total, the same way STRC's buybacks are. MORE's are parsed from SWC's buyback RNS
+  // (the share-count ledger) with SEED_MORE_BUYBACKS as a hand override; the rest are hand/scan-kept seeds.
+  const moreBuybacks = mergeMoreBuybacks(data?.moreBuybacks, moreBuybackRows(counts?.swc?.preferred?.buybackLedger?.entries));
+  const sataBuybacks = mergeBuybacks(SEED_SATA_BUYBACKS, data?.sataBuybacks);
+  const satsBuybacks = mergeBuybacks(SEED_SATS_BUYBACKS, data?.satsBuybacks);
+  const bmnpBuybacks = mergeBuybacks(SEED_BMNP_BUYBACKS, data?.bmnpBuybacks);
+  const chadBuybacks = mergeBuybacks(SEED_CHAD_BUYBACKS, data?.chadBuybacks);
 
   return NextResponse.json({
     ...(data ?? {}),
@@ -53,6 +66,10 @@ export async function GET() {
     chadWeekly,
     moreWeekly,
     moreBuybacks,
+    sataBuybacks,
+    satsBuybacks,
+    bmnpBuybacks,
+    chadBuybacks,
     cumulative: buildCumulative(strategyRaisedWeekly, sataWeekly, bmnpWeekly, chadWeekly, moreWeekly, satsWeekly),
     lastUpdated: data?.lastUpdated ?? null,
   }, {
