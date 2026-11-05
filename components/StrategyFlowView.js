@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { SEED_STRATEGY_WEEKLY, STRATEGY_IPO, mergeStrategyWeekly, strategyTotals } from '@/lib/strategyFlow';
 import { FlowLegend, FlowStackedChart, fmtMoney as fmt, monthYear } from '@/components/FlowChartParts';
+import { ASSET_RATES } from '@/lib/constants';
 
 // Strategy's five preferred series on one weekly axis: net cash raised stacked by product (IPOs
 // included), with buybacks drawn as negative bars. STRE is a euro security, converted to dollars at the
@@ -77,7 +78,7 @@ export default function StrategyFlowView() {
               return (
                 <tr key={r.ticker} style={{ borderBottom: '1px solid var(--border)' }}>
                   <td className="text-left px-3 py-2 font-bold">{r.ticker}</td>
-                  <td className={td} style={{ color: 'var(--text-muted)' }}>{r.rate}</td>
+                  <td className={td} style={{ color: 'var(--text-muted)' }}>{r.ticker === 'STRC' && ASSET_RATES.STRC ? `${ASSET_RATES.STRC.toFixed(2)}%` : r.rate}</td>
                   <td className={td}>{fmt(r.ipoNet, unit)}{r.eur && <span style={{ color: 'var(--text-muted)' }}> ≈ {fmt(r.usd.ipoNet)}</span>} <span style={{ color: 'var(--text-muted)' }}>· {monthYear(r.date)}</span></td>
                   <td className={td}>{r.atmNet ? fmt(r.atmNet, unit) : '—'}</td>
                   <td className={td}>{r.buyback ? `−${fmt(r.buyback, unit)}` : '—'}</td>
