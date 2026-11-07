@@ -13,7 +13,6 @@ const NO_CHART = {
   STRE: "STRE trades on the Luxembourg Euro MTF only a handful of days a year, so there is no reliable price history to chart — "
     + "the few prices that exist are stale last trades that don't match the market maker's indicative price. The hub shows that indicative "
     + "price (taken from Strategy's own STRE page) and the effective yield it implies.",
-  SATS: "SATS has been announced but has not priced or started trading, so there is no price history yet. The chart will appear once it lists.",
 };
 
 export default function ChartTool({ initialStock }) {
