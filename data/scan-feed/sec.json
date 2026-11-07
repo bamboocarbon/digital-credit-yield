@@ -1,5 +1,5 @@
 {
- "fetchedAt": "2026-11-06T13:55:38.252Z",
+ "fetchedAt": "2026-11-07T13:55:41.895Z",
  "MSTR": {
   "cik": "0001050446",
   "filings": [
@@ -210,6 +210,13 @@
  "BMNR": {
   "cik": "0001829311",
   "filings": [
+   {
+    "form": "DEFA14A",
+    "date": "2026-11-06",
+    "accession": "0001493152-26-050507",
+    "url": "https://www.sec.gov/Archives/edgar/data/1829311/000149315226050507/defa14a.htm",
+    "docs": []
+   },
    {
     "form": "8-K",
     "date": "2026-11-02",

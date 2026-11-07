@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-06T13:55:27.927Z",
+ "generatedAt": "2026-11-07T13:55:27.765Z",
  "windowDays": 14,
  "errors": [],
  "sec": {
@@ -7,13 +7,13 @@
   "items": {
    "MSTR": 12,
    "ASST": 7,
-   "BMNR": 2,
+   "BMNR": 3,
    "DFDV": 8
   }
  },
  "swc": {
   "ok": true,
-  "items": 6
+  "items": 5
  },
  "counts": {
   "ok": true,
