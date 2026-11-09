@@ -275,6 +275,12 @@ export const config = {
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
         { type: 'header', key: 'purpose', value: 'prefetch' },
+        // TEMP 2026-11-09 — Hobby Fluid Active CPU hit 100% of its 4h cap (Vercel email, pause
+        // threatened). Returning visitors already carry consent_region (30-day cookie), so skip
+        // the proxy for them entirely. Side effect: the pageview counter only sees a visitor's
+        // first page per 30 days, so it UNDERCOUNTS until this is removed. Revert once the
+        // rolling 30-day CPU total is comfortably under 4h (peak days drop out ~15-17 Nov).
+        { type: 'cookie', key: 'consent_region' },
         {
           type: 'header',
           key: 'user-agent',
