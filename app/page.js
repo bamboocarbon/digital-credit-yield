@@ -1,5 +1,4 @@
 import AssetCard from '@/components/AssetCard';
-import AadsAd from '@/components/AadsAd';
 import LatestNews from '@/components/LatestNews';
 import SubscribeBox from '@/components/SubscribeBox';
 import CompareTable from '@/components/CompareTable';
@@ -78,7 +77,6 @@ export default function HomePage() {
 
       <CompareTable />
 
-      <AadsAd />
 
       <div className="max-w-3xl mx-auto">
         <LatestNews />

@@ -1,8 +1,7 @@
 import Link from 'next/link';
-import { STRIVE_BTC_HOLDINGS, STRATEGY_BTC_HOLDINGS, BITMINE_ETH_HOLDINGS, DFDV_SOL_HOLDINGS, SMARTER_WEB_BTC_HOLDINGS } from '@/lib/constants';
+import { ASSET_RATES, STRIVE_BTC_HOLDINGS, STRATEGY_BTC_HOLDINGS, BITMINE_ETH_HOLDINGS, DFDV_SOL_HOLDINGS, SMARTER_WEB_BTC_HOLDINGS } from '@/lib/constants';
 import { PENDING_RATE_CHANGES } from '@/lib/pendingRateChanges';
 import SubNav from '@/components/SubNav';
-import AadsAd from '@/components/AadsAd';
 import AssetHubLive from '@/components/AssetHubLive';
 import IssuerCards from '@/components/IssuerCards';
 import CapitalStructure from '@/components/CapitalStructure';
@@ -21,8 +20,8 @@ function PendingRateNote({ ticker }) {
 }
 
 // Strategy's daily dividends for STRC, STRF, STRK and STRD (8-K 5 Oct 2026 / DEFA14A; stockholders
-// approved at the 28 Oct 2026 special meeting, per the 28 Oct 8-K, on preliminary voting results and
-// subject to the amended certificates of designations being filed and taking effect). STRE is not part of it.
+// approved at the 28 Oct 2026 special meeting; amended certificates filed with Delaware 29 Oct per the 29 Oct 8-K,
+// effective 1 Nov 2026 for STRC and 1 Jan 2027 for STRF/STRK/STRD). STRE is not part of it.
 // STRC went live 1 Nov 2026 (entry removed). TODO when STRF/STRK/STRD go live (1 Jan 2027): change that ticker's
 // PAYMENT_FREQUENCY + dividend files, then drop its entry here.
 const DAILY_APPROVED = {
@@ -36,7 +35,7 @@ function DailyProposalNote({ ticker }) {
   if (!when) return null;
   return (
     <div className="text-sm mb-4 px-4 py-2.5 rounded-lg" style={{ background: 'var(--accent-gold-dim, rgba(212,175,55,0.1))', border: '1px solid var(--accent-gold)', color: 'var(--text)' }}>
-      <strong>Approved:</strong> Strategy&apos;s stockholders voted on 28 October 2026 to pay {ticker}&apos;s dividend every calendar day, with the same rate and annual total (preliminary voting results; the amended terms still have to be filed). {when}{' '}
+      <strong>Approved:</strong> Strategy&apos;s stockholders voted on 28 October 2026 to pay {ticker}&apos;s dividend every calendar day, with the same rate and annual total. The amended certificate of designations was filed with Delaware on 29 October. {when}{' '}
       <Link href="/blog/strc-365-day-calendar-dividends-proposal" prefetch={false} className="underline">Read more</Link>
     </div>
   );
@@ -158,7 +157,7 @@ const TOOLS = {
 const DESCRIPTIONS = {
   STRC: (
     <div className="space-y-3">
-      <p>STRC is Strategy&apos;s perpetual preferred stock, listed on the Nasdaq. It pays a 12.00% annual dividend in cash: twice a month (~$0.50 per share) until October 2026, then every calendar day from 1 November 2026 (about $0.033 per share a day, declared in whole cents). Strategy publishes a four-band framework tying the rate to STRC&apos;s five-day VWAP against $100 par, but since the rate rose to 12.00% in July 2026 management has said each month it will recommend holding the rate flat there until STRC shows sustained, healthy trading near par — a discretionary override of what the published bands would otherwise trigger, confirmed again in Strategy&apos;s own filings through at least August 2026. The rate rise and the ring-fenced <strong>USD Reserve</strong> shown below both came out of the same June 2026 <Link href="/blog/strategy-transforms" style={{ color: 'var(--accent-gold)' }}>Digital Credit Capital Framework</Link> announcement, after STRC&apos;s price fell well below par. Semi-monthly payments were approved by shareholders on 8 June 2026 (first payment 15 July 2026), and daily payments on 28 October 2026 (effective 1 November 2026). STRC is available on most major brokerage platforms.</p>
+      <p>STRC is Strategy&apos;s perpetual preferred stock, listed on the Nasdaq. It pays a 12.00% annual dividend in cash, and since 1 November 2026 it has paid every calendar day (about $0.033 per share a day, declared in whole cents). Until October 2026 it paid twice a month (~$0.50 per share). Strategy publishes a four-band framework tying the rate to STRC&apos;s five-day VWAP against $100 par, but since the rate rose to 12.00% in July 2026 management has said each month it will recommend holding the rate flat there until STRC shows sustained, healthy trading near par — a discretionary override of what the published bands would otherwise trigger, confirmed again in Strategy&apos;s own filings through at least August 2026. The rate rise and the ring-fenced <strong>USD Reserve</strong> shown below both came out of the same June 2026 <Link href="/blog/strategy-transforms" style={{ color: 'var(--accent-gold)' }}>Digital Credit Capital Framework</Link> announcement, after STRC&apos;s price fell well below par. Semi-monthly payments were approved by shareholders on 8 June 2026 (first payment 15 July 2026), and daily payments on 28 October 2026 (effective 1 November 2026). STRC is available on most major brokerage platforms.</p>
       <p>As preferred stock, STRC sits below debt but above common equity in Strategy&apos;s capital structure. In the event of liquidation, preferred stockholders are paid before common shareholders, giving STRC a degree of protection that pure equity does not offer. Strategy&apos;s holdings of over {STRATEGY_BTC_HOLDINGS} Bitcoin provide a substantial asset base underpinning the instrument.</p>
       <p>Strategy (formerly MicroStrategy) is a Nasdaq-listed business intelligence and Bitcoin treasury company, founded in 1989. Under executive chairman Michael Saylor — one of the world&apos;s most prominent Bitcoin advocates — Strategy has made Bitcoin accumulation central to its corporate model, positioning itself as the world&apos;s largest corporate holder of Bitcoin.</p>
       <p>The one number I watch on STRC is how close it&apos;s trading to $100 — buy near or below par and the effective yield works in your favour; pay a premium and your real yield comes in under the headline rate. Worth knowing: the published VWAP bands aren&apos;t currently driving the rate month to month — management is holding it flat by choice while the price recovers, so don&apos;t assume the next print automatically follows the band table.</p>
@@ -170,7 +169,7 @@ const DESCRIPTIONS = {
   ),
   SATA: (
     <div className="space-y-3">
-      <p>SATA is Strive&apos;s perpetual preferred equity instrument, listed on the Nasdaq. It pays a 13.00% annual dividend distributed daily in cash (~$0.052 per share per day), with Strive aiming to hold it in a $99–$101 trading range. SATA is available on most major brokerage platforms.</p>
+      <p>SATA is Strive&apos;s perpetual preferred equity instrument, listed on the Nasdaq. It pays a {ASSET_RATES.SATA.toFixed(2)}% annual dividend distributed daily in cash (~$0.052 per share per day), with Strive aiming to hold it in a $99–$101 trading range. SATA is available on most major brokerage platforms.</p>
       <p>As preferred equity, SATA sits below debt but above common equity in Strive&apos;s capital structure. In the event of liquidation, preferred stockholders are paid before common shareholders, giving SATA a meaningful layer of protection relative to pure equity. Strive backs the instrument with over {STRIVE_BTC_HOLDINGS} Bitcoin in reserve assets and maintains 18 months of pre-funded cash reserves to cover dividend payments.</p>
       <p>Strive is a Nasdaq-listed financial services and Bitcoin treasury company, founded in 2022 by Vivek Ramaswamy. It positions itself as a Bitcoin-first asset manager focused on financial returns rather than ESG objectives, and has made Bitcoin a cornerstone of both its treasury strategy and its financial product offering.</p>
       <p>What I find reassuring about SATA is that 18-month cash buffer — the near-term dividend isn&apos;t riding directly on the Bitcoin price. What I&apos;d keep an eye on is that the rate is set at the board&apos;s discretion rather than by a published formula.</p>
@@ -194,10 +193,10 @@ const DESCRIPTIONS = {
   ),
   CHAD: (
     <div className="space-y-3">
-      <p>CHAD is DeFi Development Corp.&apos;s Variable Rate Series C Perpetual Preferred Stock, listed on the Nasdaq. It pays a 13.00% annual dividend distributed daily in cash, cumulative if ever missed, with a <strong>$10 stated value</strong> rather than the $100 the other three instruments here share — a real structural difference, not just a smaller number on the label. Management intends to manage the rate to keep the price within a long-term range, reviewed monthly or more often. CHAD closed its initial offering on 8 September 2026 and is available on most major brokerage platforms.</p>
+      <p>CHAD is DeFi Development Corp.&apos;s Variable Rate Series C Perpetual Preferred Stock, listed on the Nasdaq. It pays a {ASSET_RATES.CHAD.toFixed(2)}% annual dividend distributed daily in cash, cumulative if ever missed, with a <strong>$10 stated value</strong> rather than the $100 the other instruments here share — a real structural difference, not just a smaller number on the label. Management intends to manage the rate to keep the price within a long-term range, reviewed monthly or more often. CHAD closed its initial offering on 8 September 2026 and is available on most major brokerage platforms.</p>
       <p>As preferred stock, CHAD ranks senior to DeFi Development Corp.&apos;s common stock, and junior to the company&apos;s existing and future indebtedness. Net proceeds are earmarked for general corporate purposes, chiefly buying more Solana for the company&apos;s treasury, alongside other digital-asset investments and growth initiatives.</p>
       <p>DeFi Development Corp. (Nasdaq: DFDV) describes itself as the first public Digital Asset Treasury company focused on Solana — the same playbook Strategy popularised for Bitcoin, applied to SOL instead. It holds over {DFDV_SOL_HOLDINGS} SOL, the second-largest corporate Solana treasury after Forward Industries, and raises capital — much of it now through CHAD — to keep growing it, positioning the stock as a proxy for Solana accumulation with a preferred-dividend layer on top.</p>
-      <p>What I&apos;d flag plainly: CHAD is the newest and smallest instrument on this site by some distance, with barely a month of trading history and no published rate-adjustment formula the way STRC has — the $10 stated value and daily cadence make it feel closest to SATA in mechanics, but it hasn&apos;t built the track record the other three have yet. I&apos;m watching how consistently the daily dividend actually lands before I&apos;d call it proven.</p>
+      <p>What I&apos;d flag plainly: CHAD is one of the two smallest instruments on this site — MORE is similar in size — with only a couple of months of trading history and no published rate-adjustment formula the way STRC has. The $10 stated value and daily cadence make it feel closest to SATA in mechanics, but it hasn&apos;t built the track record the longer-established ones have yet. I&apos;m watching how consistently the daily dividend actually lands before I&apos;d call it proven.</p>
       <a href="https://defidevcorp.com" target="_blank" rel="noopener noreferrer"
         className="inline-block text-sm underline mt-1" style={{ color: 'var(--accent-gold)' }}>
         Visit DefiDevCorp.com
@@ -220,8 +219,8 @@ const DESCRIPTIONS = {
 
 // ── Strategy's other preferreds and Strive's SATS ─────────────────────────────────────────────
 // Reference-tier hubs: same tools as the main tickers, generated from one helper rather than
-// five hand-written blocks. Copy is factual (terms from each issuer's filings); no personal-voice
-// closing line — that's Robin's to write.
+// five hand-written blocks. Copy is factual (terms from each issuer's filings) plus Robin's own
+// view paragraph per ticker, written in his style.
 const toolsFor = (t, { govt = 'US Treasuries', money = 'dollar', cadence = 'quarterly', par = '$100' } = {}) => {
   const low = t.toLowerCase();
   return [
@@ -244,11 +243,20 @@ const Visit = ({ href, label }) => (
   </a>
 );
 
+const TRACK_NOTE = (
+  <p className="text-xs italic">
+    I track STRC, STRF, STRK, STRD, STRE, SATA, SATS, BMNP, CHAD and MORE daily and hold positions in MSTR and ASST. Prices and yields quoted in the text above are from the date shown and will have moved. Not financial advice.
+  </p>
+);
+
 DESCRIPTIONS.STRK = (
   <div className="space-y-3">
     <p>STRK is Strategy&apos;s 8.00% Series A Perpetual Strike Preferred Stock, listed on the Nasdaq. It pays a fixed 8.00% annual dividend on a $100 stated value ($8.00 a share a year), in cash, cumulative if ever missed. It pays $2.00 a quarter until 31 December 2026, then every calendar day from 1 January 2027. Unlike STRC and STRF, it is <strong>convertible</strong>: each share can convert into 0.1 share of MSTR common stock, so holders get an equity option alongside the income.</p>
-    <p>STRK ranks below Strategy&apos;s debt, STRF, STRC and STRE, and above STRD and the common stock. The conversion feature is why it trades well below its $100 stated value at times: part of what you hold is an option on MSTR, and the headline 8% is lower than the other fixed-rate series as a result. When STRK trades below $100, the effective yield — the dividend measured against the price you actually pay — is higher than 8%.</p>
+    <p>STRK ranks below Strategy&apos;s debt, STRF, STRC and STRE, and above STRD and the common stock.</p>
+    <p>The number I look at first on STRK is the conversion price. 0.1 of an MSTR share per STRK share works out at an initial conversion price of $1,000 for each MSTR share. When STRK launched in February 2025, with 7.3 million shares sold at $80 (about $584 million gross), MSTR was trading at $340.09. On 10 November 2026 it was $121.07. MSTR would need to rise more than eightfold before converting beats simply holding the income, and a share of STRK would convert today into about $12 of MSTR stock. The market is pricing the option as close to worthless, so STRK trades on its dividend instead: $8 a year on a price of $67.26 is about 11.9%, which is more than STRF&apos;s 9.8% even though STRK&apos;s headline rate is two points lower.</p>
+    <p>My view: I treat STRK as a fixed 8% preferred with a free option on MSTR attached, not as an equity bet. If MSTR ever climbs back towards $1,000 the option becomes the story, but I wouldn&apos;t buy it for that. The wider picture of where it sits is in my <Link href="/blog/strategy-capital-structure" style={{ color: 'var(--accent-gold)' }}>Strategy capital structure article</Link>.</p>
     <p>Strategy (formerly MicroStrategy) is a Nasdaq-listed Bitcoin treasury company and the world&apos;s largest corporate holder of Bitcoin, with over {STRATEGY_BTC_HOLDINGS} BTC.</p>
+    {TRACK_NOTE}
     <Visit href="https://www.strategy.com" label="Visit Strategy.com" />
   </div>
 );
@@ -256,7 +264,10 @@ DESCRIPTIONS.STRF = (
   <div className="space-y-3">
     <p>STRF is Strategy&apos;s 10.00% Series A Perpetual Strife Preferred Stock, listed on the Nasdaq. It pays a fixed 10.00% annual dividend on a $100 stated value ($10.00 a share a year), in cash, cumulative if ever missed. It pays $2.50 a quarter until 31 December 2026, then every calendar day from 1 January 2027.</p>
     <p>STRF is the most senior of Strategy&apos;s preferred series: only Strategy&apos;s debt ranks ahead of it, and it ranks ahead of STRC, STRE, STRK and STRD. Because the rate is fixed and the instrument trades close to its stated value, STRF behaves most like conventional preferred income of the Strategy range.</p>
+    <p>A detail that is easy to miss is that STRF didn&apos;t launch at $100. In March 2025 Strategy sold 8.5 million shares at $85, about $722.5 million gross, so the first buyers were paid 11.8% on the money they put in. On 10 November 2026 STRF was $102.44, which makes the yield on today&apos;s price 9.8%. I think of that whenever STRF gets called boring: buyers who came in at $85 are up about 20% on the price and have collected the dividend as well. Anyone buying now gets the dividend and not much else, and a price above $100 means a yield below the 10% headline.</p>
+    <p>My view: STRF is the one I use as the yardstick for the rest of Strategy&apos;s range. It pays less than STRC (12%) and less than STRK or STRD at their current prices, and what you get for that is the top seat in the queue and a rate that doesn&apos;t move. STRC is the more actively managed rate, and I compare the two in <Link href="/blog/strategy-capital-structure" style={{ color: 'var(--accent-gold)' }}>my Strategy capital structure article</Link>.</p>
     <p>Strategy (formerly MicroStrategy) is a Nasdaq-listed Bitcoin treasury company and the world&apos;s largest corporate holder of Bitcoin, with over {STRATEGY_BTC_HOLDINGS} BTC.</p>
+    {TRACK_NOTE}
     <Visit href="https://www.strategy.com" label="Visit Strategy.com" />
   </div>
 );
@@ -264,7 +275,10 @@ DESCRIPTIONS.STRD = (
   <div className="space-y-3">
     <p>STRD is Strategy&apos;s 10.00% Series A Perpetual Stride Preferred Stock, listed on the Nasdaq. It pays a stated 10.00% annual dividend on a $100 stated value ($10.00 a share a year), in cash, at $2.50 a quarter until 31 December 2026 and then every calendar day from 1 January 2027. Unlike STRF, STRK and STRC, STRD&apos;s dividend is <strong>non-cumulative</strong>: a payment that isn&apos;t declared doesn&apos;t build up as an amount owed.</p>
     <p>STRD is the most junior of Strategy&apos;s preferred series, ranking just above the common stock. That position, together with the non-cumulative dividend, is why it trades well below its $100 stated value, and why its effective yield — the dividend against the price you actually pay — is well above the 10% headline rate.</p>
+    <p>STRD is the one I would read the prospectus twice for. It launched in June 2025 at $85 a share, with 11,764,700 shares and about $1.0 billion gross. On 10 November 2026 it was $68.50: below what the first buyers paid, and about 31% under its stated value. At that price $10 a year is a yield of about 14.6%. Strategy only pays a dividend &quot;when, as and if declared&quot;, and with STRD a skipped payment is gone for good. I read the extra yield as the price the market puts on that right to skip.</p>
+    <p>My view: STRD works for me as a gauge of how worried the market is about Strategy&apos;s dividend bill. If it starts moving back towards $100, the worry is fading; while it sits near $70 the market is telling you what it thinks of a preferred that can be skipped without penalty. That makes it the hardest of the Strategy series to hold with confidence, whatever the headline yield says. See <Link href="/blog/strategy-capital-structure" style={{ color: 'var(--accent-gold)' }}>my Strategy capital structure article</Link> for where it ranks.</p>
     <p>Strategy (formerly MicroStrategy) is a Nasdaq-listed Bitcoin treasury company and the world&apos;s largest corporate holder of Bitcoin, with over {STRATEGY_BTC_HOLDINGS} BTC.</p>
+    {TRACK_NOTE}
     <Visit href="https://www.strategy.com" label="Visit Strategy.com" />
   </div>
 );
@@ -272,15 +286,21 @@ DESCRIPTIONS.STRE = (
   <div className="space-y-3">
     <p>STRE is Strategy&apos;s 10.00% Series A Perpetual Stream Preferred Stock — its only <strong>euro-denominated</strong> preferred. It has a €100 stated value and pays a fixed 10.00% a year (€10.00 a share, €2.50 a quarter) in euros, cumulative if ever missed. It is listed on the Luxembourg Stock Exchange&apos;s Euro MTF market, not on Nasdaq, and is available only to professional and institutional investors in the European Economic Area — not to retail investors, and not in the UK.</p>
     <p>STRE ranks below Strategy&apos;s debt, STRF and STRC, and above STRK, STRD and the common stock.</p>
-    <p>STRE has no standard market-data feed: the price shown here is the indicative mid-point of bid and ask as reported by a market maker, taken from Strategy&apos;s own STRE page and updated by hand, so it may lag the market.</p>
+    <p>STRE is the Strategy instrument I find hardest to follow, because the price isn&apos;t public in the way the others are. The price shown here is the indicative mid-point of bid and ask reported by a market maker, taken from Strategy&apos;s own STRE page and updated by hand — €79 on 13 October — so it may lag the market. It is not a live quote and I wouldn&apos;t trade off it.</p>
+    <p>What I can say with confidence comes from the prospectus. In early November 2025 Strategy sold 7,750,000 shares at €80, about €620 million gross, after upsizing the deal from the 3.5 million shares it launched with. At €79 the yield on that indicative price is about 12.7%. The demand was real, and it came from European institutions rather than from the retail buyers who dominate the dollar series.</p>
+    <p>My view: I track STRE less for anything my readers can buy and more for what it says about where Strategy goes for money. If you&apos;re in the UK, MORE is the nearest thing you can actually hold in a local currency, and I explain why that matters in <Link href="/blog/more-preferred-uk-investor-fx" style={{ color: 'var(--accent-gold)' }}>my article on MORE and the currency toll</Link>.</p>
+    {TRACK_NOTE}
     <Visit href="https://www.strategy.com/stre/learn" label="Visit Strategy.com/stre" />
   </div>
 );
 DESCRIPTIONS.SATS = (
   <div className="space-y-3">
-    <p>SATS is Strive&apos;s 15.00% Series A Perpetual SATS Preferred Stock. On 15 October 2026 Strive priced an initial public offering of 7,000,000 shares at $90 each (about $630 million) against a $100 stated value, with a Nasdaq listing applied for. It pays a 15.00% annual dividend ($15.00 a share a year) in cash on each business day, if declared and cumulative if ever missed, beginning 9 November 2026.</p>
-    <p>At closing Strive intends to set aside a dividend reserve of $22.50 per SATS share — 18 months of dividends. SATS would rank below Strive&apos;s SATA preferred, so it carries more risk than SATA, which is the trade-off for the higher rate. SATS has not priced or begun trading yet: <strong>everything on this page is based on the announced terms, not a live market</strong>, and will be updated once the offering prices.</p>
+    <p>SATS is Strive&apos;s 15.00% Series A Perpetual SATS Preferred Stock, listed on the Nasdaq Global Market. On 15 October 2026 Strive priced 7,000,000 shares at $90 each (about $630 million gross), against a $100 stated value, after upsizing the deal from 5 million shares two days earlier. It pays a fixed 15.00% annual dividend ($15.00 a share a year) in cash on each business day, if declared and cumulative if ever missed. The first payment was expected on 9 November 2026.</p>
+    <p>At closing on 20 October Strive added to its dividend reserve an amount equal to 18 months of SATS dividends, $22.50 a share, or about $157.5 million across the 7 million shares. SATS ranks below Strive&apos;s SATA preferred, so it carries more risk than SATA, which is the trade-off for the higher rate.</p>
+    <p>SATS is the first preferred I track with a rate that doesn&apos;t move: the 15% is fixed for life, unlike SATA, where Strive adjusts the rate to try to hold the price near par. On 10 November it was trading at $95.49, which makes the yield on that price about 15.7%. Buyers at the $90 issue price earn 16.7% on what they paid, and each point the price climbs towards $100 takes some of that away. That is the number I&apos;m watching.</p>
+    <p>My view: the structure is better than the rate. The reserve, the narrow redemption rights and the buy-back right on a takeover all favour holders, and Strive has no debt ahead of either preferred. Against that, SATS is the junior of two preferreds issued by a company with one volatile asset, and nothing stops Strive adding stock that ranks ahead or equal later. I went through the prospectus in <Link href="/blog/sats-strive-15-percent-fixed-preferred" style={{ color: 'var(--accent-gold)' }}>my SATS article</Link>.</p>
     <p>Strive is a Nasdaq-listed Bitcoin treasury and asset management company, with over {STRIVE_BTC_HOLDINGS} Bitcoin.</p>
+    {TRACK_NOTE}
     <Visit href="https://strive.com" label="Visit Strive.com" />
   </div>
 );
@@ -337,7 +357,6 @@ export default function AssetHub({ ticker, name }) {
         </p>
       </div>
 
-      <AadsAd />
 
       <div className="mt-8 p-5 rounded-xl" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
         <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>Important Disclaimer</p>

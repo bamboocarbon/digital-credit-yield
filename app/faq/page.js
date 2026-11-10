@@ -42,7 +42,7 @@ const faqs = [
   },
   {
     q: 'What happens if Bitcoin or Ethereum crashes?',
-    a: 'The dividends are paid in cash by the issuing companies, not in crypto — but the issuers’ treasuries are crypto, so a severe, sustained fall would shrink the asset base that supports their capital raising. Strategy and Strive hold Bitcoin, and Strive also keeps a cash reserve covering more than 18 months of SATA dividends as a buffer. Bitmine, the company behind BMNP, holds Ethereum and funds its dividend largely from staking income, so its exposure is to ETH rather than Bitcoin. DeFi Development Corp., behind CHAD, holds Solana instead, and is the newest and smallest of the four treasuries here — a crypto drawdown does not automatically affect the dividend, but it increases the risk around future payments and the share price for all of them.',
+    a: 'The dividends are paid in cash by the issuing companies, not in crypto — but the issuers’ treasuries are crypto, so a severe, sustained fall would shrink the asset base that supports their capital raising. Strategy and Strive hold Bitcoin, and Strive also keeps a cash reserve covering more than 18 months of SATA dividends as a buffer. Bitmine, the company behind BMNP, holds Ethereum and funds its dividend largely from staking income, so its exposure is to ETH rather than Bitcoin. DeFi Development Corp., behind CHAD, holds Solana instead, and is among the smallest of the treasuries here — a crypto drawdown does not automatically affect the dividend, but it increases the risk around future payments and the share price for all of them.',
     link: { href: '/risks', label: 'Understand the full risk picture' },
   },
   {

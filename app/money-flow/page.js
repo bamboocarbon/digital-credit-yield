@@ -1,5 +1,4 @@
 import { Suspense } from 'react';
-import AadsAd from '@/components/AadsAd';
 import CumulativeFlowChart from '@/components/CumulativeFlowChart';
 import MoneyFlowSelector from '@/components/MoneyFlowSelector';
 import { BMNP_ENABLED } from '@/lib/constants';
@@ -150,7 +149,6 @@ export default function MoneyFlowPage() {
         </div>
       </div>
 
-      <AadsAd />
 
       {/* Disclaimer */}
       <div className="rounded-xl p-5 mt-6" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>

@@ -29,7 +29,7 @@ export default function PrivacyPolicyPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
       <h1 className="text-3xl font-bold mb-2">Privacy Policy</h1>
-      <p className="text-sm mb-10" style={{ color: 'var(--text-muted)' }}>Last updated: September 2026</p>
+      <p className="text-sm mb-10" style={{ color: 'var(--text-muted)' }}>Last updated: November 2026</p>
 
       <Section title="1. What Data We Collect">
         <p>We may collect the following data when you use Digital Credit Yield:</p>
@@ -49,7 +49,7 @@ export default function PrivacyPolicyPage() {
           <li>Understand how visitors use the site (analytics) in order to improve it</li>
           <li>Respond to enquiries submitted via the contact form</li>
           <li>Send the daily snapshot email to newsletter subscribers — you can unsubscribe at any time via the link in every email or at <a href="/unsubscribe" className="underline" style={{ color: 'var(--accent-gold)' }}>digitalcredityield.com/unsubscribe</a>, and your address is removed immediately</li>
-          <li>Serve relevant advertisements via A-Ads — set automatically unless you're visiting from the UK or EEA, where they're only set once you accept our cookie banner</li>
+          <li>Show advertisements through Google AdSense — advertising cookies are set automatically unless you're visiting from the UK or EEA, where they're only set once you accept our cookie banner</li>
           <li>Preserve your calculator settings (Growth Projector, vs Treasuries, and Dividend History income calculator inputs) between visits for your convenience</li>
           <li>Build and maintain a long-term dividend payment history for STRC, SATA, BMNP, CHAD and MORE — when you visit a Dividend History page, our server may fetch the latest public dividend data from Yahoo Finance (or, for BMNP and CHAD, the issuer's own SEC filings) and store it on our server to grow this record over time. This process involves no personal data whatsoever; only publicly available market information is stored.</li>
           <li>Display weekly capital flow data for STRC, SATA, BMNP, CHAD and MORE on the Money Flow page — this data is compiled from publicly available SEC 8-K filings (and, for MORE, London Stock Exchange RNS announcements) and stored on our server. No personal data is involved; only publicly available regulatory filings are used.</li>
@@ -61,7 +61,8 @@ export default function PrivacyPolicyPage() {
         <p>This site uses the following third-party services, each with their own privacy policies:</p>
         <ul className="list-disc pl-5 space-y-1">
           <li><strong>Google Analytics</strong> — website analytics. <a href="https://policies.google.com/privacy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Google Privacy Policy</a></li>
-          <li><strong>A-Ads</strong> — advertising, including ads personalised from your past visits to this and other sites. <a href="https://aads.com/privacy_policy/" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">A-Ads Privacy Policy</a></li>
+          <li><strong>Google AdSense</strong> — advertising. Google and its partners use cookies and similar technologies to show ads, including ads based on your prior visits to this and other websites, and to measure ad performance. <a href="https://policies.google.com/technologies/partner-sites" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">How Google uses information from sites that use its services</a></li>
+          <li><strong>Ahrefs Web Analytics</strong> and <strong>Vercel Web Analytics</strong> — privacy-friendly traffic statistics that do not use cookies. <a href="https://ahrefs.com/privacy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Ahrefs Privacy Policy</a> · <a href="https://vercel.com/docs/analytics/privacy-policy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Vercel Analytics privacy</a></li>
           <li><strong>TradingView (lightweight-charts)</strong> — open-source charting library used to render price and yield charts. Runs entirely client-side with no external requests to TradingView servers and no user data is collected or transmitted.</li>
           <li><strong>Yahoo Finance</strong> — live price and dividend data, fetched server-side (no user data shared).</li>
           <li><strong>Vercel</strong> — hosting platform and Blob storage. Our server stores non-personal market data (capital flow records, daily card data) in Vercel's Blob storage service. If you subscribe to the newsletter, your email address is stored in private Blob storage and used solely to send the daily snapshot. <a href="https://vercel.com/legal/privacy-policy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Vercel Privacy Policy</a></li>
@@ -77,16 +78,19 @@ export default function PrivacyPolicyPage() {
           <li><strong>Essential cookies</strong>: your cookie consent preference is stored in your browser's local storage; a short-lived cookie records which of these regions you're browsing from so the site knows whether to show the banner</li>
           <li><strong>Calculator preferences</strong>: Growth Projector and vs Treasuries inputs are stored in your browser's local storage for your convenience — these are not consent-dependent as no personal data is involved and nothing is transmitted externally</li>
           <li><strong>Analytics cookies</strong> (Google Analytics)</li>
-          <li><strong>Advertising cookies</strong> (A-Ads)</li>
+          <li><strong>Advertising cookies</strong> (Google AdSense and Google's advertising partners)</li>
         </ul>
       </Section>
 
       <Section title="5. Advertising">
         <p>
-          We use A-Ads to display advertisements on this site. A-Ads and its partners use cookies and similar technologies to serve ads, including ads based on your prior visits to this site and other sites across the internet — known as interest-based or personalised advertising.
+          We use Google AdSense to display advertisements on this site. Third-party vendors, including Google, use cookies to serve ads based on your prior visits to this website or other websites. Google&apos;s use of advertising cookies enables it and its partners to serve ads to you based on your visit to this site and/or other sites on the internet.
         </p>
         <p>
-          You can decline advertising cookies via our cookie banner if you're in the UK or EEA (see Cookie Policy above), or block or delete cookies at any time in your browser settings — though some adverts may then be less relevant. For details of what A-Ads collects and how, see the <a href="https://aads.com/privacy_policy/" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">A-Ads Privacy Policy</a>.
+          If you&apos;re visiting from the UK or EEA, advertising cookies are only set once you accept our cookie banner. If you decline, Google may still show ads, but they will not be personalised using cookies or your browsing history. Outside the UK and EEA, advertising cookies are set automatically and no banner is shown.
+        </p>
+        <p>
+          You can opt out of personalised advertising by visiting <a href="https://adssettings.google.com" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Google Ads Settings</a>, or opt out of some third-party vendors&apos; use of cookies for personalised advertising at <a href="https://www.aboutads.info" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">aboutads.info</a>. You can also block or delete cookies at any time in your browser settings. For more on how Google uses data, see <a href="https://policies.google.com/technologies/ads" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Google&apos;s advertising policies</a>.
         </p>
       </Section>
 

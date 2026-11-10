@@ -30,9 +30,8 @@ export default function CookieBanner() {
         ad_personalization: 'granted',
       });
     }
-    // AadsAd.js reads consent once on mount (no shared React context here,
-    // unlike polkadotbike's ConsentProvider) — this lets it pick up an
-    // in-page Accept/Decline without needing a full page reload.
+    // Lets any client component that reads consent (see lib/consent.js) pick
+    // up an in-page Accept/Decline without needing a full page reload.
     window.dispatchEvent(new Event('cookieConsentChange'));
     setVisible(false);
   }

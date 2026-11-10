@@ -1,3 +1,10 @@
+import { ASSET_RATES } from '@/lib/constants';
+
+// Every rate on this page is read from ASSET_RATES (lib/yieldRateHistory.js), so a rate change added by
+// the daily scan shows here automatically — never hardcode a % in the cards below. Revalidates daily so a
+// rate with a future effective date goes live without waiting for a redeploy.
+export const revalidate = 86400;
+
 export const metadata = {
   alternates: { canonical: '/about' },
   title: 'About',
@@ -78,13 +85,43 @@ export default function AboutPage() {
       </p>
 
       <h2 className="text-xl font-semibold mb-4">What I Track</h2>
+      <div className="space-y-4 mb-4">
+        {[
+          {
+            name: 'Strategy Perpetual Preferred Stock',
+            items: [
+              { ticker: 'STRC', desc: `Pays ${ASSET_RATES.STRC.toFixed(2)}% annual dividends in cash, paid every calendar day since 1 November 2026, having been semi-monthly until October 2026. Dividend rate adjusts to maintain trading near its $100 par value.` },
+              { ticker: 'STRF', desc: `Pays a fixed ${ASSET_RATES.STRF.toFixed(2)}% annual dividend. The most senior of Strategy's preferreds. Quarterly until 31 December 2026, daily from 1 January 2027.` },
+              { ticker: 'STRK', desc: `Pays a fixed ${ASSET_RATES.STRK.toFixed(2)}% annual dividend and is convertible into MSTR common stock. Quarterly until 31 December 2026, daily from 1 January 2027.` },
+              { ticker: 'STRD', desc: `Pays a ${ASSET_RATES.STRD.toFixed(2)}% annual dividend, non-cumulative, and ranks below the other series. Quarterly until 31 December 2026, daily from 1 January 2027.` },
+              { ticker: 'STRE', desc: `Pays a fixed ${ASSET_RATES.STRE.toFixed(2)}% annual dividend quarterly, in euros. Listed in Luxembourg for professional and institutional investors in the EEA.` },
+            ],
+          },
+          {
+            name: 'Strive Preferred Equity',
+            items: [
+              { ticker: 'SATA', desc: `Pays ${ASSET_RATES.SATA.toFixed(2)}% annualised in daily cash dividends. Targets a $99–$101 trading range. Strive holds a dividend reserve of 18 months of dividends, in cash and marketable securities, and 43,124 bitcoin (as of 30 October 2026, per its latest 10-Q).` },
+              { ticker: 'SATS', desc: `Pays a fixed ${ASSET_RATES.SATS.toFixed(2)}% annual dividend on a $100 base, in daily cash dividends. Ranks below SATA and above Strive common stock.` },
+            ],
+          },
+        ].map(group => (
+          <div key={group.name} className="p-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+            <p className="font-semibold mb-3">{group.name}</p>
+            <div className="space-y-3">
+              {group.items.map(item => (
+                <p key={item.ticker} className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                  <strong style={{ color: 'var(--text)' }}>{item.ticker}</strong> — {item.desc}
+                </p>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
       <div className="space-y-4 mb-8">
         {[
-          { ticker: 'STRC', name: "Strategy's Perpetual Preferred Stock", desc: "Pays 12.00% annual dividends in cash, semi-monthly until October 2026 and daily from 1 November 2026. Dividend rate adjusts to maintain trading near its $100 par value." },
-          { ticker: 'SATA', name: "Strive's Preferred Equity Instrument", desc: "Pays 13.00% annualised in daily cash dividends. Targets a $99–$101 trading range, backed by 18+ months of cash reserves and over 19,000 Bitcoin." },
-          { ticker: 'BMNP', name: "Bitmine's Preferred Equity Instrument", desc: "Pays 9.50% annualised in weekly cash dividends. Bitmine's Ethereum treasury preferred equity instrument, funded by ETH staking rewards via the MAVAN validator network. Began trading on the NYSE June 16, 2026." },
-          { ticker: 'CHAD', name: "DeFi Development Corp.'s Preferred Stock", desc: "Pays 13.00% annualised in daily cash dividends. DeFi Development Corp.'s Solana treasury preferred stock, with a $10 stated value rather than the usual $100. Began trading on the Nasdaq September 8, 2026." },
-          { ticker: 'MORE', name: "The Smarter Web Company's Preferred Shares", desc: "Pays 12.00% annualised on a £100 reference value in weekly cash dividends, in pounds sterling. A UK bitcoin treasury company's cumulative variable-rate preferred, admitted to the London Stock Exchange Main Market on October 14, 2026." },
+          { ticker: 'BMNP', name: "Bitmine's Preferred Equity Instrument", desc: `Pays ${ASSET_RATES.BMNP.toFixed(2)}% annualised in weekly cash dividends. Bitmine's Ethereum treasury preferred equity instrument, funded by ETH staking rewards via the MAVAN validator network. Began trading on the NYSE June 16, 2026.` },
+          { ticker: 'CHAD', name: "DeFi Development Corp.'s Preferred Stock", desc: `Pays ${ASSET_RATES.CHAD.toFixed(2)}% annualised in daily cash dividends. DeFi Development Corp.'s Solana treasury preferred stock, with a $10 stated value rather than the usual $100. Began trading on the Nasdaq September 8, 2026.` },
+          { ticker: 'MORE', name: "The Smarter Web Company's Preferred Shares", desc: `Pays ${ASSET_RATES.MORE.toFixed(2)}% annualised on a £100 reference value in weekly cash dividends, in pounds sterling. A UK bitcoin treasury company's cumulative variable-rate preferred, admitted to the London Stock Exchange Main Market on October 14, 2026.` },
         ].map(asset => (
           <div key={asset.ticker} className="p-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
             <p className="font-semibold mb-1">{asset.ticker} — {asset.name}</p>

@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { articles, getArticle } from '@/lib/articles';
-import AadsAd from '@/components/AadsAd';
 import { BMNP_ENABLED } from '@/lib/constants';
 
 export async function generateStaticParams() {
@@ -198,7 +197,6 @@ export default async function ArticlePage({ params }) {
         </p>
       </div>
 
-      <AadsAd />
     </div>
   );
 }

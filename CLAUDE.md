@@ -92,3 +92,9 @@ Each daily dividend is paid on the next business day; weekend/holiday record dat
   first daily table in an 8-K around mid-December 2026 (records 1 Jan 2027 onward). Add it in the same
   `{ date (record), amount, payDate }` format, flagged the same way. `data/dividends-STRK|STRF|STRD.json` are hand-kept
   by the site's API route already.
+
+## About page rates are computed — no manual sync
+app/about/page.js ("What I Track") reads every ticker's rate from ASSET_RATES, which comes from
+lib/yieldRateHistory.js. When the scan adds or changes a rate there, the About page follows by itself
+(it revalidates daily). Do NOT hardcode a % in that page. Only the descriptive wording (schedules, dates,
+"fixed"/"variable", reserve claims) is hand-written; if a scan finding changes one of those facts, update it too.

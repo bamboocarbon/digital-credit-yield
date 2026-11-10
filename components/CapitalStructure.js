@@ -3,6 +3,17 @@ import CapitalPyramid from '@/components/CapitalPyramid';
 import StrategyCashPotsDiagram from '@/components/StrategyCashPotsDiagram';
 import { DIVIDEND_RESERVE, STRATEGY_BTC_HOLDINGS, STRIVE_BTC_HOLDINGS, BITMINE_ETH_HOLDINGS, DFDV_SOL_HOLDINGS } from '@/lib/constants';
 
+
+// The scan keeps DIVIDEND_RESERVE.STRC (lib/constants.js) up to date from Strategy's weekly 8-K, so the
+// USD Reserve / USD Cash figures in the Strategy panels are read from it rather than typed here.
+const _reserveBn = parseFloat(String(DIVIDEND_RESERVE.STRC.display).replace(/[^0-9.]/g, ''));
+const _cashM = (String(DIVIDEND_RESERVE.STRC.note).match(/USD Cash component \$([\d.,]+)M/) || [])[1];
+const _disc = String(DIVIDEND_RESERVE.STRC.note).match(/disclosed ([A-Za-z]+) (\d+), (\d{4})/);
+const _months = Number.isFinite(_reserveBn) ? Math.round((_reserveBn / 1.76) * 12) : null;
+const RESERVE_TXT = Number.isFinite(_reserveBn) ? `$${_reserveBn.toFixed(2)}bn` : DIVIDEND_RESERVE.STRC.display;
+const CASH_TXT = _cashM ? `$${_cashM}m` : null;
+const DISCLOSED_TXT = _disc ? `${_disc[2]} ${{ Jan: 'January', Feb: 'February', Mar: 'March', Apr: 'April', May: 'May', Jun: 'June', Jul: 'July', Aug: 'August', Sep: 'September', Oct: 'October', Nov: 'November', Dec: 'December' }[_disc[1].slice(0, 3)] || _disc[1]} ${_disc[3]}` : null;
+
 const gold = { color: 'var(--accent-gold)' };
 
 function Panel({ title, children }) {
@@ -24,8 +35,8 @@ const CONTENT = {
     diagram: (
       <>
         <CapitalPyramid ticker="STRC" />
-        <p className="mb-1">Where the money for dividends sits, and where it flows (Strategy&apos;s 8-K, 27 September 2026):</p>
-        <StrategyCashPotsDiagram />
+        <p className="mb-1">Where the money for dividends sits, and where it flows (Strategy&apos;s latest 8-K{DISCLOSED_TXT ? `, disclosed ${DISCLOSED_TXT}` : ''}):</p>
+        <StrategyCashPotsDiagram heading={DISCLOSED_TXT ? `LATEST 8-K · DISCLOSED ${DISCLOSED_TXT.toUpperCase()}` : 'LATEST 8-K'} reserve={RESERVE_TXT} cash={CASH_TXT || 'n/a'} buybackLine="STRC buybacks since July" buybackNote="paid from USD Cash and MSTR sales" showNew={false} btc={STRATEGY_BTC_HOLDINGS} />
       </>
     ),
     above: (
@@ -43,9 +54,9 @@ const CONTENT = {
     financing: (
       <>
         <p>Bitcoin earns no yield, so the dividend isn&apos;t paid by the coins. It is paid from two dollar pots, which is the most complex part of the structure:</p>
-        <p><strong>USD Reserve ({DIVIDEND_RESERVE.STRC.display}).</strong> Ring-fenced for preferred dividends and debt interest only; any other use needs a board vote. Strategy&apos;s own figures imply an annual bill of about $1.76bn across all its preferreds and interest, so the Reserve covers roughly 34 months against a board floor of 12 (my arithmetic on the 27 September figures). It was built mainly by selling MSTR common stock.</p>
-        <p><strong>USD Cash ($1.00bn).</strong> The flexible pot, created 24 August 2026. It can buy Bitcoin, buy back stock, pay dividends and interest, repay convertibles or top up the Reserve. Since early September it has funded the STRC buybacks.</p>
-        <p><strong>Backstops.</strong> Strategy can also sell Bitcoin under its monetisation programme (up to $1.25bn authorised) and raise new money in the capital markets. STRC itself can&apos;t be used to buy Bitcoin at the moment, because it trades below par. Strategy has spent $1.28bn buying STRC back, and has proposed paying STRC&apos;s dividend every calendar day, subject to a shareholder vote.</p>
+        <p><strong>USD Reserve ({DIVIDEND_RESERVE.STRC.display}).</strong> Ring-fenced for preferred dividends and debt interest only; any other use needs a board vote. Strategy&apos;s own figures implied an annual bill of about $1.76bn across all its preferreds and interest, so the Reserve covers roughly {_months} months against a board floor of 12 (my arithmetic on Strategy&apos;s latest 8-K, assuming the bill is still about $1.76bn; the buybacks will have trimmed it a little). It was built mainly by selling MSTR common stock.</p>
+        <p><strong>USD Cash ({CASH_TXT || 'see latest 8-K'}).</strong> The flexible pot, created 24 August 2026. It can buy Bitcoin, buy back stock, pay dividends and interest, repay convertibles or top up the Reserve. From early September it funded the STRC buybacks, and it fell from $1.00bn on 27 September to the figure shown here. Some of the more recent buybacks have been paid from MSTR share sales instead.</p>
+        <p><strong>Backstops.</strong> Strategy can also sell Bitcoin under its monetisation programme (up to $1.25bn authorised) and raise new money in the capital markets. STRC itself can&apos;t be used to buy Bitcoin when it trades below par. Strategy has spent well over $2bn buying STRC back since July, and STRC has paid its dividend every calendar day since 1 November, after stockholders approved the change on 28 October.</p>
       </>
     ),
   },

@@ -41,7 +41,7 @@ export default function AssetHubLive({ ticker }) {
         </div>
 
         <div className="card p-5 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-          <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>Effective Yield at Current Price</p>
+          <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>{data?.price != null ? 'Effective Yield at Current Price' : `Effective Yield at ${ticker === 'MORE' ? 'Reference Value' : 'Par'}`}</p>
           <p className="font-mono-data text-2xl font-bold" style={{ fontFamily: "Arial, Helvetica, sans-serif", color: 'var(--accent-gold)' }}>
             {effectiveYield.toFixed(2)}<span style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: '0.8em' }}>%</span>
           </p>
