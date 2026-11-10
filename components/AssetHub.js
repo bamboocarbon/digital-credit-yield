@@ -23,10 +23,9 @@ function PendingRateNote({ ticker }) {
 // Strategy's daily dividends for STRC, STRF, STRK and STRD (8-K 5 Oct 2026 / DEFA14A; stockholders
 // approved at the 28 Oct 2026 special meeting, per the 28 Oct 8-K, on preliminary voting results and
 // subject to the amended certificates of designations being filed and taking effect). STRE is not part of it.
-// TODO when each switch goes live (STRC 1 Nov 2026, STRF/STRK/STRD 1 Jan 2027): change that ticker's
+// STRC went live 1 Nov 2026 (entry removed). TODO when STRF/STRK/STRD go live (1 Jan 2027): change that ticker's
 // PAYMENT_FREQUENCY + dividend files, then drop its entry here.
 const DAILY_APPROVED = {
-  STRC: 'Daily dividends take effect for STRC from 1 November 2026.',
   STRF: 'STRF stays quarterly until daily dividends take effect on 1 January 2027, with the first daily payment expected on 4 January 2027.',
   STRK: 'STRK stays quarterly until daily dividends take effect on 1 January 2027, with the first daily payment expected on 4 January 2027.',
   STRD: 'STRD stays quarterly until daily dividends take effect on 1 January 2027, with the first daily payment expected on 4 January 2027.',
