@@ -105,6 +105,7 @@ async function buildSiteSection(site) {
     monthToDate: own.monthToDate.count,
     totalRecorded: own.totalRecorded,
     lastWeekTopOwn: own.lastWeek.topPages.length,
+    thisWeekTopOwn: own.thisWeek.topPages.length,
     cloudflare: cf ? { yesterday: cf.yesterday, week: cf.week, month: cf.month, lastWeekTop: cf.lastWeekTop.length } : { unavailable: cfNote, error: cfError },
   });
 
@@ -116,9 +117,13 @@ async function buildSiteSection(site) {
     .join('');
 
   const lastWeekLabel = `${own.lastWeek.start} – ${lastWeekEnd.toISOString().slice(0, 10)}`;
-  const ownLastWeekNote = own.lastWeek.start <= '2026-11-09'
-    ? 'Weekly page counts started on 11 Nov 2026, so this first week is partial (Wed–Sun).'
-    : 'No views recorded for that week.';
+  // Weekly page counts only exist from Wed 11 Nov 2026 (the all-time counter can't be split by week), so the
+  // weeks before 9 Nov have no data and the 9 Nov week is partial.
+  const ownLastWeekNote = own.lastWeek.start < '2026-11-09'
+    ? 'Not available: our counter only started recording weekly page counts on Wed 11 Nov 2026. This fills in from Mon 16 Nov (for 9–15 Nov, a partial week).'
+    : own.lastWeek.start === '2026-11-09'
+      ? 'Partial week: weekly page counts started on Wed 11 Nov 2026.'
+      : 'No views recorded for that week.';
 
   return `
   <div style="background:#0f1830;border:1px solid #1c2842;border-radius:12px;padding:18px 18px 8px;margin-bottom:18px;">
@@ -142,6 +147,7 @@ async function buildSiteSection(site) {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">${weeksRows}</table>
 
     ${topPagesTable('Top 10 pages — all time (our counter)', own.topPages)}
+    ${topPagesTable(`Top 10 pages — this week so far, since ${own.thisWeek.start} (our counter)`, own.thisWeek.topPages, 'No page counts for this week yet.')}
     ${topPagesTable(`Top 10 pages — last week, ${lastWeekLabel} (our counter)`, own.lastWeek.topPages, ownLastWeekNote)}
     ${cf ? topPagesTable(`Top 10 pages — last week, ${lastWeekLabel} (Cloudflare)`, cf.lastWeekTop, 'no data') : ''}
   </div>`;
