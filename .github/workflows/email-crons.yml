@@ -34,7 +34,7 @@ on:
         description: 'Which job to trigger'
         required: true
         type: choice
-        options: [daily-email, motivation-email, evening-email, money-flow, analytics-report, scan-feed, refresh-pyramids, mp4-selftest]
+        options: [daily-email, motivation-email, evening-email, money-flow, analytics-report, scan-feed, refresh-pyramids, mp4-selftest, mp4-matrix]
 
 jobs:
   trigger:
@@ -52,6 +52,7 @@ jobs:
             scan-feed)                                                echo "path=scan-feed" >> "$GITHUB_OUTPUT" ;;
             "15 22 * * 1-5"|refresh-pyramids)                         echo "path=refresh-pyramids" >> "$GITHUB_OUTPUT" ;;
             mp4-selftest)                                             echo "path=mp4-selftest" >> "$GITHUB_OUTPUT" ;;
+            mp4-matrix)                                               echo "path=mp4-selftest?mode=matrix" >> "$GITHUB_OUTPUT" ;;
             *) echo "Unknown schedule: ${{ github.event.schedule }}" >&2; exit 1 ;;
           esac
 
