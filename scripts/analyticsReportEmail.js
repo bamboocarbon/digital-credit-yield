@@ -1,10 +1,8 @@
 // scripts/analyticsReportEmail.js
-// Daily analytics email — our own cookie-free pageview counter (Redis) for
-// digital-credit-yield, with top-10 pages. Vercel Web Analytics columns are
-// included only while VERCEL_API_TOKEN + VERCEL_TEAM_ID are set (Vercel was
-// switched off 2026-11-11, so they normally aren't). polkadotbike moved to
-// Cloudflare static hosting and no longer has its own counter: it gets a pointer
-// to Cloudflare Web Analytics instead of stale numbers.
+// Daily analytics email — our own cookie-free pageview counter (Redis) for both sites, with top-10 pages.
+// Vercel Web Analytics columns are included only while VERCEL_API_TOKEN + VERCEL_TEAM_ID are set (Vercel
+// was switched off 2026-11-11, so they normally aren't). polkadotbike's counter is a Cloudflare Worker
+// (worker/pageviews.js in that repo) writing the same Redis keys, back on since 2026-11-11.
 // Run via: node scripts/analyticsReportEmail.js
 
 import { Resend } from 'resend';
@@ -15,10 +13,14 @@ const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 
 const SITES = [
   { name: 'Digital Credit Yield', ns: 'dcy:pv', projectId: 'prj_s1iAt31nYu5VzUyua5MxAfhamnPL', url: 'https://digitalcredityield.com' },
-  { name: 'Polka Dot Bike', ns: 'pdb:pv', projectId: 'prj_AcbBsCJMha4owF3heq2gzNP2VxD1', url: 'https://polkadotbike.com', ownCounter: false },
+  { name: 'Polka Dot Bike', ns: 'pdb:pv', projectId: 'prj_AcbBsCJMha4owF3heq2gzNP2VxD1', url: 'https://polkadotbike.com' },
 ];
 
 const HAS_VERCEL = Boolean(process.env.VERCEL_API_TOKEN && process.env.VERCEL_TEAM_ID);
+
+// Per-site numbers from the latest run, returned by run() so the cron endpoint can report them (handy for checking
+// both counters are alive without opening the email).
+let summaries = [];
 
 function fmt(n) {
   return Number(n).toLocaleString('en-GB');
@@ -74,6 +76,7 @@ function externalSiteSection(site) {
 async function buildSiteSection(site) {
   if (site.ownCounter === false) return externalSiteSection(site);
   const own = await getOwnPeriodStats(site.ns);
+  summaries.push({ site: site.name, latestView: own.latestView, yesterday: own.yesterday.count, weekToDate: own.weekToDate.count, monthToDate: own.monthToDate.count, totalRecorded: own.totalRecorded });
   const { yesterday, thisMonday, thisMonth, now } = own.periodBounds;
   const yesterdayEnd = new Date(yesterday);
   yesterdayEnd.setUTCDate(yesterdayEnd.getUTCDate() + 1);
@@ -121,7 +124,7 @@ async function buildSiteSection(site) {
       ${statRow(`This week (since ${own.weekToDate.since})`, own.weekToDate.count, vWeek)}
       ${statRow(`This month (${own.monthToDate.month})`, own.monthToDate.count, vMonth)}
     </table>
-    <div style="font-size:10px;color:#3a4a62;margin:8px 10px 0;">"Our counter" = raw pageview hits, cookie-free, no bots.${showVercel ? ' "Vercel people" = unique visitors — the closest true "number of people" figure, since our counter can\'t distinguish individuals.' : ''}</div>
+    <div style="font-size:10px;color:#3a4a62;margin:8px 10px 0;">Latest recorded view: ${own.latestView ? own.latestView.replace('T', ' ').slice(0, 16) + ' UTC' : 'none yet'}. "Our counter" = raw pageview hits, cookie-free, no bots.${showVercel ? ' "Vercel people" = unique visitors — the closest true "number of people" figure, since our counter can\'t distinguish individuals.' : ''}</div>
 
     <div style="font-size:12px;color:#8a9ab5;margin:16px 0 4px;">Last 4 completed weeks (our counter)</div>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">${weeksRows}</table>
@@ -134,6 +137,7 @@ async function buildSiteSection(site) {
 export async function run() {
   if (!process.env.RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
 
+  summaries = [];
   const sections = await Promise.all(SITES.map(buildSiteSection));
   const today = new Date().toISOString().slice(0, 10);
 
@@ -151,6 +155,7 @@ export async function run() {
     html,
   });
   if (error) throw new Error(`Resend error: ${JSON.stringify(error)}`);
+  return { sites: summaries };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

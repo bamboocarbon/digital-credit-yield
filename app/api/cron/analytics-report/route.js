@@ -10,8 +10,8 @@ async function handler(request) {
   }
 
   try {
-    await run();
-    return NextResponse.json({ ok: true });
+    const summary = await run();
+    return NextResponse.json({ ok: true, ...(summary ?? {}) });
   } catch (err) {
     console.error('Analytics report cron failed:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
