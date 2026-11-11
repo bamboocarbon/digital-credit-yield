@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { weekLabelOf } from '@/lib/strategyFlow';
+import { endAnchoredX } from '@/lib/chartTicks';
 
 // Shared pieces of the issuer-level money-flow views (Strategy, Strive): a toggleable legend with the
 // 6M / 1Y / All buttons on its right (same look as the Cumulative chart's), and a weekly stacked bar
@@ -135,7 +136,7 @@ export function FlowStackedChart({ rows, series, off, range, ariaLabel }) {
             },
           },
           scales: {
-            x: { stacked: true, ticks: { color: '#6b7280', maxRotation: 45, autoSkip: true, maxTicksLimit: 14, font: { size: 11 } }, grid: { color: '#1f2937' } },
+            x: endAnchoredX(weeks.length, 14, { stacked: true, ticks: { color: '#6b7280', maxRotation: 45, font: { size: 11 } }, grid: { color: '#1f2937' } }),
             y: { stacked: true, ticks: { color: '#6b7280', font: { size: 11 }, callback: v => (v < 0 ? '−' : '') + fmtMoney(v) }, grid: { color: '#1f2937' } },
           },
         },

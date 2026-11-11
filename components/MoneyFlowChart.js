@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { SEED_STRATEGY_WEEKLY, deriveStrcWeekly } from '@/lib/strategyFlow';
+import { endAnchoredX } from '@/lib/chartTicks';
 
 // Weekly capital raised ($M) compiled from SEC 8-K filings.
 // STRC (IPO + ATM net proceeds) is derived from lib/strategyFlow.js — Strategy's own weekly 8-K tables.
@@ -89,17 +90,15 @@ function useBarChart({ canvasRef, labels, datasets, logScale, unit = '$', stacke
             },
           },
           scales: {
-            x: {
+            x: endAnchoredX(labels.length, 12, {
               stacked,
               ticks: {
                 color: '#6b7280',
                 maxRotation: 45,
-                autoSkip: true,
-                maxTicksLimit: 12,
                 font: { size: 11 },
               },
               grid: { color: '#1f2937' },
-            },
+            }),
             y: {
               type: logScale ? 'logarithmic' : 'linear',
               stacked,
