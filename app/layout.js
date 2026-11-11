@@ -106,6 +106,14 @@ export default function RootLayout({ children }) {
           data-key="l8CSokM5avw7elCQq1DfMA"
           strategy="afterInteractive"
         />
+        {/* Cloudflare Web Analytics (cookieless). The site is DNS-only on Cloudflare (Google Cloud Run needs
+            that for its certificate), so there's no automatic injection — this manual snippet is how it's
+            measured. Read by the daily analytics report (lib/cloudflareAnalytics.js). Added 2026-11-11. */}
+        <Script
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "294fd922eff54ff3b17b82d680e0c299"}'
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

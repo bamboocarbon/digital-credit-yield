@@ -14,7 +14,7 @@ const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 
 // cfSiteTag = the Cloudflare Web Analytics site tag (the token in the site's beacon snippet; public in page source).
 const SITES = [
-  { name: 'Digital Credit Yield', ns: 'dcy:pv', url: 'https://digitalcredityield.com', cfSiteTag: null },
+  { name: 'Digital Credit Yield', ns: 'dcy:pv', url: 'https://digitalcredityield.com', cfSiteTag: 'a9d1f24ed0c64a3184a3c1d921314fa3' },
   { name: 'Polka Dot Bike', ns: 'pdb:pv', url: 'https://polkadotbike.com', cfSiteTag: 'ec15959bd14441ac80d8d0593e3ba1e7' },
 ];
 
