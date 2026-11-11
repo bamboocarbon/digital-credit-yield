@@ -33,6 +33,14 @@ async function matrix() {
   await attempt('concat_demuxer_faststart', ['-f', 'concat', '-safe', '0', '-i', f('list.txt'), '-c', 'copy', '-movflags', '+faststart', f('o3.mp4')]);
   await attempt('concat_demuxer_nofaststart', ['-f', 'concat', '-safe', '0', '-i', f('list.txt'), '-c', 'copy', f('o4.mp4')]);
   await attempt('concat_protocol_fragmented', ['-i', `concat:${f('a.ts')}|${f('a.ts')}`, '-c', 'copy', '-movflags', 'frag_keyframe+empty_moov', f('o5.mp4')]);
+  // Is it the MPEG-TS *reader*, or concat in general? And which alternative works?
+  await attempt('read_ts_to_null', ['-i', f('a.ts'), '-f', 'null', '-']);
+  await attempt('read_ts_single_to_mp4', ['-i', f('a.ts'), '-c', 'copy', f('s.mp4')]);
+  await attempt('mp4_copy_faststart', ['-i', f('a.mp4'), '-c', 'copy', '-movflags', '+faststart', f('m.mp4')]);
+  fs.writeFileSync(f('list2.txt'), `file '${f('a.mp4')}'\nfile '${f('a.mp4')}'\n`);
+  await attempt('concat_demuxer_mp4_inputs', ['-f', 'concat', '-safe', '0', '-i', f('list2.txt'), '-c', 'copy', '-movflags', '+faststart', f('c1.mp4')]);
+  await attempt('concat_filter_reencode', ['-i', f('a.mp4'), '-i', f('a.mp4'), '-filter_complex', '[0:v][1:v]concat=n=2:v=1:a=0[v]', '-map', '[v]', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', f('c2.mp4')]);
+  await attempt('concat_demuxer_mp4_reencode', ['-f', 'concat', '-safe', '0', '-i', f('list2.txt'), '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', f('c3.mp4')]);
   try { fs.rmSync(dir, { recursive: true, force: true }); } catch {}
   return out;
 }
