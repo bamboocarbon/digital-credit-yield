@@ -1,6 +1,10 @@
 import XPostGrid from '@/components/XPostGrid';
 import { blobUrl } from '@/lib/blobUrl';
 
+// Render on every request: the thoughts/quiz live in Vercel Blob, which isn't reachable at build time
+// (Docker build has no BLOB_READ_WRITE_TOKEN), so a static prerender would bake in an empty list.
+export const dynamic = 'force-dynamic';
+
 // Fetch quiz items on the server so the question + answer text are in the
 // initial HTML (crawler / AdSense visible); the X embeds load client-side.
 async function getQuiz() {

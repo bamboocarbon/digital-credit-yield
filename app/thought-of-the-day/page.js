@@ -5,6 +5,10 @@ import { computeAnchors } from '@/lib/thoughtAnchors';
 
 const SITE_URL = 'https://www.digitalcredityield.com';
 
+// Render on every request: the thoughts/quiz live in Vercel Blob, which isn't reachable at build time
+// (Docker build has no BLOB_READ_WRITE_TOKEN), so a static prerender would bake in an empty list.
+export const dynamic = 'force-dynamic';
+
 // Fetch the thoughts on the server so the thought text is in the initial HTML
 // (visible to crawlers / AdSense review); the X embeds then load client-side.
 async function getThoughts() {
