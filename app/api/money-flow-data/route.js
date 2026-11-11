@@ -5,7 +5,10 @@ import { getMoneyFlowData, buildCumulative, SEED_SATA_WEEKLY, SEED_BMNP_WEEKLY, 
 import { getStockQuote } from '@/lib/fetchStockData';
 import { mergeStrategyWeekly, deriveStrcWeekly, deriveStrategyRaisedWeekly } from '@/lib/strategyFlow';
 
-export const revalidate = 3600; // cache for 1 hour
+// Read the stored Blob at request time. A static/ISR route would be prerendered during the Docker build, which has no
+// BLOB_READ_WRITE_TOKEN, baking in the seed-only data (which stops at SEED_THROUGH) — found 2026-11-11. The response's
+// own Cache-Control header below still lets browsers/CDNs cache it for an hour.
+export const dynamic = 'force-dynamic';
 
 async function readCounts() {
   try {
