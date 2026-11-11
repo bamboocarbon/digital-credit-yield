@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { currencySymbol } from '@/lib/currency';
-import { ASSET_RATES, PAYMENT_FREQUENCY, BMNP_ENABLED, STRIVE_BTC_HOLDINGS, STRATEGY_BTC_HOLDINGS, BITMINE_ETH_HOLDINGS, DFDV_SOL_HOLDINGS, SMARTER_WEB_BTC_HOLDINGS, PAR_VALUE } from '@/lib/constants';
+import { ASSET_RATES, PAYMENT_FREQUENCY, STRIVE_BTC_HOLDINGS, STRATEGY_BTC_HOLDINGS, BITMINE_ETH_HOLDINGS, DFDV_SOL_HOLDINGS, SMARTER_WEB_BTC_HOLDINGS, PAR_VALUE } from '@/lib/constants';
 
 const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#7f1d1d', MORE: '#a855f7' };
 
@@ -72,7 +72,7 @@ const ROWS = [
 ];
 
 export default function CompareTable() {
-  const tickers = BMNP_ENABLED ? ['STRC', 'SATA', 'BMNP', 'CHAD', 'MORE'] : ['STRC', 'SATA', 'CHAD', 'MORE'];
+  const tickers = ['STRC', 'SATA', 'BMNP', 'CHAD', 'MORE'];
   const parValueFor = t => PAR_VALUE[t];
   const sym = t => currencySymbol(t);
 
@@ -107,12 +107,8 @@ export default function CompareTable() {
       <p className="text-sm text-center mt-4" style={{ color: 'var(--text-muted)' }}>
         Want the full picture?{' '}
         <Link href="/blog/strc-vs-sata" prefetch={false} style={{ color: 'var(--accent-gold)' }}>Read the in-depth STRC vs SATA comparison</Link>
-        {BMNP_ENABLED && (
-          <>
-            {' '}or{' '}
-            <Link href="/blog/bmnp-vs-strc-sata" prefetch={false} style={{ color: 'var(--accent-gold)' }}>how BMNP compares to both</Link>
-          </>
-        )}
+        {' '}or{' '}
+        <Link href="/blog/bmnp-vs-strc-sata" prefetch={false} style={{ color: 'var(--accent-gold)' }}>how BMNP compares to both</Link>
         {' '}or{' '}
         <Link href="/blog/how-chad-works" prefetch={false} style={{ color: 'var(--accent-gold)' }}>how CHAD stacks up against the rest</Link>
         {' '}or{' '}

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { BMNP_ENABLED } from '@/lib/constants';
 
 // Cumulative capital raised ($M) from SEC 8-K filings
 const data = [
@@ -78,7 +77,7 @@ const RANGE_OPTS = ['6M', '1Y', 'All'];
 const TICKER_LINES = [
   { key: 'strc', color: '#15803d', label: 'Strategy', sub: 'all 5 preferreds · IPO Jan 2025' },
   { key: 'sata', color: '#2563eb', label: 'Strive', sub: 'SATA + SATS · IPO Nov 2025' },
-  ...(BMNP_ENABLED ? [{ key: 'bmnp', color: '#fde047', label: 'BMNP', sub: 'Bitmine · IPO Jun 2026' }] : []),
+  { key: 'bmnp', color: '#fde047', label: 'BMNP', sub: 'Bitmine · IPO Jun 2026' },
   { key: 'chad', color: '#7f1d1d', label: 'CHAD', sub: 'DeFi Development Corp. · IPO Sep 2026' },
   { key: 'more', color: '#a855f7', label: 'MORE', sub: 'Smarter Web Company · IPO Oct 2026 (£ converted)' },
 ];
@@ -187,7 +186,7 @@ export default function CumulativeFlowChart() {
           <p style={{ margin: '0 0 16px 44px', fontSize: 11, color: '#4b5563', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
             Linear Scale · Absolute Size
           </p>
-          <div role="img" aria-label={`Strategy, Strive${BMNP_ENABLED ? ', BMNP' : ''} CHAD and MORE cumulative capital raised — linear scale line chart`}>
+          <div role="img" aria-label={`Strategy, Strive, BMNP CHAD and MORE cumulative capital raised — linear scale line chart`}>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={displayData} margin={{ top: 4, right: 20, left: 8, bottom: 55 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
@@ -209,7 +208,7 @@ export default function CumulativeFlowChart() {
           <p style={{ margin: '0 0 16px 44px', fontSize: 11, color: '#4b5563', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
             Log Scale · Growth Trajectory
           </p>
-          <div role="img" aria-label={`Strategy, Strive${BMNP_ENABLED ? ', BMNP' : ''} CHAD and MORE cumulative capital raised — log scale line chart`}>
+          <div role="img" aria-label={`Strategy, Strive, BMNP CHAD and MORE cumulative capital raised — log scale line chart`}>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart
               data={displayData.map(d => ({ ...d, strc: d.strc ? Math.log10(d.strc) : null, sata: d.sata ? Math.log10(d.sata) : null, bmnp: d.bmnp ? Math.log10(d.bmnp) : null, chad: d.chad ? Math.log10(d.chad) : null, more: d.more ? Math.log10(d.more) : null }))}

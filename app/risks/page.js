@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { BMNP_ENABLED } from '@/lib/constants';
 
 export const metadata = {
   alternates: { canonical: '/risks' },
@@ -59,7 +58,7 @@ export default function RisksPage() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
       <h1 className="text-3xl sm:text-4xl font-bold mb-3">Understanding the Risks</h1>
       <p className="text-base mb-4" style={{ color: 'var(--text-muted)' }}>
-        The yields on STRC, SATA{BMNP_ENABLED ? ', BMNP and CHAD' : ' and CHAD'} are high because the risks are real.
+        The yields on STRC, SATA, BMNP and CHAD are high because the risks are real.
         This page sets them out plainly — read it alongside the projectors and charts, not instead of them.
       </p>
       <p className="text-base mb-10" style={{ color: 'var(--text-muted)' }}>

@@ -3,10 +3,9 @@ import LatestNews from '@/components/LatestNews';
 import SubscribeBox from '@/components/SubscribeBox';
 import CompareTable from '@/components/CompareTable';
 import YieldMap from '@/components/YieldMap';
-import { BMNP_ENABLED } from '@/lib/constants';
 
 export function generateMetadata() {
-  const instruments = BMNP_ENABLED ? 'STRC, SATA, BMNP, CHAD & MORE' : 'STRC, SATA, CHAD & MORE';
+  const instruments = 'STRC, SATA, BMNP, CHAD & MORE';
   const desc = `Track ${instruments} preferred stocks — live prices, dividend history, effective-yield charts and income projection tools.`;
   return {
     metadataBase: new URL('https://www.digitalcredityield.com'),
@@ -57,7 +56,7 @@ export default function HomePage() {
           fontFamily: 'Arial, Helvetica, sans-serif',
           marginBottom: '20px',
         }}>
-          Tracking {BMNP_ENABLED ? 'STRC, SATA, BMNP, CHAD and MORE' : 'STRC, SATA, CHAD and MORE'} for growth
+          Tracking STRC, SATA, BMNP, CHAD and MORE for growth
         </div>
         <p className="text-lg sm:text-xl max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
           Live prices, dividend tracking and income projections for the preferred stocks issued by Bitcoin, Ethereum and Solana treasury companies
@@ -65,10 +64,10 @@ export default function HomePage() {
       </div>
 
       {/* Asset selector cards */}
-      <div className={`grid grid-cols-1 gap-6 mb-12 ${BMNP_ENABLED ? 'sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5' : 'sm:grid-cols-2 lg:grid-cols-4'}`}>
+      <div className={`grid grid-cols-1 gap-6 mb-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5`}>
         <AssetCard ticker="STRC" exploreLabel="STRC, STRK, STRD, STRF, STRE" />
         <AssetCard ticker="SATA" exploreLabel="SATA, SATS" />
-        {BMNP_ENABLED && <AssetCard ticker="BMNP" />}
+        <AssetCard ticker="BMNP" />
         <AssetCard ticker="CHAD" />
         <AssetCard ticker="MORE" />
       </div>
@@ -92,7 +91,7 @@ export default function HomePage() {
         <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
           I&rsquo;m Robin Gillingham — a full-time independent investor for seven years. I built this site to highlight the
           difference between annual yield and effective yield on the new preferred stocks issued by Bitcoin, Ethereum and Solana treasury companies,
-          and it has grown into growth projectors, dividend charts, and weekly money flow data across {BMNP_ENABLED ? 'STRC, SATA, BMNP, CHAD and MORE' : 'STRC, SATA, CHAD and MORE'}.
+          and it has grown into growth projectors, dividend charts, and weekly money flow data across STRC, SATA, BMNP, CHAD and MORE.
         </p>
         <p className="text-base leading-7 mb-8" style={{ color: 'var(--text-muted)' }}>
           <a href="/about" style={{ color: 'var(--accent-gold)' }}>Read the full story on the About page →</a>

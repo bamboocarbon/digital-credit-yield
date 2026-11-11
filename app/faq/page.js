@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { BMNP_ENABLED } from '@/lib/constants';
 
 export const metadata = {
   alternates: { canonical: '/faq' },
@@ -77,7 +76,7 @@ export default function FAQPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <h1 className="text-3xl sm:text-4xl font-bold mb-3">Frequently Asked Questions</h1>
       <p className="text-base mb-10" style={{ color: 'var(--text-muted)' }}>
-        Straight answers to the questions readers ask most about STRC, SATA{BMNP_ENABLED ? ', BMNP and CHAD' : ' and CHAD'}.
+        Straight answers to the questions readers ask most about STRC, SATA, BMNP and CHAD.
       </p>
 
       <div className="space-y-8">

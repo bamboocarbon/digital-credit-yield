@@ -1,5 +1,4 @@
 import { articles } from '@/lib/articles';
-import { BMNP_ENABLED } from '@/lib/constants';
 
 export default function sitemap() {
   const base = 'https://www.digitalcredityield.com';
@@ -17,9 +16,7 @@ export default function sitemap() {
     { url: base,                          lastModified: now,          changeFrequency: 'daily',   priority: 1   },
     { url: `${base}/strc`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.9 },
     { url: `${base}/sata`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.9 },
-    ...(BMNP_ENABLED ? [
-      { url: `${base}/bmnp`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.9 },
-    ] : []),
+    { url: `${base}/bmnp`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.9 },
     { url: `${base}/chad`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.9 },
     { url: `${base}/more`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.9 },
     { url: `${base}/strk`,                lastModified: now,          changeFrequency: 'daily',   priority: 0.8 },

@@ -1,13 +1,12 @@
 import { Suspense } from 'react';
 import CumulativeFlowChart from '@/components/CumulativeFlowChart';
 import MoneyFlowSelector from '@/components/MoneyFlowSelector';
-import { BMNP_ENABLED } from '@/lib/constants';
 
 // Date the narrative zones below were last revised — shown next to the story heading
 const STORY_UPDATED = '25 September 2026';
 
 export function generateMetadata() {
-  const instruments = BMNP_ENABLED ? 'STRC, SATA, BMNP, CHAD & MORE' : 'STRC, SATA, CHAD & MORE';
+  const instruments = 'STRC, SATA, BMNP, CHAD & MORE';
   const desc = `Weekly capital raised by ${instruments} tracked from SEC 8-K filings since each IPO. Bar charts and cumulative totals showing investor demand over time.`;
   return {
     alternates: { canonical: '/money-flow' },
@@ -35,9 +34,9 @@ export default function MoneyFlowPage() {
       <div className="text-center mb-10">
         <h1 className="text-4xl sm:text-5xl font-bold mb-3 tracking-tight">Money Flow</h1>
         <p className="text-lg max-w-2xl mx-auto" style={{ color: 'var(--text-muted)' }}>
-          Weekly capital raised by {BMNP_ENABLED ? 'STRC, SATA, BMNP, CHAD and MORE' : 'STRC, SATA, CHAD and MORE'}, compiled
+          Weekly capital raised by STRC, SATA, BMNP, CHAD and MORE, compiled
           from SEC 8-K filings since each IPO.
-          {BMNP_ENABLED && ' BMNP listed on the NYSE in June 2026.'} CHAD listed on the Nasdaq in September 2026. MORE weekly figures are being added from 26 October 2026.
+           BMNP listed on the NYSE in June 2026. CHAD listed on the Nasdaq in September 2026. MORE weekly figures are being added from 26 October 2026.
         </p>
       </div>
 
@@ -114,7 +113,7 @@ export default function MoneyFlowPage() {
             </div>
           </div>
 
-          {BMNP_ENABLED && (
+          <>
             <div className="flex gap-4">
               <div className="flex-shrink-0 w-1 rounded-full" style={{ background: '#fde047' }} />
               <div>
@@ -124,7 +123,7 @@ export default function MoneyFlowPage() {
                 </p>
               </div>
             </div>
-          )}
+          </>
 
           <div className="flex gap-4">
             <div className="flex-shrink-0 w-1 rounded-full" style={{ background: '#15803d' }} />

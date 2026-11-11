@@ -38,7 +38,6 @@ jobs:
           docker build \
             --build-arg NEXT_PUBLIC_ADSENSE_ID="${{ vars.NEXT_PUBLIC_ADSENSE_ID }}" \
             --build-arg NEXT_PUBLIC_GA_ID="${{ vars.NEXT_PUBLIC_GA_ID }}" \
-            --build-arg NEXT_PUBLIC_BMNP_ENABLED="${{ vars.NEXT_PUBLIC_BMNP_ENABLED }}" \
             -t "$IMAGE:${{ github.sha }}" .
           docker push "$IMAGE:${{ github.sha }}"
 
