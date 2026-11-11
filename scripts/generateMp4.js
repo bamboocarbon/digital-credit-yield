@@ -55,8 +55,16 @@ export async function ensureClip(key) {
   return dest;
 }
 
-function run(cmd, args) {
-  return promisify(execFile)(cmd, args, { maxBuffer: 1024 * 1024 * 256 });
+// Runs ffmpeg quietly and, on failure, reports WHY (signal/exit code plus the tail of stderr) — a bare
+// "Command failed: ..." hid an ffmpeg segfault (signal 11) on Cloud Run for a day (2026-11-11).
+async function run(cmd, args) {
+  try {
+    return await promisify(execFile)(cmd, ['-hide_banner', '-loglevel', 'error', ...args], { maxBuffer: 1024 * 1024 * 256 });
+  } catch (err) {
+    const tail = String(err.stderr || '').trim().slice(-500);
+    err.message = `${String(err.message).split('\n')[0]} [signal=${err.signal ?? 'none'} code=${err.code ?? 'none'}]${tail ? ` stderr: ${tail}` : ''}`;
+    throw err;
+  }
 }
 
 function moneyFmt(v, c = '$') {

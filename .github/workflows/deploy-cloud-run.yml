@@ -44,6 +44,8 @@ jobs:
       # Runtime secrets (Redis, Blob, Resend, Twitter, CRON_SECRET, …) are set
       # once on the Cloud Run service and carried over by each deploy.
       # max-instances caps spend; min-instances 0 keeps it inside the free tier.
+      # gen2 = full Linux sandbox: the static ffmpeg binary that renders the daily email's rocket MP4 segfaulted
+      # (signal 11) in the default gVisor sandbox (2026-11-11).
       - name: Deploy
         run: |
           gcloud run deploy "$SERVICE" \
@@ -51,6 +53,7 @@ jobs:
             --region "$REGION" \
             --allow-unauthenticated \
             --memory 1Gi --cpu 1 \
+            --execution-environment gen2 \
             --min-instances 0 --max-instances 2 \
             --concurrency 80 --timeout 300 \
             --quiet
