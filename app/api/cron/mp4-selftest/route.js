@@ -70,7 +70,17 @@ async function handler(request) {
     const { insight, quotes } = await generateDailyInsight(getDailyTicker(0));
     const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     const mp4 = await generateMp4(insight, quotes, today);
-    return NextResponse.json({ ok: true, bytes: mp4.length, seconds: Math.round((Date.now() - started) / 100) / 10 });
+    // A file existing isn't enough — decode it end to end and read back its stream info.
+    const file = path.join(os.tmpdir(), `mp4-selftest-${Date.now()}.mp4`);
+    fs.writeFileSync(file, mp4);
+    let decode = 'ok';
+    let info = '';
+    try {
+      await promisify(execFile)(ffmpegPath || 'ffmpeg', ['-hide_banner', '-loglevel', 'error', '-i', file, '-f', 'null', '-'], { timeout: 90000 });
+      try { await promisify(execFile)(ffmpegPath || 'ffmpeg', ['-hide_banner', '-i', file], { timeout: 30000 }); } catch (e) { info = String(e.stderr || '').split('\n').filter((l) => /Duration|Stream/.test(l)).map((l) => l.trim()).join(' | '); }
+    } catch (e) { decode = `FAIL signal=${e.signal ?? 'none'} ${String(e.stderr || '').trim().slice(-200)}`; }
+    try { fs.rmSync(file, { force: true }); } catch {}
+    return NextResponse.json({ ok: decode === 'ok', bytes: mp4.length, decode, info, seconds: Math.round((Date.now() - started) / 100) / 10 });
   } catch (err) {
     return NextResponse.json({ ok: false, error: err.message, seconds: Math.round((Date.now() - started) / 100) / 10 }, { status: 500 });
   }

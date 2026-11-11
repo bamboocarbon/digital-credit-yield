@@ -76,8 +76,6 @@ export async function generateMp4(insight, quotes, date) {
   const tmpId = crypto.randomBytes(6).toString('hex');
   const tmpDir = os.tmpdir();
   const chartMp4 = path.join(tmpDir, `dcy-chart-${tmpId}.mp4`);
-  const introTs  = path.join(tmpDir, `dcy-intro-${tmpId}.ts`);
-  const chartTs  = path.join(tmpDir, `dcy-chart-${tmpId}.ts`);
   const finalMp4 = path.join(tmpDir, `dcy-final-${tmpId}.mp4`);
 
   try {
@@ -133,13 +131,21 @@ export async function generateMp4(insight, quotes, date) {
     const clip = getDailyRocketClip(0);
     const introMp4 = await ensureClip(clip.key);
 
-    await run(FFMPEG, ['-y', '-i', introMp4, '-c', 'copy', '-bsf:v', 'h264_mp4toannexb', '-f', 'mpegts', introTs]);
-    await run(FFMPEG, ['-y', '-i', chartMp4, '-c', 'copy', '-bsf:v', 'h264_mp4toannexb', '-f', 'mpegts', chartTs]);
-    await run(FFMPEG, ['-y', '-i', `concat:${introTs}|${chartTs}`, '-c', 'copy', '-movflags', '+faststart', finalMp4]);
+    // Join intro + chart with ONE ffmpeg call (concat filter, re-encoded). This used to stream-copy both clips
+    // through MPEG-TS files, but ffmpeg's MPEG-TS *reader* segfaults (signal 11) on Cloud Run — confirmed with the
+    // /api/cron/mp4-selftest matrix on 2026-11-11 — so every daily email since the move went out without its video.
+    // Both inputs are video-only H.264; scale/fps/sar are normalised so a clip of a different size still joins.
+    const norm = `scale=${PW}:${PH},setsar=1,fps=${FPS},format=yuv420p`;
+    await run(FFMPEG, [
+      '-y', '-i', introMp4, '-i', chartMp4,
+      '-filter_complex', `[0:v]${norm}[a];[1:v]${norm}[b];[a][b]concat=n=2:v=1:a=0[v]`,
+      '-map', '[v]', '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '18', '-pix_fmt', 'yuv420p',
+      '-movflags', '+faststart', finalMp4,
+    ]);
 
     return fs.readFileSync(finalMp4);
   } finally {
-    for (const f of [chartMp4, introTs, chartTs, finalMp4]) {
+    for (const f of [chartMp4, finalMp4]) {
       fs.rm(f, { force: true }, () => {});
     }
   }
