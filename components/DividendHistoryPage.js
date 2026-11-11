@@ -4,6 +4,7 @@ import { STRC_SEMI_MONTHLY_START, DAILY_START, BMNP_DIVIDEND_SCHEDULE } from '@/
 import { currencySymbol } from '@/lib/currency';
 
 const MONO = { fontFamily: "Arial, Helvetica, sans-serif" };
+const MORE_FIRST_PAYMENT_DEADLINE = '2026-11-09';
 
 function formatDate(dateStr) {
   const [y, m, d] = dateStr.split('-');
@@ -20,12 +21,16 @@ export default function DividendHistoryPage({ ticker, dividends }) {
   const today = new Date().toISOString().slice(0, 10);
   const isSataComingSoon = ticker === 'SATA' && today < SATA_DAILY_START;
   const isStrcComingSoon = ticker === 'STRC' && today < STRC_SEMI_MONTHLY_START;
-  const isBmnpComingSoon = ticker === 'BMNP' && today < BMNP_DIVIDEND_SCHEDULE[BMNP_DIVIDEND_SCHEDULE.length - 1].paymentDate;
-  // CHAD has no dedicated schedule constant (unlike BMNP) — its only announced
+  // These three banners announce the FIRST dividend, so they show only until that first payment is made.
+  // (They used to compare with the LAST entry, but BMNP/CHAD/MORE store payment dates announced months ahead,
+  // so the "first dividend" banner stayed up until the final announced date — fixed 2026-11-11.)
+  const isBmnpComingSoon = ticker === 'BMNP' && today < BMNP_DIVIDEND_SCHEDULE[0].paymentDate;
+  // CHAD has no dedicated schedule constant (unlike BMNP) — its announced
   // dates live in the dividends prop itself (data/dividends-CHAD.json), so this
-  // checks the last entry there directly instead.
-  const isChadComingSoon = ticker === 'CHAD' && dividends.length > 0 && today < dividends[dividends.length - 1].date;
-  const isMoreComingSoon = ticker === 'MORE' && dividends.length > 0 && today < dividends[dividends.length - 1].date;
+  // checks the first entry there (1 Oct 2026, the first cash payment).
+  const isChadComingSoon = ticker === 'CHAD' && dividends.length > 0 && today < dividends[0].date;
+  // MORE's first weekly dividend was payable no later than 9 November 2026 (see the banner text below).
+  const isMoreComingSoon = ticker === 'MORE' && dividends.length > 0 && today <= MORE_FIRST_PAYMENT_DEADLINE;
   const cur = currencySymbol(ticker);
   const isComingSoon = isSataComingSoon || isStrcComingSoon || isBmnpComingSoon || isChadComingSoon;
   const isBmnp = ticker === 'BMNP';
