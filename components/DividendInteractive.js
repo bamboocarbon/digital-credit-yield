@@ -394,6 +394,35 @@ export default function DividendInteractive({ ticker }) {
   const isQuarterly = PAYMENT_FREQUENCY[ticker]?.perYear === 4;
   const showMonthlyBox = ticker !== 'SATA' && !!paidDividends && paidDividends.length > 0 && !isQuarterly;
   const predictionOverdue = prediction && prediction.date < today;
+
+  // ONE shared box for every daily payer, so they all read the same way: SATA, SATS and CHAD (every NYSE
+  // business day) and STRC/STRF/STRK/STRD (every calendar day, once their daily era starts). It carries the
+  // next declared payment too, which used to be a second, separate box on the Strategy tickers.
+  const isBizDayPayer = ticker === 'SATS' || ticker === 'CHAD';
+  const nextDeclared = announcedDividends[0] ?? null;
+  let dailyBox = null;
+  if (inDailyEra || isBizDayPayer) {
+    const bd = getBusinessDaysInMonth(todayYM);
+    const amt = inDailyEra ? getSataDailyDividend(ASSET_RATES.SATA, todayYM) : (bd ? expectedMonthlyTotal / bd : null);
+    dailyBox = {
+      title: 'DAILY DIVIDEND PAYMENTS ACTIVE',
+      cadence: 'Every NYSE business day',
+      amountLabel: 'Daily amount (this month)',
+      amount: amt != null ? `${cur}${amt.toFixed(6)}` : '—',
+      note: `${inDailyEra ? `From ${formatDate(SATA_DAILY_START)} · ` : ''}${bd ? `${bd} business days this month` : 'Paid on each NYSE business day'}`,
+    };
+  } else if (dailyWindow) {
+    const refYM = today >= dailyStart ? todayYM : dailyStart.slice(0, 7);
+    const [ry, rm] = refYM.split('-').map(Number);
+    const daysInMonth = new Date(Date.UTC(ry, rm, 0)).getUTCDate();
+    dailyBox = {
+      title: today >= dailyStart ? 'DAILY DIVIDEND PAYMENTS ACTIVE' : `DAILY DIVIDENDS FROM ${formatDate(dailyStart).toUpperCase()}`,
+      cadence: 'Every calendar day, paid the next business day',
+      amountLabel: `Average per day (${ymToLabel(refYM)})`,
+      amount: `${cur}${(expectedMonthlyTotal / daysInMonth).toFixed(4)}`,
+      note: `Strategy declares each day's dividend in whole cents, so the daily amount alternates slightly while a month still adds up to about ${cur}${expectedMonthlyTotal.toFixed(2)} · weekend and holiday dividends are paid together on the next business day`,
+    };
+  }
   const sharesNum         = parseFloat(shares) || 0;
   const incomePerPayment  = sharesNum * (latestMonthly?.amount ?? 0);
   const incomeAnnual      = sharesNum * impliedAnnualDollars;
@@ -665,55 +694,33 @@ export default function DividendInteractive({ ticker }) {
         </div>
       )}
 
-      {/* SATA daily era banner */}
-      {inDailyEra && (
+      {/* Daily dividends: one shared box for every daily payer (see dailyBox above) */}
+      {dailyBox && (
         <div className="p-4 rounded-xl mb-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8"
           style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
           <div>
-            <p className="text-xs font-semibold tracking-wide mb-0.5" style={{ color: 'var(--accent-gold)' }}>DAILY DIVIDEND PAYMENTS ACTIVE</p>
-            <p className="text-sm font-medium">Every NYSE business day</p>
+            <p className="text-xs font-semibold tracking-wide mb-0.5" style={{ color: 'var(--accent-gold)' }}>{dailyBox.title}</p>
+            <p className="text-sm font-medium">{dailyBox.cadence}</p>
           </div>
           <div>
-            <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>Daily amount (this month)</p>
-            <p className="text-lg font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>
-              ${getSataDailyDividend(ASSET_RATES.SATA, todayYM)?.toFixed(6) ?? '—'}
-            </p>
+            <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>{dailyBox.amountLabel}</p>
+            <p className="text-lg font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>{dailyBox.amount}</p>
           </div>
-          <p className="text-xs sm:ml-auto" style={{ color: 'var(--text-muted)' }}>
-            From {formatDate(SATA_DAILY_START)} · {getBusinessDaysInMonth(todayYM)} business days this month
-          </p>
+          {nextDeclared && (
+            <div>
+              <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>Next payment (declared)</p>
+              <p className="text-sm font-medium">
+                {formatDate(nextDeclared.payDate ?? nextDeclared.date)}
+                <span style={{ ...MONO, color: 'var(--accent-gold)' }}> · {cur}{nextDeclared.amount.toFixed(ticker === 'STRC' ? 4 : 6)}</span>
+              </p>
+            </div>
+          )}
+          <p className="text-xs sm:ml-auto" style={{ color: 'var(--text-muted)' }}>{dailyBox.note}</p>
         </div>
       )}
 
-      {/* Calendar-day dividends (STRC from 1 Nov 2026, STRF/STRK/STRD from 1 Jan 2027) */}
-      {dailyWindow && (() => {
-        const refYM = today >= dailyStart ? todayYM : dailyStart.slice(0, 7);
-        const [ry, rm] = refYM.split('-').map(Number);
-        const daysInMonth = new Date(Date.UTC(ry, rm, 0)).getUTCDate();
-        return (
-          <div className="p-4 rounded-xl mb-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8"
-            style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
-            <div>
-              <p className="text-xs font-semibold tracking-wide mb-0.5" style={{ color: 'var(--accent-gold)' }}>
-                {today >= dailyStart ? 'DAILY DIVIDEND PAYMENTS ACTIVE' : `DAILY DIVIDENDS FROM ${formatDate(dailyStart).toUpperCase()}`}
-              </p>
-              <p className="text-sm font-medium">Every calendar day, paid the next business day</p>
-            </div>
-            <div>
-              <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>Average per day ({ymToLabel(refYM)})</p>
-              <p className="text-lg font-medium" style={{ ...MONO, color: 'var(--accent-gold)' }}>
-                {cur}{(expectedMonthlyTotal / daysInMonth).toFixed(4)}
-              </p>
-            </div>
-            <p className="text-xs sm:ml-auto" style={{ color: 'var(--text-muted)' }}>
-              Strategy declares each day&apos;s dividend in whole cents, so the daily amount alternates slightly while a month still adds up to about {cur}{expectedMonthlyTotal.toFixed(2)} · weekend and holiday dividends are paid together on the next business day
-            </p>
-          </div>
-        );
-      })()}
-
       {/* Monthly prediction banner */}
-      {!inDailyEra && prediction && (
+      {!dailyBox && prediction && (
         <div className="p-4 rounded-xl mb-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8"
           style={{ background: 'rgba(200,137,58,0.08)', border: `1px solid ${predictionOverdue ? '#f59e0b' : 'var(--accent-gold)'}` }}>
           <div>
