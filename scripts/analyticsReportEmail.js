@@ -8,7 +8,7 @@
 
 import { Resend } from 'resend';
 import { getOwnPeriodStats } from '../lib/pageviewPeriods.js';
-import { cloudflareConfigured, getCloudflareTotals, getCloudflareTopPages } from '../lib/cloudflareAnalytics.js';
+import { cloudflareConfigured, getCloudflareTotals, getCloudflareTopPages, diagnoseCloudflare } from '../lib/cloudflareAnalytics.js';
 
 const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 
@@ -77,6 +77,7 @@ async function buildSiteSection(site) {
   let cf = null;
   let cfNote = null;
   let cfError = null;
+  let cfDiag = null;
   if (!cloudflareConfigured()) {
     cfNote = 'Cloudflare figures appear here once CF_API_TOKEN and CF_ACCOUNT_ID are set on the server.';
   } else if (!site.cfSiteTag) {
@@ -93,6 +94,7 @@ async function buildSiteSection(site) {
     } catch (err) {
       cfError = err.message;
       cfNote = 'Cloudflare data unavailable today.';
+      cfDiag = await diagnoseCloudflare().catch(() => null);
       console.error('Cloudflare analytics unavailable for', site.name, '-', err.message);
     }
   }
@@ -106,7 +108,7 @@ async function buildSiteSection(site) {
     totalRecorded: own.totalRecorded,
     lastWeekTopOwn: own.lastWeek.topPages.length,
     thisWeekTopOwn: own.thisWeek.topPages.length,
-    cloudflare: cf ? { yesterday: cf.yesterday, week: cf.week, month: cf.month, lastWeekTop: cf.lastWeekTop.length } : { unavailable: cfNote, error: cfError },
+    cloudflare: cf ? { yesterday: cf.yesterday, week: cf.week, month: cf.month, lastWeekTop: cf.lastWeekTop.length } : { unavailable: cfNote, error: cfError, diagnostics: cfDiag },
   });
 
   const weeksRows = own.lastFourWeeks
