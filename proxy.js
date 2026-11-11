@@ -129,7 +129,9 @@ const REGULATED_COUNTRIES = new Set([
  * required one.
  */
 function regionFor(request) {
-  const country = request.headers.get('x-vercel-ip-country');
+  // Cloud Run behind Cloudflare (2026-11-11): Cloudflare stamps CF-IPCountry
+  // the same way; the Vercel header is kept so either host works.
+  const country = request.headers.get('cf-ipcountry') || request.headers.get('x-vercel-ip-country');
   if (!country) return 'regulated';
   return REGULATED_COUNTRIES.has(country.toUpperCase()) ? 'regulated' : 'open';
 }
@@ -159,6 +161,9 @@ const BURST_WINDOW_SECONDS = 3;
 const BURST_ALLOWANCE = 4;
 
 function clientIp(request) {
+  // Behind Cloudflare the real visitor IP is CF-Connecting-IP.
+  const cfIp = request.headers.get('cf-connecting-ip');
+  if (cfIp) return cfIp;
   const forwardedFor = request.headers.get('x-forwarded-for');
   if (forwardedFor) return forwardedFor.split(',')[0].trim();
   return request.headers.get('x-real-ip') || 'unknown';
@@ -245,7 +250,9 @@ export function proxy(request, event) {
   // but never in plain local `next dev` — same signal polkadotbike's
   // lib/calendar/store.ts uses to pick its storage backend. Skip recording
   // entirely rather than try to filter dev traffic out after the fact.
-  if (!process.env.VERCEL) return response;
+  // Cloud Run sets K_SERVICE in every deployed revision (never in `next dev`),
+  // the same production-only signal VERCEL gave on Vercel.
+  if (!process.env.VERCEL && !process.env.K_SERVICE) return response;
   const ua = request.headers.get('user-agent') || '';
   // A real browser always sends a User-Agent — a blank one is itself a
   // reliable bot signal, not just "unknown".

@@ -1,0 +1,57 @@
+name: Deploy to Cloud Run
+
+# Replaces Vercel's Git integration: every push to main builds the image and
+# rolls out a new Cloud Run revision, so "push to main = site live" still
+# holds (the daily Regulatory & News Scan relies on that).
+# Feed-only commits are skipped, matching vercel.json's old ignoreCommand.
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'data/scan-feed/**'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-cloud-run
+  cancel-in-progress: false
+
+env:
+  REGION: europe-west1
+  SERVICE: dcy
+  IMAGE: europe-west1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/dcy/web
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build and push image
+        run: |
+          gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
+          docker build \
+            --build-arg NEXT_PUBLIC_ADSENSE_ID="${{ vars.NEXT_PUBLIC_ADSENSE_ID }}" \
+            --build-arg NEXT_PUBLIC_GA_ID="${{ vars.NEXT_PUBLIC_GA_ID }}" \
+            --build-arg NEXT_PUBLIC_BMNP_ENABLED="${{ vars.NEXT_PUBLIC_BMNP_ENABLED }}" \
+            -t "$IMAGE:${{ github.sha }}" .
+          docker push "$IMAGE:${{ github.sha }}"
+
+      # Runtime secrets (Redis, Blob, Resend, Twitter, CRON_SECRET, …) are set
+      # once on the Cloud Run service and carried over by each deploy.
+      # max-instances caps spend; min-instances 0 keeps it inside the free tier.
+      - name: Deploy
+        run: |
+          gcloud run deploy "$SERVICE" \
+            --image "$IMAGE:${{ github.sha }}" \
+            --region "$REGION" \
+            --allow-unauthenticated \
+            --memory 1Gi --cpu 1 \
+            --min-instances 0 --max-instances 2 \
+            --concurrency 80 --timeout 300 \
+            --quiet

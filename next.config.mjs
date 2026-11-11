@@ -12,6 +12,8 @@ const TOOL_REDIRECTS = ['strc', 'sata', 'bmnp', 'chad', 'more', 'strk', 'strf', 
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Self-contained Node server for the Cloud Run container (see Dockerfile).
+  output: 'standalone',
   serverExternalPackages: ['yahoo-finance2', 'sharp', '@napi-rs/canvas', 'ffmpeg-static', 'resend', 'tesseract.js'],
   allowedDevOrigins: ['192.168.1.70'],
   // Social cards are served from /og rather than /api/og: X cached our old
