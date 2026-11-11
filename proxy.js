@@ -179,6 +179,16 @@ const EXCLUDED_IPS = new Set(
   (process.env.PV_EXCLUDE_IPS || '').split(',').map((s) => s.trim()).filter(Boolean),
 );
 
+// Per-week path counters (hash per Monday, UTC) so the daily report can show LAST WEEK's top pages — the all-time
+// `paths` hash can't be split by period. Added 2026-11-11, so the first full week to report on is w/c 16 Nov.
+// Each hash expires after ~10 weeks; the report only ever reads the previous week.
+const WPATHS_TTL_SECONDS = 60 * 60 * 24 * 70;
+function mondayOf(d) {
+  const m = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+  m.setUTCDate(m.getUTCDate() - ((m.getUTCDay() + 6) % 7));
+  return m.toISOString().slice(0, 10);
+}
+
 async function recordPageview(encoded, ip, ua) {
   const burstKey = `${NS}:burst:${ip}`;
   const hitsInWindow = await redis.incr(burstKey);
@@ -189,12 +199,15 @@ async function recordPageview(encoded, ip, ua) {
   const now = new Date();
   const day = now.toISOString().slice(0, 10);
   const month = day.slice(0, 7);
+  const weekKey = `${NS}:wpaths:${mondayOf(now)}`;
   await redis
     .pipeline()
     .incr(`${NS}:day:${day}`)
     .incr(`${NS}:month:${month}`)
     .sadd(`${NS}:months`, month)
     .hincrby(`${NS}:paths`, encoded, 1)
+    .hincrby(weekKey, encoded, 1)
+    .expire(weekKey, WPATHS_TTL_SECONDS)
     .incr(`${NS}:total`)
     // Bounded rolling sample of the last 500 events (timestamp, path,
     // UA) — replaces the old per-event-forever log that caused the

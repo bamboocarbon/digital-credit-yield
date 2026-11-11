@@ -1,22 +1,22 @@
 // scripts/analyticsReportEmail.js
-// Daily analytics email — our own cookie-free pageview counter (Redis) for both sites, with top-10 pages.
-// Vercel Web Analytics columns are included only while VERCEL_API_TOKEN + VERCEL_TEAM_ID are set (Vercel
-// was switched off 2026-11-11, so they normally aren't). polkadotbike's counter is a Cloudflare Worker
-// (worker/pageviews.js in that repo) writing the same Redis keys, back on since 2026-11-11.
+// Daily analytics email for both sites: our own cookie-free pageview counter (Redis) side by side with Cloudflare
+// Web Analytics (page views + visits), plus top-10 pages (all-time, and last week from both sources).
+// Cloudflare numbers need CF_API_TOKEN + CF_ACCOUNT_ID on the server and a Web Analytics site tag per site (see
+// lib/cloudflareAnalytics.js); without them each card says so and still shows our own counter.
+// polkadotbike's counter is a Cloudflare Worker (worker/pageviews.js in that repo) writing the same Redis keys.
 // Run via: node scripts/analyticsReportEmail.js
 
 import { Resend } from 'resend';
 import { getOwnPeriodStats } from '../lib/pageviewPeriods.js';
-import { getVercelTotals, getVercelTopPages } from '../lib/vercelAnalytics.js';
+import { cloudflareConfigured, getCloudflareTotals, getCloudflareTopPages } from '../lib/cloudflareAnalytics.js';
 
 const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 
+// cfSiteTag = the Cloudflare Web Analytics site tag (the token in the site's beacon snippet; public in page source).
 const SITES = [
-  { name: 'Digital Credit Yield', ns: 'dcy:pv', projectId: 'prj_s1iAt31nYu5VzUyua5MxAfhamnPL', url: 'https://digitalcredityield.com' },
-  { name: 'Polka Dot Bike', ns: 'pdb:pv', projectId: 'prj_AcbBsCJMha4owF3heq2gzNP2VxD1', url: 'https://polkadotbike.com' },
+  { name: 'Digital Credit Yield', ns: 'dcy:pv', url: 'https://digitalcredityield.com', cfSiteTag: null },
+  { name: 'Polka Dot Bike', ns: 'pdb:pv', url: 'https://polkadotbike.com', cfSiteTag: 'ec15959bd14441ac80d8d0593e3ba1e7' },
 ];
-
-const HAS_VERCEL = Boolean(process.env.VERCEL_API_TOKEN && process.env.VERCEL_TEAM_ID);
 
 // Per-site numbers from the latest run, returned by run() so the cron endpoint can report them (handy for checking
 // both counters are alive without opening the email).
@@ -40,17 +40,18 @@ function wrapEmail(inner) {
 </html>`;
 }
 
-function statRow(label, ourCount, vercel) {
+function statRow(label, ourCount, cf) {
+  const cell = 'padding:6px 10px;border-bottom:1px solid #1c2842;text-align:right;';
   return `<tr>
     <td style="padding:6px 10px;border-bottom:1px solid #1c2842;color:#8a9ab5;">${label}</td>
-    <td style="padding:6px 10px;border-bottom:1px solid #1c2842;text-align:right;">${fmt(ourCount)}</td>${vercel ? `
-    <td style="padding:6px 10px;border-bottom:1px solid #1c2842;text-align:right;">${fmt(vercel.pageviews)}</td>
-    <td style="padding:6px 10px;border-bottom:1px solid #1c2842;text-align:right;color:#5fd3a0;">${fmt(vercel.people)}</td>` : ''}
+    <td style="${cell}">${fmt(ourCount)}</td>${cf ? `
+    <td style="${cell}">${fmt(cf.pageviews)}</td>
+    <td style="${cell}color:#5fd3a0;">${fmt(cf.visits)}</td>` : ''}
   </tr>`;
 }
 
-function topPagesTable(title, pages) {
-  if (!pages.length) return `<div style="font-size:12px;color:#8a9ab5;margin:6px 0 14px;">${title}: no data</div>`;
+function topPagesTable(title, pages, emptyNote = 'no data') {
+  if (!pages?.length) return `<div style="font-size:12px;color:#8a9ab5;margin:14px 0 4px;">${title}</div><div style="font-size:11px;color:#5a6a8a;margin:0 0 6px;">${emptyNote}</div>`;
   const rows = pages
     .map(
       (p, i) => `<tr>
@@ -64,49 +65,60 @@ function topPagesTable(title, pages) {
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">${rows}</table>`;
 }
 
-function externalSiteSection(site) {
-  return `
-  <div style="background:#0f1830;border:1px solid #1c2842;border-radius:12px;padding:18px;margin-bottom:18px;">
-    <div style="font-size:16px;font-weight:bold;margin-bottom:2px;">${site.name}</div>
-    <div style="font-size:11px;color:#5a6a8a;margin-bottom:10px;"><a href="${site.url}" style="color:#5a6a8a;text-decoration:none;">${site.url.replace(/^https?:\/\//, '')}</a></div>
-    <div style="font-size:13px;color:#8a9ab5;">Traffic for this site is now measured by Cloudflare Web Analytics (no own counter any more). <a href="https://dash.cloudflare.com/?to=/:account/web-analytics" style="color:#5fd3a0;">Open the dashboard</a>.</div>
-  </div>`;
-}
-
 async function buildSiteSection(site) {
-  if (site.ownCounter === false) return externalSiteSection(site);
   const own = await getOwnPeriodStats(site.ns);
-  summaries.push({ site: site.name, latestView: own.latestView, yesterday: own.yesterday.count, weekToDate: own.weekToDate.count, monthToDate: own.monthToDate.count, totalRecorded: own.totalRecorded });
   const { yesterday, thisMonday, thisMonth, now } = own.periodBounds;
   const yesterdayEnd = new Date(yesterday);
   yesterdayEnd.setUTCDate(yesterdayEnd.getUTCDate() + 1);
+  const lastWeekStart = new Date(`${own.lastWeek.start}T00:00:00Z`);
+  const lastWeekEnd = new Date(thisMonday.getTime() - 86400000);
 
-  let vYesterday = null, vWeek = null, vMonth = null, vTop30d = null;
-  if (HAS_VERCEL) {
+  // Cloudflare Web Analytics — never lets a failure stop the email.
+  let cf = null;
+  let cfNote = null;
+  let cfError = null;
+  if (!cloudflareConfigured()) {
+    cfNote = 'Cloudflare figures appear here once CF_API_TOKEN and CF_ACCOUNT_ID are set on the server.';
+  } else if (!site.cfSiteTag) {
+    cfNote = "Cloudflare Web Analytics isn't set up for this site yet.";
+  } else {
     try {
-      [vYesterday, vWeek, vMonth, vTop30d] = await Promise.all([
-        getVercelTotals(site.projectId, yesterday, yesterdayEnd),
-        getVercelTotals(site.projectId, thisMonday, now),
-        getVercelTotals(site.projectId, thisMonth, now),
-        getVercelTopPages(site.projectId, new Date(now.getTime() - 30 * 86400000), now, 10),
+      const [y, w, m, lastWeekTop] = await Promise.all([
+        getCloudflareTotals(site.cfSiteTag, yesterday, yesterdayEnd),
+        getCloudflareTotals(site.cfSiteTag, thisMonday, now),
+        getCloudflareTotals(site.cfSiteTag, thisMonth, now),
+        getCloudflareTopPages(site.cfSiteTag, lastWeekStart, thisMonday, 10),
       ]);
+      cf = { yesterday: y, week: w, month: m, lastWeekTop };
     } catch (err) {
-      // Vercel's data is a nice-to-have now — never let it stop the email going out.
-      console.error('Vercel analytics unavailable, sending own-counter report only:', err.message);
+      cfError = err.message;
+      cfNote = 'Cloudflare data unavailable today.';
+      console.error('Cloudflare analytics unavailable for', site.name, '-', err.message);
     }
   }
-  const showVercel = Boolean(vYesterday);
+
+  summaries.push({
+    site: site.name,
+    latestView: own.latestView,
+    yesterday: own.yesterday.count,
+    weekToDate: own.weekToDate.count,
+    monthToDate: own.monthToDate.count,
+    totalRecorded: own.totalRecorded,
+    lastWeekTopOwn: own.lastWeek.topPages.length,
+    cloudflare: cf ? { yesterday: cf.yesterday, week: cf.week, month: cf.month, lastWeekTop: cf.lastWeekTop.length } : { unavailable: cfNote, error: cfError },
+  });
 
   const weeksRows = own.lastFourWeeks
-    .map((w, i) => {
-      // We don't have per-week Vercel totals cheaply without 4 more round
-      // trips per site — shown for our own counter only, labeled as such.
-      return `<tr>
+    .map((w) => `<tr>
         <td style="padding:4px 10px;color:#8a9ab5;font-size:12px;">${w.label}</td>
         <td style="padding:4px 10px;text-align:right;font-size:12px;">${fmt(w.count)}</td>
-      </tr>`;
-    })
+      </tr>`)
     .join('');
+
+  const lastWeekLabel = `${own.lastWeek.start} – ${lastWeekEnd.toISOString().slice(0, 10)}`;
+  const ownLastWeekNote = own.lastWeek.start <= '2026-11-09'
+    ? 'Weekly page counts started on 11 Nov 2026, so this first week is partial (Wed–Sun).'
+    : 'No views recorded for that week.';
 
   return `
   <div style="background:#0f1830;border:1px solid #1c2842;border-radius:12px;padding:18px 18px 8px;margin-bottom:18px;">
@@ -116,21 +128,22 @@ async function buildSiteSection(site) {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
       <tr>
         <td style="padding:6px 10px;font-size:11px;color:#5a6a8a;">Period</td>
-        <td style="padding:6px 10px;font-size:11px;color:#5a6a8a;text-align:right;">Our counter</td>${showVercel ? `
-        <td style="padding:6px 10px;font-size:11px;color:#5a6a8a;text-align:right;">Vercel pageviews</td>
-        <td style="padding:6px 10px;font-size:11px;color:#5a6a8a;text-align:right;">Vercel people</td>` : ''}
+        <td style="padding:6px 10px;font-size:11px;color:#5a6a8a;text-align:right;">Our counter</td>${cf ? `
+        <td style="padding:6px 10px;font-size:11px;color:#5a6a8a;text-align:right;">Cloudflare views</td>
+        <td style="padding:6px 10px;font-size:11px;color:#5a6a8a;text-align:right;">Cloudflare visits</td>` : ''}
       </tr>
-      ${statRow(`Yesterday (${yesterday.toISOString().slice(0, 10)})`, own.yesterday.count, vYesterday)}
-      ${statRow(`This week (since ${own.weekToDate.since})`, own.weekToDate.count, vWeek)}
-      ${statRow(`This month (${own.monthToDate.month})`, own.monthToDate.count, vMonth)}
+      ${statRow(`Yesterday (${yesterday.toISOString().slice(0, 10)})`, own.yesterday.count, cf?.yesterday)}
+      ${statRow(`This week (since ${own.weekToDate.since})`, own.weekToDate.count, cf?.week)}
+      ${statRow(`This month (${own.monthToDate.month})`, own.monthToDate.count, cf?.month)}
     </table>
-    <div style="font-size:10px;color:#3a4a62;margin:8px 10px 0;">Latest recorded view: ${own.latestView ? own.latestView.replace('T', ' ').slice(0, 16) + ' UTC' : 'none yet'}. "Our counter" = raw pageview hits, cookie-free, no bots.${showVercel ? ' "Vercel people" = unique visitors — the closest true "number of people" figure, since our counter can\'t distinguish individuals.' : ''}</div>
+    <div style="font-size:10px;color:#3a4a62;margin:8px 10px 0;">Latest recorded view: ${own.latestView ? own.latestView.replace('T', ' ').slice(0, 16) + ' UTC' : 'none yet'}. "Our counter" = raw pageview hits, cookie-free, bots filtered.${cf ? ' Cloudflare = real browsers running its cookie-free beacon: views = page views, visits = sessions.' : ''}${cfNote ? ` ${cfNote}` : ''}</div>
 
     <div style="font-size:12px;color:#8a9ab5;margin:16px 0 4px;">Last 4 completed weeks (our counter)</div>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">${weeksRows}</table>
 
-    ${topPagesTable('Top 10 pages — our counter (all-time)', own.topPages)}
-    ${showVercel ? topPagesTable('Top 10 pages — Vercel Analytics (last 30 days)', vTop30d) : ''}
+    ${topPagesTable('Top 10 pages — all time (our counter)', own.topPages)}
+    ${topPagesTable(`Top 10 pages — last week, ${lastWeekLabel} (our counter)`, own.lastWeek.topPages, ownLastWeekNote)}
+    ${cf ? topPagesTable(`Top 10 pages — last week, ${lastWeekLabel} (Cloudflare)`, cf.lastWeekTop, 'no data') : ''}
   </div>`;
 }
 
