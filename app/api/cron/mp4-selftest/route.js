@@ -6,7 +6,8 @@ import os from 'os';
 import path from 'path';
 import ffmpegPath from 'ffmpeg-static';
 import { generateDailyInsight, getDailyTicker } from '../../../../scripts/insightEngine.js';
-import { generateMp4 } from '../../../../scripts/generateMp4.js';
+import { generateMp4, ensureClip } from '../../../../scripts/generateMp4.js';
+import { getDailyRocketClip } from '../../../../scripts/daily-email-v2-rocket-race/rocketClipRotation.mjs';
 
 // Diagnostic only: builds the daily email's rocket MP4 exactly as dailyEmail.js does, but sends nothing and
 // writes nothing — answers "does video generation work on this host?" without waiting for a daily send
@@ -45,12 +46,25 @@ async function matrix() {
   return out;
 }
 
+// ?mode=probe: stream info of today's rocket intro clip (ffmpeg prints it, then errors for lack of an output file).
+async function probe() {
+  const clip = getDailyRocketClip(0);
+  const file = await ensureClip(clip.key);
+  let text = '';
+  try { await promisify(execFile)(ffmpegPath || 'ffmpeg', ['-hide_banner', '-i', file], { timeout: 30000 }); } catch (e) { text = String(e.stderr || ''); }
+  return { clip: clip.key, bytes: fs.statSync(file).size, streams: text.split('\n').filter((l) => /Duration|Stream|Input/.test(l)).map((l) => l.trim()) };
+}
+
 async function handler(request) {
   const authHeader = request.headers.get('authorization');
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  if (new URL(request.url).searchParams.get('mode') === 'matrix') return NextResponse.json(await matrix());
+  const mode = new URL(request.url).searchParams.get('mode');
+  if (mode === 'matrix') return NextResponse.json(await matrix());
+  if (mode === 'probe') {
+    try { return NextResponse.json(await probe()); } catch (err) { return NextResponse.json({ error: err.message }, { status: 500 }); }
+  }
   const started = Date.now();
   try {
     const { insight, quotes } = await generateDailyInsight(getDailyTicker(0));
