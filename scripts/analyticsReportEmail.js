@@ -1,7 +1,10 @@
 // scripts/analyticsReportEmail.js
-// Daily analytics comparison email — our own cookie-free pageview counter
-// vs Vercel's real Web Analytics (pageviews + unique visitors), for both
-// digital-credit-yield and polkadotbike, with top-10 pages per site.
+// Daily analytics email — our own cookie-free pageview counter (Redis) for
+// digital-credit-yield, with top-10 pages. Vercel Web Analytics columns are
+// included only while VERCEL_API_TOKEN + VERCEL_TEAM_ID are set (Vercel was
+// switched off 2026-11-11, so they normally aren't). polkadotbike moved to
+// Cloudflare static hosting and no longer has its own counter: it gets a pointer
+// to Cloudflare Web Analytics instead of stale numbers.
 // Run via: node scripts/analyticsReportEmail.js
 
 import { Resend } from 'resend';
@@ -12,8 +15,10 @@ const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 
 const SITES = [
   { name: 'Digital Credit Yield', ns: 'dcy:pv', projectId: 'prj_s1iAt31nYu5VzUyua5MxAfhamnPL', url: 'https://digitalcredityield.com' },
-  { name: 'Polka Dot Bike', ns: 'pdb:pv', projectId: 'prj_AcbBsCJMha4owF3heq2gzNP2VxD1', url: 'https://polkadotbike.com' },
+  { name: 'Polka Dot Bike', ns: 'pdb:pv', projectId: 'prj_AcbBsCJMha4owF3heq2gzNP2VxD1', url: 'https://polkadotbike.com', ownCounter: false },
 ];
+
+const HAS_VERCEL = Boolean(process.env.VERCEL_API_TOKEN && process.env.VERCEL_TEAM_ID);
 
 function fmt(n) {
   return Number(n).toLocaleString('en-GB');
@@ -33,12 +38,12 @@ function wrapEmail(inner) {
 </html>`;
 }
 
-function statRow(label, ourCount, vercelPageviews, vercelPeople) {
+function statRow(label, ourCount, vercel) {
   return `<tr>
     <td style="padding:6px 10px;border-bottom:1px solid #1c2842;color:#8a9ab5;">${label}</td>
-    <td style="padding:6px 10px;border-bottom:1px solid #1c2842;text-align:right;">${fmt(ourCount)}</td>
-    <td style="padding:6px 10px;border-bottom:1px solid #1c2842;text-align:right;">${fmt(vercelPageviews)}</td>
-    <td style="padding:6px 10px;border-bottom:1px solid #1c2842;text-align:right;color:#5fd3a0;">${fmt(vercelPeople)}</td>
+    <td style="padding:6px 10px;border-bottom:1px solid #1c2842;text-align:right;">${fmt(ourCount)}</td>${vercel ? `
+    <td style="padding:6px 10px;border-bottom:1px solid #1c2842;text-align:right;">${fmt(vercel.pageviews)}</td>
+    <td style="padding:6px 10px;border-bottom:1px solid #1c2842;text-align:right;color:#5fd3a0;">${fmt(vercel.people)}</td>` : ''}
   </tr>`;
 }
 
@@ -57,18 +62,37 @@ function topPagesTable(title, pages) {
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">${rows}</table>`;
 }
 
+function externalSiteSection(site) {
+  return `
+  <div style="background:#0f1830;border:1px solid #1c2842;border-radius:12px;padding:18px;margin-bottom:18px;">
+    <div style="font-size:16px;font-weight:bold;margin-bottom:2px;">${site.name}</div>
+    <div style="font-size:11px;color:#5a6a8a;margin-bottom:10px;"><a href="${site.url}" style="color:#5a6a8a;text-decoration:none;">${site.url.replace(/^https?:\/\//, '')}</a></div>
+    <div style="font-size:13px;color:#8a9ab5;">Traffic for this site is now measured by Cloudflare Web Analytics (no own counter any more). <a href="https://dash.cloudflare.com/?to=/:account/web-analytics" style="color:#5fd3a0;">Open the dashboard</a>.</div>
+  </div>`;
+}
+
 async function buildSiteSection(site) {
+  if (site.ownCounter === false) return externalSiteSection(site);
   const own = await getOwnPeriodStats(site.ns);
   const { yesterday, thisMonday, thisMonth, now } = own.periodBounds;
   const yesterdayEnd = new Date(yesterday);
   yesterdayEnd.setUTCDate(yesterdayEnd.getUTCDate() + 1);
 
-  const [vYesterday, vWeek, vMonth, vTop30d] = await Promise.all([
-    getVercelTotals(site.projectId, yesterday, yesterdayEnd),
-    getVercelTotals(site.projectId, thisMonday, now),
-    getVercelTotals(site.projectId, thisMonth, now),
-    getVercelTopPages(site.projectId, new Date(now.getTime() - 30 * 86400000), now, 10),
-  ]);
+  let vYesterday = null, vWeek = null, vMonth = null, vTop30d = null;
+  if (HAS_VERCEL) {
+    try {
+      [vYesterday, vWeek, vMonth, vTop30d] = await Promise.all([
+        getVercelTotals(site.projectId, yesterday, yesterdayEnd),
+        getVercelTotals(site.projectId, thisMonday, now),
+        getVercelTotals(site.projectId, thisMonth, now),
+        getVercelTopPages(site.projectId, new Date(now.getTime() - 30 * 86400000), now, 10),
+      ]);
+    } catch (err) {
+      // Vercel's data is a nice-to-have now — never let it stop the email going out.
+      console.error('Vercel analytics unavailable, sending own-counter report only:', err.message);
+    }
+  }
+  const showVercel = Boolean(vYesterday);
 
   const weeksRows = own.lastFourWeeks
     .map((w, i) => {
@@ -89,29 +113,26 @@ async function buildSiteSection(site) {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
       <tr>
         <td style="padding:6px 10px;font-size:11px;color:#5a6a8a;">Period</td>
-        <td style="padding:6px 10px;font-size:11px;color:#5a6a8a;text-align:right;">Our counter</td>
+        <td style="padding:6px 10px;font-size:11px;color:#5a6a8a;text-align:right;">Our counter</td>${showVercel ? `
         <td style="padding:6px 10px;font-size:11px;color:#5a6a8a;text-align:right;">Vercel pageviews</td>
-        <td style="padding:6px 10px;font-size:11px;color:#5a6a8a;text-align:right;">Vercel people</td>
+        <td style="padding:6px 10px;font-size:11px;color:#5a6a8a;text-align:right;">Vercel people</td>` : ''}
       </tr>
-      ${statRow(`Yesterday (${yesterday.toISOString().slice(0, 10)})`, own.yesterday.count, vYesterday.pageviews, vYesterday.people)}
-      ${statRow(`This week (since ${own.weekToDate.since})`, own.weekToDate.count, vWeek.pageviews, vWeek.people)}
-      ${statRow(`This month (${own.monthToDate.month})`, own.monthToDate.count, vMonth.pageviews, vMonth.people)}
+      ${statRow(`Yesterday (${yesterday.toISOString().slice(0, 10)})`, own.yesterday.count, vYesterday)}
+      ${statRow(`This week (since ${own.weekToDate.since})`, own.weekToDate.count, vWeek)}
+      ${statRow(`This month (${own.monthToDate.month})`, own.monthToDate.count, vMonth)}
     </table>
-    <div style="font-size:10px;color:#3a4a62;margin:8px 10px 0;">"Our counter" = raw pageview hits, cookie-free, no bots. "Vercel people" = unique visitors — the closest true "number of people" figure, since our counter can't distinguish individuals.</div>
+    <div style="font-size:10px;color:#3a4a62;margin:8px 10px 0;">"Our counter" = raw pageview hits, cookie-free, no bots.${showVercel ? ' "Vercel people" = unique visitors — the closest true "number of people" figure, since our counter can\'t distinguish individuals.' : ''}</div>
 
     <div style="font-size:12px;color:#8a9ab5;margin:16px 0 4px;">Last 4 completed weeks (our counter)</div>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">${weeksRows}</table>
 
     ${topPagesTable('Top 10 pages — our counter (all-time)', own.topPages)}
-    ${topPagesTable('Top 10 pages — Vercel Analytics (last 30 days)', vTop30d)}
+    ${showVercel ? topPagesTable('Top 10 pages — Vercel Analytics (last 30 days)', vTop30d) : ''}
   </div>`;
 }
 
 export async function run() {
   if (!process.env.RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
-  if (!process.env.VERCEL_API_TOKEN || !process.env.VERCEL_TEAM_ID) {
-    throw new Error('Missing VERCEL_API_TOKEN or VERCEL_TEAM_ID');
-  }
 
   const sections = await Promise.all(SITES.map(buildSiteSection));
   const today = new Date().toISOString().slice(0, 10);
