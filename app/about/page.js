@@ -130,6 +130,26 @@ export default function AboutPage() {
         ))}
       </div>
 
+      <h2 className="text-xl font-semibold mb-4">How I Source and Correct</h2>
+      <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
+        Dividend rates, payment schedules, reserves and capital figures come from the issuers&rsquo; own
+        documents: SEC filings (8-Ks, 10-Qs, prospectuses), exchange announcements and company press
+        releases. I check them against the filings each day, and where a figure is hand-dated, such as a
+        Bitcoin holding from a quarterly report, the page says when it was taken. Share prices come from
+        Yahoo Finance and can lag or occasionally be wrong, so treat them as indicative.
+      </p>
+      <p className="text-base leading-7 mb-4" style={{ color: 'var(--text-muted)' }}>
+        Articles are my own analysis and opinion, written from those sources. I hold positions in MSTR and
+        ASST, and I say so at the end of each article. Nothing here is paid for or sponsored by an issuer.
+      </p>
+      <p className="text-base leading-7 mb-12" style={{ color: 'var(--text-muted)' }}>
+        If something is wrong, I fix it. When an article changes because a rate, date or figure moved, I
+        add a dated update note rather than quietly rewriting history. If you spot an error, email{' '}
+        <a href="mailto:contact@digitalcredityield.com" style={{ color: 'var(--accent-gold)' }}>contact@digitalcredityield.com</a>{' '}
+        or use the <a href="/contact" style={{ color: 'var(--accent-gold)' }}>contact page</a>, and tell me
+        which page and figure so I can check it against the source.
+      </p>
+
       <div className="p-5 rounded-xl mb-8" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
         <p className="text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>Important Disclaimer</p>
         <p className="text-sm mt-2 leading-6" style={{ color: 'var(--text-muted)' }}>
