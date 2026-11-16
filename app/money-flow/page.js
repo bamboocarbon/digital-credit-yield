@@ -3,7 +3,7 @@ import CumulativeFlowChart from '@/components/CumulativeFlowChart';
 import MoneyFlowSelector from '@/components/MoneyFlowSelector';
 
 // Date the narrative zones below were last revised — shown next to the story heading
-const STORY_UPDATED = '25 September 2026';
+const STORY_UPDATED = '16 November 2026';
 
 export function generateMetadata() {
   const instruments = 'STRC, SATA, BMNP, CHAD & MORE';
@@ -140,7 +140,17 @@ export default function MoneyFlowPage() {
             <div>
               <p className="font-semibold text-sm mb-1">Zone 8 — A Fourth Instrument, and a New Chain <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Sep 2026</span></p>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                September 2026 brought the first non-Bitcoin, non-Ethereum entrant: DeFi Development Corp. (Nasdaq: DFDV) priced 1,375,000 shares of its 13.00% Variable Rate Series C Perpetual Preferred (CHAD Stock) at $8.00, closing on September 8 for roughly $11.0M in gross proceeds. Unlike every other instrument here, CHAD carries a $10 stated value rather than $100 — a genuinely different structure, not just a smaller headline number. Proceeds are earmarked for Solana, positioning DeFi Development Corp. as a Solana-treasury counterpart to Strategy, Strive and Bitmine. CHAD&apos;s single pink IPO bar marks the start of what could become a fourth weekly capital line to watch, and the newest, smallest and shortest-tracked of the four.
+                September 2026 brought the first non-Bitcoin, non-Ethereum entrant: DeFi Development Corp. (Nasdaq: DFDV) priced 1,375,000 shares of its 13.00% Variable Rate Series C Perpetual Preferred (CHAD Stock) at $8.00, closing on September 8 for roughly $11.0M in gross proceeds. Unlike every other instrument here, CHAD carries a $10 stated value rather than $100 — a genuinely different structure, not just a smaller headline number. The prospectus lists general corporate purposes, including working capital, buying SOL and strategic initiatives, which positions DeFi Development Corp. as a Solana-treasury counterpart to Strategy, Strive and Bitmine. CHAD&apos;s single pink IPO bar marks the start of what could become a fourth weekly capital line to watch, and the newest, smallest and shortest-tracked of the four.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-1 rounded-full" style={{ background: 'linear-gradient(#a855f7 50%, #3b82f6 50%)' }} />
+            <div>
+              <p className="font-semibold text-sm mb-1">Zone 9 — A Sterling Share and a Second Strive Preferred <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>Oct 2026</span></p>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                October added two more instruments within two days. On 14 October The Smarter Web Company&apos;s MORE was admitted to the London Stock Exchange, the first sterling instrument on this page: about £10M gross (111,112 shares at £90), below the £15–25M the company first targeted. On 15 October Strive priced its 15.00% SATS, 7,000,000 shares at $90 for about $630M gross after upsizing from 5 million shares, and at closing on 20 October added $157.5M, 18 months of SATS dividends, to its dividend reserve. SATS sits inside Strive&apos;s card above alongside SATA. MORE&apos;s weekly figures are being added from 26 October 2026.
               </p>
             </div>
           </div>
