@@ -26,7 +26,7 @@ const terms = [
   },
   {
     term: 'Par value',
-    def: 'The face (stated) value of a preferred share — $100 for STRC, SATA and BMNP, $10 for CHAD, and a £100 reference value for MORE (its nominal value is only £0.001, but the dividend is calculated on £100). The dividend rate is set against par, and the issuers manage their rates to keep the market price trading close to it.',
+    def: 'The face (stated) value of a preferred share — $100 for STRC, STRF, STRK, STRD, SATA, SATS and BMNP, €100 for STRE, $10 for CHAD, and a £100 reference value for MORE (its nominal value is only £0.001, but the dividend is calculated on £100). The dividend rate is set against par. Some issuers (STRC, SATA, CHAD) adjust the rate to try to keep the market price close to it; the fixed-rate ones don’t, and their prices can sit well above or below par.',
   },
   {
     term: 'Effective yield',
@@ -39,7 +39,7 @@ const terms = [
   },
   {
     term: 'Cumulative dividends',
-    def: 'A structure in which missed dividend payments accumulate as an obligation that must be settled in full before common shareholders can receive anything. Non-cumulative structures offer no such protection — a skipped payment is simply gone.',
+    def: 'A structure in which missed dividend payments accumulate as an obligation that must be settled in full before common shareholders can receive anything. Non-cumulative structures, like STRD, offer no such protection — a skipped payment is simply gone. BMNP goes a step further: its dividend accumulates whether or not it is declared, and a missed payment obliges Bitmine to try to raise the cash within 30 days.',
   },
   {
     term: 'ATM programme (at-the-market)',
@@ -71,22 +71,27 @@ const terms = [
   },
   {
     term: 'Dividend frequency',
-    def: 'How often payments arrive: STRC pays semi-monthly (24 times a year) until October 2026 and every calendar day (365 times a year) from 1 November 2026, STRK, STRF and STRD move from quarterly to every calendar day on 1 January 2027, SATA and CHAD pay daily on US market business days (~250 times a year), and BMNP and MORE pay weekly. Annual yield is unaffected by frequency, but faster payments mean more frequent compounding if you reinvest.',
+    def: 'How often payments arrive: STRC pays semi-monthly (24 times a year) until October 2026 and every calendar day (365 times a year) from 1 November 2026, STRK, STRF and STRD move from quarterly to every calendar day on 1 January 2027, SATA, SATS and CHAD pay daily on US market business days (~250 times a year), BMNP and MORE pay weekly, and STRE pays quarterly. Annual yield is unaffected by frequency, but faster payments mean more frequent compounding if you reinvest.',
     link: { href: '/blog/monthly-vs-daily-dividends', label: 'Does frequency matter?' },
   },
   {
     term: 'Bitcoin treasury company',
-    def: 'A public company that holds Bitcoin as a core treasury asset and typically raises capital — often via preferred stock — to buy more. Strategy (STRC) and Strive (SATA) are the two Bitcoin-treasury issuers tracked here; Bitmine (BMNP) follows the same playbook with Ethereum, and DeFi Development Corp. (CHAD) with Solana.',
+    def: 'A public company that holds Bitcoin as a core treasury asset and typically raises capital — often via preferred stock — to buy more. Strategy (STRC, STRF, STRK, STRD, STRE), Strive (SATA, SATS) and The Smarter Web Company (MORE) are the Bitcoin-treasury issuers tracked here; Bitmine (BMNP) follows the same playbook with Ethereum, and DeFi Development Corp. (CHAD) with Solana.',
     link: { href: '/blog/bitcoin-treasury-companies', label: 'Why they issue preferred equity' },
   },
   {
     term: 'Staking (proof-of-stake)',
-    def: 'Locking up cryptocurrency to help run a proof-of-stake network like Ethereum, earning rewards in return. Bitmine stakes its Ethereum through its MAVAN validator network, and those rewards are what fund BMNP’s dividend — unlike STRC and SATA, whose Bitcoin earns nothing and simply has to hold its value.',
+    def: 'Locking up cryptocurrency to help run a proof-of-stake network like Ethereum, earning rewards in return. Bitmine stakes its Ethereum through its MAVAN validator network, and Bitmine expects to fund BMNP’s dividend mainly from the yield on that Ethereum — unlike STRC and SATA, whose Bitcoin earns nothing and simply has to hold its value.',
     link: { href: '/blog/bmnp-dividend-rate-mechanism', label: 'How BMNP is funded' },
   },
   {
+    term: 'Convertible preferred',
+    def: 'A preferred share that can be exchanged for common stock at a fixed ratio. STRK is the convertible one in the Strategy range: each share can convert into 0.1 share of MSTR, an initial conversion price of $1,000 per MSTR share. When the common stock trades far below that price, as it does now, the option has little value and the share trades mainly on its dividend.',
+    link: { href: '/strk', label: 'See the STRK hub' },
+  },
+  {
     term: 'Redemption premium',
-    def: 'An above-par price an issuer must pay to buy its preferred shares back early. BMNP can be bought back at 110% of par ($110) in the first 18 months, then 105%, then par — which helps anchor its price near term, the job STRC and SATA hand to their adjustable rate instead. CHAD carries one too: DeFi Development Corp. can buy it back at $11.00, 110% of its $10 stated value, at any time since it listed, with no step-down. For CHAD it sits alongside the variable rate rather than replacing it. Both are the issuer’s option, not a right for holders to sell back.',
+    def: 'An above-par price an issuer must pay to buy its preferred shares back early. BMNP can be bought back at 110% of par ($110) until 10 December 2027, then 105% until 10 June 2029, then par (plus unpaid dividends) — which helps anchor its price near term, the job STRC and SATA hand to their adjustable rate instead. CHAD carries one too: DeFi Development Corp. can buy it back at $11.00, 110% of its $10 stated value, at any time since it listed, with no step-down. For CHAD it sits alongside the variable rate rather than replacing it. MORE is redeemable by its company at £110. All of these are the issuer’s option, not a right for holders to sell back.',
     link: { href: '/blog/bmnp-dividend-rate-mechanism', label: 'BMNP’s price anchor' },
   },
 ];
