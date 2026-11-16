@@ -1,16 +1,16 @@
 {
- "generatedAt": "2026-11-09T13:55:49.193Z",
+ "generatedAt": "2026-11-16T13:55:44.468Z",
  "strategy": {
   "ledger": {
    "counts": {
-    "STRC": 79934262,
+    "STRC": 77651752,
     "STRF": 12840000,
     "STRK": 14020000,
     "STRD": 14024000,
     "STRE": 7750000,
-    "MSTR": 425569772
+    "MSTR": 427656812
    },
-   "appliedThrough": "2026-11-08",
+   "appliedThrough": "2026-11-15",
    "applied": [
     "sold|2026-10-18",
     "repurchased|2026-10-18",
@@ -18,17 +18,19 @@
     "sold|2026-11-01",
     "repurchased|2026-11-01",
     "sold|2026-11-08",
-    "repurchased|2026-11-08"
+    "repurchased|2026-11-08",
+    "sold|2026-11-15",
+    "repurchased|2026-11-15"
    ]
   },
-  "asOf": "2026-11-08",
+  "asOf": "2026-11-15",
   "counts": {
-   "STRC": 79934262,
+   "STRC": 77651752,
    "STRF": 12840000,
    "STRK": 14020000,
    "STRD": 14024000,
    "STRE": 7750000,
-   "MSTR": 425569772
+   "MSTR": 427656812
   },
   "base": {
    "asOf": "2026-10-11",
@@ -44,15 +46,15 @@
   }
  },
  "strive": {
-  "asOf": "2026-11-06",
+  "asOf": "2026-11-13",
   "classA": 118133002,
   "classB": 9198107,
   "commonEffective": 127331109,
   "SATA": 14030176,
-  "SATS": 7036559,
-  "bitcoinHeld": 43153,
-  "source": "https://www.sec.gov/Archives/edgar/data/1920406/000162828026071888/asst-20261109.htm",
-  "filed": "2026-11-09"
+  "SATS": 7141037,
+  "bitcoinHeld": 43404,
+  "source": "https://www.sec.gov/Archives/edgar/data/1920406/000162828026074004/asst-20261116.htm",
+  "filed": "2026-11-16"
  },
  "swc": {
   "ordinary": {
