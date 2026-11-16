@@ -1,7 +1,7 @@
 export const metadata = {
   alternates: { canonical: '/terms' },
   title: 'Terms & Conditions',
-  description: 'Terms and conditions for using Digital Credit Yield — an independent tracker for STRC, SATA, BMNP, CHAD and MORE preferred stocks. Not financial advice.',
+  description: 'Terms and conditions for using Digital Credit Yield — an independent tracker for crypto-treasury preferred stocks. Not financial advice.',
   openGraph: {
     title: 'Terms & Conditions — Digital Credit Yield',
     description: 'Terms for using Digital Credit Yield. Independent tracker, not financial advice.',
@@ -29,7 +29,7 @@ export default function TermsPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
       <h1 className="text-3xl font-bold mb-2">Terms & Conditions</h1>
-      <p className="text-sm mb-10" style={{ color: 'var(--text-muted)' }}>Last updated: May 2026</p>
+      <p className="text-sm mb-10" style={{ color: 'var(--text-muted)' }}>Last updated: November 2026</p>
 
       {/* Prominent disclaimer */}
       <div id="disclaimer" className="p-5 rounded-xl mb-10"
@@ -62,7 +62,7 @@ export default function TermsPage() {
       </Section>
 
       <Section title="4. Third-Party Links & Services">
-        <p>The Site may contain links to third-party websites or use third-party services (including Google Analytics, Google AdSense, and Google Fonts). We are not responsible for the content, accuracy, or practices of any third-party sites or services.</p>
+        <p>The Site may contain links to third-party websites or use third-party services (including Google Analytics, Google AdSense, Ahrefs Web Analytics and Cloudflare Web Analytics). We are not responsible for the content, accuracy, or practices of any third-party sites or services.</p>
       </Section>
 
       <Section title="5. Governing Law">

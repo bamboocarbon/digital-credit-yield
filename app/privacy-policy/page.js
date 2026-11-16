@@ -29,7 +29,7 @@ export default function PrivacyPolicyPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
       <h1 className="text-3xl font-bold mb-2">Privacy Policy</h1>
-      <p className="text-sm mb-10" style={{ color: 'var(--text-muted)' }}>Last updated: November 2026</p>
+      <p className="text-sm mb-10" style={{ color: 'var(--text-muted)' }}>Last updated: 16 November 2026</p>
 
       <Section title="1. What Data We Collect">
         <p>We may collect the following data when you use Digital Credit Yield:</p>
@@ -62,10 +62,11 @@ export default function PrivacyPolicyPage() {
         <ul className="list-disc pl-5 space-y-1">
           <li><strong>Google Analytics</strong> — website analytics. <a href="https://policies.google.com/privacy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Google Privacy Policy</a></li>
           <li><strong>Google AdSense</strong> — advertising. Google and its partners use cookies and similar technologies to show ads, including ads based on your prior visits to this and other websites, and to measure ad performance. <a href="https://policies.google.com/technologies/partner-sites" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">How Google uses information from sites that use its services</a></li>
-          <li><strong>Ahrefs Web Analytics</strong> and <strong>Vercel Web Analytics</strong> — privacy-friendly traffic statistics that do not use cookies. <a href="https://ahrefs.com/privacy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Ahrefs Privacy Policy</a> · <a href="https://vercel.com/docs/analytics/privacy-policy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Vercel Analytics privacy</a></li>
+          <li><strong>Ahrefs Web Analytics</strong> and <strong>Cloudflare Web Analytics</strong> — privacy-friendly traffic statistics that do not use cookies. <a href="https://ahrefs.com/privacy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Ahrefs Privacy Policy</a> · <a href="https://www.cloudflare.com/privacypolicy/" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Cloudflare privacy policy</a></li>
           <li><strong>TradingView (lightweight-charts)</strong> — open-source charting library used to render price and yield charts. Runs entirely client-side with no external requests to TradingView servers and no user data is collected or transmitted.</li>
           <li><strong>Yahoo Finance</strong> — live price and dividend data, fetched server-side (no user data shared).</li>
-          <li><strong>Vercel</strong> — hosting platform and Blob storage. Our server stores non-personal market data (capital flow records, daily card data) in Vercel's Blob storage service. If you subscribe to the newsletter, your email address is stored in private Blob storage and used solely to send the daily snapshot. <a href="https://vercel.com/legal/privacy-policy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Vercel Privacy Policy</a></li>
+          <li><strong>Google Cloud and Cloudflare</strong> — the site is hosted on Google Cloud Run and delivered through Cloudflare, which see your IP address and request as any web host and network would. <a href="https://policies.google.com/privacy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Google Privacy Policy</a></li>
+          <li><strong>Vercel</strong> — Blob storage. Our server stores non-personal market data (capital flow records, daily card data) in Vercel's Blob storage service. If you subscribe to the newsletter, your email address is stored in private Blob storage and used solely to send the daily snapshot. <a href="https://vercel.com/legal/privacy-policy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Vercel Privacy Policy</a></li>
           <li><strong>Resend</strong> — email delivery service used to send contact form messages and the daily snapshot email to subscribers. <a href="https://resend.com/legal/privacy-policy" className="underline" style={{ color: 'var(--accent-gold)' }} target="_blank" rel="noopener noreferrer">Resend Privacy Policy</a></li>
         </ul>
       </Section>

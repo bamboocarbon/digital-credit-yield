@@ -3,10 +3,10 @@ import Link from 'next/link';
 export const metadata = {
   alternates: { canonical: '/faq' },
   title: 'FAQ — Frequently Asked Questions',
-  description: 'Answers to common questions about STRC, SATA, BMNP, CHAD and MORE: how to buy, whether dividends are guaranteed, why the price stays near par, tax basics, and more.',
+  description: 'Answers to common questions about the crypto-treasury preferred stocks tracked here: how to buy, whether dividends are guaranteed, why prices can drift from par, tax basics, and more.',
   openGraph: {
     title: 'FAQ — Frequently Asked Questions',
-    description: 'Answers to common questions about STRC, SATA, BMNP, CHAD and MORE preferred stocks.',
+    description: 'Answers to common questions about crypto-treasury preferred stocks.',
     type: 'website',
     url: 'https://www.digitalcredityield.com/faq',
     images: [{ url: '/og?v=4&title=FAQ&sub=Frequently+Asked+Questions' }],
@@ -14,24 +14,24 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'FAQ — Frequently Asked Questions',
-    description: 'Answers to common questions about STRC, SATA, BMNP, CHAD and MORE preferred stocks.',
+    description: 'Answers to common questions about crypto-treasury preferred stocks.',
   },
 };
 
 const faqs = [
   {
-    q: 'How do I buy STRC, SATA, BMNP, CHAD or MORE?',
-    a: 'STRC, SATA and CHAD trade on the Nasdaq, BMNP on the NYSE and MORE on the London Stock Exchange Main Market, all like ordinary shares — under their own tickers "STRC", "SATA", "BMNP", "CHAD" and "MORE". Search the ticker in any major brokerage account (Fidelity, Schwab, Interactive Brokers, eToro and most others carry the US ones; MORE needs a platform that offers London-listed shares), choose the number of shares, and place the order during that exchange\'s market hours. MORE is priced in pounds sterling, the others in US dollars, so a UK investor buying the US four will normally pay a currency conversion on the way in and out. There is no minimum investment beyond the price of one share, and no special account type is needed.',
+    q: 'How do I buy these preferred stocks?',
+    a: 'STRC, STRF, STRK, STRD, SATA, SATS and CHAD trade on the Nasdaq, BMNP on the NYSE and MORE on the London Stock Exchange Main Market, all like ordinary shares, under their own tickers. (STRE is the exception: it is listed in Luxembourg and open only to professional and institutional investors in the EEA, so most readers can’t buy it.) Search the ticker in any major brokerage account (Fidelity, Schwab, Interactive Brokers, eToro and most others carry the US ones; MORE needs a platform that offers London-listed shares), choose the number of shares, and place the order during that exchange\'s market hours. MORE is priced in pounds sterling, the others in US dollars, so a UK investor buying a US-listed one will normally pay a currency conversion on the way in and out. There is no minimum investment beyond the price of one share, and no special account type is needed.',
     link: { href: '/blog/what-is-preferred-stock', label: 'New to preferred stock? Start with the basics' },
   },
   {
     q: 'Are the dividends guaranteed?',
-    a: 'No. Like all preferred stock dividends, each payment must be declared by the issuer’s board of directors before it is paid. Strategy, Strive, Bitmine, DeFi Development Corp. and The Smarter Web Company all have strong incentives to maintain payments — a missed dividend would severely damage their ability to raise capital — but a dividend is a corporate decision, not a contractual debt obligation like a bond coupon. (MORE works slightly differently: its dividend accrues weekly without a board resolution, but the board can suspend any payment, and anything unpaid is only paid when the board decides to.) Always read the issuer’s prospectus for the exact terms.',
+    a: 'No. Like all preferred stock dividends, each payment must be declared by the issuer’s board of directors before it is paid. Strategy, Strive, Bitmine, DeFi Development Corp. and The Smarter Web Company all have strong incentives to maintain payments — a missed dividend would severely damage their ability to raise capital — but a dividend is a corporate decision, not a contractual debt obligation like a bond coupon. (MORE works slightly differently: its dividend accrues weekly without a board resolution, but the board can suspend any payment, and anything unpaid is only paid when the board decides to. STRD is different again: its dividend is non-cumulative, so a payment that isn’t declared is lost rather than owed.) Always read the issuer’s prospectus for the exact terms.',
     link: { href: '/risks', label: 'Read more on the risks page' },
   },
   {
     q: 'Why does the price stay close to par?',
-    a: 'STRC and SATA are designed to trade near their $100 par value: the issuers review the dividend rate each month, nudging it up if the price drifts below par to attract buyers, or down if it trades above. In practice, Strategy has held STRC’s rate flat at 12.00% since July 2026 rather than following its own published VWAP bands mechanically — a discretionary call to wait for the price to recover, not an automatic monthly adjustment. CHAD works the same way in principle but against a $10 par value instead, with management reviewing the rate monthly or more often. BMNP works differently — its 9.50% rate is fixed, so instead of a moving rate it leans on a redemption premium (the company can buy shares back above par in the early years) to keep the price from drifting too far. Either way, prices tend to move in cents rather than dollars — and the effective yield you lock in depends on the price you pay relative to that instrument’s own par value.',
+    a: 'Only some of them are designed to. STRC and SATA aim to trade near their $100 par value: the issuers review the dividend rate each month, nudging it up if the price drifts below par to attract buyers, or down if it trades above. In practice, Strategy has held STRC’s rate flat at 12.00% since July 2026 rather than following its own published VWAP bands mechanically — a discretionary call to wait for the price to recover, not an automatic monthly adjustment. CHAD works the same way in principle but against a $10 par value instead, with management reviewing the rate monthly or more often. BMNP works differently — its 9.50% rate is fixed, so instead of a moving rate it leans on a redemption premium (the company can buy shares back above par in the early years) to keep the price from drifting too far. STRF, STRK, STRD, STRE and SATS have fixed rates, so they have no rate lever at all, and in practice they trade wherever the market puts them: on 10 November 2026 STRD was around $68 against a $100 stated value, while STRF was above it. The effective yield you lock in depends on the price you pay relative to that instrument’s own par value.',
     link: { href: '/blog/strc-vwap-dividend-mechanism', label: 'How STRC’s rate mechanism works in detail' },
   },
   {
@@ -41,7 +41,7 @@ const faqs = [
   },
   {
     q: 'What happens if Bitcoin or Ethereum crashes?',
-    a: 'The dividends are paid in cash by the issuing companies, not in crypto — but the issuers’ treasuries are crypto, so a severe, sustained fall would shrink the asset base that supports their capital raising. Strategy and Strive hold Bitcoin, and Strive also keeps a cash reserve covering more than 18 months of SATA dividends as a buffer. Bitmine, the company behind BMNP, holds Ethereum and funds its dividend largely from staking income, so its exposure is to ETH rather than Bitcoin. DeFi Development Corp., behind CHAD, holds Solana instead, and is among the smallest of the treasuries here — a crypto drawdown does not automatically affect the dividend, but it increases the risk around future payments and the share price for all of them.',
+    a: 'The dividends are paid in cash by the issuing companies, not in crypto — but the issuers’ treasuries are crypto, so a severe, sustained fall would shrink the asset base that supports their capital raising. Strategy and Strive hold Bitcoin, and Strive also keeps a dividend reserve sized at 18 months of SATA dividends as a buffer (though it is not ring-fenced). Bitmine, the company behind BMNP, holds Ethereum and funds its dividend largely from staking income, so its exposure is to ETH rather than Bitcoin. DeFi Development Corp., behind CHAD, holds Solana instead, and is among the smallest of the treasuries here — a crypto drawdown does not automatically affect the dividend, but it increases the risk around future payments and the share price for all of them.',
     link: { href: '/risks', label: 'Understand the full risk picture' },
   },
   {
@@ -54,8 +54,8 @@ const faqs = [
     link: { href: '/risks', label: 'Read the risks page before investing' },
   },
   {
-    q: 'Is this site affiliated with Strategy, Strive, Bitmine or DeFi Development Corp.?',
-    a: 'No. Digital Credit Yield is an independent research and tracking site. I hold positions in MSTR and ASST (the common stock of Strategy and Strive) but have no relationship with any of the four companies and am not compensated by them. Nothing here is financial advice.',
+    q: 'Is this site affiliated with any of the issuers?',
+    a: 'No. Digital Credit Yield is an independent research and tracking site. I hold positions in MSTR and ASST (the common stock of Strategy and Strive) but have no relationship with any of the issuers covered here (Strategy, Strive, Bitmine, DeFi Development Corp. or The Smarter Web Company) and am not compensated by any of them. Nothing here is financial advice.',
     link: { href: '/about', label: 'More about who runs this site' },
   },
 ];
@@ -76,7 +76,7 @@ export default function FAQPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <h1 className="text-3xl sm:text-4xl font-bold mb-3">Frequently Asked Questions</h1>
       <p className="text-base mb-10" style={{ color: 'var(--text-muted)' }}>
-        Straight answers to the questions readers ask most about STRC, SATA, BMNP and CHAD.
+        Straight answers to the questions readers ask most about the crypto-treasury preferred stocks tracked here.
       </p>
 
       <div className="space-y-8">
