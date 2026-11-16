@@ -4,6 +4,7 @@ import { useState } from 'react';
 import SubNav from '@/components/SubNav';
 import StockSelector from '@/components/StockSelector';
 import DividendHistoryPage from '@/components/DividendHistoryPage';
+import { DividendsNotes } from '@/components/ToolNotes';
 
 export default function DividendsTool({ initialStock, dividendsByStock }) {
   const [stock, setStock] = useState(initialStock);
@@ -26,6 +27,8 @@ export default function DividendsTool({ initialStock, dividendsByStock }) {
         <a href="/blog/monthly-vs-daily-dividends" style={{ color: 'var(--accent-gold)' }}>Does payment frequency matter? &rarr;</a>
       </p>
       <DividendHistoryPage ticker={stock} dividends={dividendsByStock[stock] || []} />
+
+      <DividendsNotes ticker={stock} />
     </div>
   );
 }

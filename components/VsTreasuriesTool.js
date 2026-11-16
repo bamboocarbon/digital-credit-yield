@@ -4,6 +4,7 @@ import { useState } from 'react';
 import SubNav from '@/components/SubNav';
 import StockSelector from '@/components/StockSelector';
 import Differentiator from '@/components/Differentiator';
+import { VsTreasuriesNotes } from '@/components/ToolNotes';
 
 export default function VsTreasuriesTool({ initialStock, liveYields, livePrices }) {
   const [stock, setStock] = useState(initialStock);
@@ -30,6 +31,8 @@ export default function VsTreasuriesTool({ initialStock, liveYields, livePrices 
         <a href="/blog/what-is-effective-yield" style={{ color: 'var(--accent-gold)' }}>What effective yield means &rarr;</a>
       </p>
       <Differentiator ticker={stock} liveYield={liveYields[stock]} livePrice={livePrices?.[stock]} />
+
+      <VsTreasuriesNotes ticker={stock} />
 
       <div className="mt-8 p-5 rounded-xl" style={{ background: 'rgba(200,137,58,0.08)', border: '1px solid var(--accent-gold)' }}>
         <p className="text-sm font-medium text-center" style={{ color: 'var(--accent-gold)' }}>Important Disclaimer</p>
