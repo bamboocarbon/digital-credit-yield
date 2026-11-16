@@ -39,10 +39,10 @@ const ROWS = [
   },
   {
     label: 'Approx. per payment',
-    STRC: '~$0.479/share',
+    STRC: '~$0.033/share (declared in whole cents)',
     SATA: '~$0.057/share (Nov)',
-    BMNP: '~$0.183/share',
-    CHAD: '~$0.0052/share',
+    BMNP: '~$0.185/share',
+    CHAD: '~$0.0061/share',
     MORE: '~£0.231/share',
   },
   {
