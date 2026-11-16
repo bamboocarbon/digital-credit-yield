@@ -172,6 +172,15 @@ const DESCRIPTIONS = {
       <p>As preferred stock, STRC sits below debt but above common equity in Strategy&apos;s capital structure. In the event of liquidation, preferred stockholders are paid before common shareholders, giving STRC a degree of protection that pure equity does not offer. Strategy&apos;s holdings of over {STRATEGY_BTC_HOLDINGS} Bitcoin provide a substantial asset base underpinning the instrument.</p>
       <p>Strategy (formerly MicroStrategy) is a Nasdaq-listed business intelligence and Bitcoin treasury company, founded in 1989. Under executive chairman Michael Saylor — one of the world&apos;s most prominent Bitcoin advocates — Strategy has made Bitcoin accumulation central to its corporate model, positioning itself as the world&apos;s largest corporate holder of Bitcoin.</p>
       <p>The one number I watch on STRC is how close it&apos;s trading to $100 — buy near or below par and the effective yield works in your favour; pay a premium and your real yield comes in under the headline rate. Worth knowing: the published VWAP bands aren&apos;t currently driving the rate month to month — management is holding it flat by choice while the price recovers, so don&apos;t assume the next print automatically follows the band table.</p>
+      <p className="font-semibold pt-1">What could go wrong</p>
+      <ul className="list-disc pl-5 space-y-1.5">
+        <li><strong>Bitcoin and MSTR concentration.</strong> Strategy holds {STRATEGY_BTC_HOLDINGS} BTC and raises money by selling MSTR stock and other securities. A long Bitcoin bear market would shrink the assets and make that fundraising more expensive at the same moment.</li>
+        <li><strong>The rate is a management choice.</strong> The published VWAP bands aren&apos;t what sets the rate at the moment. Management has held it flat at 12.00% by choice every month since July 2026, so the next change could go either way and doesn&apos;t have to follow the table.</li>
+        <li><strong>The price can sit below par for a long time.</strong> STRC aims for $100 but there is no peg. The June 2026 framework was announced after the price fell well below par, and a buyer below par earns more than the headline rate only while the dividend keeps being paid.</li>
+        <li><strong>The USD Reserve is ring-fenced, but it can be spent.</strong> It is meant for preferred dividends and debt interest, and any other use needs a board vote. It is also being drawn down to pay dividends and topped up from share sales, so its size ({DIVIDEND_RESERVE.STRC.display}) moves with how much Strategy can raise.</li>
+        <li><strong>Debt and STRF rank ahead of you.</strong> In a liquidation STRC is paid after Strategy&apos;s debt and after STRF, which is more senior.</li>
+        <li><strong>Payments have changed shape twice.</strong> STRC moved from monthly to semi-monthly (first payment 15 July 2026) and then to every calendar day from 1 November 2026, both approved by shareholders. It is a young instrument whose terms are still being adjusted.</li>
+      </ul>
       <a href="https://www.strategy.com" target="_blank" rel="noopener noreferrer"
         className="inline-block text-sm underline mt-1" style={{ color: 'var(--accent-gold)' }}>
         Visit Strategy.com
@@ -184,6 +193,15 @@ const DESCRIPTIONS = {
       <p>As preferred equity, SATA sits below debt but above common equity in Strive&apos;s capital structure. In the event of liquidation, preferred stockholders are paid before common shareholders, giving SATA a meaningful layer of protection relative to pure equity. Strive holds over {STRIVE_BTC_HOLDINGS} Bitcoin, and it keeps a dividend reserve sized at 18 months of SATA dividends (raised from 12 months in March 2026, according to its Q3 10-Q). Its latest disclosed cash and equivalents are {DIVIDEND_RESERVE.SATA.display}. The 10-Q says the reserve is held in cash and marketable securities with no lien or contractual restriction on it, so Strive&apos;s creditors could in principle reach it.</p>
       <p>Strive is a Nasdaq-listed financial services and Bitcoin treasury company, founded in 2022 by Vivek Ramaswamy. It positions itself as a Bitcoin-first asset manager focused on financial returns rather than ESG objectives, and has made Bitcoin a cornerstone of both its treasury strategy and its financial product offering.</p>
       <p>What I find reassuring about SATA is that cash buffer: the near-term dividend isn&apos;t riding directly on the Bitcoin price. What I&apos;d keep an eye on is that the reserve isn&apos;t ring-fenced, and that the rate is set at the board&apos;s discretion rather than by a published formula.</p>
+      <p className="font-semibold pt-1">What could go wrong</p>
+      <ul className="list-disc pl-5 space-y-1.5">
+        <li><strong>One volatile asset.</strong> Strive holds {STRIVE_BTC_HOLDINGS} Bitcoin, so the company&apos;s value, and its ability to keep raising money, depends heavily on the Bitcoin price.</li>
+        <li><strong>The reserve isn&apos;t ring-fenced.</strong> It covers about 18 months of dividends, but Strive&apos;s Q3 10-Q says it is cash and marketable securities with no lien or contractual restriction, and the figure moves from week to week. If it ran low, dividends would depend on new raises or on selling assets.</li>
+        <li><strong>The rate is the board&apos;s call.</strong> SATA has no published formula. Strive adjusts the rate to try to hold the price in a $99–$101 range, but that is an aim, not a guarantee, and a lower rate is possible as well as a higher one.</li>
+        <li><strong>More preferred can be issued.</strong> SATS now ranks below SATA, and Strive funds growth by issuing more preferred and common equity, which spreads the same assets across more securities. It has committed not to issue new SATA below $100 through its at-the-market programme.</li>
+        <li><strong>No maturity.</strong> SATA has no redemption date. Your exit is selling at whatever the market pays, and a daily payer with a narrow price band can still gap down in a hard Bitcoin sell-off.</li>
+        <li><strong>A short history.</strong> SATA has paid daily only since 16 June 2026, so it has a short record as a daily payer.</li>
+      </ul>
       <a href="https://strive.com" target="_blank" rel="noopener noreferrer"
         className="inline-block text-sm underline mt-1" style={{ color: 'var(--accent-gold)' }}>
         Visit Strive.com
@@ -294,6 +312,13 @@ DESCRIPTIONS.STRK = (
     <p>The number I look at first on STRK is the conversion price. 0.1 of an MSTR share per STRK share works out at an initial conversion price of $1,000 for each MSTR share. When STRK launched in February 2025, with 7.3 million shares sold at $80 (about $584 million gross), MSTR was trading at $340.09. On 10 November 2026 it was $121.07. MSTR would need to rise more than eightfold before converting beats simply holding the income, and a share of STRK would convert today into about $12 of MSTR stock. The market is pricing the option as close to worthless, so STRK trades on its dividend instead: $8 a year on a price of $67.26 is about 11.9%, which is more than STRF&apos;s 9.8% even though STRK&apos;s headline rate is two points lower.</p>
     <p>My view: I treat STRK as a fixed 8% preferred with a free option on MSTR attached, not as an equity bet. If MSTR ever climbs back towards $1,000 the option becomes the story, but I wouldn&apos;t buy it for that. The wider picture of where it sits is in my <Link href="/blog/strategy-capital-structure" style={{ color: 'var(--accent-gold)' }}>Strategy capital structure article</Link>.</p>
     <p>Strategy (formerly MicroStrategy) is a Nasdaq-listed Bitcoin treasury company and the world&apos;s largest corporate holder of Bitcoin, with over {STRATEGY_BTC_HOLDINGS} BTC.</p>
+    <p className="font-semibold pt-1">What could go wrong</p>
+    <ul className="list-disc pl-5 space-y-1.5">
+      <li><strong>The conversion option is far out of the money.</strong> Conversion needs MSTR to reach about $1,000, and at the price I quote above it is nowhere near. You are really holding an 8% preferred, and it prices like one.</li>
+      <li><strong>The price can sit well below par.</strong> STRK is trading far below its $100 stated value, so the yield on today&apos;s price is higher than 8% but you take on the capital risk that comes with it, which is the part the headline rate leaves out.</li>
+      <li><strong>Near the bottom of the queue.</strong> STRK ranks below Strategy&apos;s debt, STRF, STRC and STRE, and above only STRD and the common stock.</li>
+      <li><strong>Dividends are declared, not owed.</strong> They are cumulative if missed, so a skipped payment builds up, but it still has to be declared to be paid, and it all depends on one Bitcoin-heavy company.</li>
+    </ul>
     {TRACK_NOTE}
     <Visit href="https://www.strategy.com" label="Visit Strategy.com" />
   </div>
@@ -305,6 +330,13 @@ DESCRIPTIONS.STRF = (
     <p>A detail that is easy to miss is that STRF didn&apos;t launch at $100. In March 2025 Strategy sold 8.5 million shares at $85, about $722.5 million gross, so the first buyers were paid 11.8% on the money they put in. On 10 November 2026 STRF was $102.44, which makes the yield on today&apos;s price 9.8%. I think of that whenever STRF gets called boring: buyers who came in at $85 are up about 20% on the price and have collected the dividend as well. Anyone buying now gets the dividend and not much else, and a price above $100 means a yield below the 10% headline.</p>
     <p>My view: STRF is the one I use as the yardstick for the rest of Strategy&apos;s range. It pays less than STRC (12%) and less than STRK or STRD at their current prices, and what you get for that is the top seat in the queue and a rate that doesn&apos;t move. STRC is the more actively managed rate, and I compare the two in <Link href="/blog/strategy-capital-structure" style={{ color: 'var(--accent-gold)' }}>my Strategy capital structure article</Link>.</p>
     <p>Strategy (formerly MicroStrategy) is a Nasdaq-listed Bitcoin treasury company and the world&apos;s largest corporate holder of Bitcoin, with over {STRATEGY_BTC_HOLDINGS} BTC.</p>
+    <p className="font-semibold pt-1">What could go wrong</p>
+    <ul className="list-disc pl-5 space-y-1.5">
+      <li><strong>A price above par means a yield below 10%.</strong> At the price I quote above the yield is below the 10.00% headline, and you are paying a premium to the $100 stated value.</li>
+      <li><strong>The fixed rate can&apos;t be raised.</strong> STRC&apos;s rate can be adjusted if the price slips. STRF&apos;s can&apos;t, so if market yields rise the only thing that can give is the price.</li>
+      <li><strong>Senior, but still equity.</strong> Only Strategy&apos;s debt ranks ahead of STRF, but debt does rank ahead, and a preferred dividend is declared by the board, not guaranteed like bond interest.</li>
+      <li><strong>One issuer, one asset.</strong> All of Strategy&apos;s preferreds depend on the same company, with {STRATEGY_BTC_HOLDINGS} BTC at the centre of the balance sheet.</li>
+    </ul>
     {TRACK_NOTE}
     <Visit href="https://www.strategy.com" label="Visit Strategy.com" />
   </div>
@@ -316,6 +348,13 @@ DESCRIPTIONS.STRD = (
     <p>STRD is the one I would read the prospectus twice for. It launched in June 2025 at $85 a share, with 11,764,700 shares and about $1.0 billion gross. On 10 November 2026 it was $68.50: below what the first buyers paid, and about 31% under its stated value. At that price $10 a year is a yield of about 14.6%. Strategy only pays a dividend &quot;when, as and if declared&quot;, and with STRD a skipped payment is gone for good. I read the extra yield as the price the market puts on that right to skip.</p>
     <p>My view: STRD works for me as a gauge of how worried the market is about Strategy&apos;s dividend bill. If it starts moving back towards $100, the worry is fading; while it sits near $70 the market is telling you what it thinks of a preferred that can be skipped without penalty. That makes it the hardest of the Strategy series to hold with confidence, whatever the headline yield says. See <Link href="/blog/strategy-capital-structure" style={{ color: 'var(--accent-gold)' }}>my Strategy capital structure article</Link> for where it ranks.</p>
     <p>Strategy (formerly MicroStrategy) is a Nasdaq-listed Bitcoin treasury company and the world&apos;s largest corporate holder of Bitcoin, with over {STRATEGY_BTC_HOLDINGS} BTC.</p>
+    <p className="font-semibold pt-1">What could go wrong</p>
+    <ul className="list-disc pl-5 space-y-1.5">
+      <li><strong>A skipped dividend is gone for good.</strong> STRD is non-cumulative, so a payment that isn&apos;t declared doesn&apos;t build up as an amount owed. STRF, STRK and STRC are cumulative.</li>
+      <li><strong>The most junior preferred.</strong> STRD ranks just above the common stock and below everything else Strategy has issued, so in a downturn it takes losses first among the preferreds.</li>
+      <li><strong>The high yield is the market&apos;s price for those risks.</strong> The price I quote above is far below the $100 stated value, which is why the yield on that price is well above 10%. That is the market charging you for the right to skip.</li>
+      <li><strong>Price gap.</strong> On 10 November STRD was $68.50 and STRF $102.44, which shows how differently the market treats the two.</li>
+    </ul>
     {TRACK_NOTE}
     <Visit href="https://www.strategy.com" label="Visit Strategy.com" />
   </div>
@@ -327,6 +366,14 @@ DESCRIPTIONS.STRE = (
     <p>STRE is the Strategy instrument I find hardest to follow, because the price isn&apos;t public in the way the others are. The price shown here is the indicative mid-point of bid and ask reported by a market maker, taken from Strategy&apos;s own STRE page and updated by hand — €79 on 13 October — so it may lag the market. It is not a live quote and I wouldn&apos;t trade off it.</p>
     <p>What I can say with confidence comes from the prospectus. In early November 2025 Strategy sold 7,750,000 shares at €80, about €620 million gross, after upsizing the deal from the 3.5 million shares it launched with. At €79 the yield on that indicative price is about 12.7%. The demand was real, and it came from European institutions rather than from the retail buyers who dominate the dollar series.</p>
     <p>My view: I track STRE less for anything my readers can buy and more for what it says about where Strategy goes for money. If you&apos;re in the UK, MORE is the nearest thing you can actually hold in a local currency, and I explain why that matters in <Link href="/blog/more-preferred-uk-investor-fx" style={{ color: 'var(--accent-gold)' }}>my article on MORE and the currency toll</Link>.</p>
+    <p className="font-semibold pt-1">What could go wrong</p>
+    <ul className="list-disc pl-5 space-y-1.5">
+      <li><strong>You probably can&apos;t buy it.</strong> STRE is listed on the Luxembourg Euro MTF market and is only open to professional and institutional investors in the European Economic Area, not to retail investors and not in the UK.</li>
+      <li><strong>The price isn&apos;t a live quote.</strong> It is an indicative mid-point from a market maker, taken from Strategy&apos;s own STRE page and updated by hand, so it can lag the real market. I wouldn&apos;t trade off it.</li>
+      <li><strong>Euro exposure.</strong> STRE is priced and paid in euros. A sterling or dollar-based holder carries the currency risk as well as the Strategy risk.</li>
+      <li><strong>Thin and hard to exit.</strong> It sits in a small, professional-only market, so selling a size could be slow or costly.</li>
+      <li><strong>Below STRF and STRC.</strong> STRE ranks below Strategy&apos;s debt, STRF and STRC, with the same single-company, Bitcoin-heavy exposure as the dollar series.</li>
+    </ul>
     {TRACK_NOTE}
     <Visit href="https://www.strategy.com/stre/learn" label="Visit Strategy.com/stre" />
   </div>
@@ -338,6 +385,15 @@ DESCRIPTIONS.SATS = (
     <p>SATS is the first preferred I track with a rate that doesn&apos;t move: the 15% is fixed for life, unlike SATA, where Strive adjusts the rate to try to hold the price near par. On 10 November it was trading at $95.49, which makes the yield on that price about 15.7%. Buyers at the $90 issue price earn 16.7% on what they paid, and each point the price climbs towards $100 takes some of that away. That is the number I&apos;m watching.</p>
     <p>My view: the structure is better than the rate. The reserve, the narrow redemption rights and the buy-back right on a takeover all favour holders, and Strive has no debt ahead of either preferred. Against that, SATS is the junior of two preferreds issued by a company with one volatile asset, and nothing stops Strive adding stock that ranks ahead or equal later. I went through the prospectus in <Link href="/blog/sats-strive-15-percent-fixed-preferred" style={{ color: 'var(--accent-gold)' }}>my SATS article</Link>.</p>
     <p>Strive is a Nasdaq-listed Bitcoin treasury and asset management company, with over {STRIVE_BTC_HOLDINGS} Bitcoin.</p>
+    <p className="font-semibold pt-1">What could go wrong</p>
+    <ul className="list-disc pl-5 space-y-1.5">
+      <li><strong>Junior to SATA.</strong> SATS ranks below SATA, which is why it pays 15% against SATA&apos;s 13%. In a downturn it is hit first of the two.</li>
+      <li><strong>More ranking stock can be added.</strong> Nothing stops Strive issuing stock that ranks ahead of or equal to SATS later, which would dilute your claim on the same assets.</li>
+      <li><strong>The rate can&apos;t be adjusted.</strong> The 15% is fixed for life. SATA&apos;s rate can be moved to help the price, but SATS has to rely on the price alone. A price above $90 also cuts the return a buyer gets on what they paid.</li>
+      <li><strong>The reserve isn&apos;t locked away.</strong> The $157.5 million added at closing is meant to cover 18 months of SATS dividends, but Strive&apos;s Q3 10-Q describes the dividend reserve it is added to as cash and marketable securities with no lien or contractual restriction.</li>
+      <li><strong>Bitcoin concentration and a short record.</strong> Strive holds {STRIVE_BTC_HOLDINGS} Bitcoin, and SATS only priced on 15 October 2026, so it has no history through a rough patch.</li>
+      <li><strong>Dividends are declared, not promised.</strong> SATS is cumulative if missed, but each payment still has to be declared by Strive&apos;s board.</li>
+    </ul>
     {TRACK_NOTE}
     <Visit href="https://strive.com" label="Visit Strive.com" />
   </div>
