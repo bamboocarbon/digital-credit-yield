@@ -21,6 +21,14 @@ const nextConfig = {
   async rewrites() {
     return [{ source: '/og', destination: '/api/og' }];
   },
+  // Social-card and thought-card images are for sharing, not search: keep them out of Google's index
+  // (they showed up in Search Console as "crawled, currently not indexed").
+  async headers() {
+    return ['/og', '/api/og', '/api/thought-card'].map(source => ({
+      source,
+      headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
+    }));
+  },
   async redirects() {
     return [
       // The news + thoughts/quiz admins were merged into a single /admin page.

@@ -1,7 +1,10 @@
 import { ImageResponse } from 'next/og';
 import { blobUrl } from '@/lib/blobUrl';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
-export const runtime = 'edge';
+// Node runtime (not edge): the edge runtime returned 503 on Cloud Run after the 2026-11-11 move off Vercel.
+export const runtime = 'nodejs';
 
 // Portrait quote card — a site-generated equivalent of the dcy-app export,
 // but backed by the archive's own stored text so it can render ANY date
@@ -15,14 +18,12 @@ const MUTED = '#9ca3af';
 let fontRegular = null;
 let fontBold    = null;
 
-async function getFonts(origin) {
+async function getFonts() {
   if (fontRegular && fontBold) return [fontRegular, fontBold];
-  const [r, b] = await Promise.all([
-    fetch(`${origin}/fonts/inter-400.ttf`).then(res => res.arrayBuffer()),
-    fetch(`${origin}/fonts/inter-700.ttf`).then(res => res.arrayBuffer()),
-  ]);
-  fontRegular = r;
-  fontBold    = b;
+  const dir = join(process.cwd(), 'public', 'fonts');
+  const [r, b] = await Promise.all([readFile(join(dir, 'inter-400.ttf')), readFile(join(dir, 'inter-700.ttf'))]);
+  fontRegular = r.buffer.slice(r.byteOffset, r.byteOffset + r.byteLength);
+  fontBold    = b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
   return [fontRegular, fontBold];
 }
 
@@ -47,6 +48,15 @@ async function lookupEntry(date, id) {
 }
 
 export async function GET(request) {
+  try {
+    return await render(request);
+  } catch (err) {
+    console.error('thought-card render failed', err);
+    return new Response('Card render failed', { status: 500 });
+  }
+}
+
+async function render(request) {
   const { searchParams } = new URL(request.url);
   const dateParam = searchParams.get('date');
   const id        = searchParams.get('id');
@@ -60,10 +70,9 @@ export async function GET(request) {
     return new Response('No thought text found for this entry', { status: 404 });
   }
 
-  const origin = new URL(request.url).origin;
   let fonts = [];
   try {
-    const [regular, bold] = await getFonts(origin);
+    const [regular, bold] = await getFonts();
     fonts = [
       { name: 'Inter', data: regular, weight: 400 },
       { name: 'Inter', data: bold,    weight: 700 },

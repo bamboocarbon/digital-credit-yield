@@ -1,6 +1,10 @@
 import { ImageResponse } from 'next/og';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
-export const runtime = 'edge';
+// Node runtime (not edge): the edge runtime returned 503 on Cloud Run after the 2026-11-11 move off Vercel.
+// Fonts and the background photo are read from public/ on disk instead of fetched from our own URL.
+export const runtime = 'nodejs';
 
 const GOLD   = '#f5a623';
 const NAVY   = '#0a0f1e';
@@ -10,15 +14,23 @@ const MUTED  = '#b9c0cc'; // light grey — must stay readable over the photo ba
 let fontRegular = null;
 let fontBold    = null;
 
-async function getFonts(origin) {
+async function getFonts() {
   if (fontRegular && fontBold) return [fontRegular, fontBold];
-  const [r, b] = await Promise.all([
-    fetch(`${origin}/fonts/inter-400.ttf`).then(res => res.arrayBuffer()),
-    fetch(`${origin}/fonts/inter-700.ttf`).then(res => res.arrayBuffer()),
-  ]);
-  fontRegular = r;
-  fontBold    = b;
+  const dir = join(process.cwd(), 'public', 'fonts');
+  const [r, b] = await Promise.all([readFile(join(dir, 'inter-400.ttf')), readFile(join(dir, 'inter-700.ttf'))]);
+  fontRegular = r.buffer.slice(r.byteOffset, r.byteOffset + r.byteLength);
+  fontBold    = b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
   return [fontRegular, fontBold];
+}
+
+let bgDataUri = null;
+async function getBackground() {
+  if (bgDataUri) return bgDataUri;
+  try {
+    const buf = await readFile(join(process.cwd(), 'public', 'og-bg.jpg'));
+    bgDataUri = `data:image/jpeg;base64,${buf.toString('base64')}`;
+  } catch { bgDataUri = ''; }
+  return bgDataUri;
 }
 
 export async function GET(request) {
@@ -28,10 +40,10 @@ export async function GET(request) {
   const rate  = searchParams.get('rate')  || '';
   const tag   = searchParams.get('tag')   || '';
 
-  const origin = new URL(request.url).origin;
+  const bg = await getBackground();
   let fonts = [];
   try {
-    const [regular, bold] = await getFonts(origin);
+    const [regular, bold] = await getFonts();
     fonts = [
       { name: 'Inter', data: regular, weight: 400 },
       { name: 'Inter', data: bold,    weight: 700 },
@@ -49,7 +61,7 @@ export async function GET(request) {
 
         {/* Photo background + legibility overlay */}
         <img
-          src={`${origin}/og-bg.jpg`}
+          src={bg}
           width={1200}
           height={630}
           style={{ position: 'absolute', top: 0, left: 0, objectFit: 'cover' }}
