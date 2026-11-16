@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar';
 import IssuerBar from '@/components/IssuerBar';
 import Footer from '@/components/Footer';
 import CookieBanner from '@/components/CookieBanner';
+import AdSenseScript from '@/components/AdSenseScript';
 
 export const metadata = {
   metadataBase: new URL('https://www.digitalcredityield.com'),
@@ -91,14 +92,7 @@ export default function RootLayout({ children }) {
             </Script>
           </>
         )}
-        {process.env.NEXT_PUBLIC_ADSENSE_ID && (
-          <Script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_ID}`}
-            crossOrigin="anonymous"
-            strategy="afterInteractive"
-          />
-        )}
+        <AdSenseScript clientId={process.env.NEXT_PUBLIC_ADSENSE_ID} />
         {/* Ahrefs Web Analytics (cookieless) */}
         <Script
           async

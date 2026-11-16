@@ -26,6 +26,8 @@ async function getThoughts() {
 }
 
 export const metadata = {
+  // Short quote-style archive: kept for visitors but not offered to search engines, and no ads load here.
+  robots: { index: false, follow: true },
   alternates: { canonical: '/thought-of-the-day' },
   title: 'Thought of the Day',
   description: 'A growing archive of the daily Thought of the Day posts from @DCYieldHub — short reflections on income investing, preferred stock and staying the course, newest first.',
