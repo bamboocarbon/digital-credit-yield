@@ -9,6 +9,8 @@ import { DIVIDEND_RESERVE, STRATEGY_BTC_HOLDINGS, STRIVE_BTC_HOLDINGS, BITMINE_E
 const _reserveBn = parseFloat(String(DIVIDEND_RESERVE.STRC.display).replace(/[^0-9.]/g, ''));
 const _cashM = (String(DIVIDEND_RESERVE.STRC.note).match(/USD Cash component \$([\d.,]+)M/) || [])[1];
 const _disc = String(DIVIDEND_RESERVE.STRC.note).match(/disclosed ([A-Za-z]+) (\d+), (\d{4})/);
+const _sd = String(DIVIDEND_RESERVE.SATA.note).match(/as of ([A-Za-z]+) (\d+), (\d{4})/);
+const SATA_DISCLOSED = _sd ? `as of ${_sd[2]} ${{ Jan: 'January', Feb: 'February', Mar: 'March', Apr: 'April', May: 'May', Jun: 'June', Jul: 'July', Aug: 'August', Sep: 'September', Oct: 'October', Nov: 'November', Dec: 'December' }[_sd[1].slice(0, 3)] || _sd[1]} ${_sd[3]}` : null;
 const _months = Number.isFinite(_reserveBn) ? Math.round((_reserveBn / 1.76) * 12) : null;
 const RESERVE_TXT = Number.isFinite(_reserveBn) ? `$${_reserveBn.toFixed(2)}bn` : DIVIDEND_RESERVE.STRC.display;
 const CASH_TXT = _cashM ? `$${_cashM}m` : null;
@@ -81,7 +83,7 @@ const CONTENT = {
     financing: (
       <>
         <p>Strive&apos;s {STRIVE_BTC_HOLDINGS} Bitcoin is the long-term backing, but it doesn&apos;t pay the dividend. A dedicated, ring-fenced cash reserve does.</p>
-        <p>At the time of my capital-structure article in June 2026 the reserve was about $137m, sized to cover roughly <strong>18 months</strong> of SATA dividends without selling a coin. Strive&apos;s latest disclosed cash and equivalents are <strong>{DIVIDEND_RESERVE.SATA.display}</strong> (Strive&apos;s latest 8-K, as of 6 November 2026).</p>
+        <p>At the time of my capital-structure article in June 2026 the reserve was about $137m, sized to cover roughly <strong>18 months</strong> of SATA dividends without selling a coin. Strive&apos;s latest disclosed cash and equivalents are <strong>{DIVIDEND_RESERVE.SATA.display}</strong> (Strive&apos;s latest 8-K{SATA_DISCLOSED ? `, ${SATA_DISCLOSED}` : ''}).</p>
         <p>With no debt ahead of SATA, the reserve doesn&apos;t have to cover interest first. Longer term, Strive funds growth through preferred and common equity, and has committed not to issue new SATA below $100 through its at-the-market programme.</p>
       </>
     ),

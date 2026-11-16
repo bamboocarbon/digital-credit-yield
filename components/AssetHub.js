@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ASSET_RATES, DIVIDEND_RESERVE, STRIVE_BTC_HOLDINGS, STRATEGY_BTC_HOLDINGS, BITMINE_ETH_HOLDINGS, DFDV_SOL_HOLDINGS, SMARTER_WEB_BTC_HOLDINGS } from '@/lib/constants';
+import { monthSummary, previousMonthSummary } from '@/lib/perPayment';
 import { PENDING_RATE_CHANGES } from '@/lib/pendingRateChanges';
 import SubNav from '@/components/SubNav';
 import AssetHubLive from '@/components/AssetHubLive';
@@ -154,6 +155,16 @@ const TOOLS = {
   ],
 };
 
+// SATA's daily amount changes with the number of payment days in the month, so the text is built from
+// data/dividends-SATA.json (kept current by the daily scan) rather than typed.
+function sataMonthText() {
+  const cur = monthSummary('SATA'); const prev = previousMonthSummary('SATA');
+  if (!cur) return '';
+  const d4 = n => n.toFixed(4);
+  const now = `$${d4(cur.mean)} a share in ${cur.month} (${cur.days} payment days)`;
+  return prev ? `${now}, against $${d4(prev.mean)} in ${prev.month} (${prev.days} days).` : `${now}.`;
+}
+
 const DESCRIPTIONS = {
   STRC: (
     <div className="space-y-3">
@@ -169,7 +180,7 @@ const DESCRIPTIONS = {
   ),
   SATA: (
     <div className="space-y-3">
-      <p>SATA is Strive&apos;s perpetual preferred equity instrument, listed on the Nasdaq. It pays a {ASSET_RATES.SATA.toFixed(2)}% annual dividend in cash on every business day, if declared, which comes to about $1.08 a share a month. The daily amount moves with the number of payment days: $0.0516 a share in October (21 days) and $0.0571 in November (19 days). Strive adjusts the rate with the aim of holding the price in a $99–$101 range. SATA is available on most major brokerage platforms.</p>
+      <p>SATA is Strive&apos;s perpetual preferred equity instrument, listed on the Nasdaq. It pays a {ASSET_RATES.SATA.toFixed(2)}% annual dividend in cash on every business day, if declared, which comes to about ${(ASSET_RATES.SATA * 100 / 12).toFixed(2)} a share a month. The daily amount moves with the number of payment days: {sataMonthText()} Strive adjusts the rate with the aim of holding the price in a $99–$101 range. SATA is available on most major brokerage platforms.</p>
       <p>As preferred equity, SATA sits below debt but above common equity in Strive&apos;s capital structure. In the event of liquidation, preferred stockholders are paid before common shareholders, giving SATA a meaningful layer of protection relative to pure equity. Strive holds over {STRIVE_BTC_HOLDINGS} Bitcoin, and it keeps a dividend reserve sized at 18 months of SATA dividends (raised from 12 months in March 2026, according to its Q3 10-Q). Its latest disclosed cash and equivalents are {DIVIDEND_RESERVE.SATA.display}. The 10-Q says the reserve is held in cash and marketable securities with no lien or contractual restriction on it, so Strive&apos;s creditors could in principle reach it.</p>
       <p>Strive is a Nasdaq-listed financial services and Bitcoin treasury company, founded in 2022 by Vivek Ramaswamy. It positions itself as a Bitcoin-first asset manager focused on financial returns rather than ESG objectives, and has made Bitcoin a cornerstone of both its treasury strategy and its financial product offering.</p>
       <p>What I find reassuring about SATA is that cash buffer: the near-term dividend isn&apos;t riding directly on the Bitcoin price. What I&apos;d keep an eye on is that the reserve isn&apos;t ring-fenced, and that the rate is set at the board&apos;s discretion rather than by a published formula.</p>
@@ -185,6 +196,15 @@ const DESCRIPTIONS = {
       <p>As preferred stock, BMNP sits above common equity in Bitmine&apos;s capital structure. The instrument includes call provisions allowing the company to redeem shares at 110% of the $100 par value in the first 18 months, stepping down to 105% between 18 months and 3 years, then at par thereafter. These premiums are designed to compensate holders for early redemption risk. Unpaid dividends compound weekly at the stated rate plus a 5 basis point step-up per missed period, capped at 15% per annum.</p>
       <p>Bitmine Immersion Technologies (common stock: BMNR) is an Ethereum-focused digital asset company, holding over {BITMINE_ETH_HOLDINGS} ETH — the largest corporate Ethereum treasury in the world. Through its MAVAN staking infrastructure platform, Bitmine operates Ethereum validators and staking nodes, generating yield from network validation rewards. The company plans to deploy proceeds from the BMNP offering into ETH acquisition and expanded staking infrastructure, positioning itself as an Ethereum treasury company.</p>
       <p>What makes BMNP genuinely different, to my mind, is that the Ethereum behind it actively earns the dividend through staking rather than simply needing to rise in value. The trade-off is a newer, more complex asset and a fixed rate with no published mechanism to adjust it.</p>
+      <p className="font-semibold pt-1">What could go wrong</p>
+      <ul className="list-disc pl-5 space-y-1.5">
+        <li><strong>One asset behind everything.</strong> Bitmine is an Ethereum treasury company holding {BITMINE_ETH_HOLDINGS} ETH. A deep, long Ether bear market shrinks the asset base behind BMNP and the staking income that pays the dividend, and staking yields themselves float (the latest figure I have is a 2.65% seven-day yield).</li>
+        <li><strong>Staked ETH isn&apos;t instantly sellable.</strong> About 86% of the holding was staked in early November. Staked coins go through an exit queue before they can be sold, and staking carries slashing risk if a validator misbehaves.</li>
+        <li><strong>A fixed rate can&apos;t defend the price.</strong> STRC, SATA and CHAD can raise their rate if the price slips below par. BMNP&apos;s 9.50% is fixed at issue, so if the market wants more yield the only thing that moves is the price.</li>
+        <li><strong>The company can call it.</strong> Bitmine can redeem at 110% of par in the first 18 months, then 105%, then par. That caps the upside and can end an income stream just when rates elsewhere are lower.</li>
+        <li><strong>Debt could appear ahead of you.</strong> There were no borrowings in the 10-Q to 31 May 2026, but the prospectus says BMNP is junior to any existing and future debt, and Bitmine says it may raise debt or equity to buy more ETH.</li>
+        <li><strong>A short record.</strong> BMNP began trading on 16 June 2026, so it has no history through a rough patch for Ether, and its weekly schedule is unusual enough that some data feeds have got its dates wrong.</li>
+      </ul>
       <a href="https://www.bitminetech.io" target="_blank" rel="noopener noreferrer"
         className="inline-block text-sm underline mt-1" style={{ color: 'var(--accent-gold)' }}>
         Visit Bitminetech.io
@@ -197,6 +217,15 @@ const DESCRIPTIONS = {
       <p>As preferred stock, CHAD ranks senior to DeFi Development Corp.&apos;s common stock, and junior to the company&apos;s existing and future indebtedness. Net proceeds are earmarked for general corporate purposes, chiefly buying more Solana for the company&apos;s treasury, alongside other digital-asset investments and growth initiatives.</p>
       <p>DeFi Development Corp. (Nasdaq: DFDV) describes itself as the first public Digital Asset Treasury company focused on Solana — the same playbook Strategy popularised for Bitcoin, applied to SOL instead. It holds over {DFDV_SOL_HOLDINGS} SOL, the second-largest corporate Solana treasury after Forward Industries, and raises capital — much of it now through CHAD — to keep growing it, positioning the stock as a proxy for Solana accumulation with a preferred-dividend layer on top.</p>
       <p>What I&apos;d flag plainly: CHAD is one of the two smallest instruments on this site — MORE is similar in size — with only a couple of months of trading history and no published rate-adjustment formula the way STRC has. The $10 stated value and daily cadence make it feel closest to SATA in mechanics, but it hasn&apos;t built the track record the longer-established ones have yet. I&apos;m watching how consistently the daily dividend actually lands before I&apos;d call it proven.</p>
+      <p className="font-semibold pt-1">What could go wrong</p>
+      <ul className="list-disc pl-5 space-y-1.5">
+        <li><strong>Solana concentration.</strong> DeFi Development Corp. holds {DFDV_SOL_HOLDINGS} SOL and raises money, much of it through CHAD, to buy more. If SOL falls hard, the company&apos;s balance sheet and its ability to keep raising capital both suffer.</li>
+        <li><strong>The rate is discretionary, and it moves.</strong> There is no published formula. The rate went from 13% to 14% for periods starting 1 November 2026, and management says it will manage it to keep the price in a long-term range. Dividends are cumulative, but each one still needs board declaration.</li>
+        <li><strong>Debt ranks ahead of you.</strong> CHAD is junior to the company&apos;s existing and future debt, and net proceeds are earmarked for general corporate purposes, chiefly buying Solana.</li>
+        <li><strong>The reserve is a year&apos;s worth.</strong> The prospectus sets aside 12 months of projected dividends at each closing. That is a useful buffer, but SATA&apos;s issuer says it holds 18 months.</li>
+        <li><strong>Small and new.</strong> CHAD closed its offering on 8 September 2026 and is one of the two smallest instruments on this site, so spreads can be wider and a big order can move the price.</li>
+        <li><strong>A $10 stated value.</strong> It is a different structure from the $100 instruments, so a one-cent move is 0.1% of the price rather than 0.01%. Don&apos;t compare prices across tickers without allowing for it.</li>
+      </ul>
       <a href="https://defidevcorp.com" target="_blank" rel="noopener noreferrer"
         className="inline-block text-sm underline mt-1" style={{ color: 'var(--accent-gold)' }}>
         Visit DefiDevCorp.com
@@ -209,6 +238,15 @@ const DESCRIPTIONS = {
       <p>As preferred equity, MORE ranks ahead of the ordinary shares but behind creditors in a winding-up, with a liquidation entitlement of £100 a share plus any unpaid dividends. The initial raise came in at about £10M gross (111,112 shares at £90), below the £15–25M the company first targeted, with a further 100,000 shares held back for sale into the market through Tennyson Capital Partners. Of the net proceeds, £4M is earmarked for additional bitcoin and about £3.85M for working capital and general corporate purposes, including dividend cash reserves. The first dividend is £0.2301 a share, with an ex-dividend date of 22 October and a record date of 23 October.</p>
       <p>The Smarter Web Company is a UK web-services business that also runs a bitcoin treasury: bitcoin is its primary treasury reserve asset, with a stated aim of growing bitcoin per ordinary share over time. It currently holds {SMARTER_WEB_BTC_HOLDINGS} BTC. Its own website is blunt that an investment in the company is not an investment in bitcoin, directly or by proxy. That is worth taking at face value for a preferred share, where the dividend is a corporate obligation rather than a bitcoin price bet. The prospectus does warn, though, that a big fall in bitcoin could eat into the profits the company is legally allowed to pay dividends from.</p>
       <p>What matters most to me about MORE is the currency, not the yield. Every other instrument on this site is priced in dollars, so a UK saver pays a foreign-exchange toll in and out before the dividend does any work. MORE is the first one I can buy in pounds, on a London screen, with no currency conversion at all. The trade-off is a brand-new issuer, a small raise and no track record — I&apos;d want to see the weekly dividend land on time before calling it proven.</p>
+      <p className="font-semibold pt-1">What could go wrong</p>
+      <ul className="list-disc pl-5 space-y-1.5">
+        <li><strong>The board can cut or skip a payment.</strong> The rate can be varied within the prospectus limits (a 20% cap, a floor of Bank of England base rate plus 1%, and cuts of no more than 0.5% in any four weeks), and any single weekly payment can be suspended.</li>
+        <li><strong>Arrears earn nothing.</strong> A missed dividend builds up as a balance that pays no interest and is paid only when the board resolves to pay it. Until it is cleared no dividend can go to the ordinary shares, but you have no right to the money on a set date.</li>
+        <li><strong>Dividends need distributable profits.</strong> The prospectus warns that a big fall in the bitcoin price could eat into the profits the company is legally allowed to pay dividends from, even though the company says an investment in it isn&apos;t an investment in bitcoin.</li>
+        <li><strong>The company can call it.</strong> MORE is redeemable by the company at £110, which caps what you can gain if it trades above £100 and can end the income early.</li>
+        <li><strong>Behind creditors, and non-voting.</strong> In a winding-up you rank behind the company&apos;s creditors and ahead of the ordinary shares, with no say in how the company is run.</li>
+        <li><strong>Very small and untested.</strong> The raise was about £10M (111,112 shares at £90), below the £15–25M targeted, with a further 100,000 shares held back to sell into the market. Trading since 14 October 2026 is thin, so selling quickly may cost you the spread.</li>
+      </ul>
       <a href="https://www.smarterwebcompany.co.uk" target="_blank" rel="noopener noreferrer"
         className="inline-block text-sm underline mt-1" style={{ color: 'var(--accent-gold)' }}>
         Visit SmarterWebCompany.co.uk

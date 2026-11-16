@@ -110,7 +110,7 @@ export default function DividendHistoryPage({ ticker, dividends }) {
           <p className="text-sm">
             CHAD closed its initial offering on <strong>September 8, 2026</strong>. Dividends accrue daily from that date, but the first cash payment
             — <strong>$0.07944/share</strong>, covering the accrual period from September 8 through October 1 — lands on <strong>October 1, 2026</strong>.
-            After that, regular daily payments of roughly <strong>$0.0052/share</strong> begin on each business day of the month.
+            After that, regular daily payments of roughly <strong>${dividends[1]?.amount ?? ''}/share</strong> begin on each business day of the month.
           </p>
         </div>
       )}

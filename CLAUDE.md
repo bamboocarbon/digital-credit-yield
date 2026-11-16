@@ -98,3 +98,13 @@ app/about/page.js ("What I Track") reads every ticker's rate from ASSET_RATES, w
 lib/yieldRateHistory.js. When the scan adds or changes a rate there, the About page follows by itself
 (it revalidates daily). Do NOT hardcode a % in that page. Only the descriptive wording (schedules, dates,
 "fixed"/"variable", reserve claims) is hand-written; if a scan finding changes one of those facts, update it too.
+
+## Compare table + SATA hub figures are computed — no manual sync
+The "Approx. per payment" row of components/CompareTable.js and the SATA hub's monthly/daily dividend sentence
+(components/AssetHub.js) are built by lib/perPayment.js from data/dividends-*.json (daily tickers: mean of the current
+month's rows; weekly: median). The SATA hub's "$X a share a month", the SATA meta description and the Capital Structure
+panel's SATA reserve date come from ASSET_RATES / DIVIDEND_RESERVE.SATA (the "as of <Mon D, YYYY>" text in its `note` — keep that
+format when you update it). So when you add dividend rows, a rate, or a new DIVIDEND_RESERVE.SATA figure, those follow by
+themselves. Do NOT hardcode per-share amounts in those places. Hand-written and still yours to check: the SATA reserve
+policy wording (18 months; cash and marketable securities; not ring-fenced) and the "What could go wrong" lists on the
+BMNP/CHAD/MORE hubs (rates, call prices, reserve months, share counts) — update them if a filing changes one of those facts.

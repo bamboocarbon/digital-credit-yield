@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { currencySymbol } from '@/lib/currency';
+import { perPaymentLabel } from '@/lib/perPayment';
 import { ASSET_RATES, PAYMENT_FREQUENCY, STRIVE_BTC_HOLDINGS, STRATEGY_BTC_HOLDINGS, BITMINE_ETH_HOLDINGS, DFDV_SOL_HOLDINGS, SMARTER_WEB_BTC_HOLDINGS, PAR_VALUE } from '@/lib/constants';
 
 const TICKER_COLOUR = { STRC: '#4ade80', SATA: '#3b82f6', BMNP: '#fde047', CHAD: '#7f1d1d', MORE: '#a855f7' };
@@ -39,11 +40,11 @@ const ROWS = [
   },
   {
     label: 'Approx. per payment',
-    STRC: '~$0.033/share (declared in whole cents)',
-    SATA: '~$0.057/share (Nov)',
-    BMNP: '~$0.185/share',
-    CHAD: '~$0.0061/share',
-    MORE: '~£0.231/share',
+    get STRC() { return perPaymentLabel('STRC', '$', '~$0.033/share'); },
+    get SATA() { return perPaymentLabel('SATA', '$', '~$0.057/share'); },
+    get BMNP() { return perPaymentLabel('BMNP', '$', '~$0.185/share'); },
+    get CHAD() { return perPaymentLabel('CHAD', '$', '~$0.0061/share'); },
+    get MORE() { return perPaymentLabel('MORE', '£', '~£0.230/share'); },
   },
   {
     label: 'How the rate is set',
