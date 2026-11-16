@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ASSET_RATES, STRIVE_BTC_HOLDINGS, STRATEGY_BTC_HOLDINGS, BITMINE_ETH_HOLDINGS, DFDV_SOL_HOLDINGS, SMARTER_WEB_BTC_HOLDINGS } from '@/lib/constants';
+import { ASSET_RATES, DIVIDEND_RESERVE, STRIVE_BTC_HOLDINGS, STRATEGY_BTC_HOLDINGS, BITMINE_ETH_HOLDINGS, DFDV_SOL_HOLDINGS, SMARTER_WEB_BTC_HOLDINGS } from '@/lib/constants';
 import { PENDING_RATE_CHANGES } from '@/lib/pendingRateChanges';
 import SubNav from '@/components/SubNav';
 import AssetHubLive from '@/components/AssetHubLive';
@@ -169,10 +169,10 @@ const DESCRIPTIONS = {
   ),
   SATA: (
     <div className="space-y-3">
-      <p>SATA is Strive&apos;s perpetual preferred equity instrument, listed on the Nasdaq. It pays a {ASSET_RATES.SATA.toFixed(2)}% annual dividend distributed daily in cash (~$0.052 per share per day), with Strive aiming to hold it in a $99–$101 trading range. SATA is available on most major brokerage platforms.</p>
-      <p>As preferred equity, SATA sits below debt but above common equity in Strive&apos;s capital structure. In the event of liquidation, preferred stockholders are paid before common shareholders, giving SATA a meaningful layer of protection relative to pure equity. Strive backs the instrument with over {STRIVE_BTC_HOLDINGS} Bitcoin in reserve assets and maintains 18 months of pre-funded cash reserves to cover dividend payments.</p>
+      <p>SATA is Strive&apos;s perpetual preferred equity instrument, listed on the Nasdaq. It pays a {ASSET_RATES.SATA.toFixed(2)}% annual dividend in cash on every business day, if declared, which comes to about $1.08 a share a month. The daily amount moves with the number of payment days: $0.0516 a share in October (21 days) and $0.0571 in November (19 days). Strive adjusts the rate with the aim of holding the price in a $99–$101 range. SATA is available on most major brokerage platforms.</p>
+      <p>As preferred equity, SATA sits below debt but above common equity in Strive&apos;s capital structure. In the event of liquidation, preferred stockholders are paid before common shareholders, giving SATA a meaningful layer of protection relative to pure equity. Strive holds over {STRIVE_BTC_HOLDINGS} Bitcoin, and it keeps a dividend reserve sized at 18 months of SATA dividends (raised from 12 months in March 2026, according to its Q3 10-Q). Its latest disclosed cash and equivalents are {DIVIDEND_RESERVE.SATA.display}. The 10-Q says the reserve is held in cash and marketable securities with no lien or contractual restriction on it, so Strive&apos;s creditors could in principle reach it.</p>
       <p>Strive is a Nasdaq-listed financial services and Bitcoin treasury company, founded in 2022 by Vivek Ramaswamy. It positions itself as a Bitcoin-first asset manager focused on financial returns rather than ESG objectives, and has made Bitcoin a cornerstone of both its treasury strategy and its financial product offering.</p>
-      <p>What I find reassuring about SATA is that 18-month cash buffer — the near-term dividend isn&apos;t riding directly on the Bitcoin price. What I&apos;d keep an eye on is that the rate is set at the board&apos;s discretion rather than by a published formula.</p>
+      <p>What I find reassuring about SATA is that cash buffer: the near-term dividend isn&apos;t riding directly on the Bitcoin price. What I&apos;d keep an eye on is that the reserve isn&apos;t ring-fenced, and that the rate is set at the board&apos;s discretion rather than by a published formula.</p>
       <a href="https://strive.com" target="_blank" rel="noopener noreferrer"
         className="inline-block text-sm underline mt-1" style={{ color: 'var(--accent-gold)' }}>
         Visit Strive.com

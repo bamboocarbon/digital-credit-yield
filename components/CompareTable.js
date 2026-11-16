@@ -40,7 +40,7 @@ const ROWS = [
   {
     label: 'Approx. per payment',
     STRC: '~$0.479/share',
-    SATA: '~$0.052/share',
+    SATA: '~$0.057/share (Nov)',
     BMNP: '~$0.183/share',
     CHAD: '~$0.0052/share',
     MORE: '~£0.231/share',
@@ -56,7 +56,7 @@ const ROWS = [
   {
     label: 'What backs it',
     STRC: `${STRATEGY_BTC_HOLDINGS}+ Bitcoin treasury`,
-    SATA: `${STRIVE_BTC_HOLDINGS}+ Bitcoin plus an 18-month cash reserve`,
+    SATA: `${STRIVE_BTC_HOLDINGS}+ Bitcoin plus a cash reserve sized at 18 months of dividends`,
     BMNP: `${BITMINE_ETH_HOLDINGS}+ Ethereum treasury, staking income via the MAVAN validator network`,
     CHAD: `${DFDV_SOL_HOLDINGS}+ Solana treasury, funded by ongoing capital raises`,
     MORE: `${SMARTER_WEB_BTC_HOLDINGS}+ Bitcoin treasury; £4M of IPO proceeds earmarked for more bitcoin`,
