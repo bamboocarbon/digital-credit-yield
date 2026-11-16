@@ -24,11 +24,11 @@ export function ProjectorNotes({ ticker }) {
       <p>
         The model steps forward one month at a time. Each month it works out the dividends the holding earns, adds the reinvested share
         back into the holding at the same price, and counts the rest as cash income, which is shown separately from the portfolio
-        value. The monthly rate allows for how often the instrument really pays: STRC daily since 1 November 2026, SATA and CHAD every
-        business day, BMNP and MORE weekly. The other tickers are modelled as monthly payers, a simplification that is slightly generous for the quarterly ones and slightly conservative for the daily ones.
+        value. The monthly rate allows for how often the instrument really pays: STRC daily since 1 November 2026, SATA, SATS and CHAD every
+        business day, BMNP and MORE weekly, STRK, STRF and STRD quarterly until the end of 2026 and daily from 1 January 2027 (the model switches on that date by itself), and STRE quarterly.
       </p>
       <p>
-        It is deliberately simple, and the simplicity is the main limitation. It assumes the yield and the price stay where they are today,
+        It is deliberately simple, and the simplicity is the main limitation. One detail to know: the monthly rate includes compounding within the month even when you reinvest less than 100%, so with reinvestment turned down the cash income is overstated slightly, by about half of one per cent for a 13% daily payer. It assumes the yield and the price stay where they are today,
         so it never shows a falling share price or a cut dividend, and it ignores tax and dealing costs. The share price is the real risk
         with these instruments, and a projector can&apos;t forecast it. Treat the output as arithmetic on a stated assumption, not a forecast, and
         read <A href="/risks">the risks page</A> alongside it. For a walk-through of each input, see{' '}

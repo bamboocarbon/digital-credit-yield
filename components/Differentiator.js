@@ -83,7 +83,8 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
   const step = months <= 24 ? 1 : 12;
 
   // STRC uses 24 semi-monthly; SATA/CHAD use 250 business-day compounding; BMNP uses 52 weekly; benchmarks stay at 12
-  const paymentsPerYear = ticker === 'STRC' ? PAYMENT_FREQUENCY.STRC.perYear : ticker === 'SATA' ? 250 : ticker === 'BMNP' ? 52 : ticker === 'CHAD' ? 250 : ticker === 'MORE' ? 52 : 12;
+  // Each instrument's real payment frequency (STRC/STRK/STRF/STRD flip to daily on their start dates); unknown tickers fall back to monthly.
+  const paymentsPerYear = PAYMENT_FREQUENCY[ticker]?.perYear ?? 12;
 
   const assetData = useMemo(
     () => runProjection(startValue, yieldForProjection, Number(form.monthlyContribution), Number(form.reinvestmentPct), months, paymentsPerYear),
@@ -354,43 +355,11 @@ export default function Differentiator({ ticker, liveYield, livePrice }) {
                 onChange={e => update('reinvestmentPct', e.target.value)}
                 aria-label={`Reinvestment percentage: ${form.reinvestmentPct}%`}
                 className="w-full" style={{ accentColor: 'var(--accent-gold)' }} />
-              {ticker === 'STRC' && Number(form.reinvestmentPct) > 0 && (
+              {paymentsPerYear !== 12 && Number(form.reinvestmentPct) > 0 && (
                 <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
-                  {PAYMENT_FREQUENCY.STRC.label === 'Daily' ? 'Daily' : 'Semi-monthly'} compounding: {computeAPY(yieldForProjection, PAYMENT_FREQUENCY.STRC.perYear).toFixed(4)}% APY
+                  {String(PAYMENT_FREQUENCY[ticker].label).replace('Semi-Monthly', 'Semi-monthly')} compounding: {computeAPY(yieldForProjection, paymentsPerYear).toFixed(4)}% APY
                   <span style={{ color: 'var(--text-muted)' }}>
-                    {' '}(+{((computeAPY(yieldForProjection, PAYMENT_FREQUENCY.STRC.perYear) - computeAPY(yieldForProjection, 12)) * 100).toFixed(1)} bps vs monthly)
-                  </span>
-                </p>
-              )}
-              {ticker === 'SATA' && Number(form.reinvestmentPct) > 0 && (
-                <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
-                  Daily compounding: {computeAPY(yieldForProjection, 250).toFixed(4)}% APY
-                  <span style={{ color: 'var(--text-muted)' }}>
-                    {' '}(+{((computeAPY(yieldForProjection, 250) - computeAPY(yieldForProjection, 12)) * 100).toFixed(1)} bps vs monthly)
-                  </span>
-                </p>
-              )}
-              {ticker === 'BMNP' && Number(form.reinvestmentPct) > 0 && (
-                <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
-                  Weekly compounding: {computeAPY(yieldForProjection, 52).toFixed(4)}% APY
-                  <span style={{ color: 'var(--text-muted)' }}>
-                    {' '}(+{((computeAPY(yieldForProjection, 52) - computeAPY(yieldForProjection, 12)) * 100).toFixed(1)} bps vs monthly)
-                  </span>
-                </p>
-              )}
-              {ticker === 'MORE' && Number(form.reinvestmentPct) > 0 && (
-                <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
-                  Weekly compounding: {computeAPY(yieldForProjection, 52).toFixed(4)}% APY
-                  <span style={{ color: 'var(--text-muted)' }}>
-                    {' '}(+{((computeAPY(yieldForProjection, 52) - computeAPY(yieldForProjection, 12)) * 100).toFixed(1)} bps vs monthly)
-                  </span>
-                </p>
-              )}
-              {ticker === 'CHAD' && Number(form.reinvestmentPct) > 0 && (
-                <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
-                  Daily compounding: {computeAPY(yieldForProjection, 250).toFixed(4)}% APY
-                  <span style={{ color: 'var(--text-muted)' }}>
-                    {' '}(+{((computeAPY(yieldForProjection, 250) - computeAPY(yieldForProjection, 12)) * 100).toFixed(1)} bps vs monthly)
+                    {' '}({(computeAPY(yieldForProjection, paymentsPerYear) - computeAPY(yieldForProjection, 12)) >= 0 ? '+' : '−'}{Math.abs((computeAPY(yieldForProjection, paymentsPerYear) - computeAPY(yieldForProjection, 12)) * 100).toFixed(1)} bps vs monthly)
                   </span>
                 </p>
               )}
