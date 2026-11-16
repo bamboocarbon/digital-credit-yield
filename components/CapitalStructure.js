@@ -82,9 +82,9 @@ const CONTENT = {
     ),
     financing: (
       <>
-        <p>Strive&apos;s {STRIVE_BTC_HOLDINGS} Bitcoin is the long-term backing, but it doesn&apos;t pay the dividend. A dedicated, ring-fenced cash reserve does.</p>
-        <p>At the time of my capital-structure article in June 2026 the reserve was about $137m, sized to cover roughly <strong>18 months</strong> of SATA dividends without selling a coin. Strive&apos;s latest disclosed cash and equivalents are <strong>{DIVIDEND_RESERVE.SATA.display}</strong> (Strive&apos;s latest 8-K{SATA_DISCLOSED ? `, ${SATA_DISCLOSED}` : ''}).</p>
-        <p>With no debt ahead of SATA, the reserve doesn&apos;t have to cover interest first. Longer term, Strive funds growth through preferred and common equity, and has committed not to issue new SATA below $100 through its at-the-market programme.</p>
+        <p>Strive&apos;s {STRIVE_BTC_HOLDINGS} Bitcoin is the long-term backing, but it doesn&apos;t pay the dividend. A dedicated dividend reserve does.</p>
+        <p>Strive&apos;s March 2026 8-K described the reserve as covering more than <strong>18 months</strong> of SATA dividends, with 12 months held in cash and 6 months in STRC, so the dividends can be paid without selling a coin. Strive&apos;s latest disclosed cash and equivalents are <strong>{DIVIDEND_RESERVE.SATA.display}</strong> (Strive&apos;s latest 8-K{SATA_DISCLOSED ? `, ${SATA_DISCLOSED}` : ''}).</p>
+        <p>With no debt ahead of SATA, the reserve doesn&apos;t have to cover interest first. Longer term, Strive funds growth through preferred and common equity, and has said it does not intend to issue new SATA below $100 through its at-the-market programme.</p>
       </>
     ),
   },
