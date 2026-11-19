@@ -1,5 +1,5 @@
 {
- "fetchedAt": "2026-11-18T13:55:36.088Z",
+ "fetchedAt": "2026-11-19T13:55:39.362Z",
  "MSTR": {
   "cik": "0001050446",
   "filings": [
@@ -154,6 +154,13 @@
   "cik": "0001805526",
   "filings": [
    {
+    "form": "FWP",
+    "date": "2026-11-18",
+    "accession": "0001805526-26-000180",
+    "url": "https://www.sec.gov/Archives/edgar/data/1805526/000180552626000180/fwpofficewalkthrough.htm",
+    "docs": []
+   },
+   {
     "form": "8-K",
     "date": "2026-11-16",
     "accession": "0001805526-26-000177",
@@ -266,20 +273,6 @@
     "date": "2026-11-05",
     "accession": "0001805526-26-000153",
     "url": "https://www.sec.gov/Archives/edgar/data/1805526/000180552626000153/fwpchadsocialmedia.htm",
-    "docs": []
-   },
-   {
-    "form": "DEFA14A",
-    "date": "2026-11-04",
-    "accession": "0001213900-26-115935",
-    "url": "https://www.sec.gov/Archives/edgar/data/1805526/000121390026115935/ea0309455-02.htm",
-    "docs": []
-   },
-   {
-    "form": "DEF 14A",
-    "date": "2026-11-04",
-    "accession": "0001213900-26-115933",
-    "url": "https://www.sec.gov/Archives/edgar/data/1805526/000121390026115933/ea0309455-01.htm",
     "docs": []
    }
   ]

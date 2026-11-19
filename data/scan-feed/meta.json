@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-18T13:55:27.587Z",
+ "generatedAt": "2026-11-19T13:55:29.566Z",
  "windowDays": 14,
  "errors": [],
  "sec": {
@@ -8,7 +8,7 @@
    "MSTR": 2,
    "ASST": 5,
    "BMNR": 4,
-   "DFDV": 12
+   "DFDV": 11
   }
  },
  "swc": {
