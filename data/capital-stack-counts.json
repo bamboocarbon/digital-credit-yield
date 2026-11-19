@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-16T13:55:44.468Z",
+ "generatedAt": "2026-11-19T13:55:43.575Z",
  "strategy": {
   "ledger": {
    "counts": {
@@ -72,7 +72,7 @@
    "headline": "First day of dealings in Preferred Shares",
    "note": "ATM-facility shares are issued to Tennyson to sell into the market; they exist but may not be sold yet.",
    "atmSold": 25,
-   "sold": 109362,
+   "sold": 106097,
    "atmSalesLedger": {
     "entries": [
      {
@@ -83,7 +83,7 @@
      }
     ]
    },
-   "repurchased": 1775,
+   "repurchased": 5040,
    "buybackLedger": {
     "entries": [
      {
@@ -93,6 +93,14 @@
       "shares": 1775,
       "price": 80.354,
       "consideration": 142985
+     },
+     {
+      "key": "2026-11-19|MORE Preferred Shares Buyback",
+      "date": "2026-11-19",
+      "tradeDate": "2026-11-18",
+      "shares": 3265,
+      "price": 77.5,
+      "consideration": 253925
      }
     ]
    }
