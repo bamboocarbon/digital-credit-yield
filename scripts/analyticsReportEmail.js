@@ -8,6 +8,7 @@
 
 import { Resend } from 'resend';
 import { getOwnPeriodStats } from '../lib/pageviewPeriods.js';
+import { getGpxDownloadStats } from '../lib/gpxDownloads.js';
 import { cloudflareConfigured, getCloudflareTotals, getCloudflareTopPages, diagnoseCloudflare } from '../lib/cloudflareAnalytics.js';
 
 const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
@@ -15,7 +16,7 @@ const RECIPIENT = 'robin.gillingham@hotmail.co.uk';
 // cfSiteTag = the Cloudflare Web Analytics site tag (the token in the site's beacon snippet; public in page source).
 const SITES = [
   { name: 'Digital Credit Yield', ns: 'dcy:pv', url: 'https://digitalcredityield.com', cfSiteTag: 'a9d1f24ed0c64a3184a3c1d921314fa3' },
-  { name: 'Polka Dot Bike', ns: 'pdb:pv', url: 'https://polkadotbike.com', cfSiteTag: 'ec15959bd14441ac80d8d0593e3ba1e7' },
+  { name: 'Polka Dot Bike', ns: 'pdb:pv', url: 'https://polkadotbike.com', cfSiteTag: 'ec15959bd14441ac80d8d0593e3ba1e7', gpx: true },
 ];
 
 // Per-site numbers from the latest run, returned by run() so the cron endpoint can report them (handy for checking
@@ -65,8 +66,36 @@ function topPagesTable(title, pages, emptyNote = 'no data') {
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">${rows}</table>`;
 }
 
+// GPX download clicks (polkadotbike only): counts per period plus the most-downloaded climbs. Never stops the email.
+async function gpxSection() {
+  let g;
+  try {
+    g = await getGpxDownloadStats();
+  } catch (err) {
+    console.error('GPX download stats unavailable -', err.message);
+    return { html: `<div style="font-size:12px;color:#8a9ab5;margin:14px 0 4px;">GPX downloads</div><div style="font-size:11px;color:#5a6a8a;margin:0 0 6px;">Unavailable today.</div>`, summary: { error: err.message } };
+  }
+  if (!g) {
+    return { html: `<div style="font-size:12px;color:#8a9ab5;margin:14px 0 4px;">GPX downloads</div><div style="font-size:11px;color:#5a6a8a;margin:0 0 6px;">No downloads recorded yet. Counting is live once the GPX counter is deployed; it records the Download GPX button only (not direct links to the .gpx files).</div>`, summary: { total: 0 } };
+  }
+  const cell = 'padding:6px 10px;border-bottom:1px solid #1c2842;text-align:right;';
+  const row = (label, n) => `<tr><td style="padding:6px 10px;border-bottom:1px solid #1c2842;color:#8a9ab5;">${label}</td><td style="${cell}">${fmt(n)}</td></tr>`;
+  const html = `
+    <div style="font-size:12px;color:#8a9ab5;margin:16px 0 4px;">GPX downloads (Download GPX button clicks, bots and your own IP excluded)</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+      ${row(`Yesterday (${g.yesterday.date})`, g.yesterday.count)}
+      ${row(`This week (since ${g.weekToDate.since})`, g.weekToDate.count)}
+      ${row(`This month (${g.monthToDate.month})`, g.monthToDate.count)}
+      ${row(`All time (since ${g.since || 'launch'})`, g.total)}
+    </table>
+    ${topPagesTable('Most downloaded climbs — last 30 days', g.topLast30, 'No downloads in the last 30 days.')}
+    ${topPagesTable('Most downloaded climbs — all time', g.topAllTime)}`;
+  return { html, summary: { yesterday: g.yesterday.count, weekToDate: g.weekToDate.count, monthToDate: g.monthToDate.count, total: g.total } };
+}
+
 async function buildSiteSection(site) {
   const own = await getOwnPeriodStats(site.ns);
+  const gpx = site.gpx ? await gpxSection() : null;
   const { yesterday, thisMonday, thisMonth, now } = own.periodBounds;
   const yesterdayEnd = new Date(yesterday);
   yesterdayEnd.setUTCDate(yesterdayEnd.getUTCDate() + 1);
@@ -108,6 +137,7 @@ async function buildSiteSection(site) {
     totalRecorded: own.totalRecorded,
     lastWeekTopOwn: own.lastWeek.topPages.length,
     thisWeekTopOwn: own.thisWeek.topPages.length,
+    ...(gpx ? { gpxDownloads: gpx.summary } : {}),
     cloudflare: cf ? { yesterday: cf.yesterday, week: cf.week, month: cf.month, lastWeekTop: cf.lastWeekTop.length } : { unavailable: cfNote, error: cfError, diagnostics: cfDiag },
   });
 
@@ -152,6 +182,7 @@ async function buildSiteSection(site) {
     ${topPagesTable(`Top 10 pages — this week so far, since ${own.thisWeek.start} (our counter)`, own.thisWeek.topPages, 'No page counts for this week yet.')}
     ${topPagesTable(`Top 10 pages — last week, ${lastWeekLabel} (our counter)`, own.lastWeek.topPages, ownLastWeekNote)}
     ${cf ? topPagesTable(`Top 10 pages — last week, ${lastWeekLabel} (Cloudflare)`, cf.lastWeekTop, 'no data') : ''}
+    ${gpx ? gpx.html : ''}
   </div>`;
 }
 
