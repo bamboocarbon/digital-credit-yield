@@ -1,5 +1,5 @@
 {
- "fetchedAt": "2026-11-27T13:55:34.762Z",
+ "fetchedAt": "2026-11-28T13:55:41.832Z",
  "MSTR": {
   "cik": "0001050446",
   "filings": [
@@ -124,6 +124,13 @@
  "DFDV": {
   "cik": "0001805526",
   "filings": [
+   {
+    "form": "FWP",
+    "date": "2026-11-27",
+    "accession": "0001805526-26-000184",
+    "url": "https://www.sec.gov/Archives/edgar/data/1805526/000180552626000184/chadvariousvideos.htm",
+    "docs": []
+   },
    {
     "form": "8-K",
     "date": "2026-11-23",
